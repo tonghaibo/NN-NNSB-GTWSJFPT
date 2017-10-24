@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >WSSI3</MWID><NAME >WSSI3</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >WSSI3.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >WebService</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >test2</ID><NAME >测试</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//测试
+function test2()
+{
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var ws = new JavaPackage(&amp;quot;com.xlsgrid.net.ws&amp;quot;);
+var dom = new JavaPackage(&amp;quot;org.w3c.dom&amp;quot;);
+var sax = new JavaPackage(&amp;quot;org.xml.sax&amp;quot;);
+var parsers = new JavaPackage(&amp;quot;javax.xml.parsers&amp;quot;);
+var soap = new JavaPackage(&amp;quot;javax.xml.soap&amp;quot;);
+var io = new JavaPackage(&amp;quot;java.io&amp;quot;);
+var util = new JavaPackage(&amp;quot;java.util&amp;quot;);
+
+//业务调用查询账户余额demo
+function demo()
+{
+	var instId = &amp;quot;102&amp;quot;; //工商银行
+	var account = &amp;quot;6222222222221555532&amp;quot;;
+	var ret = F0113005(instId,account);
+	return ret;
+}
+
+
+// 查询社保机构账户余额
+//function F0113005() 
+function F0113005(sbjgm,yhjgm,sblsh,yhzh,yhhm)
+{
+	try{
+		var service = new SBCW_sbcwService();
+		var ref = service.genRef(sbjgm);
+		var yymmdd = service.getDate();
+		var hhmmss = service.getTime();
+		var busycode = &amp;quot;0113005&amp;quot;;//业务功能号	
+		//组装报文
+		var xml = &amp;quot;&amp;lt;soapenv:Envelope xmlns:soapenv=\&amp;quot;http://schemas.xmlsoap.org/soap/envelope/\&amp;quot;&amp;gt;
+			           &amp;lt;soapenv:Header/&amp;gt;
+			            &amp;lt;soapenv:Body&amp;gt;
+					&amp;lt;MsgText&amp;gt;
+					  &amp;lt;GrpHdr&amp;gt;
+					    &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+					    &amp;lt;Ref&amp;gt;&amp;quot;+ref+&amp;quot;&amp;lt;/Ref&amp;gt;
+					    &amp;lt;BusCd&amp;gt;&amp;quot;+busycode+&amp;quot;&amp;lt;/BusCd&amp;gt;
+					    &amp;lt;TradSrc&amp;gt;S&amp;lt;/TradSrc&amp;gt;
+					    &amp;lt;Sender&amp;gt;
+					      &amp;lt;InstId&amp;gt;&amp;quot;+sbjgm+&amp;quot;&amp;lt;/InstId&amp;gt;
+					    &amp;lt;/Sender&amp;gt;
+					    &amp;lt;Recver&amp;gt;
+					      &amp;lt;InstId&amp;gt;&amp;quot;+yhjgm+&amp;quot;&amp;lt;/InstId&amp;gt;
+					    &amp;lt;/Recver&amp;gt;
+					    &amp;lt;Resend&amp;gt;N&amp;lt;/Resend&amp;gt;
+					    &amp;lt;Date&amp;gt;&amp;quot;+yymmdd+&amp;quot;&amp;lt;/Date&amp;gt;
+					    &amp;lt;Time&amp;gt;&amp;quot;+hhmmss+&amp;quot;&amp;lt;/Time&amp;gt;
+					    &amp;lt;Dgst&amp;gt;查询余额&amp;lt;/Dgst&amp;gt;
+					    &amp;lt;Rst&amp;gt;
+						    &amp;lt;Code&amp;gt;0001&amp;lt;/Code&amp;gt;
+						    &amp;lt;Info&amp;gt;待处理&amp;lt;/Info&amp;gt;
+					  &amp;lt;/Rst&amp;gt;
+					  &amp;lt;/GrpHdr&amp;gt;
+					  &amp;lt;BusiText&amp;gt;
+						&amp;lt;SiSeq&amp;gt;&amp;quot;+sblsh+&amp;quot;&amp;lt;/SiSeq&amp;gt;
+						&amp;lt;BkAcct&amp;gt;
+							&amp;lt;Id&amp;gt;&amp;quot;+yhzh+&amp;quot;&amp;lt;/Id&amp;gt;
+							&amp;lt;Name&amp;gt;&amp;quot;+yhhm+&amp;quot;&amp;lt;/Name&amp;gt;
+						&amp;lt;/BkAcct&amp;gt;
+					  &amp;lt;/BusiText&amp;gt;
+					&amp;lt;/MsgText&amp;gt;
+			           &amp;lt;/soapenv:Body&amp;gt;
+			      &amp;lt;/soapenv:Envelope&amp;gt;
+	                          &amp;quot;;
+	
+		var map = new java.util.HashMap();
+		map = service.parseMsgText(xml,true);
+		var wscall = new x_EAWebServiceCall();
+		//发送报文
+		var ret = wscall.SendWeblogic(service.shuNiuUrl, xml, &amp;quot;UTF-8&amp;quot;,null,null);
+		map = service.parseMsgText(ret,true);
+		var ResInfo = map.get(&amp;quot;RstInfo&amp;quot;);
+		//接收响应报文并处理
+		map = parseMsgText(ret);
+		var code = map.get(&amp;quot;BusiCode&amp;quot;);
+		var info = map.get(&amp;quot;BusiInfo&amp;quot;);
+		var je = map.get(&amp;quot;je&amp;quot;);
+		if(code == &amp;quot;0000&amp;quot;) {
+			return code+&amp;quot;~&amp;quot;+je+&amp;quot;~&amp;quot;+info;
+		}
+		else {
+			if(info == &amp;quot;&amp;quot;) {
+				return code+&amp;quot;~&amp;quot;+111+&amp;quot;~&amp;quot;+ResInfo;
+			}
+			else return code+&amp;quot;~&amp;quot;+111+&amp;quot;~&amp;quot;+info;
+		}		
+	}catch(e) {
+		throw new Exception(e);
+	}
+}
+
+
+// 解释报文取得报文头信息
+// msgText - 报文信息XML
+function parseMsgText(msgText)
+{		
+	var map = new java.util.HashMap();
+	try {													
+		var dbf = parsers.DocumentBuilderFactory.newInstance();
+		var documentbuilder = dbf.newDocumentBuilder();
+		var document = documentbuilder.parse(new sax.InputSource(new io.StringReader(msgText))); 
+		var nodelist = document.getElementsByTagName(&amp;quot;MsgText&amp;quot;);                  
+		var node = nodelist.item(0);		
+		var BusiCode = &amp;quot;&amp;quot;;
+		try{BusiCode = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Rst&amp;quot;).item(0).getElementsByTagName(&amp;quot;Code&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		var BusiInfo = &amp;quot;&amp;quot;;
+		try{BusiInfo = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Rst&amp;quot;).item(0).getElementsByTagName(&amp;quot;Info&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		var je = &amp;quot;&amp;quot;;
+		try{je = node.getElementsByTagName(&amp;quot;BkAcct&amp;quot;).item(0).getElementsByTagName(&amp;quot;Balance&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		map.put(&amp;quot;je&amp;quot;,je);
+		map.put(&amp;quot;BusiCode&amp;quot;,BusiCode);
+		map.put(&amp;quot;BusiInfo&amp;quot;,BusiInfo);
+	}
+	catch(e) {
+		throw new Exception(e);
+	}
+								
+	return map;
+	
+}
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

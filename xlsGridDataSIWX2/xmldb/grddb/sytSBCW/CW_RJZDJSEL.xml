@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >CW_RJZDJSEL</MWID><NAME >取单据</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CW_RJZDJSEL.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >DAT1</ID><NAME >起始日期</NAME><NOTNULL ></NOTNULL><KEYVAL >DAT</KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG></ROW>
+<ROW num="1" ><ID >DAT2</ID><NAME >截止日期</NAME><NOTNULL ></NOTNULL><KEYVAL >DAT</KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG></ROW>
+<ROW num="2" ><ID >RZBZ</ID><NAME >入账标志</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG></ROW>
+<ROW num="3" ><ID >SKEY</ID><NAME >查询关键字</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG></ROW>
+</ROWSET>
+</grdpamds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.ShowToolBar(0);
+	_this.LoadScene(1,10);
+	
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,&amp;quot;10%&amp;quot;);	
+	
+	_sql.querytods(&amp;quot;LASTDAY&amp;quot;,&amp;quot;DAT=&amp;quot;+G_LOGDAT);
+
+	_this.SetToDateBox(&amp;quot;&amp;quot;,1,1,2,G_LOGDAT.substring(0,8)+&amp;quot;01&amp;quot;);
+	_this.SetToDateBox(&amp;quot;&amp;quot;,1,1,4,_this.XMLDS_GetString(0,&amp;quot;LASTDAY&amp;quot;));
+	
+	var rzbzList = _this.CreateListValue();
+	_this.SetListValue(rzbzList,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+	_this.SetListValue(rzbzList,&amp;quot;0&amp;quot;,&amp;quot;未入账&amp;quot;);
+	_this.SetListValue(rzbzList,&amp;quot;1&amp;quot;,&amp;quot;已入账&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,1,6,rzbzList);
+	_this.SetCellText(1,1,6,&amp;quot;0&amp;quot;); //默认未入账
+	
+	//业务类型  ----20161212 lwq add
+	var ywlxList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_YWLX&amp;where=id!=&amp;apos;E110&amp;apos;&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;FULLNAME&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,1,8,ywlxList);
+	_this.SetCellText(1,1,8,&amp;quot;%&amp;quot;);
+	
+	ZXGFILE0 = _this.SaveTempZXGFile(0); 
+	
+	loadData();
+	
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if (id == &amp;quot;查询&amp;quot;) {
+		loadData();
+	}
+	else if (id == &amp;quot;确定&amp;quot;) {
+		var row = -1;
+		for (var r=1;r&amp;lt;=_this.GetMainCellRangeRow2(0);r++) {		
+			if (_this.GetCellText(0,r,0) == &amp;quot;1&amp;quot;) {
+				row = r;
+				break;
+			}
+		}
+		var djh = _this.GetCellText(0,row,1);
+		window.returnValue = djh;
+		window.close();
+	}
+}
+
+
+function loadData()
+{
+	var dat1 = _this.GetCellText(1,1,2);
+	var dat2 = _this.GetCellText(1,1,4);
+	var rzbz = _this.GetCellText(1,1,6);
+	var ywlx = _this.GetCellText(1,1,8); //20161212 lwq add
+	var skey = _this.GetCellText(1,1,10); //20161212 lwq modify
+	
+	_this.LoadZXGFile(ZXGFILE0,-1,0);
+	_this.SetFixedRow(0,1);
+	_this.SetFixedCol(0,0);
+	_this.SetMainCellRange(0,1,0,_this.GetRowCount(0)-1,_this.GetColCount(0)-1);
+	
+	var xml = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;DAT1=&amp;quot;+dat1+&amp;quot;&amp;DAT2=&amp;quot;+dat2+&amp;quot;&amp;RZBZ=&amp;quot;+rzbz+&amp;quot;&amp;SKEY=&amp;quot;+skey+&amp;quot;&amp;YWLX=&amp;quot;+ywlx);  //20161212 lwq modify
+	_this.SetXmlDS(0,1,0,_this.GetRowCount(0)-1,_this.GetColCount(0)-1,xml);
+	for (var r=1;r&amp;lt;=_this.GetMainCellRangeRow2(0);r++) {	
+		var rzbz = _this.GetCellText(0,r,6);	
+		if (_this.GetCellText(0,r,1) != &amp;quot;&amp;quot;) {
+			_this.SetToBoolBox(0,r,0);
+		}
+		else {
+			_this.SetRowVisible(0,r,-1);
+		}
+		if (rzbz == &amp;quot;未入账&amp;quot;) _this.SetCellColor(0,r,6,255,0,0);
+		else if (rzbz == &amp;quot;已入账&amp;quot;) _this.SetCellColor(0,r,6,0,0,255);
+	}
+	_this.AutoFixColWidth(0,300);
+	_this.AutoFixScreenWidth();
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{	
+	if (sheet == 0) {
+		if (row &amp;lt; 1) return;
+		for (var r=1;r&amp;lt;=_this.GetMainCellRangeRow2(0);r++) {		
+			_this.SetCellText(0,r,0,&amp;quot;0&amp;quot;);
+		}
+		_this.SetCellText(0,row,0,&amp;quot;1&amp;quot;);
+	}
+}
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+	if (sheet == 0 &amp;&amp; row &amp;gt;= _this.GetMainCellRangeRow1(0) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(0)) {
+		var djh = _this.GetCellText(sheet,row,1);
+		window.returnValue = djh;
+		window.close();
+	}
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 1) {
+		if (row == 1 &amp;&amp; col == 2) {
+			var dat1 = _this.GetCellText(1,1,2);
+			var dat2 = _this.GetCellText(1,1,4);
+			var dat11 = dat1.replace(/-/g,&amp;quot;&amp;quot;);
+			var dat22 = dat2.replace(/-/g,&amp;quot;&amp;quot;);
+			//if (dat11 &amp;gt; dat22) {
+				_sql.querytods(&amp;quot;LASTDAY&amp;quot;,&amp;quot;DAT=&amp;quot;+dat1);
+				_this.SetCellText(1,1,4,_this.XMLDS_GetString(0,&amp;quot;LASTDAY&amp;quot;));
+			//}
+		}
+		loadData();
+	}
+}
+
+//单元格焦点变动
+function _thisOnCellFocusChange(sheet,rowold,colold,rownew,colnew)
+{
+	if (sheet == 1 &amp;&amp; rowold == 1 &amp;&amp; colold == 2) {
+		_thisOnCellModify(sheet,1,2,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;)
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select distinct &amp;apos;&amp;apos; sel,
+	djh,
+	dwbh,
+	dwmc,
+	max(zy) zy,
+	pch &amp;quot;批次号&amp;quot;,
+	decode(rzbz,&amp;apos;1&amp;apos;,&amp;apos;已入账&amp;apos;,&amp;apos;未入账&amp;apos;) &amp;quot;入账标志&amp;quot;,
+	min(ym1) &amp;quot;起始年月&amp;quot;,
+	max(ym2) &amp;quot;截止年月&amp;quot;,
+	rq,
+	sum(je1+je2+je3+je4+je5+je6+je7+je8+je9+je10+je11+je12+je13+je14+je15) je,
+	(select fullname from v_cw_ywlx b where a.ywlx=b.id and rownum=1) YWLX
+from V_SI_DJB_TMP a
+where YWLX like &amp;apos;[%YWLX]%&amp;apos;/*20161212 lwq add*/ 
+  and YWLX&amp;lt;&amp;gt;&amp;apos;E110&amp;apos;
+  and org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; 
+  and rq &amp;gt;=to_char(to_date(&amp;apos;[%DAT1]&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;),&amp;apos;yyyymmdd&amp;apos;) 
+  and rq &amp;lt;=to_char(to_date(&amp;apos;[%DAT2]&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;),&amp;apos;yyyymmdd&amp;apos;) 
+  and rzbz like &amp;apos;[%RZBZ]%&amp;apos; 
+  and ZBBZ=&amp;apos;0&amp;apos; and ZFBZ=&amp;apos;0&amp;apos;
+  and (djh like &amp;apos;%[%SKEY]%&amp;apos; or dwbh like &amp;apos;%[%SKEY]%&amp;apos; or
+  	dwmc like &amp;apos;%[%SKEY]%&amp;apos; or zy like &amp;apos;%[%SKEY]%&amp;apos;) 
+group by djh,dwbh,dwmc,pch,rzbz,rq,ywlx
+order by rq desc,djh</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 >MAIN</C6><C7 >MAIN</C7><C8 ></C8><C9 >MAIN</C9><C10 >MAIN</C10></ROW>
+<ROW num="1" ><ID >LASTDAY</ID><NAME ></NAME><DATDSC >select last_day(to_date(&amp;apos;[%DAT]&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;))  lastday from dual</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 >LASTDAY</C8><C9 ></C9><C10 ></C10></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

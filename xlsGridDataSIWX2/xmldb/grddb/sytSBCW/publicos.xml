@@ -1,0 +1,514 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >publicos</MWID><NAME >publicos</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >publicos.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE ></GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >
+var pub = new JavaPackage ( &amp;quot;com.xlsgrid.net.pub&amp;quot; );
+var web = new JavaPackage ( &amp;quot;com.xlsgrid.net.web&amp;quot; );
+
+function getAcc(request,response)
+{	
+	var ret = &amp;quot;&amp;quot;;
+	try {
+		var orgid = request.getParameter(&amp;quot;orgid&amp;quot;);
+		//var sql = &amp;quot;select id,name from v_acc where org=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos;&amp;quot;;
+		var sql = &amp;quot;select b.zth,a.* from acc a,cw_ztb b where a.org=b.org and a.id=b.acc and a.syt=&amp;apos;SBCW&amp;apos; and a.org=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos; order by to_number(id)&amp;quot;;
+		var ds = pub.EADbTool.QuerySQL(sql);
+		for (var i=0;i&amp;lt;ds.getRowCount();i++) {
+			var id = ds.getStringAt(i,&amp;quot;ID&amp;quot;);
+			var name = ds.getStringAt(i,&amp;quot;NAME&amp;quot;);
+			var zth = ds.getStringAt(i,&amp;quot;ZTH&amp;quot;);
+			ret += &amp;quot;&amp;lt;option value=\&amp;quot;&amp;quot;+id+&amp;quot;\&amp;quot;&amp;gt;&amp;quot;+zth+&amp;quot;-&amp;quot;+name+&amp;quot;&amp;lt;/option&amp;gt;\n&amp;quot;;
+		}
+	}
+	catch (e) {
+		ret = e.toString();
+	}
+	return ret;
+}
+
+function getAccDate(request,response)
+{	
+	var ret = &amp;quot;&amp;quot;;
+	try {
+		var accid = request.getParameter(&amp;quot;accid&amp;quot;);
+		var sql = &amp;quot;select substr(dqym,0,4)||&amp;apos;-&amp;apos;||substr(dqym,5,6)||&amp;apos;-&amp;apos;||to_char(sysdate,&amp;apos;dd&amp;apos;) logdat from cw_ztb where acc=&amp;apos;&amp;quot;+accid+&amp;quot;&amp;apos;&amp;quot;;
+		var ds = pub.EADbTool.QuerySQL(sql);
+		if (ds.getRowCount() &amp;gt; 0) {
+			return ds.getStringAt(0,&amp;quot;LOGDAT&amp;quot;);
+		}
+		else {
+			ret = pub.EADbTool.GetSQL(&amp;quot;select to_char(sysdate,&amp;apos;yyyy-mm-dd&amp;apos;) from dual&amp;quot;);
+		}
+	}
+	catch (e) {
+		ret = e.toString();
+	}
+	return ret;
+}
+
+//旧的备份
+function indexBAK()
+{
+	var html = &amp;quot;&amp;quot;;
+	var db = null;
+	var defaultorg = web.EAWebDeforg.GetDeforg(request);
+	var sRootPath = request.getContextPath();
+	try {
+		db = new pub.EADatabase();
+		var orgds = db.QuerySQL(&amp;quot;select id,id||&amp;apos;-&amp;apos;||name name,level from org where id!=&amp;apos;XLSGRID&amp;apos; start with refid is null connect by prior id=refid&amp;quot;);
+		//var accds = db.QuerySQL(&amp;quot;select * from v_acc where syt=&amp;apos;SBCW&amp;apos; and org=&amp;apos;&amp;quot;+defaultorg+&amp;quot;&amp;apos; order by id&amp;quot;);
+		var accds = db.QuerySQL(&amp;quot;select b.zth,a.* from acc a,cw_ztb b where a.org=b.org and a.id=b.acc and a.syt=&amp;apos;SBCW&amp;apos; and a.org=&amp;apos;&amp;quot;+defaultorg+&amp;quot;&amp;apos; order by id&amp;quot;);
+		var orgStr = &amp;quot;&amp;quot;;
+		for (var i=0;i&amp;lt;orgds.getRowCount();i++) {
+			var orgid = orgds.getStringAt(i,&amp;quot;ID&amp;quot;);
+			var orgname = orgds.getStringAt(i,&amp;quot;NAME&amp;quot;);
+			var lev = orgds.getStringAt(i,&amp;quot;LEVEL&amp;quot;);
+			if (lev == &amp;quot;2&amp;quot;) orgname = &amp;quot;　&amp;quot; + orgname;
+			else if (lev == &amp;quot;3&amp;quot;) orgname = &amp;quot;　∟&amp;quot; + orgname;			
+			orgStr += &amp;quot;&amp;lt;option value=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos;&amp;gt;&amp;quot;+orgname+&amp;quot;&amp;lt;/option&amp;gt;\n&amp;quot;;
+		}
+		var accStr = &amp;quot;&amp;quot;;
+		for (var i=0;i&amp;lt;accds.getRowCount();i++) {
+			var accid = accds.getStringAt(i,&amp;quot;ID&amp;quot;);
+			var zth = accds.getStringAt(i,&amp;quot;ZTH&amp;quot;);
+			var accname = accds.getStringAt(i,&amp;quot;NAME&amp;quot;);
+			accStr += &amp;quot;&amp;lt;option value=&amp;apos;&amp;quot;+accid+&amp;quot;&amp;apos;&amp;gt;&amp;quot;+zth+&amp;quot;-&amp;quot;+accname+&amp;quot;&amp;lt;/option&amp;gt;\n&amp;quot;;
+		}
+
+		html = &amp;quot;&amp;lt;style type=\&amp;quot;text/css\&amp;quot;&amp;gt;
+			html { overflow-x:hidden; overflow-y:hidden; }
+			body{
+				margin:0;
+				font-size:12px;
+				line-height:180%;
+				font-family:\&amp;quot;微软雅黑\&amp;quot;;
+				background-color:#0057a4;
+			}
+			a:link {color: #333333;	text-decoration: none;}
+			a:visited {color: #333333;	text-decoration: none;}
+			a:hover {color: #FF3300; text-decoration: underline;}
+			a:active {color: #333333;	text-decoration: none;}
+			.logo2015{
+				margin:0 auto;
+				background-image: url(org/images/logo2015.gif);
+				background-repeat: no-repeat;
+				background-position: left center;
+				background-color:#0057A4;
+				height:41px;
+				_height:41px;
+				padding-top:10px;
+			}
+			.title{
+				margin:0 auto;
+				background-image: url(org/images/name2015.gif);
+				background-repeat: no-repeat;
+				background-position: center center;
+				background-color:#0057A4;
+				height:69px;
+				_height:69px;
+			}
+			.conbox{
+				margin:0 auto;
+				background-image: url(org/images/bgimg2015.jpg);
+				background-repeat: no-repeat;
+				background-position: center top;
+				background-color:#0057a4;
+				height:640px;
+				_height:640px;
+				font-family:\&amp;quot;微软雅黑\&amp;quot;;
+			}
+			.conbox2{
+				margin:0 auto;
+				width:500px;
+				padding-top:85px;
+				font-size:14px;
+				line-height:40px;
+				font-family:\&amp;quot;微软雅黑\&amp;quot;;
+			}
+			.xiala{
+				margin:0 auto;
+				width:330px;
+				line-height:30px;
+				height:30px;
+				_height:30px;
+				font-family:\&amp;quot;微软雅黑\&amp;quot;;
+				border:#cccccc solid 1px;
+			}
+			.button{
+				margin:0 auto;
+				width:80px;
+				height:30px;
+				_height:30px;
+				font-family:\&amp;quot;微软雅黑\&amp;quot;;
+			}
+			.conbox3{
+				margin:0 auto;
+				height:30px;
+				_height:30px;
+				line-height:30px;
+				text-align:center;
+				color:#FFFFFF;
+				font-weight:bold;
+				font-size:14px;
+				padding-top:80px;
+				padding-right:80px;
+			}
+			&amp;lt;/style&amp;gt;
+		&amp;lt;div class=\&amp;quot;title\&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;
+		&amp;lt;div class=\&amp;quot;conbox\&amp;quot;&amp;gt;
+		  &amp;lt;div class=\&amp;quot;conbox2\&amp;quot;&amp;gt;
+		  &amp;lt;form action=\&amp;quot;Login.sp\&amp;quot; id=\&amp;quot;f_login\&amp;quot; method=\&amp;quot;post\&amp;quot;&amp;gt;
+		    &amp;lt;table width=\&amp;quot;400\&amp;quot; border=\&amp;quot;0\&amp;quot; cellspacing=\&amp;quot;0\&amp;quot; cellpadding=\&amp;quot;0\&amp;quot;&amp;gt;
+		  &amp;lt;tr&amp;gt;
+		    &amp;lt;td width=\&amp;quot;60\&amp;quot; height=\&amp;quot;40\&amp;quot; align=\&amp;quot;center\&amp;quot;&amp;gt;组织：&amp;lt;/td&amp;gt;
+		    &amp;lt;td height=\&amp;quot;40\&amp;quot;&amp;gt;
+		      &amp;lt;select id=\&amp;quot;orgid\&amp;quot; name=\&amp;quot;orgid\&amp;quot; class=\&amp;quot;xiala\&amp;quot;&amp;gt;&amp;quot;+orgStr+&amp;quot;&amp;lt;/select&amp;gt;
+		    &amp;lt;/td&amp;gt;
+		  &amp;lt;/tr&amp;gt;
+		  &amp;lt;tr&amp;gt;
+		    &amp;lt;td height=\&amp;quot;40\&amp;quot; align=\&amp;quot;center\&amp;quot;&amp;gt;帐套：&amp;lt;/td&amp;gt;
+		    &amp;lt;td height=\&amp;quot;40\&amp;quot;&amp;gt;
+		      &amp;lt;select id=\&amp;quot;accid\&amp;quot; name=\&amp;quot;accid\&amp;quot; class=\&amp;quot;xiala\&amp;quot;&amp;gt;&amp;quot;+accStr+&amp;quot;&amp;lt;/select&amp;gt;
+		    &amp;lt;/td&amp;gt;
+		  &amp;lt;/tr&amp;gt;
+		  &amp;lt;tr&amp;gt;
+		    &amp;lt;td height=\&amp;quot;40\&amp;quot; align=\&amp;quot;center\&amp;quot;&amp;gt;日期：&amp;lt;/td&amp;gt;
+		    &amp;lt;td height=\&amp;quot;40\&amp;quot;&amp;gt;&amp;lt;input name=\&amp;quot;logdat\&amp;quot; type=\&amp;quot;text\&amp;quot; class=\&amp;quot;xiala\&amp;quot; id=\&amp;quot;logdat\&amp;quot; onclick=\&amp;quot;laydate({elem: this, istime: true, format: &amp;apos;YYYY-MM-DD&amp;apos;,event: &amp;apos;focus&amp;apos;,choose: function(datas){ //选择日期完毕的回调
+			            alert(&amp;apos;得到：&amp;apos;+datas);
+			  }})\&amp;quot; /&amp;gt;&amp;lt;/td&amp;gt;
+		  &amp;lt;/tr&amp;gt;
+		  &amp;lt;tr&amp;gt;
+		    &amp;lt;td height=\&amp;quot;40\&amp;quot; align=\&amp;quot;center\&amp;quot;&amp;gt;用户：&amp;lt;/td&amp;gt;
+		    &amp;lt;td height=\&amp;quot;40\&amp;quot;&amp;gt;&amp;lt;input type=\&amp;quot;text\&amp;quot; name=\&amp;quot;usrid\&amp;quot; class=\&amp;quot;xiala\&amp;quot; id=\&amp;quot;usrid\&amp;quot; /&amp;gt;&amp;lt;/td&amp;gt;
+		  &amp;lt;/tr&amp;gt;
+		  &amp;lt;tr&amp;gt;
+		    &amp;lt;td height=\&amp;quot;40\&amp;quot; align=\&amp;quot;center\&amp;quot;&amp;gt;密码：&amp;lt;/td&amp;gt;
+		    &amp;lt;td height=\&amp;quot;40\&amp;quot;&amp;gt;&amp;lt;input type=\&amp;quot;password\&amp;quot; name=\&amp;quot;userpwd\&amp;quot; class=\&amp;quot;xiala\&amp;quot; id=\&amp;quot;userpwd\&amp;quot; /&amp;gt;&amp;lt;/td&amp;gt;
+		  &amp;lt;/tr&amp;gt;
+		  &amp;lt;tr&amp;gt;
+		    &amp;lt;td height=\&amp;quot;40\&amp;quot; align=\&amp;quot;center\&amp;quot;&amp;gt;&amp;nbsp;&amp;lt;/td&amp;gt;
+		    &amp;lt;td height=\&amp;quot;40\&amp;quot;&amp;gt;&amp;lt;input name=\&amp;quot;rememberMe\&amp;quot; type=\&amp;quot;checkbox\&amp;quot; id=\&amp;quot;rememberMe\&amp;quot; checked=\&amp;quot;checked\&amp;quot; /&amp;gt;&amp;nbsp;记住密码&amp;lt;/td&amp;gt;
+		  &amp;lt;/tr&amp;gt;
+		  &amp;lt;tr&amp;gt;
+		    &amp;lt;td height=\&amp;quot;40\&amp;quot; colspan=\&amp;quot;2\&amp;quot; align=\&amp;quot;center\&amp;quot;&amp;gt;
+		      &amp;lt;input type=\&amp;quot;submit\&amp;quot; name=\&amp;quot;button\&amp;quot; id=\&amp;quot;button\&amp;quot; class=\&amp;quot;button\&amp;quot; value=\&amp;quot;登 录\&amp;quot; onclick=\&amp;quot;javascript:xmidware_login();\&amp;quot;/&amp;gt;
+		      &amp;lt;input type=\&amp;quot;reset\&amp;quot; name=\&amp;quot;reset\&amp;quot; id=\&amp;quot;reset\&amp;quot; class=\&amp;quot;button\&amp;quot; value=\&amp;quot;重 置\&amp;quot; /&amp;gt;&amp;lt;/td&amp;gt;
+		    &amp;lt;/tr&amp;gt;
+		&amp;lt;/table&amp;gt;
+		&amp;lt;/form&amp;gt;
+		  &amp;lt;/div&amp;gt;
+		  &amp;lt;div class=\&amp;quot;conbox3\&amp;quot;&amp;gt;广西鼎力电子科技有限责任公司&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;电话 ： 0771-5858082&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;网址： www.gxdltech.com&amp;lt;/div&amp;gt;
+		&amp;lt;/div&amp;gt;
+		
+		&amp;lt;script src=\&amp;quot;org/GXSI/login/js/jquery.cookie.js\&amp;quot; &amp;gt;&amp;lt;/script&amp;gt;
+		&amp;lt;script src=\&amp;quot;plugins/laydate/laydate.js\&amp;quot; &amp;gt;&amp;lt;/script&amp;gt;
+		&amp;lt;script&amp;gt;
+	        	$(document).ready(function(){
+	        	    //监听【记住我】事件  
+			    $(\&amp;quot;#rememberMe\&amp;quot;).click(rememberMe); 	
+			    $(&amp;apos;#orgid&amp;apos;).change(orgChanged);
+			    $(&amp;apos;#accid&amp;apos;).change(accChanged);
+			    
+	        	    //判断之前是否有设置cookie，如果有，则设置【记住我】选择框  
+			    if($.cookie(&amp;apos;xmidware_login_usrid&amp;apos;)!=undefined){  
+			        $(\&amp;quot;#rememberMe\&amp;quot;).attr(\&amp;quot;checked\&amp;quot;, true);  
+			    }else{  
+			        $(\&amp;quot;#rememberMe\&amp;quot;).attr(\&amp;quot;checked\&amp;quot;, true);  
+			    }  
+			      
+			    //读取cookie  
+			    if($(&amp;apos;#rememberMe:checked&amp;apos;).length&amp;gt;0){  
+			        $(&amp;apos;#orgid&amp;apos;).val($.cookie(&amp;apos;xmidware_login_orgid&amp;apos;)); 
+			        $(&amp;apos;#accid&amp;apos;).val($.cookie(&amp;apos;xmidware_login_accid&amp;apos;));
+			        $(&amp;apos;#usrid&amp;apos;).val($.cookie(&amp;apos;xmidware_login_usrid&amp;apos;)); 
+			        $(&amp;apos;#userpwd&amp;apos;).val($.cookie(&amp;apos;xmidware_login_userpwd&amp;apos;)); 
+			        $(&amp;apos;#orgid&amp;apos;).change(); 
+			    }  
+	        	});
+	        	function orgChanged() {
+	        		var thisorgid = $(&amp;apos;#orgid&amp;apos;).children(&amp;apos;option:selected&amp;apos;).val();
+	        		var url = &amp;apos;L.sp?osp=SBCW_publicos_getAcc&amp;orgid=&amp;apos;+thisorgid;
+	        		$.post(url,function(result){
+	        			$(&amp;apos;#accid&amp;apos;).empty();     
+	        			$(&amp;apos;#accid&amp;apos;).append(result);
+					$(&amp;apos;#accid&amp;apos;).val($.cookie(&amp;apos;xmidware_login_accid&amp;apos;));
+					$(&amp;apos;#accid&amp;apos;).change();
+	        		});
+	        	}
+	        	function accChanged() {
+	        		var thisaccid = $(&amp;apos;#accid&amp;apos;).children(&amp;apos;option:selected&amp;apos;).val();
+	        		var url = &amp;apos;L.sp?osp=SBCW_publicos_getAccDate&amp;accid=&amp;apos;+thisaccid;
+	        		$.post(url,function(result){
+					$(&amp;apos;#logdat&amp;apos;).val(result);
+	        		});
+	        	}
+	        	function rememberMe(){ 
+			        if($(&amp;apos;#rememberMe:checked&amp;apos;).length&amp;gt;0){//设置cookie  
+			            $.cookie(&amp;apos;xmidware_login_orgid&amp;apos;, $(&amp;apos;#orgid&amp;apos;).val(), { expires: 1 });  
+			            $.cookie(&amp;apos;xmidware_login_accid&amp;apos;, $(&amp;apos;#accid&amp;apos;).val(), { expires: 1 });
+			            $.cookie(&amp;apos;xmidware_login_usrid&amp;apos;, $(&amp;apos;#usrid&amp;apos;).val(), { expires: 1 });
+			            //$.cookie(&amp;apos;xmidware_login_userpwd&amp;apos;, $(&amp;apos;#userpwd&amp;apos;).val());  
+			        }else{//清除cookie  
+			            $.removeCookie(&amp;apos;xmidware_login_orgid&amp;apos;);  
+			            $.removeCookie(&amp;apos;xmidware_login_accid&amp;apos;);
+			            $.removeCookie(&amp;apos;xmidware_login_usrid&amp;apos;);
+			            $.removeCookie(&amp;apos;xmidware_login_userpwd&amp;apos;);  
+			        }  
+			}
+	        	function xmidware_login(){
+			        var accid = $(&amp;apos;#accid&amp;apos;).val();
+			        var usrid = $(&amp;apos;#usrid&amp;apos;).val();
+			        var password = $(&amp;apos;#userpwd&amp;apos;).val();
+			        if(accid == &amp;apos;&amp;apos;) {
+			            alert(&amp;apos;请选择帐套信息!&amp;apos;);
+			            return false;
+			        }
+			        if(usrid == &amp;apos;&amp;apos;) {
+			            alert(&amp;apos;用户名不能为空!&amp;apos;);
+			            return false;
+			        }
+			        if(password == &amp;apos;&amp;apos;) {
+			            alert(&amp;apos;密码不能为空!&amp;apos;);
+			            return false;
+			        }
+			        rememberMe();
+			    	$(&amp;apos;#f_login&amp;apos;).submit();
+			}
+	        &amp;lt;/script&amp;gt;		
+		&amp;quot;;
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}		
+	return html;
+}
+
+//使用新的首页
+function index()
+{
+	var html = &amp;quot;&amp;quot;;
+	var db = null;
+	var defaultorg = web.EAWebDeforg.GetDeforg(request);
+	var sRootPath = request.getContextPath();
+	try{
+		db = new pub.EADatabase();
+		var orgds = db.QuerySQL(&amp;quot;select id,id||&amp;apos;-&amp;apos;||name name,level from org where id!=&amp;apos;XLSGRID&amp;apos; start with refid is null connect by prior id=refid&amp;quot;);
+		//var accds = db.QuerySQL(&amp;quot;select * from v_acc where syt=&amp;apos;SBCW&amp;apos; and org=&amp;apos;&amp;quot;+defaultorg+&amp;quot;&amp;apos; order by id&amp;quot;);
+		var accds = db.QuerySQL(&amp;quot;select b.zth,a.* from acc a,cw_ztb b where a.org=b.org and a.id=b.acc and a.syt=&amp;apos;SBCW&amp;apos; and a.org=&amp;apos;&amp;quot;+defaultorg+&amp;quot;&amp;apos; order by id&amp;quot;);
+		var orgStr = &amp;quot;&amp;quot;;
+		for (var i=0;i&amp;lt;orgds.getRowCount();i++) {
+			var orgid = orgds.getStringAt(i,&amp;quot;ID&amp;quot;);
+			var orgname = orgds.getStringAt(i,&amp;quot;NAME&amp;quot;);
+			var lev = orgds.getStringAt(i,&amp;quot;LEVEL&amp;quot;);
+			if (lev == &amp;quot;2&amp;quot;) orgname = &amp;quot;　&amp;quot; + orgname;
+			else if (lev == &amp;quot;3&amp;quot;) orgname = &amp;quot;　∟&amp;quot; + orgname;			
+			orgStr += &amp;quot;&amp;lt;option value=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos;&amp;gt;&amp;quot;+orgname+&amp;quot;&amp;lt;/option&amp;gt;\n&amp;quot;;
+		}
+		var accStr = &amp;quot;&amp;quot;;
+		for (var i=0;i&amp;lt;accds.getRowCount();i++) {
+			var accid = accds.getStringAt(i,&amp;quot;ID&amp;quot;);
+			var zth = accds.getStringAt(i,&amp;quot;ZTH&amp;quot;);
+			var accname = accds.getStringAt(i,&amp;quot;NAME&amp;quot;);
+			accStr += &amp;quot;&amp;lt;option value=&amp;apos;&amp;quot;+accid+&amp;quot;&amp;apos;&amp;gt;&amp;quot;+zth+&amp;quot;-&amp;quot;+accname+&amp;quot;&amp;lt;/option&amp;gt;\n&amp;quot;;
+		}		
+		html = &amp;quot;&amp;lt;!DOCTYPE html PUBLIC \&amp;quot;-//W3C//DTD XHTML 1.0 Transitional//EN\&amp;quot; \&amp;quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\&amp;quot;&amp;gt;
+			&amp;lt;html xmlns=\&amp;quot;http://www.w3.org/1999/xhtml\&amp;quot;&amp;gt;
+			&amp;lt;head&amp;gt;
+			&amp;lt;meta http-equiv=\&amp;quot;Content-Type\&amp;quot; content=\&amp;quot;text/html; charset=gb2312\&amp;quot; /&amp;gt;
+			&amp;lt;meta http-equiv=\&amp;quot;X-UA-Compatible\&amp;quot; content=\&amp;quot;IE=EmulateIE7\&amp;quot; /&amp;gt;
+			&amp;lt;meta http-equiv=\&amp;quot;refresh\&amp;quot; content=\&amp;quot;0.1;url=gxsilogin.jsp\&amp;quot;&amp;gt;
+			&amp;lt;title&amp;gt;登录&amp;lt;/title&amp;gt;
+			&amp;lt;link href=\&amp;quot;org/GXSI/style/main.css\&amp;quot; rel=\&amp;quot;stylesheet\&amp;quot; type=\&amp;quot;text/css\&amp;quot; /&amp;gt;
+			&amp;lt;script src=\&amp;quot;org/GXSI/Scripts/swfobject_modified.js\&amp;quot; type=\&amp;quot;text/javascript\&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;
+			&amp;lt;/head&amp;gt;			
+			&amp;lt;body class=\&amp;quot;body\&amp;quot;&amp;gt;
+			  &amp;lt;!--LOGO等--&amp;gt;
+			  &amp;lt;form action=\&amp;quot;Login.sp\&amp;quot; id=\&amp;quot;f_login\&amp;quot; method=\&amp;quot;post\&amp;quot;&amp;gt;
+			  &amp;lt;div class=\&amp;quot;top\&amp;quot;&amp;gt;
+			  	&amp;lt;object classid=\&amp;quot;clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\&amp;quot; codebase=\&amp;quot;http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0\&amp;quot; width=\&amp;quot;1004\&amp;quot; height=\&amp;quot;160\&amp;quot;&amp;gt;
+				&amp;lt;param name=\&amp;quot;movie\&amp;quot; value=\&amp;quot;flash/top.swf\&amp;quot; /&amp;gt;
+				&amp;lt;param name=\&amp;quot;quality\&amp;quot; value=\&amp;quot;high\&amp;quot; /&amp;gt;
+				&amp;lt;param name=\&amp;quot;wmode\&amp;quot; value=\&amp;quot;transparent\&amp;quot; /&amp;gt;
+				&amp;lt;embed src=\&amp;quot;org/GXSI/flash/top.swf\&amp;quot; quality=\&amp;quot;high\&amp;quot; wmode=\&amp;quot;transparent\&amp;quot; pluginspage=\&amp;quot;http://www.macromedia.com/go/getflashplayer\&amp;quot; type=\&amp;quot;application/x-shockwave-flash\&amp;quot; width=\&amp;quot;1004\&amp;quot; height=\&amp;quot;160\&amp;quot;&amp;gt;&amp;lt;/embed&amp;gt;
+				&amp;lt;/object&amp;gt;
+			  &amp;lt;/div&amp;gt;
+			  &amp;lt;div class=\&amp;quot;middle\&amp;quot;&amp;gt;
+			    &amp;lt;div class=\&amp;quot;middle_con\&amp;quot;&amp;gt;
+			      &amp;lt;!--组织--&amp;gt;
+			      &amp;lt;table border=\&amp;quot;0\&amp;quot; cellspacing=\&amp;quot;0\&amp;quot; cellpadding=\&amp;quot;0\&amp;quot;&amp;gt;
+			        &amp;lt;tr&amp;gt;
+			          &amp;lt;td class=\&amp;quot;labletd\&amp;quot;&amp;gt;组织：&amp;lt;/td&amp;gt;
+			          &amp;lt;td class=\&amp;quot;texttd\&amp;quot;&amp;gt;
+			            &amp;lt;select name=\&amp;quot;orgid\&amp;quot; id=\&amp;quot;orgid\&amp;quot; class=\&amp;quot;xialcss\&amp;quot;&amp;gt;
+					&amp;quot;+orgStr+&amp;quot;
+			            &amp;lt;/select&amp;gt;
+			          &amp;lt;/td&amp;gt;
+			        &amp;lt;/tr&amp;gt;
+			      &amp;lt;/table&amp;gt;
+			      &amp;lt;!--帐套、日期--&amp;gt;
+			      &amp;lt;table border=\&amp;quot;0\&amp;quot; cellspacing=\&amp;quot;0\&amp;quot; cellpadding=\&amp;quot;0\&amp;quot; class=\&amp;quot;table_login\&amp;quot;&amp;gt;
+			        &amp;lt;tr&amp;gt;
+			          &amp;lt;td class=\&amp;quot;labletd\&amp;quot;&amp;gt;帐套：&amp;lt;/td&amp;gt;
+			          &amp;lt;td class=\&amp;quot;texttd\&amp;quot;&amp;gt;
+			            &amp;lt;select name=\&amp;quot;accid\&amp;quot; id=\&amp;quot;accid\&amp;quot; class=\&amp;quot;zhangtao\&amp;quot;&amp;gt;
+					&amp;quot;+accStr+&amp;quot;
+			            &amp;lt;/select&amp;gt;
+			          &amp;lt;/td&amp;gt;
+			          &amp;lt;td class=\&amp;quot;labletd\&amp;quot;&amp;gt;日期1：&amp;lt;/td&amp;gt;
+			          &amp;lt;td class=\&amp;quot;texttd\&amp;quot;&amp;gt;
+			            &amp;lt;input name=\&amp;quot;logdat\&amp;quot; id=\&amp;quot;logdat\&amp;quot; type=\&amp;quot;text\&amp;quot; class=\&amp;quot;timebox\&amp;quot; onclick=\&amp;quot;laydate();\&amp;quot; /&amp;gt;
+			          &amp;lt;/td&amp;gt;
+			        &amp;lt;/tr&amp;gt;
+			      &amp;lt;/table&amp;gt;
+			      &amp;lt;!--用户名、密码--&amp;gt;
+			      &amp;lt;table border=\&amp;quot;0\&amp;quot; cellspacing=\&amp;quot;0\&amp;quot; cellpadding=\&amp;quot;0\&amp;quot; class=\&amp;quot;table_login\&amp;quot;&amp;gt;
+			        &amp;lt;tr&amp;gt;
+			          &amp;lt;td class=\&amp;quot;labletd\&amp;quot;&amp;gt;用户名：&amp;lt;/td&amp;gt;
+			          &amp;lt;td class=\&amp;quot;texttd\&amp;quot;&amp;gt;
+			            &amp;lt;input name=\&amp;quot;usrid\&amp;quot; id=\&amp;quot;usrid\&amp;quot; type=\&amp;quot;text\&amp;quot; class=\&amp;quot;textbox\&amp;quot;  /&amp;gt;
+			          &amp;lt;/td&amp;gt;
+			          &amp;lt;td class=\&amp;quot;labletd\&amp;quot;&amp;gt;密码：&amp;lt;/td&amp;gt;
+			          &amp;lt;td class=\&amp;quot;texttd\&amp;quot;&amp;gt;
+			            &amp;lt;input name=\&amp;quot;userpwd\&amp;quot; id=\&amp;quot;userpwd\&amp;quot;  type=\&amp;quot;password\&amp;quot; class=\&amp;quot;timebox\&amp;quot; autocomplete=\&amp;quot;off\&amp;quot; /&amp;gt;
+			          &amp;lt;/td&amp;gt;
+			        &amp;lt;/tr&amp;gt;
+			      &amp;lt;/table&amp;gt;
+			      &amp;lt;!--验证码及登录、重置按钮--&amp;gt;
+			      &amp;lt;table border=\&amp;quot;0\&amp;quot; cellspacing=\&amp;quot;0\&amp;quot; cellpadding=\&amp;quot;0\&amp;quot; class=\&amp;quot;table_login\&amp;quot;&amp;gt;
+			        &amp;lt;tr&amp;gt;
+			          &amp;lt;td class=\&amp;quot;labletd\&amp;quot;&amp;gt;验证码：&amp;lt;/td&amp;gt;
+			          &amp;lt;td class=\&amp;quot;texttd\&amp;quot;&amp;gt;
+			            &amp;lt;input name=\&amp;quot;\&amp;quot; type=\&amp;quot;text\&amp;quot; class=\&amp;quot;textbox_yzm\&amp;quot; value=\&amp;quot;\&amp;quot; /&amp;gt;
+			          &amp;lt;/td&amp;gt;
+			          &amp;lt;td class=\&amp;quot;texttd\&amp;quot;&amp;gt;&amp;lt;input name=\&amp;quot;\&amp;quot; type=\&amp;quot;text\&amp;quot; class=\&amp;quot;textbox_yzm2\&amp;quot; value=\&amp;quot;未启用\&amp;quot; /&amp;gt;&amp;lt;/td&amp;gt;
+			          &amp;lt;td class=\&amp;quot;texttd\&amp;quot;&amp;gt;&amp;lt;input name=\&amp;quot;\&amp;quot; type=\&amp;quot;button\&amp;quot; class=\&amp;quot;an_dl\&amp;quot; value=\&amp;quot;登　录\&amp;quot; onclick=\&amp;quot;javascript:xmidware_login();\&amp;quot;/&amp;gt;&amp;lt;/td&amp;gt;
+			          &amp;lt;td class=\&amp;quot;texttd\&amp;quot;&amp;gt;&amp;lt;input name=\&amp;quot;\&amp;quot; type=\&amp;quot;reset\&amp;quot; class=\&amp;quot;an_cz\&amp;quot; value=\&amp;quot;重　置\&amp;quot; /&amp;gt;&amp;lt;/td&amp;gt;
+			        &amp;lt;/tr&amp;gt;
+			      &amp;lt;/table&amp;gt;
+			
+			    &amp;lt;/div&amp;gt;
+			  &amp;lt;/div&amp;gt;
+			&amp;lt;div&amp;gt;
+			&amp;lt;div class=\&amp;quot;loginfoot\&amp;quot;&amp;gt;
+			  &amp;lt;div class=\&amp;quot;loginfoot_dot\&amp;quot;&amp;gt;
+			    &amp;lt;div class=\&amp;quot;loginfoot_dot_1\&amp;quot;&amp;gt;&amp;lt;img src=\&amp;quot;org/GXSI/images/fangzi.png\&amp;quot; width=\&amp;quot;72\&amp;quot; height=\&amp;quot;72\&amp;quot; border=\&amp;quot;0\&amp;quot; /&amp;gt;&amp;lt;/div&amp;gt;
+			    &amp;lt;div class=\&amp;quot;loginfoot_dot_2\&amp;quot;&amp;gt;&amp;lt;img src=\&amp;quot;org/GXSI/images/phone.png\&amp;quot; width=\&amp;quot;72\&amp;quot; height=\&amp;quot;72\&amp;quot; border=\&amp;quot;0\&amp;quot; /&amp;gt;&amp;lt;/div&amp;gt;
+			    &amp;lt;div class=\&amp;quot;loginfoot_dot_3\&amp;quot;&amp;gt;&amp;lt;img src=\&amp;quot;org/GXSI/images/diqiu.png\&amp;quot; width=\&amp;quot;72\&amp;quot; height=\&amp;quot;72\&amp;quot; border=\&amp;quot;0\&amp;quot; /&amp;gt;&amp;lt;/div&amp;gt;
+			  &amp;lt;/div&amp;gt;
+			  &amp;lt;div class=\&amp;quot;loginfoot_text\&amp;quot;&amp;gt;
+			    &amp;lt;div id=\&amp;quot;menu\&amp;quot; class=\&amp;quot;loginfoot_text_con1\&amp;quot;&amp;gt;广西鼎力电子科技有限责任公司&amp;lt;/div&amp;gt;
+			    &amp;lt;div id=\&amp;quot;menu\&amp;quot; class=\&amp;quot;loginfoot_text_con2\&amp;quot;&amp;gt;电话：0771-5702183&amp;lt;/div&amp;gt;
+			    &amp;lt;div id=\&amp;quot;menu\&amp;quot; class=\&amp;quot;loginfoot_text_con3\&amp;quot;&amp;gt;&amp;lt;a href=\&amp;quot;http://www.gxdltech.com\&amp;quot; target=\&amp;quot;_blank\&amp;quot;&amp;gt;www.gxdltech.com&amp;lt;/a&amp;gt;&amp;lt;/div&amp;gt;
+			  &amp;lt;/div&amp;gt;
+			&amp;lt;/div&amp;gt;
+			&amp;lt;/div&amp;gt;
+			&amp;lt;/form&amp;gt;
+			&amp;lt;script src=\&amp;quot;org/GXSI/login/js/jquery.cookie.js\&amp;quot; &amp;gt;&amp;lt;/script&amp;gt;
+			&amp;lt;script src=\&amp;quot;plugins/laydate/laydate.js\&amp;quot; &amp;gt;&amp;lt;/script&amp;gt;	
+			&amp;lt;script type=\&amp;quot;text/javascript\&amp;quot;&amp;gt;swfobject.registerObject(\&amp;quot;FlashID\&amp;quot;);&amp;lt;/script&amp;gt;		
+		&amp;lt;script&amp;gt;
+	        	$(document).ready(function(){
+	        	    //监听【记住我】事件  
+			    //$(\&amp;quot;#rememberMe\&amp;quot;).click(rememberMe); 	
+			    $(&amp;apos;#orgid&amp;apos;).change(orgChanged);
+			    $(&amp;apos;#accid&amp;apos;).change(accChanged);
+			    
+	        	    //判断之前是否有设置cookie，如果有，则设置【记住我】选择框  
+//			    if($.cookie(&amp;apos;xmidware_login_usrid&amp;apos;)!=undefined){  
+//			        $(\&amp;quot;#rememberMe\&amp;quot;).attr(\&amp;quot;checked\&amp;quot;, true);  
+//			    }else{  
+//			        $(\&amp;quot;#rememberMe\&amp;quot;).attr(\&amp;quot;checked\&amp;quot;, true);  
+//			    }  
+			      
+			    //读取cookie  
+//			    if($(&amp;apos;#rememberMe:checked&amp;apos;).length&amp;gt;0){  
+			        $(&amp;apos;#orgid&amp;apos;).val($.cookie(&amp;apos;xmidware_login_orgid&amp;apos;)); 
+			        $(&amp;apos;#accid&amp;apos;).val($.cookie(&amp;apos;xmidware_login_accid&amp;apos;));
+			        //$(&amp;apos;#usrid&amp;apos;).val($.cookie(&amp;apos;xmidware_login_usrid&amp;apos;)); 
+			        //$(&amp;apos;#userpwd&amp;apos;).val($.cookie(&amp;apos;xmidware_login_userpwd&amp;apos;)); 
+			        $(&amp;apos;#orgid&amp;apos;).change(); 
+//			    }  
+			    document.getElementById(&amp;apos;userpwd&amp;apos;).value=&amp;apos;&amp;apos;; 
+	        	});
+	        	function orgChanged() {
+	        		var thisorgid = $(&amp;apos;#orgid&amp;apos;).children(&amp;apos;option:selected&amp;apos;).val();
+	        		var url = &amp;apos;L.sp?osp=SBCW_publicos_getAcc&amp;orgid=&amp;apos;+thisorgid;
+	        		$.post(url,function(result){
+	        			$(&amp;apos;#accid&amp;apos;).empty();     
+	        			$(&amp;apos;#accid&amp;apos;).append(result);
+					$(&amp;apos;#accid&amp;apos;).val($.cookie(&amp;apos;xmidware_login_accid&amp;apos;));
+					$(&amp;apos;#accid&amp;apos;).change();
+	        		});
+	        	}
+	        	function accChanged() {
+	        		var thisaccid = $(&amp;apos;#accid&amp;apos;).children(&amp;apos;option:selected&amp;apos;).val();
+	        		var url = &amp;apos;L.sp?osp=SBCW_publicos_getAccDate&amp;accid=&amp;apos;+thisaccid;
+	        		$.post(url,function(result){
+					$(&amp;apos;#logdat&amp;apos;).val(result);
+	        		});
+	        	}
+	        	function rememberMe(){ 
+//			        if($(&amp;apos;#rememberMe:checked&amp;apos;).length&amp;gt;0){//设置cookie  
+			            $.cookie(&amp;apos;xmidware_login_orgid&amp;apos;, $(&amp;apos;#orgid&amp;apos;).val(), { expires: 3 });  
+			            $.cookie(&amp;apos;xmidware_login_accid&amp;apos;, $(&amp;apos;#accid&amp;apos;).val(), { expires: 3 });
+			            //$.cookie(&amp;apos;xmidware_login_usrid&amp;apos;, $(&amp;apos;#usrid&amp;apos;).val(), { expires: 1 });
+			            //$.cookie(&amp;apos;xmidware_login_userpwd&amp;apos;, $(&amp;apos;#userpwd&amp;apos;).val());  
+//			        }else{//清除cookie  
+//			            $.removeCookie(&amp;apos;xmidware_login_orgid&amp;apos;);  
+//			            $.removeCookie(&amp;apos;xmidware_login_accid&amp;apos;);
+//			            $.removeCookie(&amp;apos;xmidware_login_usrid&amp;apos;);
+//			            $.removeCookie(&amp;apos;xmidware_login_userpwd&amp;apos;);  
+//			        }  
+			}
+	        	function xmidware_login(){
+			        var accid = $(&amp;apos;#accid&amp;apos;).val();
+			        var usrid = $(&amp;apos;#usrid&amp;apos;).val();
+			        var password = $(&amp;apos;#userpwd&amp;apos;).val();
+			        if(accid == &amp;apos;&amp;apos;) {
+			            alert(&amp;apos;请选择帐套信息!&amp;apos;);
+			            return false;
+			        }
+			        if(usrid == &amp;apos;&amp;apos;) {
+			            alert(&amp;apos;用户名不能为空!&amp;apos;);
+			            return false;
+			        }
+			        if(password == &amp;apos;&amp;apos;) {
+			            alert(&amp;apos;密码不能为空!&amp;apos;);
+			            return false;
+			        }
+			        rememberMe();
+			    	$(&amp;apos;#f_login&amp;apos;).submit();
+			}
+	        &amp;lt;/script&amp;gt;&amp;lt;/body&amp;gt;
+		&amp;lt;/html&amp;gt;&amp;quot;;
+	}catch(e){
+		if(db != null) db.Rollback();
+		return e.toString();
+	
+	}finally{
+		if(db != null) db.Close();
+	}		
+			
+	return html;		
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

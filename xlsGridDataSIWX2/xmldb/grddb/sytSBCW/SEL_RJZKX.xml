@@ -1,0 +1,283 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >SEL_RJZKX</MWID><NAME >选择日记帐款项</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >SEL_RJZKX.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >selectok</ID><NAME >确定</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var sheet_kxxz = 1;
+var ZXGFILE0 ;
+var cur_row = -1;
+var cur_row1 = -1;
+
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SplitSheet(1,&amp;quot;H&amp;quot;,&amp;quot;50%&amp;quot;);
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.AutoFixScreenWidth();
+	
+	ZXGFILE0 = _this.SaveTempZXGFile(sheet); 
+	
+	var kxItem = _this.CreateListValue();
+	_this.SetListValue(kxItem,&amp;quot;1&amp;quot;,&amp;quot;收入&amp;quot;);
+	_this.SetListValue(kxItem,&amp;quot;2&amp;quot;,&amp;quot;支出&amp;quot;);
+	_this.SetListValue(kxItem,&amp;quot;3&amp;quot;,&amp;quot;收支&amp;quot;);
+	_this.SetListValue(kxItem,&amp;quot;4&amp;quot;,&amp;quot;其他收&amp;quot;);
+	_this.SetListValue(kxItem,&amp;quot;5&amp;quot;,&amp;quot;其他支&amp;quot;);
+	_this.SetListValue(kxItem,&amp;quot;6&amp;quot;,&amp;quot;其他收支&amp;quot;);
+	_this.SetToRadioBox(&amp;quot;&amp;quot;,sheet_kxxz,1,0,kxItem);
+	_this.SetCellText(sheet_kxxz,1,0,&amp;quot;2&amp;quot;); //默认是全部
+	for (var r=3;r&amp;lt;=_this.GetMainCellRangeRow2(sheet_kxxz);r++) {
+		_this.SetToBoolBox(sheet_kxxz,r,0);
+	}
+	_this.SetFixedRow(sheet_kxxz,4);
+
+	
+	loadKX();
+	loadKXMX(&amp;quot;&amp;quot;);
+	
+}
+
+function loadKX()
+{
+	var xml  = _sql.query(&amp;quot;RJLX&amp;quot;);
+	_this.SetMainCellRange(sheet_kxxz,3,0,5,2);
+	_this.SetXmlDS(sheet_kxxz,3,0,5,2,xml);
+	for (var r=_this.GetMainCellRangeRow1(sheet_kxxz);r&amp;lt;=_this.GetMainCellRangeRow2(sheet_kxxz);r++) {
+		_this.SetToBoolBox(sheet_kxxz,r,0);
+	}
+	
+	filterKX(0);
+}
+
+function loadKXMX(filter)
+{
+	_this.LoadZXGFile(ZXGFILE0,-1,0);
+	_this.SetFixedRow(0,1);
+	_this.SetColVisible(0,1,-1);
+	_this.SetMainCellRange(0,1,0,3,3);
+	var xml  = _sql.query(&amp;quot;RJLXMX&amp;quot;,&amp;quot;FILTER=&amp;quot;+filter);
+	_this.SetXmlDS(0,1,0,3,3,xml);
+	for (var r=_this.GetMainCellRangeRow1(0);r&amp;lt;=_this.GetMainCellRangeRow2(0);r++) {
+		_this.SetToBoolBox(0,r,0);
+	}
+	
+	_this.AutoFixScreenWidth();
+	
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == sheet_kxxz) {
+		if (row == 1) {
+			filterKX(0);
+		}
+	}
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{	
+	if (sheet == sheet_kxxz &amp;&amp; row &amp;gt;= _this.GetMainCellRangeRow1(sheet_kxxz) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(sheet_kxxz)) {
+		var filter = &amp;quot; and a.lxbh=&amp;apos;&amp;quot; + _this.GetCellText(sheet,row,1) + &amp;quot;&amp;apos;&amp;quot;;
+		loadKXMX(filter);
+		cur_row1 = row;
+	}
+
+	if (row &amp;gt;= _this.GetMainCellRangeRow1(sheet) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(sheet)) {
+		selectOnRow(sheet,row);
+	}
+}
+
+function selectOnRow(sheet,row)
+{
+	for (var r = _this.GetMainCellRangeRow1(sheet);r &amp;lt;= _this.GetMainCellRangeRow2(sheet);r++) {
+		_this.SetCellText(sheet,r,0,&amp;quot;0&amp;quot;);
+	}
+	_this.SetCellText(sheet,row,0,&amp;quot;1&amp;quot;);
+	if (sheet == 0) {
+		cur_row = row;
+	}
+
+}
+
+//过滤款项选择
+//showje=0 全显款项
+//showje=1 单显金额
+function filterKX(showje)
+{
+	// 日记帐录入时选择款项类型: 收入, 支出, 收支, 其他
+	//string g_sr_lxbh = &amp;quot;lxbh=&amp;apos;11&amp;apos; or lxbh=&amp;apos;21&amp;apos; or lxbh=&amp;apos;31&amp;apos;  OR  lxbh=&amp;apos;33&amp;apos; OR lxbh=&amp;apos;34&amp;apos; OR lxbh=&amp;apos;37&amp;apos; OR lxbh=&amp;apos;38&amp;apos; OR lxbh=&amp;apos;39&amp;apos; OR lxbh=&amp;apos;41&amp;apos; or lxbh=&amp;apos;51&amp;apos; or lxbh=&amp;apos;61&amp;apos; or lxbh = &amp;apos;71&amp;apos;&amp;quot;
+	//string g_zc_lxbh = &amp;quot;lxbh=&amp;apos;12&amp;apos; or lxbh=&amp;apos;22&amp;apos; or lxbh=&amp;apos;32&amp;apos; OR lxbh=&amp;apos;35&amp;apos; OR lxbh=&amp;apos;36&amp;apos; OR  lxbh=&amp;apos;3A&amp;apos; OR  lxbh=&amp;apos;3B&amp;apos; OR lxbh=&amp;apos;3C&amp;apos; OR lxbh=&amp;apos;3D&amp;apos; or lxbh=&amp;apos;42&amp;apos; or lxbh=&amp;apos;52&amp;apos; or lxbh=&amp;apos;62&amp;apos; or lxbh = &amp;apos;72&amp;apos; or lxbh=&amp;apos;91&amp;apos; or lxbh=&amp;apos;92&amp;apos; &amp;quot;
+	//string g_sz_lxbh = &amp;quot;lxbh=&amp;apos;11&amp;apos; or lxbh=&amp;apos;21&amp;apos; or lxbh=&amp;apos;31&amp;apos; OR  lxbh=&amp;apos;33&amp;apos; OR lxbh=&amp;apos;34&amp;apos; OR lxbh=&amp;apos;37&amp;apos; OR lxbh=&amp;apos;38&amp;apos; OR lxbh=&amp;apos;39&amp;apos; or lxbh=&amp;apos;41&amp;apos; or lxbh=&amp;apos;51&amp;apos; or lxbh=&amp;apos;61&amp;apos; or lxbh = &amp;apos;71&amp;apos; or lxbh=&amp;apos;12&amp;apos; or lxbh=&amp;apos;22&amp;apos; or lxbh=&amp;apos;32&amp;apos;  OR lxbh=&amp;apos;35&amp;apos; OR lxbh=&amp;apos;36&amp;apos; OR  lxbh=&amp;apos;3A&amp;apos; OR  lxbh=&amp;apos;3B&amp;apos; OR lxbh=&amp;apos;3C&amp;apos; OR lxbh=&amp;apos;3D&amp;apos; or lxbh=&amp;apos;42&amp;apos; or lxbh=&amp;apos;52&amp;apos; or lxbh=&amp;apos;62&amp;apos; or lxbh = &amp;apos;72&amp;apos; or lxbh=&amp;apos;91&amp;apos; or lxbh=&amp;apos;92&amp;apos; &amp;quot;
+	//string g_qts_lxbh = &amp;quot;lxbh=&amp;apos;81&amp;apos; or lxbh=&amp;apos;82&amp;apos; or lxbh=&amp;apos;83&amp;apos; or lxbh=&amp;apos;84&amp;apos; or lxbh=&amp;apos;85&amp;apos; or lxbh=&amp;apos;86&amp;apos; or lxbh = &amp;apos;87&amp;apos; or lxbh = &amp;apos;88&amp;apos; or lxbh = &amp;apos;89&amp;apos;&amp;quot;
+	//string g_qtz_lxbh = &amp;quot;lxbh=&amp;apos;93&amp;apos; or lxbh=&amp;apos;94&amp;apos; or lxbh=&amp;apos;95&amp;apos; or lxbh=&amp;apos;96&amp;apos; or lxbh = &amp;apos;97&amp;apos; or lxbh = &amp;apos;98&amp;apos; or lxbh = &amp;apos;99&amp;apos;&amp;quot; //20121010 qfj 增加医疗手工增加提现款项99
+	//string g_qtsz_lxbh = &amp;quot;lxbh=&amp;apos;81&amp;apos; or lxbh=&amp;apos;82&amp;apos; or lxbh=&amp;apos;83&amp;apos; or lxbh=&amp;apos;84&amp;apos; or lxbh=&amp;apos;85&amp;apos; or lxbh=&amp;apos;86&amp;apos; or lxbh = &amp;apos;87&amp;apos; or lxbh = &amp;apos;88&amp;apos; or lxbh = &amp;apos;89&amp;apos; or lxbh=&amp;apos;93&amp;apos; or lxbh=&amp;apos;94&amp;apos; or lxbh=&amp;apos;95&amp;apos; or lxbh=&amp;apos;96&amp;apos; or lxbh = &amp;apos;97&amp;apos; or lxbh = &amp;apos;98&amp;apos; or lxbh = &amp;apos;99&amp;apos;&amp;quot;
+	var typ = _this.GetCellText(sheet_kxxz,1,0);
+	var arrSelLXBH = new Array();
+	var i = 0;
+	_this.SetCellText(sheet_kxxz,3,0,1);
+	if (typ == &amp;quot;1&amp;quot;) { //收入
+		for (var r=_this.GetMainCellRangeRow1(sheet_kxxz);r&amp;lt;=_this.GetMainCellRangeRow2(sheet_kxxz);r++) {
+			var lxbh = _this.GetCellText(sheet_kxxz,r,1);
+			if (lxbh == &amp;apos;11&amp;apos; || lxbh == &amp;apos;21&amp;apos; || lxbh == &amp;apos;31&amp;apos; || lxbh == &amp;apos;33&amp;apos; || lxbh == &amp;apos;34&amp;apos; || lxbh == &amp;apos;37&amp;apos; || lxbh == &amp;apos;38&amp;apos; || lxbh == &amp;apos;39&amp;apos; || lxbh == &amp;apos;41&amp;apos; || lxbh == &amp;apos;51&amp;apos; || lxbh == &amp;apos;61&amp;apos; || lxbh == &amp;apos;71&amp;apos;) {
+				_this.SetRowVisible(sheet_kxxz,r,1);
+				//_this.SetCellText(sheet_kxxz,r,0,1);
+				arrSelLXBH[i++] = lxbh;
+			}
+			else {
+				_this.SetRowVisible(sheet_kxxz,r,-1);
+				_this.SetCellText(sheet_kxxz,r,0,0);
+			}
+		}
+	}
+	else if (typ == &amp;quot;2&amp;quot;) { //支出
+		for (var r=_this.GetMainCellRangeRow1(sheet_kxxz);r&amp;lt;=_this.GetMainCellRangeRow2(sheet_kxxz);r++) {
+			var lxbh = _this.GetCellText(sheet_kxxz,r,1);
+			if (lxbh == &amp;apos;12&amp;apos; || lxbh == &amp;apos;22&amp;apos; || lxbh == &amp;apos;32&amp;apos; || lxbh == &amp;apos;35&amp;apos; || lxbh == &amp;apos;36&amp;apos; ||  lxbh == &amp;apos;3A&amp;apos; ||  lxbh == &amp;apos;3B&amp;apos; || lxbh == &amp;apos;3C&amp;apos; || lxbh == &amp;apos;3D&amp;apos; || lxbh == &amp;apos;42&amp;apos; || lxbh == &amp;apos;52&amp;apos; || lxbh == &amp;apos;62&amp;apos; || lxbh == &amp;apos;72&amp;apos; || lxbh == &amp;apos;91&amp;apos; || lxbh == &amp;apos;92&amp;apos;) {
+				_this.SetRowVisible(sheet_kxxz,r,1);
+				//_this.SetCellText(sheet_kxxz,r,0,1);
+				arrSelLXBH[i++] = lxbh;
+			}
+			else {
+				_this.SetRowVisible(sheet_kxxz,r,-1);
+				_this.SetCellText(sheet_kxxz,r,0,0);
+			}
+		}
+	}
+	else if (typ == &amp;quot;3&amp;quot;) { //收支
+		for (var r=_this.GetMainCellRangeRow1(sheet_kxxz);r&amp;lt;=_this.GetMainCellRangeRow2(sheet_kxxz);r++) {
+			var lxbh = _this.GetCellText(sheet_kxxz,r,1);
+			if (lxbh==&amp;apos;11&amp;apos; || lxbh==&amp;apos;21&amp;apos; || lxbh==&amp;apos;31&amp;apos; ||  lxbh==&amp;apos;33&amp;apos; || lxbh==&amp;apos;34&amp;apos; || lxbh==&amp;apos;37&amp;apos; || lxbh==&amp;apos;38&amp;apos; || lxbh==&amp;apos;39&amp;apos; || lxbh==&amp;apos;41&amp;apos; || lxbh==&amp;apos;51&amp;apos; || lxbh==&amp;apos;61&amp;apos; || lxbh == &amp;apos;71&amp;apos; || lxbh==&amp;apos;12&amp;apos; || lxbh==&amp;apos;22&amp;apos; || lxbh==&amp;apos;32&amp;apos;  || lxbh==&amp;apos;35&amp;apos; || lxbh==&amp;apos;36&amp;apos; ||  lxbh==&amp;apos;3A&amp;apos; ||  lxbh==&amp;apos;3B&amp;apos; || lxbh==&amp;apos;3C&amp;apos; || lxbh==&amp;apos;3D&amp;apos; || lxbh==&amp;apos;42&amp;apos; || lxbh==&amp;apos;52&amp;apos; || lxbh==&amp;apos;62&amp;apos; || lxbh == &amp;apos;72&amp;apos; || lxbh==&amp;apos;91&amp;apos; || lxbh==&amp;apos;92&amp;apos; ) {
+				_this.SetRowVisible(sheet_kxxz,r,1);
+				//_this.SetCellText(sheet_kxxz,r,0,1);
+				arrSelLXBH[i++] = lxbh;
+			}
+			else {
+				_this.SetRowVisible(sheet_kxxz,r,-1);
+				_this.SetCellText(sheet_kxxz,r,0,0);
+			}
+		}
+	}
+	else if (typ == &amp;quot;4&amp;quot;) { //其他收
+		for (var r=_this.GetMainCellRangeRow1(sheet_kxxz);r&amp;lt;=_this.GetMainCellRangeRow2(sheet_kxxz);r++) {
+			var lxbh = _this.GetCellText(sheet_kxxz,r,1);
+			if (lxbh == &amp;apos;81&amp;apos; || lxbh == &amp;apos;82&amp;apos; || lxbh == &amp;apos;83&amp;apos; || lxbh == &amp;apos;84&amp;apos; || lxbh == &amp;apos;85&amp;apos; || lxbh == &amp;apos;86&amp;apos; || lxbh == &amp;apos;87&amp;apos; || lxbh == &amp;apos;88&amp;apos; || lxbh == &amp;apos;89&amp;apos;) {
+				_this.SetRowVisible(sheet_kxxz,r,1);
+				//_this.SetCellText(sheet_kxxz,r,0,1);
+				arrSelLXBH[i++] = lxbh;
+			}
+			else {
+				_this.SetRowVisible(sheet_kxxz,r,-1);
+				_this.SetCellText(sheet_kxxz,r,0,0);
+			}
+		}
+	}
+	else if (typ == &amp;quot;5&amp;quot;) { //其他支
+		for (var r=_this.GetMainCellRangeRow1(sheet_kxxz);r&amp;lt;=_this.GetMainCellRangeRow2(sheet_kxxz);r++) {
+			var lxbh = _this.GetCellText(sheet_kxxz,r,1);
+			if (lxbh == &amp;apos;93&amp;apos; || lxbh == &amp;apos;94&amp;apos; || lxbh == &amp;apos;95&amp;apos; || lxbh == &amp;apos;96&amp;apos; || lxbh == &amp;apos;97&amp;apos; || lxbh == &amp;apos;98&amp;apos; || lxbh == &amp;apos;99&amp;apos;) {
+				_this.SetRowVisible(sheet_kxxz,r,1);
+				//_this.SetCellText(sheet_kxxz,r,0,1);
+				arrSelLXBH[i++] = lxbh;
+			}
+			else {
+				_this.SetRowVisible(sheet_kxxz,r,-1);
+				_this.SetCellText(sheet_kxxz,r,0,0);
+			}
+		}
+	}
+	else if (typ == &amp;quot;6&amp;quot;) { //其他收支
+		for (var r=_this.GetMainCellRangeRow1(sheet_kxxz);r&amp;lt;=_this.GetMainCellRangeRow2(sheet_kxxz);r++) {
+			var lxbh = _this.GetCellText(sheet_kxxz,r,1);
+			if (lxbh == &amp;apos;81&amp;apos; || lxbh == &amp;apos;82&amp;apos; || lxbh == &amp;apos;83&amp;apos; || lxbh == &amp;apos;84&amp;apos; || lxbh == &amp;apos;85&amp;apos; || lxbh == &amp;apos;86&amp;apos; || lxbh == &amp;apos;87&amp;apos; || lxbh == &amp;apos;88&amp;apos; || lxbh == &amp;apos;89&amp;apos; || lxbh == &amp;apos;93&amp;apos; || lxbh == &amp;apos;94&amp;apos; || lxbh == &amp;apos;95&amp;apos; || lxbh == &amp;apos;96&amp;apos; || lxbh == &amp;apos;97&amp;apos; || lxbh == &amp;apos;98&amp;apos; || lxbh == &amp;apos;99&amp;apos;) {
+				_this.SetRowVisible(sheet_kxxz,r,1);
+				//_this.SetCellText(sheet_kxxz,r,0,1);
+				arrSelLXBH[i++] = lxbh;
+			}
+			else {
+				_this.SetRowVisible(sheet_kxxz,r,-1);
+				_this.SetCellText(sheet_kxxz,r,0,0);
+			}
+		}
+	}
+	else if (typ == &amp;quot;0&amp;quot;) { //全部
+	        _this.SetCellText(sheet_kxxz,3,0,1);
+		for (var r=_this.GetMainCellRangeRow1(sheet_kxxz);r&amp;lt;=_this.GetMainCellRangeRow2(sheet_kxxz);r++) {
+			var lxbh = _this.GetCellText(sheet_kxxz,r,1);
+			if (lxbh != &amp;quot;&amp;quot;) {
+				_this.SetRowVisible(sheet_kxxz,r,1);
+				//_this.SetCellText(sheet_kxxz,r,0,1);
+				arrSelLXBH[i++] = lxbh;
+			}
+			else {
+				_this.SetRowVisible(sheet_kxxz,r,-1);
+			}
+		}
+	}	
+
+
+}
+
+
+//确定
+function selectok()
+{
+	if (cur_row1 == -1) {
+		alert(&amp;quot;请先在左边选择款项大类！&amp;quot;);
+		return;
+	}
+	
+	var result = _this.GetCellText(0,cur_row,1) + &amp;quot;~&amp;quot; 	//款项编号	
+		    + _this.GetCellText(0,cur_row,2) + &amp;quot;~&amp;quot;	//款项序号
+		    + _this.GetCellText(1,cur_row1,2) + &amp;quot;-&amp;quot;	//款项名称	
+		    + _this.GetCellText(0,cur_row,3);
+		    
+	window.returnValue = result;
+	window.close();
+}
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >RJLX</ID><NAME ></NAME><DATDSC >SELECT &amp;apos;&amp;apos; xz,
+       LXBH,   
+       RJLX
+FROM CW_RJLXB  
+WHERE ORG=&amp;apos;[%SYS_ORGID]&amp;apos; and ACC=&amp;apos;[%SYS_ACCID]&amp;apos;  
+order by lxbh</DATDSC><C4 >RJLX</C4><C5 >RJLX</C5></ROW>
+<ROW num="1" ><ID >RJLXMX</ID><NAME ></NAME><DATDSC >SELECT &amp;apos;&amp;apos; SEL,
+	a.LXBH ,
+    a.MXXH,
+    a.KXMC            
+FROM CW_RJLXMXB a , CW_RJLXB b
+WHERE ( a.ORG = &amp;apos;[%SYS_ORGID]&amp;apos; ) AND  
+    ( a.ACC = &amp;apos;[%SYS_ACCID]&amp;apos; )    and
+	( a.SBH = b.SBH ) and
+	( a.ZTH = b.ZTH ) and
+	( a.LXBH = b.LXBH )
+	[%FILTER]
+order by a.LXBH, a.MXXH
+</DATDSC><C4 ></C4><C5 >RJLXMX</C5></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

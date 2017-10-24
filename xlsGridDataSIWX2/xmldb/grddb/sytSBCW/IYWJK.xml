@@ -1,0 +1,616 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >IYWJK</MWID><NAME >业务接口</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >IYWJK.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >接口</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >test</ID><NAME >Test</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//Test
+function test()
+{
+	var ret = invokeOSFunc(&amp;quot;wf_4xffht&amp;quot;,&amp;quot;&amp;quot;);
+	alert(ret);
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+////////////////////////////////////////////////////////////////////////////////
+// 需要考虑两个系统的调用：一个是区社保的，一个是机关养老的
+////////////////////////////////////////////////////////////////////////////////
+
+//获取业务接口类型
+function getYWJKBZ(db,accid)
+{
+	var ywjkbz = db.GetSQL(&amp;quot;select ywjkbz from cw_ztb where acc=&amp;apos;&amp;quot;+accid+&amp;quot;&amp;apos;&amp;quot;);
+	return ywjkbz;
+}
+
+//银行拷盘回盘
+//  --财务回写业务数据标志
+// PROCEDURE prc_updateac82_aae117(prm_aaz220   IN    NUMBER,   --应付计划事件ID (BAZ610	 业务内部序号)
+//                                  prm_aaa027   IN    VARCHAR2, --所属统筹区 ()
+//                                  prm_aae117   IN    VARCHAR2, --支付标志（11:支付成功，12：支付失败）
+//                                  prm_reason   IN    VARCHAR2, --失败原因
+//                                  prm_yac900   IN    VARCHAR2, --记账凭证号
+//                                  prm_yac901   IN    VARCHAR2, --制单人
+//                                  prm_yac902   IN    DATE,     --记账时间
+//                                  prm_yac903   IN    VARCHAR2, --财务汇总批次号
+//                                  prm_yac904   IN    DATE,     --到账时间
+//                                  prm_yac905   IN    DATE,     --对账时间
+//				    prm_yac906   IN    DATE,     --回盘时间
+//                                  prm_xh       OUT   VARCHAR2, --记录流水号
+//                                  prm_appcode  OUT   VARCHAR2,
+//                                  prm_errmsg   OUT   VARCHAR2);
+//function wf_4xffht(db,orgid,accid,ywguid,tcqbm,zfbz,errmsg,lsh,zdr,jzdat,pch,daozdat,duizdat,hprq)
+//YH   zfbz 	11:支付成功	12：发放支付失败	
+//DR   zfbz 	11:支付成功	12：四险待遇发放不成功接口	8：机构发放退回
+//		YHYJHT：医疗待遇月结发放不成功接口		12_HT：四险待遇发放不成功接口_回退
+			        
+function yhkpReturn(db,orgid,accid,ywguid,tcqbm,zfbz,errmsgs,lsh,zdr,jzdat,pch,daozdat,duizdat,hprq,ywjkbz)
+{
+	//业务接口类型：银海、东软
+//	var ywjkbz = getYWJKBZ(db,accid);
+	var sql = &amp;quot;&amp;quot;;		
+	var in_str = &amp;quot;&amp;quot;;	//入参
+	var func_name = &amp;quot;&amp;quot;;	//函数
+	var xh = &amp;quot;&amp;quot;;		//序号
+	var appcode = &amp;quot;999999&amp;quot;;	//错误码
+	var errmsg  = &amp;quot;&amp;quot;;	//错误信息	
+	if (ywjkbz == &amp;quot;YH&amp;quot;) {
+		if(zfbz == &amp;quot;11&amp;quot; || zfbz == &amp;quot;12&amp;quot; || zfbz = &amp;quot;QSHT&amp;quot;){
+			//查询单据号,业务类型
+//			sql = &amp;quot;select djh,ywlx,rzbz from v_si_djb_tmp where xh = &amp;apos;&amp;quot;+ywguid+&amp;quot;&amp;apos;&amp;quot;;
+			sql = &amp;quot;select bae074,bac005,aae076 from ac95 where baz610 = &amp;apos;&amp;quot;+ywguid+&amp;quot;&amp;apos;&amp;quot;;
+			var ds = db.QuerySQL(sql);
+			var djh = ds.getStringAt(0,&amp;quot;BAE074&amp;quot;);
+			var ywlx = ds.getStringAt(0,&amp;quot;BAC005&amp;quot;);	
+			var rzbz = ds.getStringAt(0,&amp;quot;AAE076&amp;quot;);
+			if(rzbz == &amp;quot;&amp;quot;){
+				rzbz = 0;
+			}else{
+				rzbz = 1;
+			}
+			
+			if(ywlx == &amp;quot;E110&amp;quot;){			
+				var conn = db.GetConn();
+				var statement = conn.createStatement();
+				    in_str = ywguid+&amp;quot;/&amp;quot;+tcqbm+&amp;quot;/&amp;quot;+zfbz+&amp;quot;/&amp;quot;+errmsgs+&amp;quot;/&amp;quot;+lsh+&amp;quot;/&amp;quot;+zdr+&amp;quot;/&amp;quot;+jzdat+&amp;quot;/&amp;quot;+pch+&amp;quot;/&amp;quot;+daozdat+&amp;quot;/&amp;quot;+duizdat+&amp;quot;/&amp;quot;+hprq;
+				    func_name = &amp;quot;pkg_interface.prc_updateac82_aae117&amp;quot;;
+				
+				var stmt = conn.prepareCall(&amp;quot;call pkg_interface.prc_updateac82_aae117(?,?,?,?,?,?,?,?,?,?,?,?,?,?)&amp;quot;);
+				var format = new java.text.SimpleDateFormat(&amp;quot;yyyy-MM-dd&amp;quot;);
+				var jzsj = format.parse(jzdat);
+				var daozsj = format.parse(daozdat);
+				var duizsj = format.parse(duizdat);
+				var hprq = format.parse(hprq);
+				
+				stmt.setString(1, ywguid);
+				stmt.setString(2, tcqbm);
+				stmt.setString(3, zfbz);
+				stmt.setString(4, errmsgs);
+				stmt.setString(5, lsh);
+				stmt.setString(6, zdr);
+				stmt.setDate(7,  new java.sql.Date(jzsj.getTime()));
+				stmt.setString(8, pch);
+				stmt.setDate(9,  new java.sql.Date(daozsj.getTime()));
+				stmt.setDate(10, new java.sql.Date(duizsj.getTime()));
+				stmt.setDate(11, new java.sql.Date(hprq.getTime()));
+				stmt.registerOutParameter(12, java.sql.Types.VARCHAR);	//返回参数
+				stmt.registerOutParameter(13, java.sql.Types.VARCHAR);	//返回参数
+				stmt.registerOutParameter(14, java.sql.Types.VARCHAR); 	//返回参数
+				
+				stmt.executeUpdate();
+				
+				xh = stmt.getString(12);
+				appcode = stmt.getString(13);
+				errmsg = stmt.getString(14);
+				
+				stmt.close();
+			}else if(ywlx == &amp;quot;E120&amp;quot;){
+				var conn = db.GetConn();
+				var statement = conn.createStatement();
+				    in_str = djh+&amp;quot;/&amp;quot;+tcqbm+&amp;quot;/&amp;quot;+zfbz+&amp;quot;/&amp;quot;+errmsgs+&amp;quot;/&amp;quot;+lsh+&amp;quot;/&amp;quot;+zdr+&amp;quot;/&amp;quot;+jzdat+&amp;quot;/&amp;quot;+pch+&amp;quot;/&amp;quot;+daozdat+&amp;quot;/&amp;quot;+duizdat+&amp;quot;/&amp;quot;+hprq+&amp;quot;/&amp;quot;+rzbz;
+				    func_name = &amp;quot;pkg_interface.prc_updateac82_aae117dw&amp;quot;;
+				
+				var stmt = conn.prepareCall(&amp;quot;call pkg_interface.prc_updateac82_aae117dw(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)&amp;quot;);
+				var format = new java.text.SimpleDateFormat(&amp;quot;yyyy-MM-dd&amp;quot;);
+				var jzsj = format.parse(jzdat);
+				var daozsj = format.parse(daozdat);
+				var duizsj = format.parse(duizdat);
+				var hprq = format.parse(hprq);
+				
+				stmt.setString(1, djh);
+				stmt.setString(2, tcqbm);
+				stmt.setString(3, zfbz);
+				stmt.setString(4, errmsgs);
+				stmt.setString(5, lsh);
+				stmt.setString(6, zdr);
+				stmt.setDate(7,  new java.sql.Date(jzsj.getTime()));
+				stmt.setString(8, pch);
+				stmt.setDate(9,  new java.sql.Date(daozsj.getTime()));
+				stmt.setDate(10, new java.sql.Date(duizsj.getTime()));
+				stmt.setDate(11, new java.sql.Date(hprq.getTime()));
+				stmt.setString(12, &amp;quot;&amp;quot;+rzbz);
+				stmt.registerOutParameter(13, java.sql.Types.VARCHAR);	//返回参数
+				stmt.registerOutParameter(14, java.sql.Types.VARCHAR);	//返回参数
+				stmt.registerOutParameter(15, java.sql.Types.VARCHAR); 	//返回参数
+				
+				stmt.executeUpdate();
+				
+				xh = stmt.getString(13);
+				appcode = stmt.getString(14);
+				errmsg = stmt.getString(15);
+				
+				stmt.close();
+			}else if(ywlx == &amp;quot;E123&amp;quot;){
+				sql = &amp;quot;select sum(aci263) aic263 from ac95 where bae074 = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;&amp;quot;;
+				var je = db.GetSQL(sql);
+				var zje = 1.0*je;
+			
+				var format = new java.text.SimpleDateFormat(&amp;quot;yyyy-MM-dd&amp;quot;);
+				var dat = dzrq.substring(0,4)+&amp;quot;-&amp;quot;+dzrq.substring(4,6)+&amp;quot;-&amp;quot;+dzrq.substring(6,8);
+				var jzdat = format.parse(dat);
+				var hkzje = new java.lang.Double(zje);
+				var data1 = new java.sql.Date(jzdat.getTime());
+				
+				var rzbz = &amp;quot;0&amp;quot;;
+				var pch = &amp;quot;&amp;quot;;
+				var ywbz = &amp;quot;1&amp;quot;;	
+				if(zfbz == &amp;quot;QSHT&amp;quot;){
+					ywbz = &amp;quot;2&amp;quot;;
+					zfbz = &amp;quot;12&amp;quot;;
+				}
+				
+				sql = &amp;quot;select rzbz,pch from v_si_djb_tmp where djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and sbh = &amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos; and accid = &amp;apos;&amp;quot;+accid+&amp;quot;&amp;apos;&amp;quot;;
+				var ds = db.QuerySQL(sql);
+				if(ds.GetRowCount() &amp;lt;= 0){
+					appcode = &amp;quot;ERROR-QS&amp;quot;;
+					errmsg = &amp;quot;&amp;quot;;
+				}else{
+					rzbz = ds.GetStringAt(0,&amp;quot;RZBZ&amp;quot;);
+					pch  = ds.GetStringAt(0,&amp;quot;PCH&amp;quot;);
+				}
+					
+				var statement = conn.createStatement();
+				in_str = djh+&amp;quot;/&amp;quot;+ywbz+&amp;quot;/&amp;quot;+zje+&amp;quot;/&amp;quot;+jzsj+&amp;quot;/&amp;quot;+zfbz+&amp;quot;/&amp;quot;+errmsgs+&amp;quot;/&amp;quot;+lsh+&amp;quot;/&amp;quot;+zdr+&amp;quot;/&amp;quot;+jzsj+&amp;quot;/&amp;quot;+pch+&amp;quot;/&amp;quot;+jzsj+&amp;quot;/&amp;quot;+jzsj+&amp;quot;/&amp;quot;+jzsj+&amp;quot;/&amp;quot;+rzbz+&amp;quot;/&amp;quot;+zdr+&amp;quot;/&amp;quot;+tcqbm;
+				func_name = &amp;quot;pkg_financialInterface.prc_p_historyFundAndPay&amp;quot;;
+				
+				var stmt = conn.prepareCall(&amp;quot;call pkg_financialInterface.prc_p_historyFundAndPay(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)&amp;quot;);//pkg_financialInterface						
+								
+				stmt.setString(1, djh);
+				stmt.setString(2, ywbz);
+				stmt.setDouble(3, zje);	
+				stmt.setDate(4,  new java.sql.Date(jzsj.getTime()));
+				stmt.setString(5, zfbz);
+				stmt.setString(6, errmsgs);
+				stmt.setString(7, lsh);
+				stmt.setString(8, zdr);
+				stmt.setDate(9,  new java.sql.Date(jzsj.getTime()));
+				stmt.setString(10, pch);
+				stmt.setDate(11,  new java.sql.Date(jzsj.getTime()));
+				stmt.setDate(12, new java.sql.Date(jzsj.getTime()));
+				stmt.setDate(13, new java.sql.Date(jzsj.getTime()));
+				stmt.setString(14, rzbz);
+				stmt.setString(15, zdr);
+				stmt.setString(16, tcqbm);
+				stmt.registerOutParameter(17, java.sql.Types.VARCHAR);	//返回参数
+				stmt.registerOutParameter(18, java.sql.Types.VARCHAR);	//返回参数
+				stmt.registerOutParameter(19, java.sql.Types.VARCHAR); 	//返回参数
+				
+				stmt.executeUpdate();	
+				
+				xh      = stmt.getString(17);
+				appcode = stmt.getString(18);
+				errmsg = stmt.getString(19);
+				
+				stmt.close();
+			}//if(ywlx == &amp;quot;E110)
+		}//if(zfbz == &amp;quot;11&amp;quot; || zfbz == &amp;quot;12&amp;quot;)
+	}else if(ywjkbz == &amp;quot;DR&amp;quot;){
+		if(zfbz == &amp;quot;12&amp;quot; || zfbz == &amp;quot;8&amp;quot;){
+			//ywguid = BAZ610	
+			//获取费款所属期、实付年月、险种、个人编号、单据号
+			var min_aae002 = &amp;quot;&amp;quot;;
+			var max_aae002 = &amp;quot;&amp;quot;;
+			var aae208     = &amp;quot;&amp;quot;;
+			var aae140     = &amp;quot;&amp;quot;;
+			var aac001     = &amp;quot;&amp;quot;;
+			var bae074     = &amp;quot;&amp;quot;;
+			var aab001     = &amp;quot;&amp;quot;;
+			var aae076     = &amp;quot;&amp;quot;;
+			
+			sql = &amp;quot;SELECT SUBSTRB(AAE002, 1 ,INSTRB(AAE002, &amp;apos;-&amp;apos;) - 1) MIN_AAE002,SUBSTRB(AAE002, INSTRB(AAE002, &amp;apos;-&amp;apos;) + 1) MAX_AAE002,AAE208,AAE140,AAC001,BAE074 ,BAC005,AAB001,aae076
+				FROM AC95 WHERE BAZ610 = &amp;apos;&amp;quot;+ywguid+&amp;quot;&amp;apos;&amp;quot;;
+			var ds = db.QuerySQL(sql);
+			var ywlx = &amp;quot;&amp;quot;;
+			if(ds.getRowCount() &amp;lt;= 0){
+				xh = &amp;quot;-998&amp;quot;;
+				appcode = &amp;quot;ERROR-1&amp;quot;;
+				errmsg  = &amp;quot;业务序号:&amp;quot;+ywguid+&amp;quot;查询AC95表无此记录!&amp;quot;;
+				return xh+&amp;quot;@&amp;quot;+appcode+&amp;quot;@&amp;quot;+errmsg;
+			}else{
+				min_aae002 = ds.getStringAt(0,&amp;quot;MIN_AAE002&amp;quot;);
+				max_aae002 = ds.getStringAt(0,&amp;quot;MAX_AAE002&amp;quot;);
+				aae208     = ds.getStringAt(0,&amp;quot;AAE208&amp;quot;);
+				aae140     = ds.getStringAt(0,&amp;quot;AAE140&amp;quot;);
+				aac001     = ds.getStringAt(0,&amp;quot;AAC001&amp;quot;);
+				bae074     = ds.getStringAt(0,&amp;quot;BAE074&amp;quot;);
+				ywlx       = ds.getStringAt(0,&amp;quot;BAC005&amp;quot;);
+				aab001     = ds.getStringAt(0,&amp;quot;AAB001&amp;quot;);
+				aae076     = ds.getStringAt(0,&amp;quot;AAE076&amp;quot;);
+			}//if(ds.getRowCount() &amp;lt;= 0)
+			var drjk = 0;
+			
+			var ztlx = db.GetSQL(&amp;quot;select nvl(max(ztlx),&amp;apos;NO&amp;apos;) ztlx from aa10 where aaa100 = &amp;apos;YWLX&amp;apos; and aaa102 = &amp;apos;&amp;quot;+ywlx+&amp;quot;&amp;apos;&amp;quot;);
+			if( ztlx == &amp;quot;NO&amp;quot;){
+				appcode = &amp;quot;ERROR-2&amp;quot;;
+				errmsg  = &amp;quot;查询aa10表无此记录，业务类型:&amp;quot;+ywlx;
+			}
+			
+			if(ywlx == &amp;quot;E110&amp;quot;){				
+				if(min_aae002 != max_aae002){
+					drjk = 0;
+				}else{
+					drjk = min_aae002;
+				}
+			}
+			
+			//获取ab01的AAB001
+			if(aab001 != &amp;quot;&amp;quot;){
+				if(ywlx == &amp;quot;E120&amp;quot;){//拨至单位使用汇总单位
+					aab001 = db.GetSQL(&amp;quot;SELECT aab001 FROM ab01_table WHERE aab001 IN (SELECT bab001 FROM ab01_table WHERE aab999 = &amp;apos;&amp;quot;+aab001+&amp;quot;&amp;apos;)&amp;quot;);
+				}else{
+					aab001 = db.GetSQL(&amp;quot;select aab001 from ab01 where aab999 = &amp;apos;&amp;quot;+aab001+&amp;quot;&amp;apos;&amp;quot;);
+				}
+			}
+			//获取ac01的aac001
+			if(aac001 == &amp;quot;%&amp;quot;) grbh = &amp;quot;&amp;quot;;
+			if(aac001 != &amp;quot;&amp;quot;){
+				aac001 = db.GetSQL(&amp;quot;select aac001 from ac01 where aac999 = &amp;apos;&amp;quot;+aac001+&amp;quot;&amp;apos;&amp;quot;);
+			}
+
+			var ztbh = &amp;quot;&amp;quot;;
+			if(zfbz == 8){
+				ztbh = 0;
+				ztlx = 3;
+			}else if(zfbz == 12){
+				if(ztlx == 1){
+					ztbh = aab001;
+				}else if(ztlx == 2){
+					ztbh = aac001;
+				}
+			}
+			//调用业务接口
+			var conn = db.GetConn();
+			var statement = conn.createStatement();
+			   in_str = drjk+&amp;quot;/&amp;quot;+aae208+&amp;quot;/&amp;quot;+aae140+&amp;quot;/&amp;quot;+ztlx+&amp;quot;/&amp;quot;+ztbh+&amp;quot;/&amp;quot;+bae074;
+		           func_name = &amp;quot;PKG_LAF_FINANCE.PRC_四险待遇发放不成功接口&amp;quot;;
+			var stmt = conn.prepareCall(&amp;quot;call PKG_LAF_FINANCE.PRC_四险待遇发放不成功接口(?,?,?,?,?,?,?,?,?)&amp;quot;);
+			stmt.setString(1, &amp;quot;&amp;quot;+drjk );
+			stmt.setString(2, aae208);
+			stmt.setString(3, aae140);
+			stmt.setString(4, &amp;quot;&amp;quot;+ztlx);
+			stmt.setString(5, ztbh);
+			stmt.setString(6, bae074);
+			stmt.registerOutParameter(7, java.sql.Types.VARCHAR);	//返回参数
+			stmt.registerOutParameter(8, java.sql.Types.VARCHAR);	//返回参数
+			stmt.registerOutParameter(9, java.sql.Types.VARCHAR); 	//返回参数
+			
+			stmt.executeUpdate();
+			
+			xh      = stmt.getString(7);
+			appcode = stmt.getString(8);
+			errmsg  = stmt.getString(9);
+			
+			stmt.close();
+			
+			if(appcode == 0){
+				appcode = &amp;quot;NOERROR&amp;quot;;
+			}
+		}else if(zfbz == &amp;quot;YLYJHT&amp;quot;){
+			//ywguid = BAZ610	
+			//获取费款所属期、实付年月、险种、个人编号、单据号
+			var min_aae002 = &amp;quot;&amp;quot;;
+			var max_aae002 = &amp;quot;&amp;quot;;
+			var aae208     = &amp;quot;&amp;quot;;
+			var aae140     = &amp;quot;&amp;quot;;
+			var aac001     = &amp;quot;&amp;quot;;
+			var bae074     = &amp;quot;&amp;quot;;
+			var aab001     = &amp;quot;&amp;quot;;
+			
+			sql = &amp;quot;SELECT SUBSTRB(AAE002, 1 ,INSTRB(AAE002, &amp;apos;-&amp;apos;) - 1) MIN_AAE002,SUBSTRB(AAE002, INSTRB(AAE002, &amp;apos;-&amp;apos;) + 1) MAX_AAE002,AAE208,AAE140,AAC001,BAE074 ,BAC005,AAB001
+				FROM AC95 WHERE BAZ610 = &amp;apos;&amp;quot;+ywguid+&amp;quot;&amp;apos;&amp;quot;;
+			var ds = db.QuerySQL(sql);
+			var ywlx = &amp;quot;&amp;quot;;
+			if(ds.getRowCount() &amp;lt;= 0){
+				xh = &amp;quot;-998&amp;quot;;
+				appcode = &amp;quot;ERROR-1&amp;quot;;
+				errmsg  = &amp;quot;业务序号:&amp;quot;+ywguid+&amp;quot;查询AC95表无此记录!&amp;quot;;
+				return xh+&amp;quot;@&amp;quot;+appcode+&amp;quot;@&amp;quot;+errmsg;
+			}else{
+				min_aae002 = ds.getStringAt(0,&amp;quot;MIN_AAE002&amp;quot;);
+				max_aae002 = ds.getStringAt(0,&amp;quot;MAX_AAE002&amp;quot;);
+				aae208     = ds.getStringAt(0,&amp;quot;AAE208&amp;quot;);
+				aae140     = ds.getStringAt(0,&amp;quot;AAE140&amp;quot;);
+				aac001     = ds.getStringAt(0,&amp;quot;AAC001&amp;quot;);
+				bae074     = ds.getStringAt(0,&amp;quot;BAE074&amp;quot;);
+				ywlx       = ds.getStringAt(0,&amp;quot;BAC005&amp;quot;);
+				aab001     = ds.getStringAt(0,&amp;quot;AAB001&amp;quot;);
+			}//if(ds.getRowCount() &amp;lt;= 0)
+			
+			//调用业务接口
+			var conn = db.GetConn();
+			var statement = conn.createStatement();
+			   in_str = min_aae002+&amp;quot;/&amp;quot;+aae140+&amp;quot;/&amp;quot;+bae074;
+		           func_name = &amp;quot;PKG_LAF_FINANCE.prc_医疗待遇月结发放不成功接口&amp;quot;;
+			var stmt = conn.prepareCall(&amp;quot;call PKG_LAF_FINANCE.prc_医疗待遇月结发放不成功接口(?,?,?,?,?,?)&amp;quot;);
+			stmt.setString(1, min_aae002);
+			stmt.setString(2, aae140);
+			stmt.setString(3, bae074);
+			stmt.registerOutParameter(4, java.sql.Types.VARCHAR);	//返回参数
+			stmt.registerOutParameter(5, java.sql.Types.VARCHAR);	//返回参数
+			stmt.registerOutParameter(6, java.sql.Types.VARCHAR); 	//返回参数
+			
+			stmt.executeUpdate();
+			
+			xh      = stmt.getString(7);
+			appcode = stmt.getString(8);
+			errmsg  = stmt.getString(9);
+			
+			stmt.close();
+			
+			if(appcode == 0){
+				appcode = &amp;quot;NOERROR&amp;quot;;
+			}
+		}else if(zfbz == &amp;quot;12_HT&amp;quot;){
+			//ywguid = DJH
+			
+			//调用业务接口
+			var conn = db.GetConn();
+			var statement = conn.createStatement();
+			   in_str = ywguid;
+		           func_name = &amp;quot;PKG_LAF_FINANCE.PRC_待遇发放不成功接口_回退&amp;quot;;
+			var stmt = conn.prepareCall(&amp;quot;call PKG_LAF_FINANCE.PRC_待遇发放不成功接口_回退(?,?,?,?,?,?)&amp;quot;);
+			stmt.setString(1, ywguid);
+			stmt.registerOutParameter(2, java.sql.Types.VARCHAR);	//返回参数
+			stmt.registerOutParameter(3, java.sql.Types.VARCHAR);	//返回参数
+			stmt.registerOutParameter(4, java.sql.Types.VARCHAR); 	//返回参数
+			
+			stmt.executeUpdate();
+			
+			xh      = stmt.getString(2);
+			appcode = stmt.getString(3);
+			errmsg  = stmt.getString(4);
+			
+			stmt.close();
+			
+			if(appcode == 0){
+				appcode = &amp;quot;NOERROR&amp;quot;;
+			}
+		}//if(zfbz == 12)
+	}//if (ywjkbz == &amp;quot;YH&amp;quot;)
+	
+//	throw new Exception(&amp;quot;函数名:&amp;quot;+func_name+&amp;quot;,入参:&amp;quot;+in_str);
+	
+	if(appcode == &amp;quot;999999&amp;quot;){
+		if(ywjkbz == &amp;quot;DR&amp;quot;){
+			xh  = &amp;quot;-999&amp;quot;;
+			appcode = &amp;quot;NOERROR&amp;quot;;
+			errmsg = &amp;quot;未调用业务接口,请联系系统开发商&amp;quot;;
+		}else if(ywjkbz == &amp;quot;YH&amp;quot;){
+			xh  = &amp;quot;-999&amp;quot;;
+			errmsg = &amp;quot;未调用业务接口,请联系系统开发商&amp;quot;;
+			errmsg = &amp;quot;函数名:&amp;quot;+func_name+&amp;quot;,入参:&amp;quot;+in_str+&amp;quot;,错误码：&amp;quot;+gf_nvl(appcode)+&amp;quot;错误信息：&amp;quot;+errmsg;
+		}
+	}else if(appcode != &amp;quot;NOERROR&amp;quot;){
+		errmsg = &amp;quot;函数名:&amp;quot;+func_name+&amp;quot;,入参:&amp;quot;+in_str+&amp;quot;,错误码：&amp;quot;+gf_nvl(appcode)+&amp;quot;错误信息：&amp;quot;+errmsg;
+	}
+	
+	return xh+&amp;quot;@&amp;quot;+appcode+&amp;quot;@&amp;quot;+errmsg;
+}
+
+
+//财务删除日记帐调用
+//--财务回写业务数据标志回退
+//  PROCEDURE prc_updateac82_rollback(
+//            prm_aaz220   IN    NUMBER,   --应付计划事件ID (BAZ610	 业务内部序号)
+//            prm_xh       IN    VARCHAR2, -- si_djb_tmp 的主键序号
+//            prm_aae011   IN    VARCHAR2, --回退经办人员 (回退此业务的财务经办人)
+//            prm_appcode  OUT   VARCHAR2,
+//            prm_errmsg   OUT   VARCHAR2);
+function RJZ_Delete(db,sbh,zth,lsh,czyxm,ywjkbz,djh)
+{
+	var appcode = &amp;quot;999999&amp;quot;;
+	var errmsg  = &amp;quot;&amp;quot;;
+	var sql     = &amp;quot;&amp;quot;;
+	var in_str  = &amp;quot;&amp;quot;;
+	var func_name= &amp;quot;&amp;quot;;
+	
+	var tcqbm = db.GetSQL(&amp;quot;select tcqbm from cw_sbsb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;&amp;quot;);
+
+	if (ywjkbz == &amp;quot;YH&amp;quot;) {
+		var conn = db.GetConn();
+		var statement = conn.createStatement();
+		var stmt = conn.prepareCall(&amp;quot;call pkg_interface.prc_updateac82_rollback(?,?,?,?,?)&amp;quot;);
+		//拨至单位回退接口，流水号可能不为空，都以单据号查询回退
+		if(lsh == &amp;quot;&amp;quot;){
+			sql = &amp;quot;select * from v_si_djb_tmp where djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;and sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+		}else{
+			sql = &amp;quot;select * from v_si_djb_tmp where LSH=&amp;quot;+lsh+&amp;quot; and sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+		}
+		var sids = db.QuerySQL(sql);
+		if (sids.getRowCount() &amp;gt; 0) {
+			var xh = sids.getStringAt(0,&amp;quot;XH&amp;quot;);
+			var ywlx = sids.getStringAt(0,&amp;quot;YWLX&amp;quot;);
+			
+			if(ywlx == &amp;quot;E120&amp;quot;){
+				sql = &amp;quot;select * from ac95 where bae074=&amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+				var tmpds = db.QuerySQL(sql);	
+				if(tmpds.getRowCount() &amp;lt;= 0){
+					appcode = &amp;quot;ERROR-9&amp;quot;;
+					errmsg  = &amp;quot;查询AC95出错，查无此记录&amp;quot;+sql;
+				}
+				
+				//修改si_djb_tmp数据
+				sql = &amp;quot;update v_si_djb_tmp set RZBZ=&amp;apos;0&amp;apos;,RZR=null,RZSJ=null,LSH=null where LSH=&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos; and sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;&amp;quot;;
+				db.ExcecutSQL(sql);
+				
+				//修改银行回盘AC95标志
+				sql = &amp;quot;update ac95 set prc_out_xh=&amp;apos;&amp;apos;,prc_out_code=&amp;apos;&amp;apos;,prc_out_text=&amp;apos;&amp;apos;,err_cwlsh=&amp;apos;&amp;apos; 
+					where err_cwlsh=&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and aaa027=&amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos;&amp;quot;;
+				db.ExcecutSQL(sql);
+
+				for (var i=0;i&amp;lt;tmpds.getRowCount();i++) {
+					var BAZ610 = tmpds.getStringAt(i,&amp;quot;BAZ610&amp;quot;);
+//					var BAZ610 = &amp;quot;&amp;quot;;
+
+					in_str = BAZ610+&amp;quot;/&amp;quot;+xh+&amp;quot;/&amp;quot;+czyxm;
+					func_name = &amp;quot;pkg_interface.prc_updateac82_rollback&amp;quot;;
+					
+					stmt.setString(1, BAZ610 );
+					stmt.setString(2, xh);
+					stmt.setString(3, czyxm);
+					stmt.registerOutParameter(4, java.sql.Types.VARCHAR);	//返回参数
+					stmt.registerOutParameter(5, java.sql.Types.VARCHAR);	//返回参数
+					
+					stmt.executeUpdate();
+					
+					appcode = stmt.getString(4);
+					errmsg = stmt.getString(5);
+				}
+			}else{
+//				20161124 lyh modify aae076 记录的不是传入的sblsh 是cw_rjzb的流水号
+//				sql = &amp;quot;select * from ac95 where aae076=&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+
+				sql = &amp;quot;select * from ac95 where bae074=&amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;				
+				var tmpds = db.QuerySQL(sql);
+				if(tmpds.getRowCount() &amp;lt;= 0){
+					appcode = &amp;quot;ERROR-9&amp;quot;;
+					errmsg  = &amp;quot;查询AC95出错，查无此记录&amp;quot;+sql;
+				}
+								
+				//修改银行回盘AC95标志
+//				20161124 lyh modify 错误流水号是日记账流水号，不是传入的sblsh 通过序号进行查询处理；先更新AC95，再更新SI_DJB_TMP表，AC95用到si_djb_tmp查询记录数据
+//				sql = &amp;quot;update ac95 set prc_out_xh=&amp;apos;&amp;apos;,prc_out_code=&amp;apos;&amp;apos;,prc_out_text=&amp;apos;&amp;apos;,err_cwlsh=&amp;apos;&amp;apos; 
+//					where err_cwlsh=&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and aaa027=&amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos;&amp;quot;;
+//				db.ExcecutSQL(sql);
+
+				sql = &amp;quot;update ac95 set prc_out_xh=&amp;apos;&amp;apos;,prc_out_code=&amp;apos;&amp;apos;,prc_out_text=&amp;apos;&amp;apos;,err_cwlsh=&amp;apos;&amp;apos; 
+					WHERE prc_out_xh IN ( SELECT xh FROM si_djb_tmp WHERE lsh = &amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and sbh=&amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos;)&amp;quot;;
+				db.ExcecutSQL(sql);
+
+				//修改si_djb_tmp数据 更新回退数据
+				sql = &amp;quot;update v_si_djb_tmp set RZBZ=&amp;apos;0&amp;apos;,RZR=null,RZSJ=null,LSH=null where LSH=&amp;quot;+lsh+&amp;quot; and sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;&amp;quot;;
+				db.ExcecutSQL(sql);
+
+				for (var i=0;i&amp;lt;tmpds.getRowCount();i++) {	
+					var BAZ610 = tmpds.getStringAt(i,&amp;quot;BAZ610&amp;quot;);
+					
+					in_str = BAZ610 +&amp;quot;/&amp;quot;+xh+&amp;quot;/&amp;quot;+czyxm;
+					func_name = &amp;quot;pkg_interface.prc_updateac82_rollback&amp;quot;;	
+					
+					stmt.setString(1, BAZ610 );
+					stmt.setString(2, xh);
+					stmt.setString(3, czyxm);
+					stmt.registerOutParameter(4, java.sql.Types.VARCHAR);	//返回参数
+					stmt.registerOutParameter(5, java.sql.Types.VARCHAR);	//返回参数
+					
+					stmt.executeUpdate();
+					
+					appcode = stmt.getString(4);
+					errmsg = stmt.getString(5);
+				}
+			}//if(ywlx == &amp;quot;E120&amp;quot;)
+			
+			stmt.close();
+		}else{
+			appcode = &amp;quot;ERROR-1&amp;quot;;
+			errmsg  = &amp;quot;查询无此数据&amp;quot;+sql;
+		}//if (sids.getRowCount() &amp;gt; 0)	
+	}else if(ywjkbz == &amp;quot;DR&amp;quot;){
+		//只有医疗拨款单回退调用接口，其他都不调用
+		//判断医疗拨款单回退是否有数据
+		var xzlx = &amp;quot;&amp;quot;;
+		sql = &amp;quot;select count(1) from si_tsd_tmp where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and rjzlsh = &amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos; and szbz = 2&amp;quot;;
+		var cou = db.GetSQL(sql);
+		if(cou &amp;gt; 0){
+			sql = &amp;quot;select distinct substrb(lxbh,1,1) from v_si_djb_tmp where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;&amp;quot;;
+			var lxbh = db.GetSQL(sql);
+			if(lxbh == &amp;quot;3&amp;quot;) xzlx = &amp;quot;31&amp;quot;;
+		}
+		
+		var conn = &amp;quot;&amp;quot;;
+		var statement = &amp;quot;&amp;quot;;
+		var stmt = &amp;quot;&amp;quot;;
+		
+		in_str = djh;
+		
+		//修改si_djb_tmp数据
+		sql = &amp;quot;update v_si_djb_tmp set RZBZ=&amp;apos;0&amp;apos;,RZR=null,RZSJ=null,LSH=null where LSH=&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos; and sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;&amp;quot;;
+		db.ExcecutSQL(sql);
+		
+		//修改银行回盘AC95标志
+		sql = &amp;quot;update ac95 set prc_out_xh=&amp;apos;&amp;apos;,prc_out_code=&amp;apos;&amp;apos;,prc_out_text=&amp;apos;&amp;apos;,err_cwlsh=&amp;apos;&amp;apos; 
+			where err_cwlsh=&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and aaa027=&amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos;&amp;quot;;
+		db.ExcecutSQL(sql);
+
+		
+		if(xzlx == &amp;quot;31&amp;quot;){
+			func_name = &amp;quot;PKG_LAF_FINANCE.PRC_待遇发放不成功接口_回退&amp;quot;;		
+			conn = db.GetConn();
+			statement = conn.createStatement();
+			stmt = conn.prepareCall(&amp;quot;call PKG_LAF_FINANCE.prc_医疗待遇月结接口_回退(?,?,?)&amp;quot;);
+		}else{
+			func_name = &amp;quot;PKG_LAF_FINANCE.PRC_待遇发放不成功接口_回退&amp;quot;;		
+			conn = db.GetConn();
+			statement = conn.createStatement();
+			stmt = conn.prepareCall(&amp;quot;call PKG_LAF_FINANCE.PRC_待遇发放不成功接口_回退(?,?,?)&amp;quot;);
+		}
+		stmt.setString(1, djh);
+		stmt.registerOutParameter(2, java.sql.Types.VARCHAR);	//返回参数
+		stmt.registerOutParameter(3, java.sql.Types.VARCHAR);	//返回参数
+		
+		stmt.executeUpdate();
+					
+		appcode = stmt.getString(2);
+		errmsg = stmt.getString(3);
+		
+		if(appcode == 0){
+			appcode = &amp;quot;NOERROR&amp;quot;;
+		}
+	}//if (ywjkbz == &amp;quot;YH&amp;quot;) 
+	
+	if(appcode == &amp;quot;999999&amp;quot;){		
+		errmsg = &amp;quot;未调用业务接口,请联系系统开发商&amp;quot;;
+		errmsg = &amp;quot;函数名:&amp;quot;+func_name+&amp;quot;,入参:&amp;quot;+in_str+&amp;quot;,错误码：&amp;quot;+gf_nvl(appcode)+&amp;quot;错误信息：&amp;quot;+errmsg;
+	}else if(appcode != &amp;quot;NOERROR&amp;quot;){
+		errmsg = &amp;quot;函数名:&amp;quot;+func_name+&amp;quot;,入参:&amp;quot;+in_str+&amp;quot;,错误码：&amp;quot;+gf_nvl(appcode)+&amp;quot;错误信息：&amp;quot;+errmsg;
+	}
+	
+	return appcode+&amp;quot;@&amp;quot;+errmsg;
+}
+
+//空值转换
+function gf_nvl(str){
+	if(str == &amp;quot;&amp;quot;){
+		str == &amp;quot;空值&amp;quot;;
+	}
+	return str;
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

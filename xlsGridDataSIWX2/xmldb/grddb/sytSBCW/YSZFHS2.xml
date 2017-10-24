@@ -1,0 +1,523 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >F</MWTYP><MWID >YSZFHS2</MWID><NAME >银社支付审批单</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >YSZFHS2.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG >8,1,13,20</DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE >AEF3</BILHDRTABLE><BILDTLTABLE >AEF4</BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL >3</IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdcelds>
+<ROWSET>
+<ROW num="0" ><ID >0,2,22</ID><CELLID ></CELLID><NAME >拨款序号</NAME><VALFLD >AAE400</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 >0,2,22</C21></ROW>
+<ROW num="1" ><ID >0,3,3</ID><CELLID ></CELLID><NAME >汇款单位户名(社保)</NAME><VALFLD >AAB025</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 >0,3,3</C21></ROW>
+<ROW num="2" ><ID >0,4,3</ID><CELLID ></CELLID><NAME >汇款单位帐号(社保)</NAME><VALFLD >AAB026</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 >0,4,3</C21></ROW>
+<ROW num="3" ><ID >0,3,11</ID><CELLID ></CELLID><NAME >收款单位户名(单位)</NAME><VALFLD >AAE009</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 >0,3,11</C21></ROW>
+<ROW num="4" ><ID >0,4,11</ID><CELLID ></CELLID><NAME >收款单位账号(单位)</NAME><VALFLD >AAE010</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="5" ><ID >0,6,13</ID><CELLID ></CELLID><NAME >金额</NAME><VALFLD >BAE511</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="6" ><ID >0,4,25</ID><CELLID ></CELLID><NAME >已打印标志(1-已打印0-未打印)</NAME><VALFLD >BAE552</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="7" ><ID >0,5,25</ID><CELLID ></CELLID><NAME >补拨标志(1-补拨0-正常拨)</NAME><VALFLD >BAE554</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="8" ><ID >0,6,25</ID><CELLID ></CELLID><NAME >作废标志(1-已作废0-未作废)</NAME><VALFLD >BAE553</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="9" ><ID >0,7,25</ID><CELLID ></CELLID><NAME >当月业务发放批次号(0:首次发，其他2-9:多次发次数)</NAME><VALFLD >BAE031</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="10" ><ID >0,8,25</ID><CELLID ></CELLID><NAME >所属系统编号</NAME><VALFLD >BAE007</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="11" ><ID >0,9,25</ID><CELLID ></CELLID><NAME >人数</NAME><VALFLD >BAE541</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="12" ><ID >0,14,3</ID><CELLID ></CELLID><NAME >社保业务经办人</NAME><VALFLD >AAE403</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 >0,14,3</C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="13" ><ID >0,14,6</ID><CELLID ></CELLID><NAME >财务实付审核人</NAME><VALFLD >CWSHMAN1</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 >0,14,6</C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="14" ><ID >0,14,10</ID><CELLID ></CELLID><NAME >财务主管审核人</NAME><VALFLD >CWSHMAN2</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="15" ><ID >0,3,27</ID><CELLID ></CELLID><NAME >汇出地省份</NAME><VALFLD >BAE101</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="16" ><ID >0,4,27</ID><CELLID ></CELLID><NAME >汇出地市县</NAME><VALFLD >BAE102</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="17" ><ID >0,5,27</ID><CELLID ></CELLID><NAME >汇入地省份</NAME><VALFLD >BAE201</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="18" ><ID >0,6,27</ID><CELLID ></CELLID><NAME >汇入地市县</NAME><VALFLD >BAE202</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="19" ><ID >0,7,27</ID><CELLID ></CELLID><NAME >经办日期</NAME><VALFLD >AAE401</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 >0,7,27</C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="20" ><ID >0,8,27</ID><CELLID ></CELLID><NAME >年月(YYYYMM)</NAME><VALFLD >AAE002</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="21" ><ID >0,10,25</ID><CELLID ></CELLID><NAME >拨款方式</NAME><VALFLD >AAE338</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 >0,10,25</C18><C19 ></C19><C20 ></C20><C21 >0,10,25</C21></ROW>
+<ROW num="22" ><ID >0,5,3</ID><CELLID ></CELLID><NAME >汇款单位银行代码(社保)</NAME><VALFLD >AAB340</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="23" ><ID >0,5,11</ID><CELLID ></CELLID><NAME >收款单位银行代码(单位)(代发机构)</NAME><VALFLD >AAB341</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="24" ><ID >0,9,27</ID><CELLID ></CELLID><NAME >险种类型</NAME><VALFLD >AAE140</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 >0,9,27</C21></ROW>
+<ROW num="25" ><ID >0,10,27</ID><CELLID ></CELLID><NAME >打印时间</NAME><VALFLD >PRINTTIME</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="26" ><ID >0,11,27</ID><CELLID ></CELLID><NAME >打印人</NAME><VALFLD >PRINTMAN</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="27" ><ID >0,8,21</ID><CELLID ></CELLID><NAME >经办人备注</NAME><VALFLD >JBRNOTE</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 >0,8,21</C21></ROW>
+<ROW num="28" ><ID >0,11,25</ID><CELLID ></CELLID><NAME >业务类型</NAME><VALFLD >YWLX</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 >0,11,25</C21></ROW>
+<ROW num="29" ><ID >0,2,9</ID><CELLID ></CELLID><NAME >业务类型</NAME><VALFLD >YWLX</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="30" ><ID >0,12,25</ID><CELLID ></CELLID><NAME >社保银行代码(AA10.AAA100=BAE419,收:3位，支:1-2位)--20170210 qfj</NAME><VALFLD >BAE419</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+<ROW num="31" ><ID >0,13,25</ID><CELLID ></CELLID><NAME >参保对象银行代码(AA10.AAA100=AAE008,收:3位，支:1-2位)--20170210 qfj</NAME><VALFLD >AAE008</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21></ROW>
+</ROWSET>
+</grdcelds><grdcolds>
+<ROWSET>
+<ROW num="0" ><ID >0,9</ID><NAME >待遇人数</NAME><VALFLD >AAE407</VALFLD><NOTNULL >1</NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 >0,8</C14><C15 >0,9</C15></ROW>
+<ROW num="1" ><ID >0,11</ID><NAME >待遇金额</NAME><VALFLD >AAE408</VALFLD><NOTNULL >1</NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 >0,12</C14><C15 >0,11</C15></ROW>
+<ROW num="2" ><ID >0,15</ID><NAME >款项编号</NAME><VALFLD >AAE501</VALFLD><NOTNULL >1</NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 >0,15</C15></ROW>
+<ROW num="3" ><ID >0,16</ID><NAME >拨付开始期限(YYYYMM) </NAME><VALFLD >AAE405</VALFLD><NOTNULL >1</NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 >0,16</C15></ROW>
+<ROW num="4" ><ID >0,17</ID><NAME >拨付截止期限(YYYYMM) </NAME><VALFLD >AAE406</VALFLD><NOTNULL >1</NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 >0,17</C15></ROW>
+<ROW num="5" ><ID >0,18</ID><NAME >明细排序序号</NAME><VALFLD >AAE401</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 >0,18</C15></ROW>
+<ROW num="6" ><ID >0,19</ID><NAME >补发标志 1.正常 2.补发 3.退发</NAME><VALFLD >BAE002</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15></ROW>
+<ROW num="7" ><ID >0,20</ID><NAME >拨款序号</NAME><VALFLD >AAE400</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15></ROW>
+<ROW num="8" ><ID >0,1</ID><NAME >拨付项目</NAME><VALFLD >DYMC</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15></ROW>
+<ROW num="9" ><ID >0,6</ID><NAME >所属期限</NAME><VALFLD >SSQX</VALFLD><NOTNULL >1</NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15></ROW>
+<ROW num="10" ><ID >0,14</ID><NAME >险种类型</NAME><VALFLD >AAE140</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15></ROW>
+<ROW num="11" ><ID >0,2</ID><NAME >款项明细序号</NAME><VALFLD >AAE502</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15></ROW>
+</ROWSET>
+</grdcolds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >mvOutBank</ID><NAME >选择付款银行</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >GRDBTNDS_0</C10><C11 >mvOutBank</C11></ROW>
+<ROW num="1" ><ID >mvInBank</ID><NAME >选择收款银行</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 ></C10><C11 >mvInBank</C11></ROW>
+<ROW num="2" ><ID >addItem</ID><NAME >增加拨付项目</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 ></C10><C11 >addItem</C11></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var objParam = &amp;quot;&amp;quot;;
+var AAE400 = &amp;quot;&amp;quot;;
+var xzlx = &amp;quot;&amp;quot;; //险种
+var ywlxList = &amp;quot;&amp;quot;;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{		
+	if (G_GUID == &amp;quot;&amp;quot;) {
+		_this.SetCellText(0,10,25,&amp;quot;22&amp;quot;);
+		_this.SetCellText(sheet,11,25,&amp;quot;DBJS&amp;quot;); //业务类型为单笔结算的
+		_this.SetCellText(0,9,27,&amp;quot;11&amp;quot;);
+		_this.SetCellText(0,3,27,&amp;quot;广西&amp;quot;);
+		_this.SetCellText(0,4,27,&amp;quot;南宁&amp;quot;);
+		_this.SetCellText(0,5,27,&amp;quot;广西&amp;quot;);
+		_this.SetCellText(0,6,27,&amp;quot;南宁&amp;quot;);
+		
+		_this.SetCellText(0,3,25,&amp;quot;0&amp;quot;);
+		_this.SetCellText(0,4,25,&amp;quot;0&amp;quot;);
+		_this.SetCellText(0,5,25,&amp;quot;0&amp;quot;);
+		_this.SetCellText(0,6,25,&amp;quot;0&amp;quot;);
+		_this.SetCellText(0,7,25,&amp;quot;0&amp;quot;);
+	
+		_this.SetCellText(0,8,27,G_LOGDAT.substring(0,4)+G_LOGDAT.substring(5,7));
+		_this.SetToDateBox(&amp;quot;&amp;quot;,sheet,2,4,G_LOGDAT);
+		_this.SetCellText(0,2,4,G_LOGDAT);
+		var jbrq = G_LOGDAT.replace(/-/g,&amp;quot;&amp;quot;);
+		_this.SetCellText(sheet,7,27,jbrq);		
+		
+		_sql.querytods(&amp;quot;SEQVAL&amp;quot;);
+		AAE400 = _this.XMLDS_GetString(0,&amp;quot;VAL&amp;quot;);
+		_this.SetCellText(0,2,22,AAE400);
+		//业务类型,默认值设置为Z001
+		ywlxList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=aa10&amp;where=aaa100 = &amp;apos;YWLX&amp;apos; and OUTBZ_YSZL = &amp;apos;12&amp;apos; and YWXT_YHDM is null and YWXT_DRDM is null &amp;quot;),&amp;quot;AAA102&amp;quot;,&amp;quot;AAA103&amp;quot;);//只能选支的业务类型
+		_this.SetCellText(0,2,9,&amp;quot;Z001&amp;quot;);
+		_this.SetToComboBox(&amp;quot;&amp;quot;,0,2,9,ywlxList);			
+		//经办人，审核人，复核人都不显示
+		_this.SetCellText(0,14,3,G_USRNAM);	
+//		_this.SetCellText(0,14,6,&amp;quot;&amp;quot;);	
+//		_this.SetCellText(0,14,10,&amp;quot;&amp;quot;);
+	
+		_thisOnRunCellFocusChange(sheet,-1,-1,0,0);	
+	}
+	else {
+		var jbrq = _this.GetCellText(0,7,27);
+		_this.SetToDateBox(&amp;quot;&amp;quot;,sheet,2,4,G_LOGDAT);
+		ywlxList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=aa10&amp;where=aaa100 = &amp;apos;YWLX&amp;apos; and OUTBZ_YSZL = &amp;apos;12&amp;apos; and YWXT_YHDM is null and YWXT_DRDM is null&amp;quot;),&amp;quot;AAA102&amp;quot;,&amp;quot;AAA103&amp;quot;);//只能选支的业务类型		
+		_this.SetToComboBox(&amp;quot;&amp;quot;,0,2,9,ywlxList);
+		_this.SetCellLock(0,2,9,1);
+		if (jbrq != &amp;quot;&amp;quot;) _this.SetCellText(0,2,4,jbrq.substring(0,4)+&amp;quot;-&amp;quot;+jbrq.substring(4,6)+&amp;quot;-&amp;quot;+jbrq.substring(6,8));
+	
+	}
+	
+	AAE400 = _this.GetCellText(0,2,22);
+	
+	var zje = _this.GetCellText(sheet,6,13);
+	_this.SetCellText(0,6,5,changeMoneyToChinese(zje));
+	_this.SetCellShowText(0,6,13,&amp;quot;￥&amp;quot;+fmoney(zje,2));	
+		
+	_sql.querytods(&amp;quot;getNote&amp;quot;,&amp;quot;bkdjh=&amp;quot;+_this.GetCellText(0,2,22));
+	var jbrnote = _this.XMLDS_GetString(0,&amp;quot;jbrnote&amp;quot;);//经办人
+	var cwshnote1 = _this.XMLDS_GetString(0,&amp;quot;cwshnote1&amp;quot;);//实付审核人意见
+	var cwshnote2 = _this.XMLDS_GetString(0,&amp;quot;cwshnote2&amp;quot;);//复核人意见
+	var note = &amp;quot;&amp;quot;;
+	if(jbrnote != &amp;quot;&amp;quot;) {
+		note += &amp;quot;经办人意见：&amp;quot;+jbrnote+&amp;quot;\r\n&amp;quot;;
+	}
+	if(cwshnote1 != &amp;quot;&amp;quot;) {
+		note += &amp;quot;实付审核人意见：&amp;quot;+cwshnote1+&amp;quot;\r\n&amp;quot;;
+	}
+	if(cwshnote2 != &amp;quot;&amp;quot;) {
+		note += &amp;quot;财务主管复核人意见：&amp;quot;+cwshnote2+&amp;quot;\r\n&amp;quot;;
+	}
+	_this.SetCellText(0,8,21,note);
+	
+	
+	//隐藏列
+	for (var c=14;c&amp;lt;=20;c++) {
+		_this.SetColVisible(sheet,c,-1);
+	}
+	_this.SetColVisible(sheet,24,-1);
+	_this.SetColVisible(sheet,25,-1);
+	_this.SetColVisible(sheet,26,-1);
+	_this.SetColVisible(sheet,27,-1);
+	
+	_thisOnRunCellFocusChange(sheet,-1,-1,0,0);
+
+}
+
+function changeMoneyToChinese( money )
+{
+	var cnNums = new Array(&amp;quot;零&amp;quot;,&amp;quot;壹&amp;quot;,&amp;quot;贰&amp;quot;,&amp;quot;叁&amp;quot;,&amp;quot;肆&amp;quot;,&amp;quot;伍&amp;quot;,&amp;quot;陆&amp;quot;,&amp;quot;柒&amp;quot;,&amp;quot;捌&amp;quot;,&amp;quot;玖&amp;quot;); //汉字的数字
+	var cnIntRadice = new Array(&amp;quot;&amp;quot;,&amp;quot;拾&amp;quot;,&amp;quot;佰&amp;quot;,&amp;quot;仟&amp;quot;); //基本单位
+	var cnIntUnits = new Array(&amp;quot;&amp;quot;,&amp;quot;万&amp;quot;,&amp;quot;亿&amp;quot;,&amp;quot;兆&amp;quot;); //对应整数部分扩展单位
+	var cnDecUnits = new Array(&amp;quot;角&amp;quot;,&amp;quot;分&amp;quot;,&amp;quot;毫&amp;quot;,&amp;quot;厘&amp;quot;); //对应小数部分单位
+	var cnInteger = &amp;quot;整&amp;quot;; //整数金额时后面跟的字符
+	var cnIntLast = &amp;quot;元&amp;quot;; //整型完以后的单位
+	var maxNum = 999999999999999.9999; //最大处理的数字
+	
+	var IntegerNum; //金额整数部分
+	var DecimalNum; //金额小数部分
+	var ChineseStr=&amp;quot;&amp;quot;; //输出的中文金额字符串
+	var parts; //分离金额后用的数组，预定义
+	
+	if( money == &amp;quot;&amp;quot; ){
+	return &amp;quot;&amp;quot;;
+	}
+	
+	money = parseFloat(money);
+	//alert(money);
+	if( money &amp;gt;= maxNum ){
+	alert(&amp;apos;超出最大处理数字&amp;apos;);
+	return &amp;quot;&amp;quot;;
+	}
+	if( money == 0 ){
+	ChineseStr = cnNums[0]+cnIntLast+cnInteger;
+	//document.getElementById(&amp;quot;show&amp;quot;).value=ChineseStr;
+	return ChineseStr;
+	}
+	money = money.toString(); //转换为字符串
+	if( money.indexOf(&amp;quot;.&amp;quot;) == -1 ){
+	IntegerNum = money;
+	DecimalNum = &amp;apos;&amp;apos;;
+	}else{
+	parts = money.split(&amp;quot;.&amp;quot;);
+	IntegerNum = parts[0];
+	DecimalNum = parts[1].substr(0,4);
+	}
+	if( parseInt(IntegerNum,10) &amp;gt; 0 ){//获取整型部分转换
+	zeroCount = 0;
+	IntLen = IntegerNum.length;
+	for( i=0;i&amp;lt;IntLen;i++ ){
+	n = IntegerNum.substr(i,1);
+	p = IntLen - i - 1;
+	q = p / 4;
+	m = p % 4;
+	if( n == &amp;quot;0&amp;quot; ){
+	zeroCount++;
+	}else{
+	if( zeroCount &amp;gt; 0 ){
+	ChineseStr += cnNums[0];
+	}
+	zeroCount = 0; //归零
+	ChineseStr += cnNums[parseInt(n)]+cnIntRadice[m];
+	}
+	if( m==0 &amp;&amp; zeroCount&amp;lt;4 ){
+	ChineseStr += cnIntUnits[q];
+	}
+	}
+	ChineseStr += cnIntLast;
+	//整型部分处理完毕
+	}
+	if( DecimalNum!= &amp;apos;&amp;apos; ){//小数部分
+	decLen = DecimalNum.length;
+	for( i=0; i&amp;lt;decLen; i++ ){
+	n = DecimalNum.substr(i,1);
+	if(i==0 &amp;&amp; n== &amp;apos;0&amp;apos;) {
+		ChineseStr += &amp;quot;零&amp;quot;;
+	}
+	if( n != &amp;apos;0&amp;apos; ){
+	ChineseStr += cnNums[Number(n)]+cnDecUnits[i];
+	}
+	}
+	}
+	if( ChineseStr == &amp;apos;&amp;apos; ){
+	ChineseStr += cnNums[0]+cnIntLast+cnInteger;
+	}
+	else if( DecimalNum == &amp;apos;&amp;apos; || DecimalNum.length==1){
+	ChineseStr += cnInteger;
+	}
+	return ChineseStr;
+
+}
+
+//转为带,号分隔的格式
+function fmoney(s, n)   
+{   
+   n = n &amp;gt; 0 &amp;&amp; n &amp;lt;= 20 ? n : 2;   
+   s = parseFloat((s + &amp;quot;&amp;quot;).replace(/[^\d\.-]/g, &amp;quot;&amp;quot;)).toFixed(n) + &amp;quot;&amp;quot;;   
+   var l = s.split(&amp;quot;.&amp;quot;)[0].split(&amp;quot;&amp;quot;).reverse(),   
+   r = s.split(&amp;quot;.&amp;quot;)[1];   
+   t = &amp;quot;&amp;quot;;   
+   for(i = 0; i &amp;lt; l.length; i ++ )   
+   {   
+      t += l[i] + ((i + 1) % 3 == 0 &amp;&amp; (i + 1) != l.length ? &amp;quot;,&amp;quot; : &amp;quot;&amp;quot;);   
+   }   
+   return t.split(&amp;quot;&amp;quot;).reverse().join(&amp;quot;&amp;quot;) + &amp;quot;.&amp;quot; + r;   
+} 
+//去除，号金钱格式
+function delcommafy(num){
+
+   if((num+&amp;quot;&amp;quot;).Trim()==&amp;quot;&amp;quot;){
+
+      return&amp;quot;&amp;quot;;
+
+   }
+   num=num.replace(/,/gi,&amp;apos;&amp;apos;);
+   return num;
+
+}
+
+//获取系统号
+function getXtbh2()
+{
+	var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	if (1 * G_ORGID &amp;gt;= 100) return G_ORGID + zth;
+	else if (1 * G_ORGID &amp;gt;= 10) return &amp;quot;0&amp;quot; + G_ORGID + zth;
+	else return &amp;quot;00&amp;quot; + G_ORGID + zth;
+}
+
+
+//显示明细
+function showMX()
+{
+	var zfdjh = _this.GetCellText(0,2,22);
+	//window.open(&amp;quot;show.sp?grdid=RJZ_SFFHDetail&amp;zfdjh=&amp;quot;+zfdjh);
+	window.showModalDialog(&amp;quot;show.sp?grdid=RJZ_SFFHDetail&amp;zfdjh=&amp;quot;+zfdjh,null,&amp;quot;dialogWidth=1000px;dialogHeight=600px&amp;quot;);
+
+}
+
+//打印审批凭证
+function printPZ()
+{
+	var printbz = _this.GetCellText(0,4,25);
+	if (printbz == &amp;quot;1&amp;quot;) {
+		if (!confirm(&amp;quot;该审批凭证已打印过，打印时间：&amp;quot;+_this.GetCellText(0,10,27)+&amp;quot;，打印人：&amp;quot;+_this.GetCellText(0,11,27))) return;
+	}
+	
+	if(G_GUID == &amp;quot;&amp;quot;) {
+		alert(&amp;quot;审批凭证尚未保存，请保存后再打印！&amp;quot;);
+		return;
+	}
+	
+	_this.SetCellShowText(0,14,3,&amp;quot; &amp;quot;);
+	_this.SetCellShowText(0,14,6,&amp;quot; &amp;quot;);
+	_this.SetCellShowText(0,14,10,&amp;quot; &amp;quot;);
+	_this.Print(0,0);
+	_sql.run(&amp;quot;UPPRINT&amp;quot;,&amp;quot;GUID=&amp;quot;+G_GUID+&amp;quot;&amp;USRNAM=&amp;quot;+G_USRNAM);
+}
+
+//保存前设置自定义的参数，可在服务端保存前或保存后获取
+function _thisAddParameterOnbeforesave()
+{
+	_this.AddHttpRequestParam(&amp;quot;djhstr&amp;quot;,objParam.djhstr,0);
+}
+
+//删除单据后
+function _thisOnafterdelete(success)
+{
+	window.close();
+}
+
+
+//保存单据数据后
+function _thisOnbeforesave()
+{
+	var fkyh = _this.GetCellText(0,3,3);
+	var skyh = _this.GetCellText(0,3,11);
+	if (fkyh == &amp;quot;&amp;quot;) {
+		alert(&amp;quot;请选择付款银行！&amp;quot;);
+		return -1;
+	}
+	if (skyh == &amp;quot;&amp;quot;) {
+		alert(&amp;quot;请选择收款银行！&amp;quot;);
+		return -1;
+	}
+	return &amp;quot;&amp;quot;;
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (row &amp;gt;= _this.GetMainCellRangeRow1(sheet) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(sheet)) {
+		if (xzlx == &amp;quot;&amp;quot;) {
+			alert(&amp;quot;请先选择转出银行账户信息!&amp;quot;);
+			_this.SetCellText(sheet,row,col,oldvalue);
+			return;
+		}
+		var zje = _this.GetCellText(sheet,6,13);
+		_this.SetCellText(0,6,5,changeMoneyToChinese(zje));
+		_this.SetCellShowText(0,6,13,&amp;quot;￥&amp;quot;+fmoney(zje,2));
+		
+		if (col == 6) { //拨款期限
+			var bfqx = newvalue.split(&amp;quot;-&amp;quot;);
+			if (bfqx.length == 1) {
+				_this.SetCellText(sheet,row,16,bfqx[0]);
+				_this.SetCellText(sheet,row,17,bfqx[0]);
+			}
+			else {
+				_this.SetCellText(sheet,row,16,bfqx[0]);
+				_this.SetCellText(sheet,row,17,bfqx[1]);
+			}
+		}
+		if(col == 9) {
+	            	   if (!LogicalValue(newvalue,&amp;apos;integer&amp;apos;)) {
+	            	     	 alert(&amp;quot;输入人数格式不正确&amp;quot;);
+	            	     	 _this.SetCellText(sheet,row,col,oldvalue);
+	            	     	 return;
+	            	   }    			
+		}
+            if(col == 11) {
+            	   if (!LogicalValue(newvalue,&amp;apos;number&amp;apos;)) {
+            	     	 alert(&amp;quot;输入金额格式不正确&amp;quot;);
+            	     	 _this.SetCellText(sheet,row,col,oldvalue);
+            	     	 return;
+            	   }  	              		
+            }	   		
+	}
+	else if (row == 2 &amp;&amp; col == 4) {
+		var rq = _this.GetCellText(sheet,2,4);
+		var jbrq = rq.replace(/-/g,&amp;quot;&amp;quot;);
+		_this.SetCellText(sheet,7,27,jbrq);
+	}
+	
+}
+
+//选择转出银行
+function mvOutBank()
+{
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CFG_BKDYHB&amp;action=sel&amp;sbbz=1&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=1000px;dialogHeight=600px&amp;quot;);
+	if (retVal != &amp;quot;&amp;quot; &amp;&amp; retVal != &amp;quot;undefined&amp;quot; &amp;&amp; retVal != undefined) {
+		var yhinfo = retVal.split(&amp;quot;~&amp;quot;);
+		xzlx = yhinfo[4];
+		_this.SetCellText(0,9,27,xzlx);
+		_this.SetCellText(0,3,3,yhinfo[2]);
+		_this.SetCellText(0,4,3,yhinfo[3]);
+		_this.SetCellText(0,5,3,yhinfo[1]);
+		//转出银行只能是社保银行
+		_this.SetCellText(0,12,25,yhinfo[5]);
+		alert(yhinfo[5]);
+		
+	}
+}
+
+//选择转入银行
+function mvInBank()
+{
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CFG_BKDYHB&amp;action=sel&amp;sbbz=1&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=1000px;dialogHeight=600px&amp;quot;);
+	if (retVal != &amp;quot;&amp;quot; &amp;&amp; retVal != &amp;quot;undefined&amp;quot; &amp;&amp; retVal != undefined) {
+		var yhinfo = retVal.split(&amp;quot;~&amp;quot;);
+		_this.SetCellText(0,3,11,yhinfo[2]);
+		_this.SetCellText(0,4,11,yhinfo[3]);
+		_this.SetCellText(0,5,11,yhinfo[1]);
+		_this.SetCellText(0,13,25,yhinfo[5]);
+	}
+}
+
+//鼠标左键点击
+function _thisOnMouseDClick(sheet,row,col)
+{
+	//选择款项
+	if (sheet == 0 &amp;&amp; col == 1 &amp;&amp; row &amp;gt;= _this.GetMainCellRangeRow1(0) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(0)) {
+		if (xzlx == &amp;quot;&amp;quot;) {
+			alert(&amp;quot;请先选择转出银行账户信息!&amp;quot;);
+			return;
+		}
+
+		var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=SEL_RJZKX&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=800px;dialogHeight=600px&amp;quot;);
+		if (retVal != &amp;quot;&amp;quot; &amp;&amp; retVal != &amp;quot;undefined&amp;quot; &amp;&amp; retVal != undefined) {
+			var kxinfo = retVal.split(&amp;quot;~&amp;quot;);
+			_this.SetCellText(0,row,1,kxinfo[2]);
+			_this.SetCellText(0,row,2,kxinfo[1]);
+			_this.SetCellText(0,row,15,kxinfo[0]);
+			
+			_this.SetCellText(sheet,row,14,xzlx);
+			_this.SetCellText(0,row,18,row - 7);
+			_this.SetCellText(sheet,row,19,&amp;quot;1&amp;quot;);
+			_this.SetCellText(sheet,row,20,AAE400);
+
+		}
+	}
+}
+
+//增加拨付项目
+function addItem()
+{
+	_this.AppendRow(0,_this.GetMainCellRangeRow2(0));
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+//单据保存前
+function fos_beforesave(eaContext)
+//var eaContext=new pub.EAContext();
+{
+	var db = eaContext.getEADatabase();
+	var thisorgid = eaContext.getOrgid();
+	var thisaccid = eaContext.getAccid();
+	var zth = thisaccid.substring(thisaccid.indexOf(thisorgid)+1);
+	var hdrxml = eaContext.getXmlhdr();
+	var hdrds = new pub.EAXmlDS(hdrxml);
+	var zy = hdrds.getStringAt(0,&amp;quot;JBRNOTE&amp;quot;);
+	if(zy == &amp;quot;&amp;quot;) {
+		throw new Exception(&amp;quot;保存失败，摘要不能为空&amp;quot;);		
+	}
+	//更新AC95表的AAE400拨款单号
+	var dtlxml = eaContext.getXmldtl();
+	var dtlds = new pub.EAXmlDS(dtlxml);
+	var num = 0;
+	//检查明细数据
+	for(var row = 0;row&amp;lt;dtlds.getRowCount();row++){
+		var dymc = dtlds.getStringAt(row,&amp;quot;DYMC&amp;quot;);
+		var ssqx = dtlds.getStringAt(row,&amp;quot;SSQX&amp;quot;);
+		var je = dtlds.getStringAt(row,&amp;quot;AAE408&amp;quot;);
+		var rs = dtlds.getStringAt(row,&amp;quot;AAE407&amp;quot;);
+		if(dymc == &amp;quot;&amp;quot; &amp;&amp; ssqx == &amp;quot;&amp;quot; &amp;&amp; je == &amp;quot;&amp;quot; &amp;&amp; rs == &amp;quot;&amp;quot;) {
+			num++;
+		}
+		else {
+			if(dymc == &amp;quot;&amp;quot; || ssqx == &amp;quot;&amp;quot; || je == &amp;quot;&amp;quot;) {
+				throw new Exception(&amp;quot;保存失败，明细数据不完整&amp;quot;);
+			}
+		}
+	}  
+	if(num == dtlds.getRowCount()) {
+		throw new Exception(&amp;quot;保存失败，明细数据不能为空&amp;quot;);
+	}
+}
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >UPPRINT</ID><NAME >更新打印信息</NAME><DATDSC >update aef3 set PRINTMAN=&amp;apos;[%USRNAM]&amp;apos;,PRINTTIME=sysdate,BAE552=&amp;apos;1&amp;apos; where guid=&amp;apos;[%GUID]&amp;apos;</DATDSC><C4 >UPPRINT</C4></ROW>
+<ROW num="1" ><ID >getNote</ID><NAME >查询备注</NAME><DATDSC >select jbrnote,cwshnote1,cwshnote2
+from aef3
+where aae400 = &amp;apos;[%bkdjh]&amp;apos;</DATDSC><C4 ></C4></ROW>
+<ROW num="2" ><ID >DTL2</ID><NAME ></NAME><DATDSC >select AAE400,
+	SEQ,
+	AAE600,
+	AAB001,
+	AAB004,
+	AAE009,
+	AAE010,
+	AAE339,
+	BAE541,
+	BAE511,
+	SENDBANKSTAT,
+	SENDBANKTIME,
+	SENDBANKMAN,
+	CGBZ,
+	RETCODE,
+	RETINFO
+from AEF42
+where formguid=&amp;apos;[%FORMGUID]&amp;apos;	
+order by seq
+	</DATDSC><C4 ></C4></ROW>
+<ROW num="3" ><ID >SEQVAL</ID><NAME ></NAME><DATDSC >select Seq_Aef3_Aae400.Nextval VAL from dual</DATDSC><C4 ></C4></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

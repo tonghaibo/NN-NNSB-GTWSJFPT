@@ -1,0 +1,745 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >REPSUM</MWID><NAME >报表汇总</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >REPSUM.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >doSumReport</ID><NAME >开始汇总</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >GRDBTNDS_1</C10><C11 >delReport</C11><C12 >doReportSum</C12></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var cursel_orgid = &amp;quot;&amp;quot;;
+var cursel_accid = &amp;quot;&amp;quot;; //当前选择的帐套号
+var cursel_replocid = &amp;quot;&amp;quot;; //当前选择的报表位置
+var cursel_repid = &amp;quot;&amp;quot;;
+var subtypList;
+var yyList;
+var accList;
+
+var ZXGFILE1 = &amp;quot;&amp;quot;;
+var ZXGFILE2 = &amp;quot;&amp;quot;;
+var selectCNT = 0;
+var selectBBLX = &amp;quot;&amp;quot;;
+var selectBBYM = &amp;quot;&amp;quot;;
+var selectBBS;
+var intervalProcess;
+
+var zTree;
+// zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
+var setting = {
+	data: {
+		simpleData: {
+			enable: true
+		}
+	},
+	callback: {
+		onClick: zTreeOnClick
+	}
+};
+
+// zTree 的数据属性，深入使用请参考 API 文档（zTreeNode 节点数据详解）
+//var zNodes = [
+//   {name:&amp;quot;test1&amp;quot;, open:true, children:[
+//      {name:&amp;quot;test1_1&amp;quot;,orgid:&amp;quot;1&amp;quot;,accid:&amp;quot;21&amp;quot;}, {name:&amp;quot;test1_2&amp;quot;,orgid:&amp;quot;1&amp;quot;,accid:&amp;quot;21&amp;quot;}]},
+//   {name:&amp;quot;test2&amp;quot;, open:true, children:[
+//      {name:&amp;quot;test2_1&amp;quot;,orgid:&amp;quot;1&amp;quot;,accid:&amp;quot;21&amp;quot;}, {name:&amp;quot;test2_2&amp;quot;,orgid:&amp;quot;1&amp;quot;,accid:&amp;quot;21&amp;quot;}]}
+//   ];
+
+$(document).ready(function(){
+      var zNodes = eval(getReplocNodes());
+      zTree = $.fn.zTree.init($(&amp;quot;#treeReploc&amp;quot;), setting, zNodes);
+      
+      //var node = zTree.getNodeByTId(&amp;quot;treeReploc_0012121&amp;quot;);
+//      var node = zTree.getNodeByParam(&amp;quot;id&amp;quot;,&amp;quot;00121&amp;quot;);
+//      zTree.expandNode(node,true,true,true);
+      //zTree.expandAll(true);
+//zTree.selectNode(zTree.getNodeByParam(&amp;quot;id&amp;quot;,&amp;quot;0012121&amp;quot;));
+                
+});
+
+//点击树节点事件
+function zTreeOnClick(event, treeId, treeNode) 
+{
+	//alert(treeNode.tId + &amp;quot;, &amp;quot; + treeNode.name+&amp;quot;,orgid=&amp;quot;+treeNode.orgid+&amp;quot;,accid=&amp;quot;+treeNode.accid);
+    	var typ = treeNode.typ;
+	var orgid = treeNode.orgid;
+	var accid = treeNode.accid;
+	var replocid = treeNode.replocid;
+	cursel_orgid = orgid;
+	cursel_replocid = replocid;
+
+	if (typ == &amp;quot;ACC&amp;quot;) {
+		cursel_accid = accid;
+		loadReport(accid,cursel_replocid);		
+	}
+
+};
+
+//获取报表位置节点数据
+function getReplocNodes()
+{
+	var nodes = invokeOSFunc(&amp;quot;GetReplocTree&amp;quot;,&amp;quot;thisorgid=&amp;quot;+G_ORGID+&amp;quot;&amp;thisaccid=&amp;quot;+G_ACCID);
+	return nodes;
+}
+
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SplitSheet(0,&amp;quot;H&amp;quot;,&amp;quot;0%&amp;quot;);
+	_this.SplitSheet(1,&amp;quot;H&amp;quot;,&amp;quot;65%&amp;quot;);
+
+//	var treexml = &amp;quot;&amp;lt;报表位置 imageid=\&amp;quot;0\&amp;quot;&amp;gt;&amp;quot;
+//		+ GetOrgList()
+//       		+ &amp;quot;&amp;lt;/报表位置&amp;gt;&amp;quot;;
+//	
+//	_this.SetToTreeCtrl(&amp;quot;Tree_1&amp;quot;,0,-1,-1,treexml);
+//	_this.ExpandAllItem(&amp;quot;Tree_1&amp;quot;);
+	
+	subtypList = _this.CreateListValue();
+	_this.SetListValue(subtypList,&amp;quot;1&amp;quot;,&amp;quot;月报&amp;quot;);
+	_this.SetListValue(subtypList,&amp;quot;2&amp;quot;,&amp;quot;季报&amp;quot;);
+	_this.SetListValue(subtypList,&amp;quot;3&amp;quot;,&amp;quot;预算&amp;quot;);
+	_this.SetListValue(subtypList,&amp;quot;4&amp;quot;,&amp;quot;决算&amp;quot;);
+	
+	_sql.querytods(&amp;quot;ZTQDYM&amp;quot;,&amp;quot;&amp;quot;);
+	var qdym = _this.XMLDS_GetString(0,&amp;quot;QDYM&amp;quot;);
+	yyList  =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_YYYY_MM&amp;where=id&amp;gt;=&amp;apos;&amp;quot;+qdym+&amp;quot;&amp;apos;&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	//yyList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_YYYY_MM&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;, 1,1,2,yyList);
+	_this.SetCellText(1,1,2,G_LOGDAT.substring(0,7));
+	_this.SetToRadioBox(&amp;quot;&amp;quot;,1,0,2,subtypList);
+	_this.SetCellText(1,0,2,&amp;quot;1&amp;quot;);
+	
+	ZXGFILE1 = _this.SaveTempZXGFile(1);
+	ZXGFILE2 = _this.SaveTempZXGFile(2);
+	
+	accList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=ACC&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	
+	
+	cursel_orgid = G_ORGID;
+	cursel_accid = G_ACCID;
+	//loadReport(G_ACCID);
+	
+	_sql.querytods(&amp;quot;REPLOC&amp;quot;,&amp;quot;&amp;quot;);	
+	if (_this.XMLDS_GetRowCount() &amp;gt; 0) {
+		cursel_replocid = _this.XMLDS_GetString(0,&amp;quot;BMBH&amp;quot;);
+	}
+	else {
+		_sql.querytods(&amp;quot;REPLOC2&amp;quot;,&amp;quot;&amp;quot;);
+		cursel_replocid = _this.XMLDS_GetString(0,&amp;quot;BMBH&amp;quot;);
+	}
+	
+	zTree.selectNode(zTree.getNodeByParam(&amp;quot;id&amp;quot;,cursel_replocid));
+	loadReport(cursel_accid,cursel_replocid);
+	
+	
+}
+
+function GetOrgList()
+{
+	var orgxml = invokeOSFunc(&amp;quot;GetReportTree&amp;quot;,&amp;quot;thisorgid=&amp;quot;+G_ORGID);
+	return orgxml;
+}
+
+
+function _thisOnTreeItemClick(id, hItem, tagid, attribe, value)
+{
+	var typ = getXmlAttribute(attribe,&amp;quot;typ&amp;quot;);
+	var orgid = getXmlAttribute(attribe,&amp;quot;orgid&amp;quot;);
+	var accid = getXmlAttribute(attribe,&amp;quot;accid&amp;quot;);
+	var bmbh = getXmlAttribute(attribe,&amp;quot;bmbh&amp;quot;);
+	cursel_orgid = orgid;
+	cursel_replocid = bmbh;
+	
+	try {var nextlevel_itemid=_this.XMLCTL_GetItem(id,hItem,2);if(nextlevel_itemid!=&amp;quot;&amp;quot;)return;} catch ( e ){  return;}//说明该节点已经有数据
+     
+
+	if (typ == &amp;quot;ORG&amp;quot;) {
+		var accxml = invokeOSFunc(&amp;quot;GetAccList&amp;quot;,&amp;quot;thisorgid=&amp;quot;+orgid);
+		_this.XMLCTL_Append(id,accxml,hItem,2);
+	}
+	else if (typ == &amp;quot;ACC&amp;quot;) {
+		cursel_accid = accid;
+		loadReport(accid,bmbh);		
+	}
+      
+  
+}
+
+function getXmlAttribute(attribe,attribename)
+{
+            var loc = attribe.indexOf( attribename+&amp;quot;=\&amp;quot;&amp;quot; );
+            if(loc&amp;lt;0) return &amp;quot;&amp;quot;;
+            var loc1 = attribe.indexOf( &amp;quot;\&amp;quot;&amp;quot; , loc+attribename.length+2);
+            var ret = attribe.substring( loc+attribename.length+2,loc1 ) ;
+            
+            return ret;
+}
+
+function loadReport(accid,bmbh)
+{	
+	if (bmbh == &amp;quot;&amp;quot;) {
+		//alert(&amp;quot;没有找到报表位置信息,请到报表定义-&amp;gt;报表存放位置模块进行定义!&amp;quot;);
+		return;
+	}
+	
+	var subtyp = _this.GetCellText(1,0,2);
+	var yymm = _this.GetCellText(1,1,2);
+	selectBBLX = subtyp;
+	selectBBYM = yymm;
+	
+	if (subtyp == &amp;quot;&amp;quot;) {
+		subtyp = &amp;quot;1&amp;quot;;
+		_this.SetCellText(1,0,2,subtyp);
+	}
+	if (yymm == &amp;quot;&amp;quot;) {
+		yymm = G_LOGDAT.substring(0,7);
+		_this.SetCellText(1,1,2,yymm);
+	}
+	
+	_this.LoadZXGFile(ZXGFILE1,-1,1);
+//	_this.SetToComboBox(&amp;quot;&amp;quot;, 1,1,3,accList);		_this.SetCellText(1,1,3,accid);
+	_this.SetToComboBox(&amp;quot;&amp;quot;, 1,1,2,yyList);		_this.SetCellText(1,1,2,yymm);
+	_this.SetToRadioBox(&amp;quot;&amp;quot;,1,0,2,subtypList);	_this.SetCellText(1,0,2,subtyp);
+	
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+	var xml = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;REPSUBTYPE=&amp;quot;+subtyp+&amp;quot;&amp;YYMM=&amp;quot;+yymm+&amp;quot;&amp;ACCID=&amp;quot;+accid+&amp;quot;&amp;REPLOCID=&amp;quot;+bmbh);
+	_this.SetMainCellRange(1,3,1,17,3);
+	_this.SetXmlDS(1,3,1,17,3,xml);
+	_this.SetToBoolBox(1,2,0);
+	for (var r=3;r&amp;lt;_this.GetRowCount(1);r++) {
+		_this.SetToBoolBox(1,r,0);
+		if (_this.GetCellText(1,r,1) == &amp;quot;&amp;quot;) {
+			_this.SetRowVisible(1,r,-1);
+		}
+		
+		var stat = _this.GetCellText(1,r,1); //decode(nvl(b.stat,&amp;apos;0&amp;apos;),&amp;apos;0&amp;apos;,&amp;apos;未制表&amp;apos;,&amp;apos;1&amp;apos;,&amp;apos;未审核&amp;apos;,&amp;apos;2&amp;apos;,&amp;apos;已审核&amp;apos;)
+		if (stat == &amp;quot;0&amp;quot;) {
+			_this.SetCellColor(1,r,1,255,0,0);
+			_this.SetCellShowText(1,r,1,&amp;quot;未制表&amp;quot;);
+		}
+//		else if (stat == &amp;quot;1&amp;quot;) {
+//			_this.SetCellColor(1,r,1,120,112,110);
+//			_this.SetCellShowText(1,r,1,&amp;quot;未审核&amp;quot;);
+//		}
+//		else if (stat == &amp;quot;2&amp;quot;) {
+//			_this.SetCellColor(1,r,1,0,0,255);
+//			_this.SetCellShowText(1,r,1,&amp;quot;已审核&amp;quot;);
+//		}
+		else {
+			_this.SetCellColor(1,r,1,0,0,255);
+			_this.SetCellShowText(1,r,1,&amp;quot;已制表&amp;quot;);
+		}
+	}
+	loadReportSumDtl(bmbh);
+	
+	_this.AutoFixScreenWidth();
+	
+}
+
+function loadReportSumDtl(bmbh)
+{
+	_this.LoadZXGFile(ZXGFILE2,-1,2);
+	_this.SetAttribe(&amp;quot;SHEET_2&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+	var xml = _sql.query(&amp;quot;SUMDTL&amp;quot;,&amp;quot;BMBH=&amp;quot;+bmbh);
+	_this.SetMainCellRange(2,2,0,9,2);
+	_this.SetXmlDS(2,2,0,9,2,xml);
+
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (sheet == 1) {
+		var mrow = _this.GetMainCellRangeRow1(sheet);
+		if (row &amp;gt;= mrow &amp;&amp; mrow &amp;gt; 1) {
+			if (sheet == 1) {
+				var repid = _this.GetCellText(sheet,row,2);
+				cursel_repid = repid;
+			}
+//			for (var r=mrow;r&amp;lt;_this.GetRowCount(sheet);r++) {
+//				_this.SetCellText(sheet,r,0,&amp;quot;0&amp;quot;);
+//			}
+//			_this.SetCellText(sheet,row,0,&amp;quot;1&amp;quot;);
+		}
+	}
+}
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+	if (sheet == 1) {
+		if (row &amp;lt; 3) return;
+		var stat = _this.GetCellText(sheet,row,1);
+		var repid = _this.GetCellText(sheet,row,2);
+		cursel_repid = repid;
+		var yymm = _this.GetCellText(1,1,2);
+		var repnam = _this.GetCellText(sheet,row,3);	
+		
+		//增加权限控制
+		var author = invokeOSFunc(&amp;quot;GenSumReport&amp;quot;,&amp;quot;&amp;quot;);
+		if (author != 1) {
+			alert(&amp;quot;对不起，你没有该操作权限！&amp;quot;);
+			return;
+		}
+		
+		if (stat &amp;gt; 0) {
+			saveSumReport(cursel_orgid,cursel_accid,cursel_replocid,repid,repnam,yymm);	
+		}
+
+	}
+
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 1) {
+		if (row &amp;lt; 2) {
+			loadReport(cursel_accid,cursel_replocid);
+		}
+		else if (row == 2 &amp;&amp; col == 0) {
+			for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;=_this.GetMainCellRangeRow2(sheet);r++) {
+				_this.SetCellText(sheet,r,0,newvalue);
+				if (newvalue == 1) selectCNT ++;
+				if (newvalue == 0) selectCNT --;
+			}
+		}
+		else if (row &amp;gt; 2) {
+			if (newvalue == 1) selectCNT ++;
+			if (newvalue == 0) selectCNT --;
+		}
+	}
+}
+
+//取得选中行号
+function getSelectRow(sheet)
+{
+	for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;=_this.GetMainCellRangeRow2(sheet);r++) {
+		if (_this.GetCellText(sheet,r,0) == &amp;quot;1&amp;quot;) {
+			return r;
+		}
+	}
+	return -1;
+}
+
+
+//打开报表数据
+function saveSumReport(orgid,accid,replocid,repid,repnam,yymm)
+{
+	//增加权限控制
+	var author = invokeOSFunc(&amp;quot;GenSumReport&amp;quot;,&amp;quot;&amp;quot;);
+	if (author != 1) {
+		alert(&amp;quot;对不起，你没有该操作权限！&amp;quot;);
+		return;
+	}
+	parent.document.frames[&amp;quot;_note&amp;quot;].newmsg(&amp;quot;正在生成 &amp;quot;+yymm+&amp;quot; 汇总报表：&amp;quot;+repid+&amp;quot;-&amp;quot;+repnam);
+	
+	_sql.querytods(&amp;quot;REPINFO&amp;quot;,&amp;quot;REPID=&amp;quot;+repid);
+	var mwid = _this.XMLDS_GetString(0,&amp;quot;MWID&amp;quot;);
+	var guid = invokeOSFunc(&amp;quot;getRepGuid&amp;quot;,&amp;quot;orgid=&amp;quot;+orgid+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;mwid=&amp;quot;+mwid+&amp;quot;&amp;replocid=&amp;quot;+replocid);
+	//删除已有目标报表
+	if (guid != &amp;quot;&amp;quot; &amp;&amp; guid != undefined) {
+		var ret = invokeOSFunc(&amp;quot;DeleteRep&amp;quot;, &amp;quot;mwid=&amp;quot;+mwid+&amp;quot;&amp;orgid=&amp;quot;+orgid+&amp;quot;&amp;accid=&amp;quot;+accid+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;guid=&amp;quot;+guid);
+	}
+
+	guid = (guid == undefined ? &amp;quot;&amp;quot; : guid);
+	var url = &amp;quot;show.sp?grdid=&amp;quot;+mwid+&amp;quot;&amp;guid=&amp;quot;+guid+&amp;quot;&amp;repid=&amp;quot;+repid+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;repnam=&amp;quot;+repnam+&amp;quot;&amp;thisorgid=&amp;quot;+orgid+&amp;quot;&amp;replocid=&amp;quot;+replocid;
+	window.open(url);
+	
+}
+
+//生成汇总报表
+function genSaveRep(orgid,accid,replocid,yymm,arrayObj)
+{
+	for (var j = 0; j &amp;lt; arrayObj.length; j ++) {
+		var repid = arrayObj[j][0];
+		var repname = arrayObj[j][1];
+		//var guid = arrayObj[j][2];
+		//var grdid = arrayObj[j][3];
+	
+		_sql.querytods(&amp;quot;REPINFO&amp;quot;,&amp;quot;REPID=&amp;quot;+repid);
+		var mwid = _this.XMLDS_GetString(0,&amp;quot;MWID&amp;quot;);
+		var guid = invokeOSFunc(&amp;quot;getRepGuid&amp;quot;,&amp;quot;orgid=&amp;quot;+orgid+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;mwid=&amp;quot;+mwid+&amp;quot;&amp;replocid=&amp;quot;+replocid);
+		//删除已有目标报表
+		if (guid != &amp;quot;&amp;quot; &amp;&amp; guid != undefined) {
+			var ret = invokeOSFunc(&amp;quot;DeleteRep&amp;quot;, &amp;quot;mwid=&amp;quot;+mwid+&amp;quot;&amp;orgid=&amp;quot;+orgid+&amp;quot;&amp;accid=&amp;quot;+accid+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;guid=&amp;quot;+guid);
+		}
+	
+		guid = (guid == undefined ? &amp;quot;&amp;quot; : guid);
+		var url = &amp;quot;show.sp?grdid=&amp;quot;+mwid+&amp;quot;&amp;guid=&amp;quot;+guid+&amp;quot;&amp;repid=&amp;quot;+repid+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;repnam=&amp;quot;+ repname+&amp;quot;&amp;thisorgid=&amp;quot;+orgid+&amp;quot;&amp;replocid=&amp;quot;+replocid+&amp;quot;&amp;isSave=true&amp;quot;;
+		
+		var sheetname = repname;
+		if (sheetname.length &amp;gt; 14) sheetname = sheetname.substring(0,11) + &amp;quot;...&amp;quot;;
+			
+		//parent.wnd.addex( guid,accid,repid,yymm,sheetname,url,&amp;quot;&amp;quot; );
+		parent.wnd.addex( guid,accid,repid,yymm,sheetname,url,&amp;quot;正在生成汇总报表...&amp;lt;br&amp;gt;&amp;quot; );
+
+	}
+	
+	intervalProcess = setInterval(&amp;quot;refresh()&amp;quot;,500);
+	
+}
+
+//开始汇总
+function doSumReport()
+{
+	//增加权限控制
+	var author = invokeOSFunc(&amp;quot;GenSumReport&amp;quot;,&amp;quot;&amp;quot;);
+	if (author != 1) {
+		alert(&amp;quot;对不起，你没有该操作权限！&amp;quot;);
+		return;
+	}
+	
+//	var repid = cursel_repid;
+//	var yymm = _this.GetCellText(1,1,2);
+//	var repnam = _this.GetCellText(1,_this.GetCurrentRow(1),3);	
+//	if (repid == &amp;quot;&amp;quot;) {
+//		alert(&amp;quot;请先选择汇总报表！&amp;quot;);
+//		return;
+//	}
+//	if (!confirm(&amp;quot;生成 &amp;quot;+yymm+&amp;quot; 汇总报表：&amp;quot;+repnam+&amp;quot;，是否继续？&amp;quot;)) return;		
+//	saveSumReport(cursel_orgid,cursel_accid,cursel_replocid,repid,repnam,yymm);	
+	
+	var doAction = &amp;quot;&amp;quot;;
+	var doResult = &amp;quot;&amp;quot;;
+	var str = &amp;quot;&amp;quot;;
+	var arrayObj = new Array();
+	
+	var sheet = 1;
+	var yymm = _this.GetCellText(1,1,2);
+	if (!confirm(&amp;quot;生成 &amp;quot;+yymm+&amp;quot; 汇总报表，是否继续？&amp;quot;)) return;	
+	for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;=_this.GetMainCellRangeRow2(sheet);r++) {
+		var flg = _this.GetCellText(sheet,r,0);
+		var stat = _this.GetCellText(sheet,r,1);
+		var repid = _this.GetCellText(sheet,r,2);
+		var repname = _this.GetCellText(sheet,r,3);
+		if (flg == &amp;quot;1&amp;quot; &amp;&amp; repid != &amp;quot;&amp;quot;) {
+			var arr = new Array([5]);	//repid，repname，guid
+			//saveSumReport(cursel_orgid,cursel_accid,cursel_replocid,repid,repnam,yymm);	
+			
+			if (selectCNT == 1 &amp;&amp; stat != 0) {
+				if ( confirm(repname +&amp;quot;  数据已经生成，是否覆盖？&amp;quot;) ) {
+					str += repname+&amp;quot; 已制作， 重新生成！\n&amp;quot;;
+				} else {
+					str += repname+&amp;quot; 已制作， 不生成！\n&amp;quot;;
+					continue;
+				}
+			}
+			else {
+				if (doAction != 1  &amp;&amp; stat != 0) {
+					var tips = repname +&amp;quot;  数据已经生成，是否覆盖？&amp;quot;;
+					var param = window.showModalDialog(&amp;quot;show.sp?grdid=RepCreateParam&amp;tips=&amp;quot;+tips,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=400px;dialogHeight=200px;&amp;quot;);
+					try { 
+						doAction = param.doall;
+						doResult = param.result;
+						if (param.result == 1) {
+							str += repname+&amp;quot; 已制作， 重新生成！\n&amp;quot;;
+						}
+						if (param.result == 0) {
+							str += repname+&amp;quot; 已制作， 不生成！\n&amp;quot;;
+							continue;
+						}
+					}catch (e) {
+						break;
+					}
+				}
+				if (doAction == 1  &amp;&amp; stat != 0) {
+					if (doResult == 1) {
+						str += repname+&amp;quot; 已制作， 重新生成！\n&amp;quot;;
+					}
+					if (doResult == 0) {
+						str += repname+&amp;quot; 已制作， 不生成！\n&amp;quot;;
+						continue;
+					}
+				}
+			}
+			
+			arr[0] = repid;
+			arr[1] = repname;
+			arr[2] = &amp;quot;&amp;quot;;//guid;
+			arr[3] = &amp;quot;&amp;quot;;//grdid;
+			arr[4] = 0; //status
+			arrayObj.push(arr);
+				
+		}
+	} //end for
+
+	parent.document.frames[&amp;quot;_note&amp;quot;].newmsg(str);
+	if (arrayObj.length != 0) {
+		selectBBS = arrayObj;
+		//saveSumReport(cursel_orgid,cursel_accid,cursel_replocid,repid,repnam,yymm);	
+		genSaveRep(cursel_orgid,cursel_accid,cursel_replocid,yymm,arrayObj);
+	}
+
+}
+
+
+function refresh()
+{
+	_this.SetCellText(1,0,2,selectBBLX);
+	_this.SetCellText(1,1,2,selectBBYM);
+	loadReport(cursel_accid,cursel_replocid); //刷新报表状态列表
+	var str = &amp;quot;&amp;quot;;
+	var yymm = _this.GetCellText(1,1,2);
+		
+	var endstat = 1;
+	for (var i=0; i&amp;lt;selectBBS.length; i++) {
+		var repid = selectBBS[i][0];
+		var stat = selectBBS[i][4];
+		if (stat == 0) endstat = 0;
+		for (var r=_this.GetMainCellRangeRow1(1);r&amp;lt;=_this.GetMainCellRangeRow2(1);r++) {
+			var zt = _this.GetCellText(1,r,1); //状态
+			var repname = _this.GetCellText(1,r,3);
+			if (repid == _this.GetCellText(1,r,2)) {
+				_this.SetCellText(1,r,0,1);
+				selectBBS[i][4] = zt;
+				var str2 = &amp;quot;&amp;quot;;
+				if (zt == 0) {
+					str2 = &amp;quot;正在生成[&amp;quot;+repid+&amp;quot;]&amp;quot; + repname + &amp;quot;(&amp;quot; + yymm + &amp;quot;)...\n&amp;quot;;
+				}
+				else if (zt == 1) {
+					str2 = &amp;quot;[&amp;quot;+repid+&amp;quot;]&amp;quot; + repname + &amp;quot;(&amp;quot; + yymm + &amp;quot;)生成完成\n&amp;quot;;
+				}
+				str += str2;
+				parent.document.frames[&amp;quot;_note&amp;quot;].newmsg(str2);
+			}
+		}
+	}
+	parent.document.frames[&amp;quot;_note&amp;quot;].welcomemsg = str;
+	parent.document.frames[&amp;quot;_note&amp;quot;].newmsg(str);
+	
+	if (endstat == 1) {
+		clearInterval(intervalProcess);
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+//在Head区引用额外脚本
+function addHeaderHtml(mwobj,request,sb,usrinfo)
+//var sb = new java.lang.StringBuffer();var usrinfo = new web.EAUserinfo();
+{
+	sb.append(&amp;quot;&amp;lt;link rel=\&amp;quot;stylesheet\&amp;quot; href=\&amp;quot;xlsgrid/zTree/css/zTreeStyle/zTreeStyle.css\&amp;quot; type=\&amp;quot;text/css\&amp;quot;&amp;gt;\n&amp;quot;); 
+	sb.append(&amp;quot;&amp;lt;script type=\&amp;quot;text/javascript\&amp;quot; src=\&amp;quot;xlsgrid/zTree/js/jquery-1.4.4.min.js\&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;\n&amp;quot;); 
+	sb.append(&amp;quot;&amp;lt;script type=\&amp;quot;text/javascript\&amp;quot; src=\&amp;quot;xlsgrid/zTree/js/jquery.ztree.core.js\&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;\n&amp;quot;); 
+
+	sb.append(&amp;quot;&amp;lt;table border=\&amp;quot;0\&amp;quot; width=\&amp;quot;100%\&amp;quot; cellspacing=\&amp;quot;0\&amp;quot; cellpadding=\&amp;quot;0\&amp;quot; height=\&amp;quot;100%\&amp;quot;&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td bgcolor=\&amp;quot;#EFEFEF\&amp;quot; align=center valign=middle&amp;gt;&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;table border=\&amp;quot;0\&amp;quot; width=\&amp;quot;100%\&amp;quot; height=\&amp;quot;100%\&amp;quot; cellspacing=\&amp;quot;0\&amp;quot; cellpadding=\&amp;quot;0\&amp;quot; &amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td  style=\&amp;quot;border: 1px solid #EEEEEE\&amp;quot;&amp;gt;	&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;table border=\&amp;quot;0\&amp;quot; width=\&amp;quot;100%\&amp;quot; height=\&amp;quot;100%\&amp;quot; cellspacing=\&amp;quot;0\&amp;quot; cellpadding=\&amp;quot;0\&amp;quot; &amp;gt;&amp;lt;tr&amp;gt;&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;td width=30% height=100% style=\&amp;quot;border:solid 1px gray\&amp;quot; valign=top;&amp;gt;&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;div style=\&amp;quot;overflow-y:scroll;height:100%;\&amp;quot;&amp;gt;&amp;lt;ul id=\&amp;quot;treeReploc\&amp;quot; class=\&amp;quot;ztree\&amp;quot;&amp;gt;&amp;lt;/ul&amp;gt;&amp;lt;/div&amp;gt;&amp;lt;/td&amp;gt;&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;td width=70% height=100% style=\&amp;quot;border:solid 1px gray\&amp;quot;  valign=top;&amp;gt;&amp;lt;div style=\&amp;quot;overflow-y:scroll;height:100%;\&amp;quot;&amp;gt;&amp;quot;);
+
+}
+
+//添加额外html
+//afterBodyHtml事件后触发，已过时，建议用afterBodyHtml事件进行处理
+function addBottomHtml(mwobj,request,sb,usrinfo)
+//var mwobj=grd.EAMidWareBase();var request=javax.servlet.http.HttpServletRequest();var sb = new java.lang.StringBuffer();var usrinfo = new web.EAUserinfo();
+{
+	sb.append(&amp;quot;&amp;lt;/div&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;&amp;quot;);	
+	sb.append(&amp;quot;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;&amp;quot;);
+
+}
+
+//获取报表位置节点数据
+function GetReplocTree()
+{
+	var pubFunc = new SBCW_PUBFUNC();    
+	var json = pubFunc.getReplocTreeJson(thisorgid,thisaccid,1);
+	return json;
+}
+
+
+//组织树
+function GetReportTree()
+{
+	var xml = &amp;quot;&amp;quot;;
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var sql = &amp;quot;select * from oa_reploc where (sjbmbh is null or sjbmbh=&amp;apos;&amp;apos;) &amp;quot;;		
+		if (thisorgid != &amp;quot;1&amp;quot;) {
+			sql += &amp;quot; and org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;&amp;quot;;
+		}
+		sql += &amp;quot; order by bmbh, sjbmbh&amp;quot;;	
+		
+		var ds = db.QuerySQL(sql);
+		for(var i=0;i&amp;lt;ds.getRowCount();i++) {
+			var bmbh = ds.getStringAt(i,&amp;quot;BMBH&amp;quot;);
+			var bmmc = ds.getStringAt(i,&amp;quot;BMMC&amp;quot;);
+			var orgid = ds.getStringAt(i,&amp;quot;ORG&amp;quot;);
+			var accid = ds.getStringAt(i,&amp;quot;ACC&amp;quot;);
+			var zth = ds.getStringAt(i,&amp;quot;ZTH&amp;quot;);
+			var typ = (zth == &amp;quot;&amp;quot; ? &amp;quot;ORG&amp;quot; : &amp;quot;ACC&amp;quot;);
+			var nodexml = getAccXml(db,bmbh);
+			if (nodexml != &amp;quot;&amp;quot;) {
+				xml += &amp;quot;&amp;lt;&amp;quot;+bmbh +&amp;quot;.&amp;quot;+bmmc+&amp;quot; imageid=\&amp;quot;0\&amp;quot; orgid=\&amp;quot;&amp;quot;+orgid+&amp;quot;\&amp;quot; accid=\&amp;quot;&amp;quot;+accid+&amp;quot;\&amp;quot; bmbh=\&amp;quot;&amp;quot;+bmbh+&amp;quot;\&amp;quot; typ=\&amp;quot;&amp;quot;+typ+&amp;quot;\&amp;quot;&amp;gt;&amp;quot;;	
+				xml += nodexml;
+				xml += &amp;quot;&amp;lt;/&amp;quot;+bmbh+&amp;quot;.&amp;quot;+bmmc+&amp;quot;&amp;gt;&amp;quot;;
+			}
+  		}
+  		
+	        return xml;
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();	
+	}       
+}
+
+function GetAccList()
+{
+	var xml = &amp;quot;&amp;quot;;
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		xml = getAccXml(db,thisorgid);  		
+	        return xml;
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();	
+	}       
+
+}
+
+function getAccXml(db,bmbh)
+{
+	var xml = &amp;quot;&amp;quot;;
+	var imageid = 0;
+	var sql = &amp;quot;select * from oa_reploc where sjbmbh=&amp;apos;&amp;quot;+bmbh+&amp;quot;&amp;apos; and hzbz!=&amp;apos;2&amp;apos; 
+		and ( bmbh in (  select  sjbmbh  from oa_reploc where  hzbz = 1 or hzbz = 0 ) or hzbz = 1  ) order by bmbh&amp;quot;;
+	var ds = db.QuerySQL(sql);
+	for(var i=0;i&amp;lt;ds.getRowCount();i++) {
+		var bmbh = ds.getStringAt(i,&amp;quot;BMBH&amp;quot;);
+		var bmmc = ds.getStringAt(i,&amp;quot;BMMC&amp;quot;);
+		var orgid = ds.getStringAt(i,&amp;quot;ORG&amp;quot;);
+		var accid = ds.getStringAt(i,&amp;quot;ACC&amp;quot;);
+		var zth = ds.getStringAt(i,&amp;quot;ZTH&amp;quot;);
+		var typ = (zth == &amp;quot;&amp;quot; ? &amp;quot;ORG&amp;quot; : &amp;quot;ACC&amp;quot;);
+		imageid = (zth == &amp;quot;&amp;quot; ? &amp;quot;0&amp;quot; : &amp;quot;1&amp;quot;);
+		xml += &amp;quot;&amp;lt;&amp;quot;+bmbh +&amp;quot;.&amp;quot;+bmmc+&amp;quot; imageid=\&amp;quot;&amp;quot;+imageid+&amp;quot;\&amp;quot; orgid=\&amp;quot;&amp;quot;+orgid+&amp;quot;\&amp;quot; accid=\&amp;quot;&amp;quot;+accid+&amp;quot;\&amp;quot; bmbh=\&amp;quot;&amp;quot;+bmbh+&amp;quot;\&amp;quot; typ=\&amp;quot;&amp;quot;+typ+&amp;quot;\&amp;quot;&amp;gt;&amp;quot;;	
+		xml += getAccXml(db,bmbh);
+		xml += &amp;quot;&amp;lt;/&amp;quot;+bmbh+&amp;quot;.&amp;quot;+bmmc+&amp;quot;&amp;gt;&amp;quot;;	
+	}
+	return xml;
+}
+
+
+function getRepGuid()
+{
+	var sql = &amp;quot;&amp;quot;;
+	var eagrdxmldb = new xmldb.EAGRDXmlDB(&amp;quot;SBCW&amp;quot;,mwid);
+	var grdds = eagrdxmldb.getGrdDS();
+	var grdcolds = eagrdxmldb.getGrdColDS();
+	var bilhdrtable = grdds.getStringAt(0,&amp;quot;BILHDRTABLE&amp;quot;);
+	var bildtltable = grdds.getStringAt(0,&amp;quot;BILDTLTABLE&amp;quot;);
+
+	try {
+		//sql = &amp;quot;select * from %s where acc=&amp;apos;%s&amp;apos; and yymm=&amp;apos;%s&amp;apos; and replocid=&amp;apos;%s&amp;apos;&amp;quot;.format([bilhdrtable,accid,yymm,replocid]);
+		sql = &amp;quot;select * from %s where org=&amp;apos;%s&amp;apos; and yymm=&amp;apos;%s&amp;apos; and replocid=&amp;apos;%s&amp;apos;&amp;quot;.format([bilhdrtable,orgid,yymm,replocid]);
+		var ds = pub.EADbTool.QuerySQL(sql);
+		if (ds.getRowCount() &amp;gt; 0)
+			return ds.getStringAt(0,&amp;quot;GUID&amp;quot;);
+		else 
+			return &amp;quot;&amp;quot;;
+	} catch ( e ) {
+		return e.toString();
+	}
+	return &amp;quot;&amp;quot;;
+}
+
+function DeleteRep()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	var eagrdxmldb = new xmldb.EAGRDXmlDB(&amp;quot;SBCW&amp;quot;,mwid);
+	var grdds = eagrdxmldb.getGrdDS();
+	var bilhdrtable = grdds.getStringAt(0,&amp;quot;BILHDRTABLE&amp;quot;);
+	var bildtltable = grdds.getStringAt(0,&amp;quot;BILDTLTABLE&amp;quot;);
+	
+	//return eagrdxmldb.getGrdCelDS().GetXml();
+
+	try {
+		db = new pub.EADatabase();
+		sql = &amp;quot;delete from %s where org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and yymm=&amp;apos;%s&amp;apos; and guid=&amp;apos;%s&amp;apos; and syt=&amp;apos;SBCW&amp;apos;&amp;quot;.format([bilhdrtable,orgid,accid,yymm,guid]);
+		db.ExcecutSQL(sql);
+	    	sql = &amp;quot;delete from %s where org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and formguid=&amp;apos;%s&amp;apos; and syt=&amp;apos;SBCW&amp;apos;&amp;quot;.format([bildtltable,orgid,accid,guid]);
+		db.ExcecutSQL(sql);
+		//删除报表实例
+		sql = &amp;quot;delete from repmodel where guid=&amp;apos;%s&amp;apos;&amp;quot;.format([guid]);
+		db.ExcecutSQL(sql);
+		db.Commit();
+	} catch( e ) {
+		db.Rollback();
+		throw new Exception(e.toString());
+	} finally {
+		if (db != null) db.Close();
+	}
+}
+
+//生成汇总报表权限检查
+function GenSumReport()
+{
+	return &amp;quot;1&amp;quot;;
+}
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select stat,reportid,reportname from (
+select nvl(max(b.stat),&amp;apos;0&amp;apos;) stat,reportid,reportname,a.sortid 
+from fin_repmodel a, v_repmodel b,fin_reporg c
+where a.reporttimetype=&amp;apos;[%REPSUBTYPE]&amp;apos;
+  and a.reportid=b.repid(+)
+  and b.yymm(+)=&amp;apos;[%YYMM]&amp;apos; and b.replocid(+)=&amp;apos;[%REPLOCID]&amp;apos;
+  and a.yszth=(select yszth from cw_ztb where acc=&amp;apos;[%SYS_ACCID]&amp;apos;)
+  and b.acc(+)=&amp;apos;[%SYS_ACCID]&amp;apos; and a.reportid=c.repmodid
+  and c.orgid=&amp;apos;[%SYS_ORGID]&amp;apos;
+  and 100*nvl(c.endyear,&amp;apos;9999&amp;apos;)+1*nvl(c.endmm,&amp;apos;99&amp;apos;)&amp;gt;=1*(substr(&amp;apos;[%YYMM]&amp;apos;,0,4)||substr(&amp;apos;[%YYMM]&amp;apos;,6,2))
+  and 100*a.startyear+a.startmonth&amp;lt;=1*to_char(sysdate,&amp;apos;YYYYMM&amp;apos;)
+  and a.isused=&amp;apos;1&amp;apos;
+group by  reportid,reportname,sortid 
+)
+order by sortid,reportid</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 ></C6><C7 >MAIN</C7><C8 >MAIN</C8><C9 >MAIN</C9><C10 >MAIN</C10><C11 >MAIN</C11><C12 >MAIN</C12><C13 ></C13><C14 >MAIN</C14><C15 >MAIN</C15><C16 >MAIN</C16></ROW>
+<ROW num="1" ><ID >REPINFO</ID><NAME ></NAME><DATDSC >select * from 
+fin_repmodel where reportid=&amp;apos;[%REPID]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 >REPINFO</C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 >REPINFO</C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="2" ><ID >SUMDTL</ID><NAME ></NAME><DATDSC >SELECT a.xh,a.BMBHMX,b.BMMC
+FROM OA_REPLOCMX a, OA_REPLOC b
+WHERE a.BMBHMX=b.BMBH 
+  and a.bmbh=&amp;apos;[%BMBH]&amp;apos;
+ORDER BY a.BMBH,a.XH</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 >REPDATE</C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="3" ><ID >REPLOC</ID><NAME ></NAME><DATDSC >select * from oa_reploc 
+where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and hzbz=&amp;apos;1&amp;apos; 
+order by bmbh</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 >REPLOC</C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="4" ><ID >REPLOC2</ID><NAME ></NAME><DATDSC >select * from oa_reploc 
+where org=&amp;apos;[%SYS_ORGID]&amp;apos; and hzbz=&amp;apos;1&amp;apos; 
+order by bmbh
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="5" ><ID >ZTQDYM</ID><NAME ></NAME><DATDSC >select substr(qdym,0,4)||&amp;apos;-&amp;apos;||substr(qdym,5,6) qdym
+from cw_ztb where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

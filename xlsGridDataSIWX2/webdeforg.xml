@@ -1,0 +1,38 @@
+<?xml version = "1.0" encoding="GBK"?>
+<ROWSET>
+	<ROW>
+		<GUID>18DE5EA92AA8FE989BAE86A083952356</GUID>
+		<站点>localhost</站点>
+		<默认组织号>1</默认组织号>
+		<标题组织号>社保财务</标题组织号>
+		<PRJID>sbcw</PRJID>
+	</ROW>
+	<ROW>
+		<GUID>876E40782F78138E4C1F017F09B3810C</GUID>
+		<站点>127.0.0.1</站点>
+		<默认组织号>1</默认组织号>
+		<标题组织号>社保财务</标题组织号>
+		<PRJID>sbcw</PRJID>
+	</ROW>
+	<ROW>
+		<GUID>20231E374F0D2772E19AF58CFEB0AB76</GUID>
+		<站点>10.176.2.40</站点>
+		<默认组织号>1</默认组织号>
+		<标题组织号>社保财务</标题组织号>
+		<PRJID>sbcw</PRJID>
+	</ROW>
+	<ROW>
+		<GUID>C5267D2E09787B034FD766CA2C1D347C</GUID>
+		<站点>10.176.2.41</站点>
+		<默认组织号>1</默认组织号>
+		<标题组织号>社保财务</标题组织号>
+		<PRJID>sbcw</PRJID>
+	</ROW>
+	<ROW>
+                <GUID>C5267D2E09787B034FD766CA2C1D347D</GUID>
+                <站点>10.176.2.47</站点>
+                <默认组织号>1</默认组织号>
+                <标题组织号>社保财务</标题组织号>
+                <PRJID>sbcw</PRJID>
+        </ROW>
+</ROWSET>

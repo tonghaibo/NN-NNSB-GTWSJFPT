@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >CFG_ACC</MWID><NAME >帐套设置</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CFG_ACC.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >系统维护</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS >xlsgrid/js/dbhelper.js,xlsgrid/js/main.js</EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >reloadAcc</ID><NAME >重载帐套</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >//================================================================// 
+// 函数：thisOnpost_loaddata
+// 说明：调用dbhelper的初始化动作
+// 参数：
+// 返回：
+// 样例：
+// 作者：
+// 创建日期：11/17/05 17:31:52
+// 修改日志：
+//================================================================// 
+function _thisOnpost_loaddata(sheet)
+{
+      setButton();
+       // 构造3个 SQL
+       // 查询用户数据表记录
+       selectSQL = &amp;quot;SELECT GUID,SBH as 所号,ZTH as 帐套号,ZTMC as 帐套名称,ORG,ACC,CWZG as 财务主管,&amp;quot;+
+                   &amp;quot;to_char(JZRQ,&amp;apos;yyyy-mm-dd&amp;apos;) as 建帐日期,QDYM as 启动年月,KMCD1 as \&amp;quot;一级长度\&amp;quot;,KMCD2 as \&amp;quot;二级长度\&amp;quot;,KMCD3 as \&amp;quot;三级长度\&amp;quot;,KMCD4 as \&amp;quot;四级长度\&amp;quot;,KMCD5 as \&amp;quot;五级长度\&amp;quot;,KMCD6 as \&amp;quot;六级长度\&amp;quot;,KMCD7 as \&amp;quot;七级长度\&amp;quot;,KMCD8 as \&amp;quot;八级长度\&amp;quot;,KMCD as 最大长度,&amp;quot;+
+                   &amp;quot;JZRXM as 建帐人,DQYM as 做帐年月,GZCZYM as 工资出账年月,YSZTH as 原始帐套号,YWJKBZ as 业务接口标志,YSZL_SBJGDM as 银社直连社保机构代码 &amp;quot; +
+                   &amp;quot;FROM V_ZTB where org=&amp;apos;&amp;quot;+G_ORGID+&amp;quot;&amp;apos; or org in (select sbh from cw_sbsb start with sbh=&amp;apos;&amp;quot;+G_ORGID+&amp;quot;&amp;apos; connect by prior sbh=slh)&amp;quot;;
+       //新增用户数据表记录
+       insertSQL = &amp;quot;INSERT INTO CW_ZTB( GUID,SBH,ZTH,ZTMC,ORG,ACC,CWZG,JZRQ,QDYM,KMCD1,KMCD2,KMCD3,KMCD4,KMCD5,KMCD6,KMCD7,KMCD8,KMCD,JZRXM,DQYM,GZCZYM,YSZTH,YWJKBZ,YSZL_SBJGDM&amp;quot;+
+                   &amp;quot; ) values( sys_guid(),?,?,?,?,?,?,to_date(?,&amp;apos;yyyy-mm-dd&amp;apos;),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? )&amp;quot;;
+       // 修改用户数据表记录
+       updateSQL = &amp;quot;UPDATE CW_ZTB SET SBH=?,ZTH=?,ZTMC=?,ORG=?,ACC=?,CWZG=?,JZRQ=to_date(?,&amp;apos;yyyy-mm-dd&amp;apos;),QDYM=?,KMCD1=?,KMCD2=?,KMCD3=?,KMCD4=?,KMCD5=?,KMCD6=?,KMCD7=?, &amp;quot;+
+                   &amp;quot;KMCD8=?,KMCD=?,JZRXM=?,DQYM=?,GZCZYM=?,YSZTH=?,YWJKBZ=?,YSZL_SBJGDM=? &amp;quot;+
+                   &amp;quot;WHERE GUID=?&amp;quot;;     
+       //删除用户数据表记录
+       deleteSQL = &amp;quot;DELETE CW_ZTB WHERE GUID=? &amp;quot;;
+            
+       parent.orderby = &amp;quot;sbh,to_number(ZTH)&amp;quot;;
+       _dbhelper.SetSelectSQL( selectSQL );
+       _dbhelper.SetInsertSQL( insertSQL );
+       _dbhelper.SetUpdateSQL( updateSQL );
+       _dbhelper.SetDeleteSQL( deleteSQL );
+       
+       // 载入数据并放在相应的位置
+       _dbhelper.Load(1,1,2,2);
+
+	 
+	      
+}
+
+function initpage(){
+
+}
+
+function f_dbeditbeforesave(){
+
+}
+
+// 基础数据维护界面：设置列的属性
+function f_dbeditpostloaddata()
+{
+	_this.SetColVisible(sheet,6,-1);
+	_this.SetColVisible(sheet,7,-1);
+	
+	var sbsList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_ORG&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	
+	for (var row=_this.GetMainCellRangeRow1(sheet);row&amp;lt;=_this.GetMainCellRangeRow2(sheet);row++) {
+		_this.SetToDateBox(&amp;quot;&amp;quot;,sheet,row,9,_this.GetCellText(sheet,row,9));
+		_this.SetToComboBox(&amp;quot;&amp;quot;,sheet,row,3,sbsList);
+	}
+	_this.SetColWidth(sheet,3,200);
+}
+
+function f_dbeditcellmodify(sheet,row,col,oldvalue,newvalue)
+{
+	if (col == 3 || col == 4) {
+		_this.SetCellText(sheet,row,6,_this.GetCellText(sheet,row,3)); //组织号
+		_this.SetCellText(sheet,row,7,_this.GetCellText(sheet,row,3)+_this.GetCellText(sheet,row,4)); //ACC
+	}
+	else if (col &amp;gt;= 10 &amp;&amp; col &amp;lt;= 19) { //判断录入格式
+		if (!IsNumber(newvalue)) {
+			alert(&amp;quot;输入格式不正确！请录入数字！&amp;quot;);
+			_this.SetCellText(sheet,row,col,oldvalue);
+		}
+		if (col == 10) { //日期格式
+			if (newvalue.length != 6) {
+				alert(&amp;quot;输入格式不正确！正确格式为:201606&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+
+			}
+			else if (!CheckDate(newvalue)) {
+				alert(&amp;quot;输入格式不正确！正确格式为:201606&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+			}
+		}
+	}
+}
+
+function f_dbeditafternewrow(sheet,row)
+{
+	_this.SetCellText(sheet,row,3,G_ORGID); //所号
+	_this.SetCellText(sheet,row,6,G_ORGID); //组织号
+	_sql.querytods(&amp;quot;GETNEWZTH&amp;quot;);
+	var newzth = _this.XMLDS_GetString(0,&amp;quot;ZTH&amp;quot;);
+	_this.SetCellText(sheet,row,4,newzth);
+	_this.SetCellText(sheet,row,7,G_ORGID+newzth); //ACC
+	_this.SetCellText(sheet,row,9,G_LOGDAT); //建帐日期
+	_this.SetCellText(sheet,row,20,G_USRNAM); //建帐人
+}
+
+//保存后调用
+//function f_dbeditbeforesave()
+function f_dbeditaftersave()
+{
+	var ret = &amp;quot;&amp;quot;;
+	var sheet=0;
+	var rows = _this.GetRowCount(sheet) - 1;
+	var cols = _this.GetColCount(sheet) - 1;
+	var xml = _this.GetXml(sheet,1,1,rows,cols);
+	var param = new Object();
+	param.xml = xml;
+//	param.thisorgid = G_ORGID;
+//	param.thisaccid = G_ACCID;
+	param.thissytid = G_SYTID;
+	try{
+		ret = invokeOSFuncExt(&amp;quot;reloadAcc&amp;quot;,param);
+		var result = &amp;quot;&amp;lt;?xml version = \&amp;quot;1.0\&amp;quot; encoding=\&amp;quot;GBK\&amp;quot;?&amp;gt;&amp;lt;ROWSET&amp;gt;&amp;lt;ROW num=\&amp;quot;0\&amp;quot; &amp;gt;&amp;lt;TOPIC&amp;gt;&amp;quot;+ret+&amp;quot;&amp;lt;/TOPIC&amp;gt;&amp;lt;/ROW&amp;gt;&amp;lt;/ROWSET&amp;gt;&amp;quot;;
+		_this.XMLDS_Reset();
+	  	_this.XMLDS_Parse(result);
+	}
+	catch(e){
+		alert(&amp;quot;保存出错&amp;quot;+e.toString());
+	}
+	//return &amp;quot;&amp;quot;;
+
+}
+
+
+//重载帐套定义
+function reloadAcc()
+{
+	openWindow(&amp;quot;xlsgrid/jsp/design/reload.jsp?hiddenField=1&amp;sytid=&amp;mwid=&amp;usrid=xlsgrid&amp;userpwd=gxsb5879003&amp;quot;);  
+}
+
+
+function CheckDate(strDate)
+{
+	strDate = strDate + &amp;quot;01&amp;quot;;
+     var reg=/^(\d{4})(\d{2})(\d{2})$/;
+     if(!reg.test(strDate)){
+         //alert(&amp;quot;日期格式不正确!\n正确格式为:201606&amp;quot;);
+         return false;
+      }
+      var year=strDate.substring(0,4);
+      var month=strDate.substring(4,6);
+      var date=strDate.substring(6,8);
+      if(!checkYear(year)){return false;}
+      if(!checkMonth(month)){return false;}
+      if(!checkDate(year,month,date)){return false;}
+      return true;
+  }
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var xmldb = new JavaPackage(&amp;quot;com.xlsgrid.net.xmldb&amp;quot;);
+var basePath = pub.EAOption.dynaDataRoot;
+var accxmlfile =&amp;quot;xmldb/accdb/accdb.xml&amp;quot;;
+var orgxmlfile =&amp;quot;xmldb/orgdb/orgdb.xml&amp;quot;;
+
+function saveDs2File(path,xml,rowsetid,rowid)
+{
+	var s1=&amp;quot;&amp;lt;&amp;quot;+rowsetid+&amp;quot;&amp;gt;&amp;quot;;
+	var s2=&amp;quot;&amp;lt;/&amp;quot;+rowsetid+&amp;quot;&amp;gt;&amp;quot;;
+	var r1=&amp;quot;&amp;lt;&amp;quot;+rowid+&amp;quot;&amp;gt;&amp;quot;;
+	var r2=&amp;quot;&amp;lt;/&amp;quot;+rowid+&amp;quot;&amp;gt;&amp;quot;;
+	var r3=&amp;quot;&amp;lt;&amp;quot;+rowid+&amp;quot; &amp;quot;;
+  
+	xml = pub.EAFunc.Replace(xml,&amp;quot;&amp;lt;ROWSET&amp;gt;&amp;quot;,s1);
+	xml = pub.EAFunc.Replace(xml,&amp;quot;&amp;lt;/ROWSET&amp;gt;&amp;quot;,s2);
+	xml = pub.EAFunc.Replace(xml,&amp;quot;&amp;lt;ROW&amp;gt;&amp;quot;,r1);
+	xml = pub.EAFunc.Replace(xml,&amp;quot;&amp;lt;/ROW&amp;gt;&amp;quot;,r2);
+	xml = pub.EAFunc.Replace(xml,&amp;quot;&amp;lt;ROW &amp;quot;,r3);
+	xml = pub.EAFunc.regexReplace(xml,&amp;quot;&amp;lt;&amp;quot;+rowid+&amp;quot; .*&amp;quot;,&amp;quot;&amp;lt;&amp;quot;+rowid+&amp;quot;&amp;gt;&amp;quot;);
+	
+
+	pub.EAFunc.WriteToFile(path,xml);
+}
+
+//保存后重载帐套信息
+function reloadAcc()
+{
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		
+		var ds = new pub.EAXmlDS(xml);
+		var xdb = new xmldb.EAXmlDB();
+		var accds = xdb.getXmlDbDs(&amp;quot;accdb&amp;quot;);
+		var thisorgid = &amp;quot;&amp;quot;;
+		var thisaccid = &amp;quot;&amp;quot;;
+//		db.Rollback();
+//		return &amp;quot;aaa&amp;quot;;	
+		for(var i = 0;i&amp;lt;ds.getRowCount();i++) {
+			thisorgid = ds.getStringAt(i,&amp;quot;ORG&amp;quot;);
+			thisaccid = ds.getStringAt(i,&amp;quot;ACC&amp;quot;);
+			if(thisorgid  != &amp;quot;&amp;quot;) {
+				var sql = &amp;quot;delete from mwacc where syt=&amp;apos;&amp;quot;+thissytid+&amp;quot;&amp;apos; 
+						and (org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; or org in (select sbh from cw_sbsb start with sbh=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; connect by prior sbh=slh))&amp;quot;;
+				db.ExcecutSQL(sql);
+				sql = &amp;quot;insert into mwacc(id,name,shtnam,lognam,syt,org,phrase,startdate)
+					select sbh||zth id,ztmc name,ztmc shtnam,ztmc lognam,&amp;apos;&amp;quot;+thissytid+&amp;quot;&amp;apos; syt,sbh org,&amp;apos;SI&amp;apos; phrase,to_char(jzrq,&amp;apos;yyyy-mm-dd&amp;apos;) startdate
+					from cw_ztb
+					where sbh||zth not in (select id from mwacc where syt=&amp;apos;&amp;quot;+thissytid+&amp;quot;&amp;apos; and org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;)
+						and (org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; or org in (select sbh from cw_sbsb start with sbh=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; connect by prior sbh=slh))&amp;quot;;
+				db.ExcecutSQL(sql);		
+			}					
+		}
+		
+		db.Commit();
+		
+		return &amp;quot;帐套信息成功！请点击【重载帐套】按钮使配置生效！！！&amp;quot;;
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >GETNEWZTH</ID><NAME ></NAME><DATDSC >select nvl(max(to_number(zth)),1)+1 zth 
+from cw_ztb 
+where sbh=&amp;apos;[%SYS_ORGID]&amp;apos;</DATDSC><C4 >GETNEWZTH</C4></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

@@ -1,0 +1,263 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >YSZL_PAYFLOW2</MWID><NAME >社银直连-支付审批流程</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >YSZL_PAYFLOW2.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	loadSvgForm();
+	_this.ShowTabBar(1);
+	_this.SetSheetName(0,&amp;quot;审批流程&amp;quot;);
+	_this.SetSheetName(1,&amp;quot;说明&amp;quot;);
+}
+
+
+function loadSvgForm() 
+{
+	//window_onresize();
+	
+	_this.SetRedraw(0);
+	
+	var str = invokeOSFunc(&amp;quot;getSvg&amp;quot;,&amp;quot;syt=&amp;quot;+G_SYTID);
+	_this.SetToSVGForm(&amp;quot;_flow&amp;quot;,0,-1,-1,str);  
+  
+  	setTimeout(&amp;quot;WF_refresh()&amp;quot;,1000);
+  	
+	if ( _this.GetReleaseNo()&amp;gt;&amp;quot;5.15&amp;quot;) {
+		_this.ShowToolbar(0);
+	}
+	
+	try{_this.SVGFORM_FixScreenWidth(&amp;quot;_flow&amp;quot;); }catch(e){}
+   	
+   	_this.SetRedraw(1);
+
+}
+
+function WF_refresh()//mysytid,mymwid,mystat,mycnt
+{
+	try {
+		var xml=_this.SVGFORM_GetObjectList(&amp;quot;_flow&amp;quot;,0);
+		var loc1=0;
+		while(1&amp;gt;0){
+			loc1= xml.indexOf(&amp;quot;&amp;lt;ROW &amp;quot;,loc1+1);
+			if ( loc1&amp;lt; 0 ) break;
+			var loc2= xml.indexOf(&amp;quot;&amp;gt;&amp;quot;,loc1+3);
+			var attr= xml.substring(loc1+4,loc2-1) ;
+			
+			var id =getXmlAttribute0(attr,&amp;quot;id&amp;quot;);// _this.XMLDS_GetString(i,&amp;quot;O_ID&amp;quot;);
+			var url =getXmlAttribute0(attr,&amp;quot;url&amp;quot;);//_this.XMLDS_GetString(i,&amp;quot;O_URL&amp;quot;);
+			if ( url!=&amp;quot;&amp;quot; ){
+				var xmlgrdid= getXmlAttribute(url,&amp;quot;grdid&amp;quot;);
+				var xmlprocessid= getXmlAttribute(url,&amp;quot;stat&amp;quot;);				
+				var processid=xmlprocessid.split(&amp;quot;,&amp;quot;);////支持processid=,
+				var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+				var cnt = invokeOSFunc(&amp;quot;getProcessCnt&amp;quot;,&amp;quot;processid=&amp;quot;+xmlprocessid+&amp;quot;&amp;logdat=&amp;quot;+G_LOGDAT+&amp;quot;&amp;zth=&amp;quot;+zth);;
+				//判读是否没有权限
+//				var usrrol = invokeOSFunc(&amp;quot;getUsrRol&amp;quot;,&amp;quot;mwid=&amp;quot;+xmlgrdid);
+//				if (usrrol == 0) {
+//					_this.XMLCTL_SetAttribe(&amp;quot;_flow&amp;quot;,id,&amp;quot;url&amp;quot;,&amp;quot;&amp;quot; );
+//					_this.XMLCTL_SetAttribe(&amp;quot;_flow&amp;quot;,id,&amp;quot;fill&amp;quot;,&amp;quot;#EEEEEE&amp;quot; );
+//					_this.XMLCTL_SetAttribe(&amp;quot;_flow&amp;quot;,id,&amp;quot;font-color&amp;quot;,&amp;quot;#000000&amp;quot; );
+//				}
+				
+				if ( cnt &amp;gt;0 ) {
+					var x=_this.XMLCTL_GetAttribe(&amp;quot;_flow&amp;quot;,id,&amp;quot;x&amp;quot;);
+					var y=_this.XMLCTL_GetAttribe(&amp;quot;_flow&amp;quot;,id,&amp;quot;y&amp;quot;);
+					var svg=&amp;quot;&amp;lt;circle id=\&amp;quot;circle_&amp;quot;+id+&amp;quot;\&amp;quot; cx=\&amp;quot;&amp;quot;+x+&amp;quot;\&amp;quot; cy=\&amp;quot;&amp;quot;+y+&amp;quot;\&amp;quot; r=\&amp;quot;9\&amp;quot; stroke=\&amp;quot;#FFFFFF\&amp;quot; fill=\&amp;quot;#FF0000\&amp;quot; fillto=\&amp;quot;\&amp;quot; opacity=\&amp;quot;1\&amp;quot; stroke-dash=\&amp;quot;1\&amp;quot; 属性=\&amp;quot;\&amp;quot; font-color=\&amp;quot;#FFFFFF\&amp;quot; stroke-width=\&amp;quot;1\&amp;quot;&amp;gt;4&amp;lt;/circle&amp;gt;&amp;lt;rect id=\&amp;quot;rect_&amp;quot;+id+&amp;quot;\&amp;quot; x=\&amp;quot;&amp;quot;+(x-11)+&amp;quot;\&amp;quot; y=\&amp;quot;&amp;quot;+(y-11)+&amp;quot;\&amp;quot; width=\&amp;quot;22\&amp;quot; height=\&amp;quot;22\&amp;quot; round=\&amp;quot;\&amp;quot; stroke=\&amp;quot;#FFFFFF\&amp;quot; fill=\&amp;quot;#FFFFFF\&amp;quot; fillto=\&amp;quot;\&amp;quot; opacity=\&amp;quot;0\&amp;quot; stroke-dash=\&amp;quot;1\&amp;quot; font-size=\&amp;quot;14\&amp;quot; font-color=\&amp;quot;#FFFFFF\&amp;quot; stroke-width=\&amp;quot;0\&amp;quot; 属性=\&amp;quot;Arial\&amp;quot;&amp;gt;&amp;quot;+cnt+&amp;quot;&amp;lt;/rect&amp;gt;&amp;quot;;
+					_this.SVGFORM_AppendXml(&amp;quot;_flow&amp;quot;,svg,&amp;quot;&amp;quot;);
+	
+					_this.XMLCTL_SetValue(&amp;quot;_flow&amp;quot;,id,_this.XMLCTL_GetValue(&amp;quot;_flow&amp;quot;,id));
+					_this.XMLCTL_SetAttribe(&amp;quot;_flow&amp;quot;,id,&amp;quot;font-color&amp;quot;,&amp;quot;#EC0000&amp;quot; );
+				}
+				
+			}
+	
+		}	
+	}
+	catch(e) {
+		alert(e.toString());
+	}
+}
+
+
+function getXmlAttribute(attribe,attribename)
+{	
+            var loc = attribe.indexOf( attribename+&amp;quot;=&amp;quot; );
+            var loc1 = attribe.indexOf( &amp;quot;&amp;&amp;quot; ,  loc+attribename.length+1);
+            var ret=&amp;quot;&amp;quot;;
+            if(loc1&amp;lt;0)
+            	ret = attribe.substring( loc+attribename.length+1 ) ;
+            else 
+            	ret = attribe.substring( loc+attribename.length+1,loc1  ) ;
+            return ret;
+}
+// id=&amp;quot;101&amp;quot;
+function getXmlAttribute0(attribe,attribename)
+{
+
+            var loc = attribe.indexOf( attribename+&amp;quot;=\&amp;quot;&amp;quot; );
+            var loc1 = attribe.indexOf( &amp;quot;\&amp;quot;&amp;quot; ,  loc+attribename.length+2);
+            var ret = attribe.substring( loc+attribename.length+2,loc1  ) ;
+            return ret;
+
+}
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var xmldb = new JavaPackage(&amp;quot;com.xlsgrid.net.xmldb&amp;quot;);
+var web = new JavaPackage(&amp;quot;com.xlsgrid.net.web&amp;quot;);
+
+function getSvg() 
+{
+	var svg = &amp;quot;&amp;quot;;
+	var filename = &amp;quot;SI_PAYFLOW3.flow&amp;quot;;
+	var filename0 = filename;
+	
+	var usrinfo = web.EASession.GetLoginInfo(request);
+	
+	try {
+  		filename = pub.EAOption.dynaDataRoot+ pub.EAOption.get(&amp;quot;xmldb.file.grddb&amp;quot;)+&amp;quot;/syt&amp;quot; + syt + &amp;quot;/&amp;quot; + filename0;
+  		svg = pub.EAFunc.readFile(filename);
+  	}
+	catch(Exception eee ){
+	  	// 递归，找上级组织节点是否有这个文件
+	  	var bExit = true;
+	  	var mysyt = syt;
+	  	while (bExit ) {
+	  		var _sytdb = new xmldb.EASYTXmlDB(mysyt);
+	  		mysyt = _sytdb.parentSyt;
+	      	if(mysyt.length()==0 ){
+	      		break;
+	      	}
+	      	else {
+	      		try{
+				  	filename = EAOption.dynaDataRoot+ EAOption.get(&amp;quot;xmldb.file.grddb&amp;quot;)+&amp;quot;/syt&amp;quot; + mysyt + &amp;quot;/&amp;quot; + filename0;
+				  	svg =EAFunc.readFile(filename);
+				  	bExit=false;
+				  
+				}
+				catch(Exception eeee ){
+	      			bExit = true;	
+	      			
+	      		}
+	      	}
+	      }
+  	}
+ 
+//	svg = pub.EAFunc.Replace(svg,&amp;quot;\&amp;quot;&amp;quot;, &amp;quot;\\\&amp;quot;&amp;quot;);
+//	svg = pub.EAFunc.Replace(svg,&amp;quot;\r\n&amp;quot;, &amp;quot;\\r\\n&amp;quot;);
+//	svg = pub.EAFunc.Replace(svg,&amp;quot;\r&amp;quot;, &amp;quot;\\r&amp;quot;);
+//	svg = pub.EAFunc.Replace(svg,&amp;quot;\n&amp;quot;, &amp;quot;\\n&amp;quot;);
+//	svg = web.EASession.GetSysValue(svg ,usrinfo );//替代那些[%SYS_]
+	
+	return svg;
+}
+
+//获取操作人员对应权限
+function getUsrRol()
+{
+	var usrrol = &amp;quot;&amp;quot;;
+	var usrinfo = web.EASession.GetLoginInfo(request);
+	var usrid = usrinfo.getUsrid();
+//	var sql = &amp;quot;select a.* from rol a,usrrol b where b.usr=(select guid from usr where id=&amp;apos;zjy&amp;apos; and org=&amp;apos;1&amp;apos;) and a.guid=b.rol&amp;quot;;
+//	var rolds = pub.EADbTool.QuerySQL(sql);
+//	for (var i=0;i&amp;lt;rolds.getRowCount();i++) {
+//		if (usrrol == &amp;quot;&amp;quot;) usrrol = rolds.getStringAt(i,&amp;quot;ID&amp;quot;);
+//		else usrrol += &amp;quot;,&amp;quot; + rolds.getStringAt(i,&amp;quot;ID&amp;quot;);
+//	}
+
+	var sql = &amp;quot;select count(*) cnt from sysmod a,rolmod b
+		where a.guid=b.sysmod and b.rol in (
+		      select a.guid from rol a,usrrol b 
+		  where b.usr=(select guid from usr where id=&amp;apos;&amp;quot;+usrid+&amp;quot;&amp;apos; and org=&amp;apos;1&amp;apos;) and a.guid=b.rol
+		) and a.grdid=&amp;apos;&amp;quot;+mwid+&amp;quot;&amp;apos;&amp;quot;;
+	usrrol = pub.EADbTool.GetSQL(sql);
+	return usrrol;
+	
+}
+
+//获取流程操作的提示数显示
+function getProcessCnt()
+{
+	var usrinfo = web.EASession.GetLoginInfo(request);
+	var orgid = usrinfo.getOrgid();
+	var accid = usrinfo.getAccid();
+	var sytid = usrinfo.getSytid();
+
+	var sql = &amp;quot;&amp;quot;;
+	var cnt = 0;
+
+	//业务生成
+	if (processid == &amp;quot;0&amp;quot;) {
+		sql = &amp;quot;select count(*) from (select distinct  BAE415,BAE074,BAE419,AAE140,BAC005
+		      from ac95 a where aaa027=(select tcqbm from cw_sbsb where org=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos;) and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; 
+		      and aae208=to_char(to_date(&amp;apos;&amp;quot;+logdat+&amp;quot;&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;),&amp;apos;yyyymm&amp;apos;) 
+		      and aae400 is null and zfbz=&amp;apos;0&amp;apos; and BAE421 is null
+		      and bac005 in (select id from v_cw_ywlx where szzt=&amp;apos;2&amp;apos;)
+		      and exists (select 1 from cw_dfdsb_yszl b where sbh = &amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and b.yszl_yhjgdm is not null and b.yhbm = a.bae419)
+		      )&amp;quot;;
+		cnt = pub.EADbTool.GetSQL(sql);
+		if (cnt &amp;lt;= 0) cnt = 0;
+	}
+	//待作废审批单
+	else if (processid == &amp;quot;-1&amp;quot;) {
+		sql = &amp;quot;select count(*) from aef3 where org=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+accid+&amp;quot;&amp;apos; and substr(aae401,0,6)=to_char(to_date(&amp;apos;&amp;quot;+logdat+&amp;quot;&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;),&amp;apos;yyyymm&amp;apos;) 
+		  and AAE338=&amp;apos;22&amp;apos; and nvl(BAE553,&amp;apos; &amp;apos;)&amp;lt;&amp;gt;&amp;apos;1&amp;apos; and (stat=&amp;apos;1&amp;apos; or stat = &amp;apos;20&amp;apos;)&amp;quot;;
+		cnt = pub.EADbTool.GetSQL(sql);
+		if (cnt &amp;lt;= 0) cnt = 0;
+	}
+	//打印
+	else if (processid == &amp;quot;4&amp;quot;) {
+		sql = &amp;quot;select count(*) from aef3 where org=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+accid+&amp;quot;&amp;apos; and substr(aae401,0,6)=to_char(to_date(&amp;apos;&amp;quot;+logdat+&amp;quot;&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;),&amp;apos;yyyymm&amp;apos;) 
+		       and (stat=&amp;apos;31&amp;apos; or stat=&amp;apos;21&amp;apos;) and AAE338=&amp;apos;22&amp;apos; and nvl(BAE553,&amp;apos;0&amp;apos;)=&amp;apos;0&amp;apos; and nvl(BAE552,&amp;apos;0&amp;apos;)=&amp;apos;0&amp;apos;&amp;quot;;
+		cnt = pub.EADbTool.GetSQL(sql);
+		if (cnt &amp;lt;= 0) cnt = 0;
+	}
+	//财务审核
+	else if (processid == &amp;quot;21&amp;quot;) {
+		sql = &amp;quot;select count(*) from aef3 where org=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+accid+&amp;quot;&amp;apos; and substr(aae401,0,6)=to_char(to_date(&amp;apos;&amp;quot;+logdat+&amp;quot;&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;),&amp;apos;yyyymm&amp;apos;)
+		        and (stat=&amp;apos;1&amp;apos; or stat = &amp;apos;30&amp;apos;) and AAE338=&amp;apos;22&amp;apos; and nvl(BAE553,&amp;apos;0&amp;apos;)=&amp;apos;0&amp;apos;&amp;quot;;
+		cnt = pub.EADbTool.GetSQL(sql);
+		if (cnt &amp;lt;= 0) cnt = 0;
+	}
+	//财务主管审核
+	else if (processid == &amp;quot;31&amp;quot;) {
+		sql = &amp;quot;select count(*) from aef3 where org=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+accid+&amp;quot;&amp;apos; and substr(aae401,0,6)=to_char(to_date(&amp;apos;&amp;quot;+logdat+&amp;quot;&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;),&amp;apos;yyyymm&amp;apos;)
+		       and stat=&amp;apos;21&amp;apos; and AAE338=&amp;apos;22&amp;apos; and nvl(BAE553,&amp;apos;0&amp;apos;)=&amp;apos;0&amp;apos;&amp;quot;;
+		cnt = pub.EADbTool.GetSQL(sql);
+		if (cnt &amp;lt;= 0) cnt = 0;
+	}
+	//发送银行
+	else if (processid == &amp;quot;5&amp;quot;) {
+		sql = &amp;quot;select count(*) from aef3 where org=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+accid+&amp;quot;&amp;apos; and substr(aae401,0,6)=to_char(to_date(&amp;apos;&amp;quot;+logdat+&amp;quot;&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;),&amp;apos;yyyymm&amp;apos;)
+		  and nvl(BAE552,&amp;apos;0&amp;apos;)=&amp;apos;1&amp;apos; and stat=&amp;apos;31&amp;apos; and AAE338=&amp;apos;22&amp;apos; and nvl(BAE553,&amp;apos;0&amp;apos;)=&amp;apos;0&amp;apos;&amp;quot;;
+		cnt = pub.EADbTool.GetSQL(sql);
+		if (cnt &amp;lt;= 0) cnt = 0;
+	}
+	else if (processid == &amp;quot;6&amp;quot;) {
+		sql = &amp;quot;select count(*) from aef3 where org=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+accid+&amp;quot;&amp;apos; and substr(aae401,0,8)=to_char(to_date(&amp;apos;&amp;quot;+logdat+&amp;quot;&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;),&amp;apos;yyyymmdd&amp;apos;)
+		  and nvl(BAE552,&amp;apos;0&amp;apos;)=&amp;apos;1&amp;apos; and stat=&amp;apos;5&amp;apos; and AAE338=&amp;apos;22&amp;apos; and nvl(BAE553,&amp;apos;0&amp;apos;)=&amp;apos;0&amp;apos;&amp;quot;;
+		cnt = pub.EADbTool.GetSQL(sql);
+		if (cnt &amp;lt;= 0) cnt = 0;
+	}
+	
+	return cnt;
+}
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

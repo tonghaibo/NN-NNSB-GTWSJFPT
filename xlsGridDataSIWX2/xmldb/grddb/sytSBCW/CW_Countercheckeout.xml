@@ -1,0 +1,393 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >CW_Countercheckeout</MWID><NAME >财务反结账操作</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CW_Countercheckeout.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >9</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >//20161227 lwq development model=&amp;gt;20170209 finish
+
+var role = &amp;quot;&amp;quot;;     //当前操作员角色ID
+var rolename = &amp;quot;&amp;quot;; //当前操作员角色
+var authorize = 0; //授权等级
+var signid = 1;    //用于判断授权等级
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SetCellText(0,3,2,G_USRNAM+&amp;quot;(&amp;quot;+G_USRID+&amp;quot;)&amp;quot;); //当前操作人
+	_this.SetCellText(0,3,5,G_LOGDAT);                 //操作时间
+	_this.SetCellText(0,5,2,G_ORGNAM);                 //所编号
+	_this.SetCellText(0,7,2,G_ACCNAM);                 //账套号	
+	
+	//无法修改所编号和账套号
+	_this.SetCellLock(0,5,2,1);
+	_this.SetCellLock(0,7,2,1);
+
+	var yyList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_YYYY&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	var mmList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_MM&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);	
+	var yy = G_LOGDAT.substring(0,4);
+	var mm = 1*(G_LOGDAT.substring(5,7));
+	
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,9,2,yyList );
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,9,4,mmList );	
+	_this.SetCellText(0,9,2,yy); //年
+	_this.SetCellText(0,9,4,mm); //月
+	
+	_this.LoadScene(sheet,10);
+	_this.SplitSheet(0,&amp;quot;H&amp;quot;,&amp;quot;65%&amp;quot;);
+	
+	//取角色
+	var results = getRole(G_USRID,G_ORGID);
+	role = results.split(&amp;quot;@&amp;quot;)[0];
+	var names = results.split(&amp;quot;@&amp;quot;)[1];
+	var nums = &amp;quot;&amp;quot;;
+	var output = &amp;quot;&amp;quot;;
+	if(role.indexOf(&amp;quot;03&amp;quot;) &amp;gt;= 0){       //财务主管
+		nums = role.indexOf(&amp;quot;03&amp;quot;)/3;
+		rolename = names.split(&amp;quot;,&amp;quot;)[nums];
+		output = &amp;quot;拥有&amp;quot;+rolename+&amp;quot;的&amp;quot;;
+	}else if(role.indexOf(&amp;quot;05&amp;quot;) &amp;gt;= 0){ //出纳人员
+		nums = role.indexOf(&amp;quot;05&amp;quot;)/3;
+		rolename = names.split(&amp;quot;,&amp;quot;)[nums];
+		output = &amp;quot;拥有&amp;quot;+rolename+&amp;quot;的&amp;quot;;
+	}else if(role.indexOf(&amp;quot;06&amp;quot;) &amp;gt;= 0){ //会计人员
+		nums = role.indexOf(&amp;quot;06&amp;quot;)/3;
+		rolename = names.split(&amp;quot;,&amp;quot;)[nums];
+		output = &amp;quot;拥有&amp;quot;+rolename+&amp;quot;的&amp;quot;;
+	}else { //其他角色人员
+		rolename = names.split(&amp;quot;,&amp;quot;)[0];
+		if(rolename == &amp;quot;&amp;quot; || rolename == null || rolename == &amp;quot;undefined&amp;quot;) output = &amp;quot;没有任何&amp;quot;;
+		output = &amp;quot;拥有&amp;quot;+rolename+&amp;quot;的&amp;quot;;
+	}
+	
+	var myDate = new Date();
+	_this.SetCellText(1,2,1,myDate.toLocaleString()+&amp;quot;当前操作人是&amp;quot;+G_USRNAM+&amp;quot;(&amp;quot;+G_USRID+&amp;quot;)，&amp;quot;+output+&amp;quot;权限！&amp;quot;);	
+}
+
+//获取角色
+function getRole(id,org)
+{
+	_sql.querytods(&amp;quot;User_role&amp;quot;,&amp;quot;id=&amp;quot;+id+&amp;quot;&amp;org=&amp;quot;+org);
+	var arrayrole = new Array();
+	var arrayname = new Array();
+	for( var i = 0; i&amp;lt; _this.XMLDS_GetRowCount();i++){
+		var roleid = _this.XMLDS_GetString(i,&amp;apos;id&amp;apos;);
+		var rolenames = _this.XMLDS_GetString(i,&amp;apos;name&amp;apos;);
+		arrayrole.push(roleid);	
+		arrayname.push(rolenames);	
+	}
+	return arrayrole+&amp;quot;@&amp;quot;+arrayname;
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if(sheet == 0 &amp;&amp; row == 9 &amp;&amp; col == 2){
+		_this.SetCellText(0,9,2,newvalue);
+	}
+	if(sheet == 0 &amp;&amp; row == 9 &amp;&amp; col == 4 ){
+		_this.SetCellText(0,9,4,newvalue);
+	}
+	if(sheet == 0 &amp;&amp; row == 11 &amp;&amp; col == 2 ){
+		_this.SetCellText(0,11,2,newvalue);
+	}
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if (id == &amp;quot;确认反结账&amp;quot;) {
+		var jbr = _this.GetCellText(0,3,2);  //第一次操作员/经办人
+		var sbh = _this.GetCellText(0,5,2);  //反结账--社保
+		var zth = _this.GetCellText(0,7,2);  //反结账--账套
+		var yyyy = _this.GetCellText(0,9,2); //反结账--年
+		var mm = _this.GetCellText(0,9,4);   //反结账--月
+		var reasons = _this.GetCellText(0,11,2);   //反结账原因
+		if (reasons != &amp;quot;&amp;quot;) {
+			if (!confirm(&amp;quot;反结账：\n所编号：&amp;quot;+sbh+&amp;quot;\n账套号：&amp;quot;+zth+&amp;quot;\n取消&amp;quot;+yyyy+&amp;quot;年&amp;quot;+mm+&amp;quot;月的记账审核标志\n原因为：&amp;quot;+reasons+&amp;quot;\n是否继续?&amp;quot;)) return;
+			//写入操作日志
+			insertLog(G_USRID,G_USRNAM,G_ACCID,G_ORGID,&amp;quot;经办人操作&amp;quot;,&amp;quot;经办人&amp;quot;+jbr+&amp;quot;，操作反结账，拥有&amp;quot;+rolename+&amp;quot;的权限，反结账[所编号：&amp;quot;+sbh+&amp;quot;，账套号：&amp;quot;+zth+&amp;quot;，取消&amp;quot;+yyyy+&amp;quot;年&amp;quot;+mm+&amp;quot;月的记账审核标志,原因为：&amp;quot;+reasons+&amp;quot;]&amp;quot;);
+			
+			//当前登陆人是会计、出纳or财务主管，使用二级授权；当前登陆人不是会计、出纳or财务主管，使用三级授权
+			if(rolename == &amp;quot;财务主管&amp;quot;){ 
+				alert(&amp;quot;当前操作员是&amp;quot;+rolename+&amp;quot;，需要使用二级授权！\n即还需要一位用户是出纳人员和另一位用户是会计人员进行操作授权，注意：这两位用户是不同操作员并有本模块操作权限！&amp;quot;);
+				authorize = 2;
+				role = &amp;quot;03&amp;quot;;
+			}else if (rolename == &amp;quot;出纳人员&amp;quot;){
+				alert(&amp;quot;当前操作员是&amp;quot;+rolename+&amp;quot;，需要使用二级授权！\n即还需要一位用户是会计人员和另一位用户是财务主管进行操作授权，注意：这两位用户是不同操作员并有本模块操作权限！&amp;quot;);
+				authorize = 2;
+				role = &amp;quot;05&amp;quot;;
+			}else if (rolename == &amp;quot;会计人员&amp;quot;){
+				alert(&amp;quot;当前操作员是&amp;quot;+rolename+&amp;quot;，需要使用二级授权！\n即还需要一位用户是出纳人员和另一位用户是财务主管进行操作授权，注意：这两位用户是不同操作员并有本模块操作权限！&amp;quot;);
+				authorize = 2;
+				role = &amp;quot;06&amp;quot;;
+			}else{
+				alert(&amp;quot;当前操作员是&amp;quot;+rolename+&amp;quot;，没有出纳、会计或者财务主管角色的权限，需要使用三级授权！\n即需要一位用户是出纳人员、一位用户是会计人员和另一位用户是财务主管进行操作授权，注意：这三位用户是不同操作员并有本模块操作权限！&amp;quot;);
+				authorize = 3;
+			}	
+						
+			//一级授权
+			var retValue1 = &amp;quot;&amp;quot;;
+			if(role == &amp;quot;03&amp;quot; || role == &amp;quot;05&amp;quot; || role == &amp;quot;06&amp;quot;){
+				retValue1 = currentWarrant(&amp;quot;一级&amp;quot;,jbr,G_USRID,role+&amp;quot;@ &amp;quot;);
+			}else{
+				retValue1 = currentWarrant(&amp;quot;一级&amp;quot;,jbr,G_USRID,&amp;quot;&amp;quot;);
+			}
+			var vals = retValue1.split(&amp;quot;@&amp;quot;)[0];  //取授权操作成败标志
+			var vals1 = retValue1.split(&amp;quot;@&amp;quot;)[1]; //取一级授权用户ID
+			var vals2 = retValue1.split(&amp;quot;@&amp;quot;)[2]; //取一级授权用户角色ID	
+			if(signid &amp;lt;= authorize &amp;&amp; vals == &amp;quot;1&amp;quot;){
+				//二级授权
+				var retValue2 = &amp;quot;&amp;quot;;
+				if(role == &amp;quot;03&amp;quot; || role == &amp;quot;05&amp;quot; || role == &amp;quot;06&amp;quot;){
+					retValue2 = currentWarrant(&amp;quot;二级&amp;quot;,jbr,vals1,role+&amp;quot;@&amp;quot;+vals2);	
+				}else{
+					retValue2 = currentWarrant(&amp;quot;二级&amp;quot;,jbr,vals1,vals2+&amp;quot;@ &amp;quot;);
+				}
+				var vals3 = retValue2.split(&amp;quot;@&amp;quot;)[0]; //取授权操作成败标志
+				var vals4 = retValue2.split(&amp;quot;@&amp;quot;)[1]; //取二级授权用户ID	
+				var vals5 = retValue2.split(&amp;quot;@&amp;quot;)[2]; //取二级授权用户角色ID
+				if(signid == authorize &amp;&amp; vals3 == &amp;quot;1&amp;quot;){
+					//三级授权
+					var retValue3 = currentWarrant(&amp;quot;三级&amp;quot;,jbr,vals4,vals2+&amp;quot;@&amp;quot;+vals5);	
+					if(retValue3.split(&amp;quot;@&amp;quot;)[0] != &amp;quot;1&amp;quot;){
+						alert(&amp;quot;三级授权已取消/失败！&amp;quot;);
+						//重新刷新界面
+						window.location.reload();
+					}
+				}else if(vals3 == &amp;quot;-1&amp;quot; || vals3 == &amp;quot;0&amp;quot;){
+					alert(&amp;quot;二级授权已取消/失败！&amp;quot;);
+					//重新刷新界面
+					window.location.reload();
+				}
+			}else {
+				alert(&amp;quot;一级授权已取消/失败！&amp;quot;);
+				//重新刷新界面
+				window.location.reload();
+			}	
+			
+			//反结账
+			if((signid-1) == authorize){
+				if(mm&amp;gt;0 &amp;&amp; mm&amp;lt;10) mm = &amp;quot;0&amp;quot;+mm;		
+				var p_yymm = yyyy+mm;	
+				var ret = invokeOSFunc(&amp;quot;CCheckout&amp;quot;,&amp;quot;p_sbh=&amp;quot;+G_ORGID+&amp;quot;&amp;p_zth=&amp;quot;+G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;)+&amp;quot;&amp;p_yymm=&amp;quot;+p_yymm+&amp;quot;&amp;p_jbr=&amp;quot;+G_USRNAM+&amp;quot;&amp;p_fhr=&amp;quot;+G_USRNAM);	
+				if(ret == &amp;quot;反结账成功&amp;quot;){
+					insertLog(G_USRID,G_USRNAM,G_ACCID,G_ORGID,ret,&amp;quot;授权操作已完成，反结账成功！&amp;quot;);  //写入操作日志
+					alert(ret);
+					//重新刷新界面
+					window.location.reload();
+				}else{
+					var myDate = new Date();
+					_this.SetCellText(1,2,1, _this.GetCellText(1,2,1)+&amp;quot;\n&amp;quot;+myDate.toLocaleString()+&amp;quot;页面出错：&amp;quot;+ret+&amp;quot;，请联系系统开发商！&amp;quot;);
+					alert(&amp;quot;页面出错：&amp;quot;+ret+&amp;quot;，请联系系统开发商！&amp;quot;);
+					//重新刷新界面
+					window.location.reload();
+				}		
+			}//if((signid-1) == authorize)	
+		} else {
+			alert(&amp;quot;反结账原因不能为空！&amp;quot;);
+			_this.SetCellFocus(0,11,2); //焦点定位到输入框
+		}//if (reasons != &amp;quot;&amp;quot;)
+	}//if (id == &amp;quot;确认反结账&amp;quot;)
+}
+
+//授权
+function currentWarrant(grade,jbr,COperators,roleid){
+	var usrid = &amp;quot;&amp;quot;;
+	var usrname = &amp;quot;&amp;quot;;
+	var Val = &amp;quot;&amp;quot;;
+	
+	var myDate = new Date();	
+	_this.SetCellText(1,2,1, _this.GetCellText(1,2,1)+&amp;quot;\n&amp;quot;+myDate.toLocaleString()+&amp;quot;正在&amp;quot;+grade+&amp;quot;授权,请稍候...&amp;quot;);
+	
+	var obj = new Object();
+	obj.notes = grade+&amp;quot;授权......&amp;quot; ; //提示当前授权等级
+	obj.org = G_ORGID ;              //反结账的所编号
+	obj.COperators = COperators ;    //上一次授权人
+	obj.roleid = roleid ;            //上次授权人角色
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_CCLoginAuthorization&amp;quot;,obj,&amp;quot;dialogWidth=400px;dialogHeight=280px&amp;quot;);
+	
+	if(retVal == &amp;quot;&amp;quot; || retVal == &amp;quot;undefined&amp;quot; || retVal == null){
+		alert(jbr+&amp;quot;，您取消了&amp;quot;+grade+&amp;quot;授权！&amp;quot;);
+		insertLog(G_USRID,G_USRNAM,G_ACCID,G_ORGID,grade+&amp;quot;授权操作&amp;quot;,grade+&amp;quot;授权操作未完成！&amp;quot;,0);                                    //写入操作日志
+		Val = &amp;quot;0&amp;quot;;			     //0----授权操作取消标志
+	}else if (retVal.split(&amp;quot;@&amp;quot;)[0] == &amp;quot;0&amp;quot;){
+		usrid = retVal.split(&amp;quot;@&amp;quot;)[1];        //取登陆授权失败的用户ID
+		usrname = retVal.split(&amp;quot;@&amp;quot;)[2];      //取登陆授权失败的用户
+		insertLog(usrid,usrname,G_ACCID,G_ORGID,grade+&amp;quot;授权操作&amp;quot;,grade+&amp;quot;授权操作失败！&amp;quot;+usrid+&amp;quot;用户三次输入密码错误！&amp;quot;,0);          //写入操作日志
+		Val = &amp;quot;-1&amp;quot;;			     //-1----授权操作失败标志
+	}else{
+		signid++;                            //用于判断授权等级
+		usrid = retVal.split(&amp;quot;@&amp;quot;)[0];        //取登陆授权成功的用户ID
+		usrname = retVal.split(&amp;quot;@&amp;quot;)[1];	     //取登陆授权成功的用户
+		var newroleid = retVal.split(&amp;quot;@&amp;quot;)[2];//取登陆授权成功的用户角色ID
+		var newrole = retVal.split(&amp;quot;@&amp;quot;)[3];  //取登陆授权成功的用户角色	
+		insertLog(usrid,usrname,G_ACCID,G_ORGID,grade+&amp;quot;授权操作&amp;quot;,grade+&amp;quot;授权操作完成！&amp;quot;+usrid+&amp;quot;(&amp;quot;+usrname+&amp;quot;)授权人拥有&amp;quot;+newrole+&amp;quot;权限。&amp;quot;,1,newrole);      //写入操作日志
+		Val = &amp;quot;1&amp;quot;;                           //1----授权操作成功标志
+	}
+	return Val +&amp;quot;@&amp;quot;+ usrid +&amp;quot;@&amp;quot;+ newroleid;
+}
+
+//写入操作日志,SF=0--失败；SF=1--成功
+function insertLog(usrid,usrnam,thisaccid,thisorgid,action,note,SF,newrole)
+{
+		var param = new Object();
+		param.usrid = usrid ;
+		param.usrnam = usrnam ;
+		param.thisaccid = thisaccid ;
+		param.thisorgid = thisorgid ;
+		param.action = action ;
+		param.note = note ;
+		try {
+			var ret = invokeOSFuncExt(&amp;quot;SaveNote&amp;quot;,param);
+			if (ret == 1) {
+				var myDate = new Date();
+				if(action == &amp;quot;经办人操作&amp;quot;){		
+					_this.SetCellText(1,2,1, _this.GetCellText(1,2,1)+&amp;quot;\n&amp;quot;+myDate.toLocaleString()+&amp;quot;正在反结账,请稍候...&amp;quot;);
+				}else if (action == &amp;quot;一级授权操作&amp;quot;){
+					if(SF==&amp;quot;0&amp;quot;){
+						_this.SetCellText(1,2,1, _this.GetCellText(1,2,1)+&amp;quot;\n&amp;quot;+myDate.toLocaleString()+&amp;quot;一级授权已取消/失败！&amp;quot;);
+					}else if(SF==&amp;quot;1&amp;quot;){
+						_this.SetCellText(1,2,1, _this.GetCellText(1,2,1)+&amp;quot;\n&amp;quot;+myDate.toLocaleString()+&amp;quot;一级授权成功！&amp;quot;+usrid+&amp;quot;(&amp;quot;+usrnam+&amp;quot;)授权人拥有&amp;quot;+newrole+&amp;quot;权限。&amp;quot;);
+					}			
+				}else if (action == &amp;quot;二级授权操作&amp;quot;){
+					if(SF==&amp;quot;0&amp;quot;){
+						_this.SetCellText(1,2,1, _this.GetCellText(1,2,1)+&amp;quot;\n&amp;quot;+myDate.toLocaleString()+&amp;quot;二级授权已取消/失败！&amp;quot;);
+					}else if(SF==&amp;quot;1&amp;quot;){
+						_this.SetCellText(1,2,1, _this.GetCellText(1,2,1)+&amp;quot;\n&amp;quot;+myDate.toLocaleString()+&amp;quot;二级授权成功！&amp;quot;+usrid+&amp;quot;(&amp;quot;+usrnam+&amp;quot;)授权人拥有&amp;quot;+newrole+&amp;quot;权限。&amp;quot;);
+					}
+				}else if (action == &amp;quot;三级授权操作&amp;quot;){
+					if(SF==&amp;quot;0&amp;quot;){
+						_this.SetCellText(1,2,1, _this.GetCellText(1,2,1)+&amp;quot;\n&amp;quot;+myDate.toLocaleString()+&amp;quot;三级授权已取消/失败！&amp;quot;);
+					}else if(SF==&amp;quot;1&amp;quot;){
+						_this.SetCellText(1,2,1, _this.GetCellText(1,2,1)+&amp;quot;\n&amp;quot;+myDate.toLocaleString()+&amp;quot;三级授权成功！&amp;quot;+usrid+&amp;quot;(&amp;quot;+usrnam+&amp;quot;)授权人拥有&amp;quot;+newrole+&amp;quot;权限。&amp;quot;);
+					}
+				}else if(action == &amp;quot;反结账成功&amp;quot;){
+					_this.SetCellText(1,2,1, _this.GetCellText(1,2,1)+&amp;quot;\n&amp;quot;+myDate.toLocaleString()+action+&amp;quot;！&amp;quot;);
+				}
+			}
+			else{
+				alert(&amp;quot;界面出错:&amp;quot;+ret+&amp;quot;，请联系系统开发商！&amp;quot;);
+				//重新刷新界面
+				window.location.reload();
+			}
+		}
+		catch (e) {
+			alert(&amp;quot;界面出错:&amp;quot;+e.toString());
+			//重新刷新界面
+			window.location.reload();
+		}
+}</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var xmldb = new JavaPackage(&amp;quot;com.xlsgrid.net.xmldb&amp;quot;);
+var web = new JavaPackage(&amp;quot;com.xlsgrid.net.web&amp;quot;);
+var orajdbc = new JavaPackage(&amp;quot;oracle.jdbc&amp;quot;);
+
+//保存操作日志
+function SaveNote()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	
+	try {
+		db = new pub.EADatabase();
+		
+		//记录操作日志
+		sql = &amp;quot;insert into oplog(grdid,type,action,opdat,opusr,opusrnam,note,acc,syt,org)
+			values(&amp;apos;CW_Countercheckeout&amp;apos;,&amp;apos;财务反结账操作&amp;apos;,&amp;apos;&amp;quot;+action+&amp;quot;&amp;apos;,sysdate,&amp;apos;&amp;quot;+usrid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+usrnam+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+note+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos;,&amp;apos;SBCW&amp;apos;,&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;)&amp;quot;;
+		db.ExcecutSQL(sql);
+	
+		db.Commit();
+		return &amp;quot;1&amp;quot;;
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();	
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+
+//反结账
+function CCheckout()
+{
+	var db = null;
+	var retVal = &amp;quot;&amp;quot;;
+	var errtext = &amp;quot;&amp;quot;;
+	
+	try {
+		db = new pub.EADatabase();
+		var conn = db.GetConn();
+		
+		var praFunc = conn.prepareCall(&amp;quot;call cw_log_rollback.PRC_CWJZ_ROLLBACL(?,?,?,?,?,?,?,?,?,?)&amp;quot;);
+		praFunc.setString(1,p_sbh);
+		praFunc.setString(2,p_zth);
+		praFunc.setString(3,p_yymm);
+		praFunc.setString(4,p_jbr);
+		praFunc.setString(5,p_fhr);
+		praFunc.setString(6,&amp;quot;&amp;quot;);	
+		praFunc.setString(7,&amp;quot;&amp;quot;);
+		praFunc.setString(8,&amp;quot;&amp;quot;);
+		
+//		praFunc.setString(9,&amp;quot;&amp;quot;);  //为输入输出参数，输入时空值，可不写此句
+		praFunc.registerOutParameter(9,java.sql.Types.VARCHAR);
+//		praFunc.setString(10,&amp;quot;&amp;quot;);
+		praFunc.registerOutParameter(10,java.sql.Types.VARCHAR);
+		
+//		throw new Exception(p_sbh+&amp;quot;@&amp;quot;+p_zth+&amp;quot;@&amp;quot;+p_yymm+&amp;quot;@&amp;quot;+p_jbr+&amp;quot;@&amp;quot;+p_fhr+&amp;quot;1&amp;quot;);
+		praFunc.executeUpdate();
+//		throw new Exception(p_sbh+&amp;quot;@&amp;quot;+p_zth+&amp;quot;@&amp;quot;+p_yymm+&amp;quot;@&amp;quot;+p_jbr+&amp;quot;@&amp;quot;+p_fhr);
+		
+		retVal = praFunc.getString(9);
+		errtext = praFunc.getString(10);
+//		throw new Exception(retVal+&amp;quot;@&amp;quot;+errtext);	
+			
+		if (retVal != &amp;quot;NOERROR&amp;quot;) {
+			db.Rollback();
+			errtext = retVal + errtext;
+		}
+		else {
+			db.Commit();
+			errtext = &amp;quot;反结账成功&amp;quot;;
+		}			
+		return errtext;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString()+&amp;quot;@&amp;quot;+retVal+&amp;quot;@&amp;quot;+errtext;
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >User_role</ID><NAME ></NAME><DATDSC >select b.id,
+       b.name
+  from (select distinct b.rol
+          from usr a, usrrol b
+         where a.guid = b.usr
+           and a.id = &amp;apos;[%id]&amp;apos;
+           and a.org = &amp;apos;[%org]&amp;apos;) a,
+       rol b
+ where a.rol(+) = b.guid
+   and (b.scope = &amp;apos;ALL&amp;apos; or b.org = &amp;apos;[%org]&amp;apos;)
+   and b.syt = &amp;apos;SBCW&amp;apos;
+   and a.rol is not null
+ order by b.acc, b.id</DATDSC><C4 >User_role</C4><C5 >User_role</C5><C6 >User_role</C6><C7 >User_role</C7><C8 >User_role</C8></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

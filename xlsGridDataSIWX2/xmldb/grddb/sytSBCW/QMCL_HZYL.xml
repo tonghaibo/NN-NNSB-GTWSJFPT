@@ -1,0 +1,285 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >QMCL_HZYL</MWID><NAME >汇总预览</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >QMCL_HZYL.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0;
+var G_YY;
+var G_MM;
+var sbh = &amp;quot;&amp;quot;;
+var zth = &amp;quot;&amp;quot;;
+var RowCount;//总记录数 
+var pageNow = 1;//当前页数
+var pageSize = 10;//每页记录数  //20170322修改行数为10，原来是6
+var pageCount = 1;//总页数
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{	
+	_this.ShowToolBar(0);
+	sbh = G_ORGID;
+	zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+	G_YY = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	G_MM = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+	initLayout();
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHOW_ZERO,1);
+	ZXGFILE0 = _this.SaveTempZXGFile(0);
+}
+
+//初始化布局
+function initLayout()
+{
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,55);
+	
+	var pzzlList = _this.CreateListValue();
+	_this.SetListValue(pzzlList,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+	_this.SetListValue(pzzlList,&amp;quot;1&amp;quot;,&amp;quot;未记账凭证&amp;quot;);
+	_this.SetToRadioBox(&amp;quot;&amp;quot;,1,1,4,pzzlList);
+	_this.SetCellText(1,1,4,&amp;quot;1&amp;quot;);
+	setValue(&amp;quot; and (zt=&amp;apos;未核&amp;apos; or zt=&amp;apos;已核&amp;apos;)&amp;quot;);
+	
+	_thisOnMouseLClick(1,1,4);
+}
+
+//设置参数默认值
+function setValue(pzzt)
+{
+	//获取最小和最大凭证号
+	var pzlx = &amp;quot;记&amp;quot;;
+	_sql.querytods(&amp;quot;getPZH&amp;quot;,&amp;quot;yy=&amp;quot;+G_YY+&amp;quot;&amp;mm=&amp;quot;+G_MM+&amp;quot;&amp;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;pzlx=&amp;quot;+pzlx+&amp;quot;&amp;pzzt=&amp;quot;+pzzt);
+	var min_pzh = _this.XMLDS_GetStringAt(0,0);
+	var max_pzh = _this.XMLDS_GetStringAt(0,1);
+
+	_this.SetCellText(1,1,7,min_pzh);
+	_this.SetCellText(1,1,9,max_pzh);
+	var pzhList = _this.CreateListValue();
+	if (max_pzh == 0) {
+		_this.SetListValue(pzhList,0,&amp;quot; &amp;quot;);
+	}
+	else {
+		for(var i = min_pzh;i&amp;lt;=max_pzh;i++) {
+			_this.SetListValue(pzhList,i,i);
+		}
+	}
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,1,7,pzhList);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,1,9,pzhList);
+	
+	_this.SetCellText(0,3,2,G_ORGNAM);
+	var logyy = 1*G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	var logmm = 1*G_LOGDAT.split(&amp;quot;-&amp;quot;)[1];
+	var logdd = 1*G_LOGDAT.split(&amp;quot;-&amp;quot;)[2];
+	_this.SetCellText(0,3,5,logyy+&amp;quot;年&amp;quot;+logmm+&amp;quot;月&amp;quot;+logdd+&amp;quot;日  记帐凭证&amp;quot;);
+	
+	_this.SetCellText(0,_this.GetRowCount(0)-1,4,G_USRNAM);
+	
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if(id == &amp;quot;汇总&amp;quot;) {
+		PZKMHZ();
+	}
+	else if(id == &amp;quot;上一页&amp;quot;) {
+		if(pageNow == 1) return;
+		pageNow = pageNow - 1;
+		loadMainData();
+	}
+	else if(id == &amp;quot;下一页&amp;quot;) {
+		if(pageCount &amp;lt; pageNow + 1) return;
+		pageNow = pageNow + 1;
+		loadMainData();
+	}
+	else if(id == &amp;quot;打印&amp;quot;) {
+		if (_this.GetCellText(0,5,1) == &amp;quot;&amp;quot;) {
+			alert(&amp;quot;记帐汇总凭证预览表没有数据，不打印！&amp;quot;);
+			return;
+		}
+		_this.Print(0,0);
+	}
+}
+
+//凭证科目汇总
+function PZKMHZ() 
+{
+	pageNow = 1;//当前页数
+	pageCount = 1;//总页数
+
+	var param = new Object();
+	param.sbh = sbh;
+	param.zth = zth;
+	param.yy = G_YY;
+	param.mm = G_MM;
+	param.pzlx = &amp;quot;记&amp;quot;;
+	param.min_pzh = _this.GetCellText(1,1,7);
+	param.max_pzh = _this.GetCellText(1,1,9);
+	//先计算出总记录数
+	RowCount = _this.invokeOSFuncExt(&amp;quot;getRowCount&amp;quot;,param);
+	//计算总页数
+	pageCount = Math.ceil(RowCount / pageSize );
+	
+	//加载主数据
+        loadMainData();
+       
+}
+
+_this.SetAttribe(&amp;quot;CELL_0_1_1&amp;quot;,_this.ATTR_CELL_RIGHTBORDER_WIDTH,0);
+
+//加载主数据
+function loadMainData()
+{
+	_this.LoadZXGFile(ZXGFILE0,-1,0);
+	var rn1 = (pageNow -1) * pageSize;
+	var rn2 = rn1 + pageSize;
+
+	_this.SetCellText(0,1,11,pageNow);
+	_this.SetCellText(0,1,15,pageCount);
+	
+	_this.SetCellText(0,1,10,pageNow);
+	_this.SetCellText(0,1,15,pageCount);
+	_this.SetCellText(0,3,2,G_ORGNAM);
+		
+	var title = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0]+&amp;quot; 年&amp;quot;+G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]+&amp;quot; 月&amp;quot;+G_LOGDAT.split(&amp;quot;-&amp;quot;)[2]+&amp;quot; 日 记帐凭证&amp;quot;;
+	_this.SetCellText(0,3,5,title);
+	_this.SetCellText(0,3,8,_this.GetCellText(1,1,7));
+	_this.SetCellText(0,3,10,_this.GetCellText(1,1,9));
+	_this.SetCellText(0,3,15,_this.GetCellText(1,1,9)-_this.GetCellText(1,1,7) + 1);
+	
+	var zzh = &amp;quot;1&amp;quot;;
+	_this.SetCellText(0,2,13,zzh);
+	_this.SetCellText(0,4,6,&amp;quot;√&amp;quot;);
+	_this.SetCellText(0,4,16,&amp;quot;√&amp;quot;);
+	
+	var min_pzh = _this.GetCellText(1,1,7);
+	var max_pzh = _this.GetCellText(1,1,9);
+	var zt = _this.GetCellText(1,1,4);
+	if(zt == &amp;quot;%&amp;quot;) 	{
+		zt = &amp;quot;%&amp;quot;;
+	}
+	else {
+		zt = &amp;quot;核&amp;quot;;
+	}
+	var xml = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;yy=&amp;quot;+G_YY+&amp;quot;&amp;mm=&amp;quot;+G_MM+&amp;quot;&amp;pzlx=记&amp;rn1=&amp;quot;+rn1+&amp;quot;&amp;rn2=&amp;quot;+rn2+&amp;quot;&amp;min_pzh=&amp;quot;+min_pzh+&amp;quot;&amp;max_pzh=&amp;quot;+max_pzh+&amp;quot;&amp;zt=&amp;quot;+zt);
+	_this.SetMainCellRange(0,5,1,14,16);
+	_this.SetXmlDS(0,5,1,14,16,xml);
+	
+	if (pageNow &amp;lt; pageCount) {
+		_this.SetCellText(0,_this.GetRowCount(0)-2,1,&amp;quot;小  计&amp;quot;);		
+		_this.SetFormula(0,_this.GetRowCount(0)-2,5,&amp;quot;SUM(F6:F11)&amp;quot;);
+		_this.SetFormula(0,_this.GetRowCount(0)-2,7,&amp;quot;SUM(H6:P11)&amp;quot;);
+		_this.RefreshFormula();
+	}
+	else {
+		_this.SetCellText(0,_this.GetRowCount(0)-2,1,&amp;quot;合  计&amp;quot;);
+		//合计数
+		_sql.querytods(&amp;quot;SUMJE&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;yy=&amp;quot;+G_YY+&amp;quot;&amp;mm=&amp;quot;+G_MM+&amp;quot;&amp;pzlx=记&amp;rn1=&amp;quot;+rn1+&amp;quot;&amp;rn2=&amp;quot;+rn2+&amp;quot;&amp;min_pzh=&amp;quot;+min_pzh+&amp;quot;&amp;max_pzh=&amp;quot;+max_pzh+&amp;quot;&amp;zt=&amp;quot;+zt);
+		var sum_jfje = _this.XMLDS_GetString(0,&amp;quot;SUM_JFJE&amp;quot;);
+		var sum_dfje = _this.XMLDS_GetString(0,&amp;quot;SUM_DFJE&amp;quot;);
+		_this.SetCellText(0,_this.GetRowCount(0)-2,5,sum_jfje);
+		_this.SetCellText(0,_this.GetRowCount(0)-2,7,sum_dfje);
+	}
+	
+	
+	//隐藏空行
+	for (var r=_this.GetMainCellRangeRow1(0);r&amp;lt;=_this.GetMainCellRangeRow2(0);r++) {
+		if (_this.GetCellText(0,r,1) == &amp;quot;&amp;quot;) _this.SetRowVisible(0,r,-1);
+	}
+	
+	_this.AutoFixScreenWidth();
+}
+
+
+
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (sheet == 1 &amp;&amp; row == 1 &amp;&amp; col == 4) {
+//		var pzlx = &amp;quot;记&amp;quot;;
+		var pzzt = &amp;quot;&amp;quot;;
+		var typ = _this.GetCellText(sheet,row,col);
+		if (typ == 1) pzzt = &amp;quot; and (zt=&amp;apos;未核&amp;apos; or zt=&amp;apos;已核&amp;apos;)&amp;quot;;
+//		
+//		_sql.querytods(&amp;quot;getPZH&amp;quot;,&amp;quot;yy=&amp;quot;+G_YY+&amp;quot;&amp;mm=&amp;quot;+G_MM+&amp;quot;&amp;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;pzlx=&amp;quot;+pzlx+&amp;quot;&amp;pzzt=&amp;quot;+pzzt);
+//		var min_pzh = _this.XMLDS_GetStringAt(0,0);
+//		var max_pzh = _this.XMLDS_GetStringAt(0,1);
+//		_this.SetCellText(1,1,7,min_pzh);
+//		_this.SetCellText(1,1,9,max_pzh);	
+
+		setValue(pzzt);
+
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function getRowCount() {
+	var db = null;
+	var ret = 0;
+	try{
+		db = new pub .EADatabase();
+		var sql = &amp;quot;select count(*)
+					from
+					(
+					select substr( kmbh, 1, 4), 
+					    sum(decode( jefx, &amp;apos;借&amp;apos;, je, 0 ) ) , sum(decode ( jefx, &amp;apos;贷&amp;apos;, je, 0 )) 
+					    from cw_pzmxb WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; 
+					      AND YY = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; AND MM = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; AND pzh &amp;gt;= &amp;quot;+min_pzh+&amp;quot;
+					      AND pzh &amp;lt;= &amp;quot;+max_pzh+&amp;quot; and pzlx = &amp;apos;&amp;quot;+pzlx+&amp;quot;&amp;apos; 
+					    group by substr( kmbh, 1, 4)
+					)&amp;quot;;
+		ret = db.GetSQL(sql);
+		return ret;			
+	}catch(e) {
+		throw new Exception(e);
+	}finally {
+		if(db != null) db.Close();
+	}
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >getPZH</ID><NAME >获取最大最小凭证号</NAME><DATDSC >select nvl(min(pzh),0) min_pzh,nvl(max(pzh),0) max_pzh
+from cw_pzb
+where sbh= &amp;apos;[%sbh]&amp;apos; and zth = &amp;apos;[%zth]&amp;apos; and yy = &amp;apos;[%yy]&amp;apos; 
+   and mm = &amp;apos;[%mm]&amp;apos; and pzlx = &amp;apos;[%pzlx]&amp;apos;
+   [%pzzt]</DATDSC><C4 >getPZH</C4><C5 >getPZH</C5></ROW>
+<ROW num="1" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select rn,cw_pack4.kmmc( &amp;apos;[%sbh]&amp;apos;, &amp;apos;[%zth]&amp;apos;, kmbh ) kmmc,&amp;apos;&amp;apos; aa,&amp;apos;&amp;apos; bb,
+       jfje,&amp;apos;&amp;apos; bz1,dfje,&amp;apos;&amp;apos; cc,&amp;apos;&amp;apos; dd,&amp;apos;&amp;apos; ee,&amp;apos;&amp;apos; ff,&amp;apos;&amp;apos; gg,&amp;apos;&amp;apos; hh,&amp;apos;&amp;apos; ii,&amp;apos;&amp;apos; jj,&amp;apos;&amp;apos; bz2 
+from (
+select a.*,rownum rn from (
+  select t.* from ( 
+	select substr( kmbh, 1, 4) kmbh, 	         
+	  sum(decode( jefx, &amp;apos;借&amp;apos;, je, 0 ) ) jfje, 
+	  sum(decode ( jefx, &amp;apos;贷&amp;apos;, je, 0 ))  dfje
+	  from cw_pzmxb WHERE SBH = &amp;apos;[%sbh]&amp;apos; AND ZTH = &amp;apos;[%zth]&amp;apos; 
+	   AND YY = &amp;apos;[%yy]&amp;apos; AND MM = &amp;apos;[%mm]&amp;apos; AND pzh &amp;gt;= [%min_pzh]
+	   AND pzh &amp;lt;= [%max_pzh] and pzlx = &amp;apos;[%pzlx]&amp;apos;
+	   and zt like &amp;apos;%[%zt]%&amp;apos; 
+	  group by substr( kmbh, 1, 4)
+  ) t order by kmbh) a
+) where rn&amp;gt;[%rn1] and rn&amp;lt;=[%rn2]</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5></ROW>
+<ROW num="2" ><ID >SUMJE</ID><NAME ></NAME><DATDSC >select sum(jfje) sum_jfje,sum(dfje) sum_dfje 
+from ( 
+	select substr( kmbh, 1, 4) kmbh, 	         
+	  sum(decode( jefx, &amp;apos;借&amp;apos;, je, 0 ) ) jfje, 
+	  sum(decode ( jefx, &amp;apos;贷&amp;apos;, je, 0 ))  dfje
+	  from cw_pzmxb WHERE SBH = &amp;apos;[%sbh]&amp;apos; AND ZTH = &amp;apos;[%zth]&amp;apos; 
+	   AND YY = &amp;apos;[%yy]&amp;apos; AND MM = &amp;apos;[%mm]&amp;apos; AND pzh &amp;gt;= [%min_pzh]
+	   AND pzh &amp;lt;= [%max_pzh] and pzlx = &amp;apos;[%pzlx]&amp;apos;
+	   and zt like &amp;apos;%[%zt]%&amp;apos; 
+	  group by substr( kmbh, 1, 4)
+  ) t</DATDSC><C4 ></C4><C5 >SUMJE</C5></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

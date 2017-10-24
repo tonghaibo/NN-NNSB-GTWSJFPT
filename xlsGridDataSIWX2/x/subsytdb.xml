@@ -1,0 +1,8 @@
+<?xml version = '1.0' encoding="GBK"?>
+<ROWSET>
+<ROW num="0" ><subid >1</subid><typ >J2ME</typ><order >0</order><name >渠道订单</name><TITLE >渠道订单</TITLE><ICON ></ICON><URL ></URL><GOTO ></GOTO><WIDTH ></WIDTH><HEIGHT ></HEIGHT><GUID ></GUID></ROW>
+<ROW num="1" ><subid >1</subid><typ ></typ><order >1</order><name >订单监控</name><TITLE ></TITLE><ICON >resource://icon_256</ICON><URL >show.sp?grdid=LayoutWEBEDI</URL><GOTO ></GOTO><WIDTH ></WIDTH><HEIGHT ></HEIGHT><GUID >C61CEA16C638F2CEE040007F01005A24</GUID></ROW>
+<ROW num="2" ><subid >1</subid><typ ></typ><order >2</order><name >高级查询</name><TITLE ></TITLE><ICON >resource://icon_255</ICON><URL >entry.sp?grdid=A3_QueryWebediDtl</URL><GOTO ></GOTO><WIDTH ></WIDTH><HEIGHT ></HEIGHT><GUID >C62C4684656596FEE040007F01002D44</GUID></ROW>
+<ROW num="3" ><subid >1</subid><typ ></typ><order >3</order><name >订单修改</name><TITLE ></TITLE><ICON >resource://icon_254</ICON><URL >entry.sp?grdid=A3_QueryWebediDtl</URL><GOTO ></GOTO><WIDTH ></WIDTH><HEIGHT ></HEIGHT><GUID >C61CEA16C639F2CEE040007F01005A24</GUID></ROW>
+<ROW num="4" ><subid >1</subid><typ ></typ><order >4</order><name >订单下载</name><TITLE ></TITLE><ICON >resource://icon_253</ICON><URL >entry.sp?grdid=A3_downbill</URL><GOTO ></GOTO><WIDTH ></WIDTH><HEIGHT ></HEIGHT><GUID >C62C4684656696FEE040007F01002D44</GUID></ROW>
+</ROWSET>

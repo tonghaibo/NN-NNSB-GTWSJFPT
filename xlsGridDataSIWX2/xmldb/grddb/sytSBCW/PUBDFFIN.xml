@@ -1,0 +1,1126 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >F</MWTYP><MWID >PUBDFFIN</MWID><NAME >公共表单</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >PUBDFFIN.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE >T01hdr</BILHDRTABLE><BILDTLTABLE >T01dtl</BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE ></GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >
+var xmldb = new JavaPackage(&amp;quot;com.xlsgrid.net.xmldb&amp;quot;);
+var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var webpack = new JavaPackage ( &amp;quot;com.xlsgrid.net.web&amp;quot; );
+
+//单据保存后
+function fos_aftersave(eaContext)
+{
+	var db = eaContext.getEADatabase();
+	var sytid = eaContext.getSytid();
+	var orgid = eaContext.getOrgid();
+	var accid = eaContext.getAccid();
+	var guid = eaContext.getGuid();	
+	var grdid = eaContext.getGrdid();
+	var eagrdxmldb = new xmldb.EAGRDXmlDB(sytid,grdid);
+	var grdds = eagrdxmldb.getGrdDS();
+	var bilhdrtable = grdds.getStringAt(0,&amp;quot;BILHDRTABLE&amp;quot;);
+	if (grdds.getStringAt(0,&amp;quot;MWTYP&amp;quot;) != &amp;quot;F&amp;quot; || (grdds.getStringAt(0,&amp;quot;MWTYP&amp;quot;) == &amp;quot;F&amp;quot; &amp;&amp; grdds.getStringAt(0,&amp;quot;IFBILL&amp;quot;) != &amp;quot;1&amp;quot;)) return;
+	//报表的年月
+	var sql = &amp;quot;select substr(yymm,0,4) YYYY,decode(length(yymm),7,substr(yymm,6,2),&amp;apos;01&amp;apos;) MM,repid,replocid from &amp;quot;+bilhdrtable+&amp;quot; where guid=&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;&amp;quot;;
+	var ds = db.GetXMLSQL(sql);
+	var yy = ds.getStringAt(0,&amp;quot;YYYY&amp;quot;);
+	var mm = ds.getStringAt(0,&amp;quot;MM&amp;quot;);
+	var yymm = yy+&amp;quot;-&amp;quot;+mm;
+	var repid = ds.getStringAt(0,&amp;quot;REPID&amp;quot;);
+	var replocid = ds.getStringAt(0,&amp;quot;REPLOCID&amp;quot;);
+	
+	//写进指标库
+	setIndexDetail(db,sytid,orgid,accid,yymm,repid,replocid);
+	
+	//更新报表实例表
+	var sql = &amp;quot;select * from repmodel where guid=&amp;apos;%s&amp;apos;&amp;quot;.format([guid]);
+	if (db.GetSQLRowCount(sql) &amp;lt;= 0) {
+		sql = &amp;quot; insert into repmodel(replocid,viewtyp,guid,acc,syt,org,orgnam,yymm,repid,repnam,stat,crtusr,crtdat,chkusr,chkusrnam,chkdat,refertime)
+			select replocid,repid,guid,acc,syt,org,orgnam,nvl(yymm,to_char(dat,&amp;apos;yyyymm&amp;apos;)) yymm,repid,repnam,stat,crtusr,crtdat,chkusr,chkusrnam,chkdat,refertime from %s
+			 where guid=&amp;apos;%s&amp;apos;&amp;quot;.format([bilhdrtable,guid]);
+		db.ExcecutSQL(sql);
+	}
+}
+
+//单据删除前
+function fos_beforedelete(eaContext)
+//var eaContext=new pub.EAContext();
+{
+	var db = eaContext.getEADatabase();
+	var sytid = eaContext.getSytid();
+	var orgid = eaContext.getOrgid();
+	var accid = eaContext.getAccid();
+	var guid = eaContext.getGuid();
+	var grdid = eaContext.getGrdid();
+	var eagrdxmldb = new xmldb.EAGRDXmlDB(sytid,grdid);
+	var grdds = eagrdxmldb.getGrdDS();
+	var bilhdrtable = grdds.getStringAt(0,&amp;quot;BILHDRTABLE&amp;quot;);
+	
+	if (grdds.getStringAt(0,&amp;quot;MWTYP&amp;quot;) != &amp;quot;F&amp;quot; || (grdds.getStringAt(0,&amp;quot;MWTYP&amp;quot;) == &amp;quot;F&amp;quot; &amp;&amp; grdds.getStringAt(0,&amp;quot;IFBILL&amp;quot;) != &amp;quot;1&amp;quot;)) return;
+	
+	//报表的年月
+	var sql = &amp;quot;select substr(yymm,0,4) YYYY,decode(length(yymm),7,substr(yymm,6,2),&amp;apos;01&amp;apos;) MM,repid,replocid from &amp;quot;+bilhdrtable+&amp;quot; where guid=&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;&amp;quot;;
+	var ds = db.GetXMLSQL(sql);
+	var yy = ds.getStringAt(0,&amp;quot;YYYY&amp;quot;);
+	var mm = ds.getStringAt(0,&amp;quot;MM&amp;quot;);
+	var yymm = yy+&amp;quot;-&amp;quot;+mm;
+	var repid = ds.getStringAt(0,&amp;quot;REPID&amp;quot;);
+	var replocid = ds.getStringAt(0,&amp;quot;REPLOCID&amp;quot;);
+	
+	//清除指标库信息
+	f_clearIdxDetail(db,sytid,orgid,accid,repid,yymm,replocid,grdid);
+	
+	//更新报表实例表
+	var sql = &amp;quot;delete from repmodel where guid=&amp;apos;%s&amp;apos;&amp;quot;.format([guid]);
+	db.ExcecutSQL(sql);
+}
+
+//单据审核前
+//  1、报表平衡检查
+//  2、报表审核后写进指标库（FIN_INDEXDETAIL）
+function fos_beforecheck(eaContext)
+{
+	var db = eaContext.getEADatabase();
+	var sytid = eaContext.getSytid();
+	var orgid = eaContext.getOrgid();
+	var accid = eaContext.getAccid();
+	var guid = eaContext.getGuid();
+	var grdid = eaContext.getGrdid();
+	var eagrdxmldb = new xmldb.EAGRDXmlDB(sytid,grdid);
+	var grdds = eagrdxmldb.getGrdDS();
+	var grdcolds = eagrdxmldb.getGrdColDS();
+	if (grdds.getStringAt(0,&amp;quot;MWTYP&amp;quot;) != &amp;quot;F&amp;quot; || (grdds.getStringAt(0,&amp;quot;MWTYP&amp;quot;) == &amp;quot;F&amp;quot; &amp;&amp; grdds.getStringAt(0,&amp;quot;IFBILL&amp;quot;) != &amp;quot;1&amp;quot;)) return;
+	var bilhdrtable = grdds.getStringAt(0,&amp;quot;BILHDRTABLE&amp;quot;);
+	
+	//审核报表的年月
+	var sql = &amp;quot;select substr(yymm,0,4) YYYY,decode(length(yymm),7,substr(yymm,6,2),&amp;apos;01&amp;apos;) MM,repid,replocid from &amp;quot;+bilhdrtable+&amp;quot; where guid=&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;&amp;quot;;
+	var ds = db.GetXMLSQL(sql);
+	var yy = ds.getStringAt(0,&amp;quot;YYYY&amp;quot;);
+	var mm = ds.getStringAt(0,&amp;quot;MM&amp;quot;);
+	var yymm = yy+&amp;quot;-&amp;quot;+mm;
+	var repid = ds.getStringAt(0,&amp;quot;REPID&amp;quot;);
+	var replocid = ds.getStringAt(0,&amp;quot;REPLOCID&amp;quot;); //报表位置编号
+	
+	//写进指标库
+	//setIndexDetail(db,sytid,orgid,accid,yymm,repid,replocid); //改为在报表保存后事件写入
+	
+	//报表平衡检查
+	var phret = &amp;quot;&amp;quot;;
+	phret = checkReportPH(db,orgid,accid,repid,yymm,replocid);
+//	if (phret != &amp;quot;&amp;quot;) {
+//		throw new Exception(&amp;quot;报表不平，审核不能通过！\n&amp;quot;+ phret);
+//	}
+	//返回值：报表编号~公式编号~公式~公式名称~不平衡差异金额;
+	var phmsg = &amp;quot;&amp;quot;;
+	var rstArr = phret.split(&amp;quot;;&amp;quot;);
+	for (var i=0;i&amp;lt;rstArr.length();i++) {
+		var rstInfo = rstArr[i].split(&amp;quot;~&amp;quot;);
+		if (rstInfo.length == 5) {		
+			var repid = rstInfo[0];
+			var fid = rstInfo[1];
+			var formula = rstInfo[2];
+			var fname = rstInfo[3];
+			var cxje = 1.0 * rstInfo[4];
+			if (cxje != &amp;quot;0&amp;quot;) {
+				phmsg += &amp;quot;平衡公式：&amp;quot;+fid+&amp;quot;-&amp;quot;+formula+&amp;quot; &amp;quot;+fname+&amp;quot; 差异金额：&amp;quot;+cxje;
+			}
+		}
+	}
+	if (phmsg != &amp;quot;&amp;quot;) {
+		throw new Exception(&amp;quot;报表不平，审核不能通过！\n&amp;quot;+ phmsg);
+	}
+
+
+	//更新报表实例表
+	var usrinfo = webpack.EASession.GetLoginInfo(eaContext.getRequest());
+	var usrid = usrinfo.getUsrid();
+	var usrorg= usrinfo.getusrOrg();
+	sql = &amp;quot;select name from usr where id=&amp;apos;%s&amp;apos; and org=&amp;apos;%s&amp;apos;&amp;quot;.format([usrid,usrorg]);
+	var usrname = db.GetSQL(sql);
+	sql = &amp;quot;update repmodel set chkusr=&amp;apos;%s&amp;apos;,chkusrnam=&amp;apos;%s&amp;apos;,stat=&amp;apos;2&amp;apos;,chkdat=sysdate where guid=&amp;apos;%s&amp;apos;&amp;quot;.format([usrid,usrname,guid]);
+	db.ExcecutSQL(sql);
+}
+
+//单据弃审前
+//  1、清除指标库信息
+function fos_beforeuncheck(eaContext)
+{
+	var db = eaContext.getEADatabase();
+	var sytid = eaContext.getSytid();
+	var orgid = eaContext.getOrgid();
+	var accid = eaContext.getAccid();
+	var guid = eaContext.getGuid();
+	var grdid = eaContext.getGrdid();
+	var eagrdxmldb = new xmldb.EAGRDXmlDB(sytid,grdid);
+	var grdds = eagrdxmldb.getGrdDS();
+	var grdcolds = eagrdxmldb.getGrdColDS();
+	if (grdds.getStringAt(0,&amp;quot;MWTYP&amp;quot;) != &amp;quot;F&amp;quot; || (grdds.getStringAt(0,&amp;quot;MWTYP&amp;quot;) == &amp;quot;F&amp;quot; &amp;&amp; grdds.getStringAt(0,&amp;quot;IFBILL&amp;quot;) != &amp;quot;1&amp;quot;)) return;
+	var bilhdrtable = grdds.getStringAt(0,&amp;quot;BILHDRTABLE&amp;quot;);
+	
+	//弃审报表的年月
+	var sql = &amp;quot;select substr(yymm,0,4) YYYY,decode(length(yymm),7,substr(yymm,6,2),&amp;apos;01&amp;apos;) MM,repid,replocid from &amp;quot;+bilhdrtable+&amp;quot; where guid=&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;&amp;quot;;
+	var ds = db.GetXMLSQL(sql);
+	var yy = ds.getStringAt(0,&amp;quot;YYYY&amp;quot;);
+	var mm = ds.getStringAt(0,&amp;quot;MM&amp;quot;);
+	var yymm = yy+&amp;quot;-&amp;quot;+mm;
+	var repid = ds.getStringAt(0,&amp;quot;REPID&amp;quot;);
+	var replocid = ds.getStringAt(0,&amp;quot;REPLOCID&amp;quot;);
+	
+	//清除指标库信息
+	//f_clearIdxDetail(db,sytid,orgid,accid,repid,yymm,replocid,grdid); //改为在单据删除后清除
+	
+	//更新报表实例表
+	sql = &amp;quot;update repmodel set chkusr=null,chkusrnam=null,stat=&amp;apos;1&amp;apos; where guid=&amp;apos;%s&amp;apos;&amp;quot;.format([guid]);
+	db.ExcecutSQL(sql);
+}
+
+//清除指标库信息
+function f_clearIdxDetail(db,sytid,orgid,accid,repid,yymm,replocid,grdid)
+{
+	//var grdid = repid;
+	var eagrdxmldb = new xmldb.EAGRDXmlDB(sytid,grdid);
+	var grdds = eagrdxmldb.getGrdDS();
+	var grdcolds = eagrdxmldb.getGrdColDS();
+	var bilhdrtable = grdds.getStringAt(0,&amp;quot;BILHDRTABLE&amp;quot;);
+	
+	var sql = &amp;quot;&amp;quot;;
+	var yy = yymm.substring(0,4);
+	var mm = &amp;quot;&amp;quot;;
+	try {mm = yymm.substring(5,7);}catch(e){mm=&amp;quot;01&amp;quot;;yymm=yy+&amp;quot;-&amp;quot;+mm;}
+	var valcol = &amp;quot;MONEY&amp;quot; + mm;
+	var hdrtablenam = grdds.getStringAt(0,&amp;quot;BILHDRTABLE&amp;quot;);//grdid +&amp;quot;hdr&amp;quot;;
+	var dtltablenam = grdds.getStringAt(0,&amp;quot;BILDTLTABLE&amp;quot;);//grdid +&amp;quot;dtl&amp;quot;;
+	var arrayObj = new Array();
+	
+	try {
+		getIndexInfo(grdcolds,arrayObj);
+	} catch ( e ) {
+		throw new Exception(e.toString());
+	}
+	
+	//获取报表金额单位（FIN_REPMODEL）
+	var moneyunit = 1;
+	var sql = &amp;quot;select nvl(moneyunit,1) moneyunit from fin_repmodel where reportid = &amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+	try {
+		moneyunit = db.GetSQL(sql);
+	} catch ( e ) { }
+	
+	//获取报表行数（FIN_REPFRAME）	
+	sql = &amp;quot;select max(seqid) maxseq from fin_repframe where repid = &amp;apos;%s&amp;apos; and sytid=&amp;apos;SBCW&amp;apos;&amp;quot;.format([grdid]);
+	var maxseq = db.GetSQL(sql);
+	
+	for ( var seq = 1; seq &amp;lt;= maxseq; seq ++ ) {
+		for ( var j = 0; j &amp;lt; arrayObj.length(); j ++ ) {
+			//获取当前操作的指标项编号、指标项列名称、指标列名称
+			var indexitemid = arrayObj[j][0];
+			var indexitemidcolnam = arrayObj[j][1];
+			var indexidcolnam = arrayObj[j][2];
+			
+			var lmh = 0;	//指标所在栏目编号
+			var gettyp = 0;	//指标取值类型
+			var isitem = 0;	//指标为取值类指标时，指标项是否写入的标识
+			
+			//获取指标所在栏目编号
+			for (var i = 0; i &amp;lt; grdcolds.getRowCount(); i ++) {
+				if (grdcolds.getStringAt(i, &amp;quot;ISIDX&amp;quot;) == &amp;quot;1&amp;quot;) lmh ++;
+				if (grdcolds.getStringAt(i, &amp;quot;VALFLD&amp;quot;) == indexidcolnam) break;					
+			}
+			
+			//获取指标项是否写入的标识
+			for (var i = 0; i &amp;lt; grdcolds.getRowCount(); i ++) {
+				if (grdcolds.getStringAt(i, &amp;quot;VALFLD&amp;quot;) == indexitemidcolnam) {
+					if (grdcolds.getStringAt(i, &amp;quot;WHERE&amp;quot;) != &amp;quot;&amp;quot; &amp;&amp; grdcolds.getStringAt(i, &amp;quot;WHERE&amp;quot;) != &amp;quot;0&amp;quot;) {
+						isitem = 1;
+					}
+					break;
+				}
+			}
+			
+			//获取当前操作(报表-指标)的取值类型(0:录入指标、1:取值指标、2:累加指标)
+			sql = &amp;quot;select nvl(isget,0) gettyp from fin_repframe where repid=&amp;apos;%s&amp;apos; and sytid=&amp;apos;SBCW&amp;apos; and seqid=&amp;apos;%s&amp;apos; and lmh=&amp;apos;%s&amp;apos;&amp;quot;
+				.format([grdid,&amp;quot;&amp;quot;+seq,&amp;quot;&amp;quot;+lmh]);	
+			try {
+				gettyp = db.GetSQL(sql);
+			} catch( e ) { }
+			
+			if (gettyp == 0) {
+				sql = &amp;quot;update fin_indexdetail a set %s=0 where a.org=&amp;apos;%s&amp;apos; and a.acc=&amp;apos;%s&amp;apos; and a.indexitemid=&amp;apos;%s&amp;apos; and a.indexyear=&amp;apos;%s&amp;apos;
+					  and a.indexid=(select distinct %s||&amp;apos;&amp;apos; from %s a,%s b where a.acc=b.acc and a.syt=b.syt and a.org=b.org
+					  	and a.guid=b.formguid and a.org=&amp;apos;%s&amp;apos; and a.acc=&amp;apos;%s&amp;apos; and a.syt=&amp;apos;%s&amp;apos; and a.replocid=&amp;apos;%s&amp;apos;
+					  	and decode(length(a.yymm),7,a.yymm,substr(a.yymm,0,4)||&amp;apos;-01&amp;apos;)=&amp;apos;%s&amp;apos; and b.seqid=&amp;apos;%s&amp;apos; and a.repid=&amp;apos;%s&amp;apos;)
+					  and a.amountmoneyunti=%s and a.replocid=&amp;apos;%s&amp;apos;&amp;quot;
+					.format([valcol,orgid,accid,indexitemid,yy,indexidcolnam,hdrtablenam,
+						dtltablenam,orgid,accid,sytid,replocid,yymm,&amp;quot;&amp;quot;+seq,repid,moneyunit,replocid]);
+				db.ExcecutSQL(sql);
+			} else if (gettyp == 1) {
+				if (yy == &amp;quot;2009&amp;quot; || isitem == 1) {	//2009年指标取消审核时取值类指标也做Update操作
+					sql = &amp;quot;update fin_indexdetail a set %s=0 where a.org=&amp;apos;%s&amp;apos; and a.acc=&amp;apos;%s&amp;apos; and a.indexitemid=&amp;apos;%s&amp;apos; and a.indexyear=&amp;apos;%s&amp;apos;
+						  and a.indexid||&amp;apos;,1&amp;apos;=( select distinct %s||&amp;apos;&amp;apos; from %s a,%s b where a.acc=b.acc and a.syt=b.syt and a.org=b.org
+						  	and a.guid=b.formguid and a.org=&amp;apos;%s&amp;apos; and a.acc=&amp;apos;%s&amp;apos; and a.syt=&amp;apos;%s&amp;apos; and a.replocid=&amp;apos;%s&amp;apos;
+						  	and decode(length(a.yymm),7,a.yymm,substr(a.yymm,0,4)||&amp;apos;-01&amp;apos;)=&amp;apos;%s&amp;apos; and b.seqid=&amp;apos;%s&amp;apos; )
+						  and a.amountmoneyunti=%s &amp;quot;
+						.format([valcol,orgid,accid,indexitemid,yy,indexidcolnam,hdrtablenam,
+							dtltablenam,orgid,accid,sytid,replocid,yymm,&amp;quot;&amp;quot;+seq,moneyunit]);
+					db.ExcecutSQL(sql);
+				}
+			}	
+		}
+	}
+}
+
+//获取查询dtl数据的SQL所需信息
+function getIndexInfo(grdcolds,arrayObj)
+{
+	var indexitemcol = &amp;quot;&amp;quot;;		//指标项所在列
+	var indexcol = &amp;quot;&amp;quot;;		//指标所在列
+	var indexitemid = &amp;quot;&amp;quot;;		//指标项编号
+	var indexitemidcolnam = &amp;quot;&amp;quot;;	//指标项dtl列名称
+	var indexidcolnam = &amp;quot;&amp;quot;;		//指标dtl列名称
+
+	for (var i = 0; i &amp;lt; grdcolds.getRowCount(); i ++) {
+		if (grdcolds.getStringAt(i, &amp;quot;INDEXID&amp;quot;) != &amp;quot;&amp;quot;) {
+			var arr = new Array([3]);	//indexitemid，indexitemidcolnam，indexidcolnam
+			indexitemid = grdcolds.getStringAt(i, &amp;quot;INDEXID&amp;quot;);
+			indexitemidcolnam = grdcolds.getStringAt(i, &amp;quot;VALFLD&amp;quot;);
+			indexitemcol = grdcolds.getStringAt(i, &amp;quot;ID&amp;quot;).split(&amp;quot;,&amp;quot;)[1];
+			for (var j = i; j &amp;lt; grdcolds.getRowCount(); j ++) {
+				if (grdcolds.getStringAt(j, &amp;quot;ISIDX&amp;quot;) == &amp;quot;1&amp;quot;) {
+					if ( indexcol == &amp;quot;&amp;quot; &amp;&amp; (1.0*grdcolds.getStringAt(j, &amp;quot;ID&amp;quot;).split(&amp;quot;,&amp;quot;)[1] - indexitemcol ) &amp;gt; 0) {
+						indexcol = grdcolds.getStringAt(j, &amp;quot;ID&amp;quot;).split(&amp;quot;,&amp;quot;)[1];
+						indexidcolnam = grdcolds.getStringAt(j, &amp;quot;VALFLD&amp;quot;);		
+					} else {
+						if ( (1.0*grdcolds.getStringAt(j, &amp;quot;ID&amp;quot;).split(&amp;quot;,&amp;quot;)[1] - indexitemcol ) &amp;gt; 0
+							&amp;&amp; (1.0*grdcolds.getStringAt(j, &amp;quot;ID&amp;quot;).split(&amp;quot;,&amp;quot;)[1] - indexitemcol ) &amp;lt; (1.0*indexcol - indexitemcol ) ) {
+								indexcol = grdcolds.getStringAt(j, &amp;quot;ID&amp;quot;).split(&amp;quot;,&amp;quot;)[1];
+								indexidcolnam = grdcolds.getStringAt(j, &amp;quot;VALFLD&amp;quot;);
+						}
+					}
+				}
+			}
+			arr[0] = indexitemid;
+			arr[1] = indexitemidcolnam;
+			arr[2] = indexidcolnam;
+			arrayObj.push(arr);
+			indexcol = &amp;quot;&amp;quot;;
+		}
+	}
+}
+
+//取得报表编号对应的中间件ID
+function getGrdidByRepid(db,repid)
+{
+	var sql = &amp;quot;select * from fin_repmodel where reportid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+	var ds = db.QuerySQL(sql);
+	if (ds.getRowCount() &amp;gt; 0) {
+		return ds.getStringAt(0,&amp;quot;GRDID&amp;quot;);
+	}
+	return repid;
+}
+
+//写进指标库（FIN_INDEXDETAIL）
+function setIndexDetail(db,sytid,orgid,accid,yymm,repid,replocid)
+{
+	var grdid = getGrdidByRepid(db,repid);
+	var eagrdxmldb = new xmldb.EAGRDXmlDB(sytid,grdid);
+	var grdds = eagrdxmldb.getGrdDS();
+	var grdcolds = eagrdxmldb.getGrdColDS();
+	if (yymm.length() == 4) yymm += &amp;quot;-01&amp;quot;;	//年报指标数据写在1月
+	var yy = yymm.split(&amp;quot;-&amp;quot;)[0];
+	var mm = yymm.split(&amp;quot;-&amp;quot;)[1];	
+	var valcol = &amp;quot;MONEY&amp;quot; + mm;
+	var hdrtablenam = grdds.getStringAt(0,&amp;quot;BILHDRTABLE&amp;quot;);//repid +&amp;quot;hdr&amp;quot;;
+	var dtltablenam = grdds.getStringAt(0,&amp;quot;BILDTLTABLE&amp;quot;);//repid +&amp;quot;dtl&amp;quot;;
+	var arrayObj = new Array();
+
+	try {
+		getIndexInfo(grdcolds,arrayObj);
+	} catch ( e ) {
+		throw new Exception(e.toString());
+	}
+	
+	//获取报表金额单位（FIN_REPMODEL）
+	var moneyunit = 1;
+	var sql = &amp;quot;select nvl(moneyunit,1) moneyunit from fin_repmodel where reportid = &amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+	try {
+		moneyunit = db.GetSQL(sql);
+	} catch ( e ) { }
+	
+	//获取报表明细行数（FIN_REPFRAME）
+	sql = &amp;quot;select max(seqid) from fin_repframe where repid = &amp;apos;%s&amp;apos; and sytid=&amp;apos;SBCW&amp;apos;&amp;quot;.format([repid]);
+	var maxseq = db.GetSQL(sql);
+	sql = &amp;quot;select max(seqid) from %s a,%s b where a.acc=b.acc and a.syt=b.syt and a.org=b.org and a.guid=b.formguid and a.org=&amp;apos;%s&amp;apos; and a.acc=&amp;apos;%s&amp;apos; and a.syt=&amp;apos;%s&amp;apos; and decode(length(a.yymm),7,a.yymm,substr(a.yymm,0,4)||&amp;apos;-01&amp;apos;)=&amp;apos;%s&amp;apos;&amp;quot;
+		.format([hdrtablenam,dtltablenam,orgid,accid,sytid,yymm]);
+	var tmpseq = db.GetSQL(sql);
+	if (tmpseq &amp;gt; maxseq) maxseq = tmpseq;
+//	pub.EAFunc.Log(sql+&amp;quot;\n&amp;quot;+maxseq);
+	
+	for ( var seq = 1; seq &amp;lt;= maxseq; seq ++ ) {
+		for ( var j = 0; j &amp;lt; arrayObj.length(); j ++ ) {
+			//当前操作的指标项编号、指标项列名称、指标列名称
+			var indexitemid = arrayObj[j][0];
+			var indexitemidcolnam = arrayObj[j][1];
+			var indexidcolnam = arrayObj[j][2];
+			
+			var lmh = 0;	//指标所在栏目编号
+			var gettyp = 0;	//指标取值类型
+			var typstr = &amp;quot;&amp;quot;;//指标库中指标拼接取值类型信息
+			var isitem = 0;	//指标为取值类指标时，指标项是否写入的标识
+			var ishave = 0;	//指标是否存在于指标库的标识
+			
+			//获取指标所在栏目编号
+			for (var i = 0; i &amp;lt; grdcolds.getRowCount(); i ++) {
+				if (grdcolds.getStringAt(i, &amp;quot;ISIDX&amp;quot;) == &amp;quot;1&amp;quot;) lmh ++;
+				if (grdcolds.getStringAt(i, &amp;quot;VALFLD&amp;quot;) == indexidcolnam) break;	
+			}
+			
+			//获取指标项是否写入的标识
+			for (var i = 0; i &amp;lt; grdcolds.getRowCount(); i ++) {
+				if (grdcolds.getStringAt(i, &amp;quot;VALFLD&amp;quot;) == indexitemidcolnam) {
+					if (grdcolds.getStringAt(i, &amp;quot;WHERE&amp;quot;) != &amp;quot;&amp;quot; &amp;&amp; grdcolds.getStringAt(i, &amp;quot;WHERE&amp;quot;) != &amp;quot;0&amp;quot;) {
+						isitem = 1;
+					}
+					break;
+				}
+			}
+			
+			//获取当前操作(报表-指标)的取值类型(0:录入指标、1:取值指标、2:累加指标)
+			sql = &amp;quot;select nvl(isget,0) gettyp from fin_repframe where repid=&amp;apos;%s&amp;apos; and sytid=&amp;apos;SBCW&amp;apos; and seqid=&amp;apos;%s&amp;apos; and lmh=&amp;apos;%s&amp;apos;&amp;quot;.format([repid,&amp;quot;&amp;quot;+seq,&amp;quot;&amp;quot;+lmh]);
+			try {
+				gettyp = db.GetSQL(sql);
+			} catch( e ) { }
+			
+			//指标库中指标拼接：,1或,2
+			if (gettyp == 1) typstr = &amp;quot;,1&amp;quot;;
+			else if (gettyp == 2) typstr = &amp;quot;,2&amp;quot;;
+			
+			//判断当前操作(指标-指标项)是否已存在于指标库表
+			sql = &amp;quot;select * from fin_indexdetail where org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and indexyear=&amp;apos;%s&amp;apos; and indexitemid=&amp;apos;%s&amp;apos; and replocid=&amp;apos;%s&amp;apos;
+				   and indexid||&amp;apos;%s&amp;apos;=( select %s from %s a,%s b where a.acc=b.acc and a.syt=b.syt and a.org=b.org
+					and a.guid=b.formguid and a.org=&amp;apos;%s&amp;apos; and a.acc=&amp;apos;%s&amp;apos; and a.syt=&amp;apos;%s&amp;apos; and a.repid=&amp;apos;%s&amp;apos; and a.replocid=&amp;apos;%s&amp;apos;
+					and decode(length(a.yymm),7,a.yymm,substr(a.yymm,0,4)||&amp;apos;-01&amp;apos;)=&amp;apos;%s&amp;apos; and b.seqid=&amp;apos;%s&amp;apos; )
+				   and amountmoneyunti=%s &amp;quot;
+				 .format([orgid,accid,yy,indexitemid,replocid,typstr,indexidcolnam,hdrtablenam,
+				 	dtltablenam,orgid,accid,sytid,repid,replocid,yymm,&amp;quot;&amp;quot;+seq,moneyunit]);
+//			try {
+				ishave = db.GetSQLRowCount(sql);
+//			} catch ( e ) {  }
+//			throw new Exception(sql+&amp;quot;\n&amp;quot;+ishave);
+			
+			if  (ishave &amp;gt; 0) {
+				if (gettyp == 0) {
+					sql = &amp;quot;update fin_indexdetail a set %s=( select %s from %s b,%s c
+						  where b.acc=c.acc and b.syt=c.syt and b.org=c.org and c.guid=b.formguid
+						    and a.indexid=%s and c.org=&amp;apos;%s&amp;apos;and c.acc=&amp;apos;%s&amp;apos; and c.replocid=&amp;apos;%s&amp;apos; and c.repid=&amp;apos;%s&amp;apos;
+						    and decode(length(c.yymm),7,c.yymm,substr(c.yymm,0,4)||&amp;apos;-01&amp;apos;)=&amp;apos;%s&amp;apos; and b.seqid=&amp;apos;%s&amp;apos; )
+						where org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and a.indexitemid=&amp;apos;%s&amp;apos; and a.indexyear=&amp;apos;%s&amp;apos; and replocid=&amp;apos;%s&amp;apos;
+						  and indexid in (select distinct %s from %s a,%s b where a.acc=b.acc and a.syt=b.syt and a.org=b.org
+						     and a.guid=b.formguid and a.org=&amp;apos;%s&amp;apos; and a.acc=&amp;apos;%s&amp;apos; and a.syt=&amp;apos;%s&amp;apos; and a.repid=&amp;apos;%s&amp;apos; and a.replocid=&amp;apos;%s&amp;apos;
+						     and decode(length(a.yymm),7,a.yymm,substr(a.yymm,0,4)||&amp;apos;-01&amp;apos;)=&amp;apos;%s&amp;apos; and b.seqid=&amp;apos;%s&amp;apos; )
+						  and amountmoneyunti=%s &amp;quot;
+						.format([valcol,indexitemidcolnam,dtltablenam,hdrtablenam,indexidcolnam,orgid,accid,replocid,repid,yymm,&amp;quot;&amp;quot;+seq,
+							orgid,accid,indexitemid,yy,replocid,indexidcolnam,hdrtablenam,dtltablenam,orgid,accid,sytid,repid,replocid,yymm,&amp;quot;&amp;quot;+seq,moneyunit]);
+					db.ExcecutSQL(sql);
+				} else if (gettyp == 1) { //指标类型 ==1是取值 ==2是追加
+//					if (yy == &amp;quot;2009&amp;quot; || isitem == 1) {	//2009年指标入库时取值类指标也做Update操作
+//						sql = &amp;quot;update fin_indexdetail a set %s=( select %s from %s b,%s c
+//							  where b.acc=c.acc and b.syt=c.syt and b.org=c.org and c.guid=b.formguid
+//							    and a.indexid||&amp;apos;%s&amp;apos;=%s and c.org=&amp;apos;%s&amp;apos;and c.acc=&amp;apos;%s&amp;apos; and c.replocid=&amp;apos;%s&amp;apos;
+//							    and decode(length(c.yymm),7,c.yymm,substr(c.yymm,0,4)||&amp;apos;-01&amp;apos;)=&amp;apos;%s&amp;apos; and b.seqid=&amp;apos;%s&amp;apos; )
+//							where org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and a.indexitemid=&amp;apos;%s&amp;apos; and a.indexyear=&amp;apos;%s&amp;apos; and a.replocid=&amp;apos;%s&amp;apos;
+//							  and indexid||&amp;apos;%s&amp;apos;=( select %s from %s a,%s b where a.acc=b.acc and a.syt=b.syt and a.org=b.org
+//							     and a.guid=b.formguid and a.org=&amp;apos;%s&amp;apos; and a.acc=&amp;apos;%s&amp;apos; and a.syt=&amp;apos;%s&amp;apos;
+//							     and decode(length(a.yymm),7,a.yymm,substr(a.yymm,0,4)||&amp;apos;-01&amp;apos;)=&amp;apos;%s&amp;apos; and b.seqid=&amp;apos;%s&amp;apos; )
+//							  and amountmoneyunti=%s &amp;quot;
+//							.format([valcol,indexitemidcolnam,dtltablenam,hdrtablenam,typstr,indexidcolnam,orgid,accid,replocid,yymm,&amp;quot;&amp;quot;+seq,
+//								orgid,accid,indexitemid,yy,replocid,typstr,indexidcolnam,hdrtablenam,dtltablenam,orgid,accid,sytid,yymm,&amp;quot;&amp;quot;+seq,moneyunit]);
+//						db.ExcecutSQL(sql);
+//					}
+				} else if (gettyp == 2) { //指标类型 ==1是取值 ==2是追加
+					sql = &amp;quot;update fin_indexdetail a set %s=nvl(%s,0)+nvl(( select %s from %s b,%s c
+						  where b.acc=c.acc and b.syt=c.syt and b.org=c.org and c.guid=b.formguid
+						    and a.indexid||&amp;apos;%s&amp;apos;=%s and c.org=&amp;apos;%s&amp;apos;and c.acc=&amp;apos;%s&amp;apos; and c.replocid=&amp;apos;%s&amp;apos;
+						    and decode(length(c.yymm),7,c.yymm,substr(c.yymm,0,4)||&amp;apos;-01&amp;apos;)=&amp;apos;%s&amp;apos; and b.seqid=&amp;apos;%s&amp;apos; ),0)
+						where org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and a.indexitemid=&amp;apos;%s&amp;apos; and a.indexyear=&amp;apos;%s&amp;apos; and a.replocid=&amp;apos;%s&amp;apos;
+						  and indexid||&amp;apos;%s&amp;apos;=( select distinct %s from %s a,%s b where a.acc=b.acc and a.syt=b.syt and a.org=b.org
+						     and a.guid=b.formguid and a.org=&amp;apos;%s&amp;apos; and a.acc=&amp;apos;%s&amp;apos; and a.syt=&amp;apos;%s&amp;apos; and a.repid=&amp;apos;%s&amp;apos; and a.replocid=&amp;apos;%s&amp;apos;
+						     and decode(length(a.yymm),7,a.yymm,substr(a.yymm,0,4)||&amp;apos;-01&amp;apos;)=&amp;apos;%s&amp;apos; and b.seqid=&amp;apos;%s&amp;apos; )
+						  and amountmoneyunti=%s &amp;quot;
+					.format([valcol,valcol,indexitemidcolnam,dtltablenam,hdrtablenam,typstr,indexidcolnam,orgid,accid,replocid,yymm,&amp;quot;&amp;quot;+seq,
+						orgid,accid,indexitemid,yy,replocid,typstr,indexidcolnam,hdrtablenam,dtltablenam,orgid,accid,sytid,repid,replocid,yymm,&amp;quot;&amp;quot;+seq,moneyunit]);
+					db.ExcecutSQL(sql);
+				}
+			} 
+			else {
+				if (gettyp == 0) {
+					sql = &amp;quot;insert into fin_indexdetail(REPLOCID,ORG,ACC,INDEXID,INDEXYEAR,INDEXITEMID,AMOUNTMONEYUNTI,%s) 
+						select &amp;apos;%s&amp;apos; replocid,&amp;apos;%s&amp;apos; orgid,a.acc,%s,substr(a.yymm,0,4),&amp;apos;%s&amp;apos; indexitemid,%s amountmoneyunti,%s from %s a,%s b
+						 where a.acc=&amp;apos;%s&amp;apos; and a.syt=&amp;apos;%s&amp;apos; and a.org=&amp;apos;%s&amp;apos; and a.replocid=&amp;apos;%s&amp;apos;
+						   and a.acc=b.acc and a.syt=b.syt and a.org=b.org and a.repid=&amp;apos;%s&amp;apos;
+						   and a.guid=b.formguid and b.seqid=&amp;apos;%s&amp;apos;
+						   and decode(length(a.yymm),7,a.yymm,substr(a.yymm,0,4)||&amp;apos;-01&amp;apos;)=&amp;apos;%s&amp;apos; and %s is not null&amp;quot;
+						.format([valcol,replocid,orgid,indexidcolnam,indexitemid,moneyunit,indexitemidcolnam,hdrtablenam,
+							dtltablenam,accid,sytid,orgid,replocid,repid,&amp;quot;&amp;quot;+seq,yymm,indexidcolnam]);
+					db.ExcecutSQL(sql);
+				} else {
+					sql = &amp;quot;insert into fin_indexdetail(REPLOCID,ORG,ACC,INDEXID,INDEXYEAR,INDEXITEMID,AMOUNTMONEYUNTI,%s) 
+						select &amp;apos;%s&amp;apos; replocid,&amp;apos;%s&amp;apos; orgid,a.acc,decode(instr(%s,&amp;apos;,&amp;apos;),0,%s,substr(%s,0,length(%s)-2)) indexid,
+							substr(a.yymm,0,4),&amp;apos;%s&amp;apos; indexitemid,%s amountmoneyunti,%s from %s a,%s b
+						 where a.acc=&amp;apos;%s&amp;apos; and a.syt=&amp;apos;%s&amp;apos; and a.org=&amp;apos;%s&amp;apos; and a.replocid=&amp;apos;%s&amp;apos;
+						   and a.acc=b.acc and a.syt=b.syt and a.org=b.org and a.repid=&amp;apos;%s&amp;apos;
+						   and a.guid=b.formguid and b.seqid=&amp;apos;%s&amp;apos;
+						   and decode(length(a.yymm),7,a.yymm,substr(a.yymm,0,4)||&amp;apos;-01&amp;apos;)=&amp;apos;%s&amp;apos; and %s is not null&amp;quot;
+						.format([valcol,replocid,orgid,indexidcolnam,indexidcolnam,indexidcolnam,indexidcolnam,
+							indexitemid,moneyunit,indexitemidcolnam,hdrtablenam,
+							dtltablenam,accid,sytid,orgid,replocid,repid,&amp;quot;&amp;quot;+seq,yymm,indexidcolnam]);
+					db.ExcecutSQL(sql);
+				}
+			}			
+		}
+	}
+}
+
+//指标取数
+//调用PLSQL函数F来取得指标数值
+//yymm = 2009-01,2009-02,2009-03
+//函数F原型：F(orgid,accid,yymm,moneyunit,indexid,indexitemid) 旧
+//函数F原型：F(replocid,orgid,accid,yymm,moneyunit,indexid,indexitemid) NEW
+function getIdxValue(db,orgid,accid,repid,yymm,indexid,indexitemid,replocid)
+{
+	if (indexid == &amp;quot;&amp;quot; || indexid == &amp;quot;undefined&amp;quot; || indexitemid == &amp;quot;&amp;quot; || indexitemid == &amp;quot;undefined&amp;quot;) return 0;
+	 
+	if(yymm.length() == 4) yymm += &amp;quot;-01&amp;quot;;
+	var colnam = &amp;quot;MONEY&amp;quot;+ yymm.split(&amp;quot;-&amp;quot;)[1];
+	var yy = yymm.split(&amp;quot;-&amp;quot;)[0];
+	var sql = &amp;quot;&amp;quot;;
+	var sql2 = &amp;quot;&amp;quot;;
+	var sql3 = &amp;quot;&amp;quot;;
+	var formula = &amp;quot;&amp;quot;;
+	var formula2 = &amp;quot;&amp;quot;;
+	var formula3 = &amp;quot;&amp;quot;;
+	var moneyunit = &amp;quot;1&amp;quot;;		//报表金额单位
+	var baseunit = &amp;quot;1&amp;quot;;		//金额基本单位
+	var maxunit = &amp;quot;10000&amp;quot;;		//金额最大单位
+	var retain = 0;			//保留小数位数
+	var issum = accid.indexOf(&amp;quot;,&amp;quot;);	//是否多帐套汇总
+		
+	try {
+		if (indexid == &amp;quot;&amp;quot;) return 0;
+		//获取报表金额单位
+		sql = &amp;quot;select nvl(moneyunit,1) moneyunit,retain from fin_repmodel where reportid=&amp;apos;&amp;quot;+ repid +&amp;quot;&amp;apos;&amp;quot;;
+		var repds = db.GetXMLSQL(sql);
+		try {
+			moneyunit = repds.getStringAt(0,&amp;quot;moneyunit&amp;quot;);
+			retain = repds.getStringAt(0,&amp;quot;retain&amp;quot;);
+		} catch ( e ) { }
+		
+		//报表指标取数公式 F(&amp;apos;T030126&amp;apos;,&amp;apos;9011&amp;apos;)
+		sql = &amp;quot;select formula from fin_index_formula where repid=&amp;apos;%s&amp;apos; and indexid=&amp;apos;%s&amp;apos; and indexitemid=&amp;apos;%s&amp;apos; and useflg=&amp;apos;1&amp;apos;&amp;quot;.format([repid,indexid,indexitemid]);
+		try {
+			formula = db.GetSQL(sql);
+			formula2 = formula;
+			formula3 = formula;
+		} catch ( e ) { 
+			return 0;
+		}
+//pub.EAFunc.Log(formula );
+
+		if (formula != &amp;quot;&amp;quot; &amp;&amp; formula != null &amp;&amp; issum &amp;lt; 0) {
+			var yymm_str = pub.EAFunc.Replace(yymm,&amp;quot;-&amp;quot;,&amp;quot;#&amp;quot;);   //替换日期的-符号 区分减号运算符
+			//设置金额单位为字符串moneyunit
+			var fma = pub.EAFunc.Replace(formula,&amp;quot;F(&amp;quot;,&amp;quot;F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;quot;.format([replocid,orgid,accid,yymm_str,&amp;quot;moneyunit&amp;quot;]));
+			//pub.EAFunc.Log(fma);
+			//取数公式可能分别从不同金额单位上取数问题
+			return getFormulaValue(db,fma,moneyunit,retain);   //元和万元
+		} else {
+			return 0; //没有定义取数公式的，不再默认取数！ //20161122修改
+			
+			sql = &amp;quot;select formula from fin_index where indexid=&amp;apos;%s&amp;apos;&amp;quot;.format([indexid]);
+			try { formula = db.GetSQL(sql); } catch ( e ) { }
+			//如果指标定义有取数公式（F(&amp;apos;T10101&amp;apos;)），则从公式取数，赋值的指标项相对应
+			if (formula != &amp;quot;&amp;quot; &amp;&amp; formula != null) {
+				formula = pub.EAFunc.Replace(formula,&amp;quot;F(&amp;quot;,&amp;quot;F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;quot;.format([replocid,orgid,accid,yymm,moneyunit]));
+				formula = pub.EAFunc.Replace(formula,&amp;quot;)&amp;quot;,&amp;quot;,&amp;apos;%s&amp;apos;)&amp;quot;.format([indexitemid]));
+				sql = &amp;quot;select %s from dual&amp;quot;.format([formula]);
+
+				formula2 = pub.EAFunc.Replace(formula2,&amp;quot;F(&amp;quot;,&amp;quot;F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;quot;.format([replocid,orgid,accid,yymm,baseunit]));
+				formula2 = pub.EAFunc.Replace(formula2,&amp;quot;)&amp;quot;,&amp;quot;,&amp;apos;%s&amp;apos;)&amp;quot;.format([indexitemid]));
+				sql2 = &amp;quot;select %s from dual&amp;quot;.format([formula2]);
+				
+				formula3 = pub.EAFunc.Replace(formula3,&amp;quot;F(&amp;quot;,&amp;quot;F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;quot;.format([replocid,orgid,accid,yymm,maxunit]));
+				formula3 = pub.EAFunc.Replace(formula3,&amp;quot;)&amp;quot;,&amp;quot;,&amp;apos;%s&amp;apos;)&amp;quot;.format([indexitemid]));
+				sql3 = &amp;quot;select %s from dual&amp;quot;.format([formula3]);
+			} else {
+				sql = &amp;quot;select F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;) from dual&amp;quot;.format([replocid,orgid,accid,yymm,moneyunit,indexid,indexitemid]);
+				sql2 = &amp;quot;select F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;) from dual&amp;quot;.format([replocid,orgid,accid,yymm,baseunit,indexid,indexitemid]);
+				sql3 = &amp;quot;select F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;) from dual&amp;quot;.format([replocid,orgid,accid,yymm,maxunit,indexid,indexitemid]);
+			}
+		}
+		//pub.EAFunc.Log(sql);
+		var idxvalue = pub.EAFunc.NVL(db.GetSQL(sql),&amp;quot;0&amp;quot;);		
+		sql = &amp;quot;select round(%s,%s) val from dual&amp;quot;.format([idxvalue,retain]);
+		idxvalue = db.GetSQL(sql);
+		if (1.0*idxvalue == 0 &amp;&amp; issum &amp;lt; 0) {
+			if (moneyunit != baseunit) {	//报表金额不是元单位，指标取元单位金额*报表金额单位
+				idxvalue = db.GetSQL(sql2);
+				idxvalue = pub.EAFunc.Round(idxvalue / (1.0*moneyunit),retain);
+			}
+			else {				//报表金额是元单位
+				idxvalue = db.GetSQL(sql3);
+				sql = &amp;quot;select round(10000*%s,%s) from dual&amp;quot;.format([idxvalue,retain]);
+				idxvalue = db.GetSQL(sql);
+//				idxvalue = pub.EAFunc.Round((1.0*idxvalue)*10000,retain);
+//				idxvalue = pub.EAFunc.Round(Double.parseDouble(idxvalue)*10000,retain);
+//				idxvalue = pub.EAFunc.formatDouble(Double.parseDouble(idxvalue),retain).multiply(10000);
+			}
+		}
+		
+		
+		return idxvalue;			//直接返回金额不需要再做单位转换
+	} catch ( e ) {
+		pub.EAFunc.Log(&amp;quot;取数出错:&amp;quot;+e.toString()+&amp;quot; accid=&amp;quot;+accid+&amp;quot; repid=&amp;quot;+repid+&amp;quot; yymm=&amp;quot;+yymm+&amp;quot; indexid=&amp;quot;+indexid+&amp;quot; indexitemid=&amp;quot;+indexitemid);
+		//throw new Exception(&amp;quot;取数出错:&amp;quot;+e.toString()+&amp;quot; accid=&amp;quot;+accid+&amp;quot; repid=&amp;quot;+repid+&amp;quot; yymm=&amp;quot;+yymm+&amp;quot; indexid=&amp;quot;+indexid+&amp;quot; indexitemid=&amp;quot;+indexitemid);
+		return 0;
+	}
+}
+
+//F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;moneyunit&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)-F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;moneyunit&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)
+//formula取数公式 moneyunit报表金额单位 retain保留小数位
+function getFormulaValue(db,formula,moneyunit,retain)
+{
+	var sql = &amp;quot;&amp;quot;;
+	var fa = &amp;quot;&amp;quot;;
+	var p1 = 0;
+	var p2 = 0;
+	var arrFormula = new Array();
+//	pub.EAFunc.Log(formula);
+	var arrSP = &amp;quot;&amp;quot;;
+	if (formula.indexOf(&amp;quot;&amp;apos;,&amp;apos;&amp;quot;) != -1) arrSP = formula.split(&amp;quot;&amp;apos;,&amp;apos;&amp;quot;);
+	else return 0;
+	var issum = arrSP[1].indexOf(&amp;quot;,&amp;quot;);	//是否汇总
+	
+	for (var i = 0; i &amp;lt; formula.length(); i ++) {
+		var ch = formula.charAt(i);
+		if ( isOperChar(ch) ) {
+			fa = formula.substring(p1,i);
+			fa = pub.EAFunc.Replace(fa,&amp;quot;#&amp;quot;,&amp;quot;-&amp;quot;);	//日期的2010#02替换为2010-02
+			arrFormula.push(fa);
+			arrFormula.push(ch);
+			p1 = i+1;
+		}
+	}
+	
+	//最后一个表达式
+	fa = formula.substring(p1,formula.length());
+	fa = pub.EAFunc.Replace(fa,&amp;quot;#&amp;quot;,&amp;quot;-&amp;quot;);
+	arrFormula.push(fa);
+	
+	var bds = &amp;quot;&amp;quot;;
+	for (var i = 0; i &amp;lt; arrFormula.length(); i ++) {
+		if (arrFormula[i].length() == 1) {	//运算符
+			bds += arrFormula[i];
+		} else {				//取数公式
+			var sform = pub.EAFunc.Replace(arrFormula[i],&amp;quot;moneyunit&amp;quot;,moneyunit);
+			sql = &amp;quot;select %s from dual&amp;quot;.format([sform]);
+//			pub.EAFunc.Log(sql);
+			var idxvalue = pub.EAFunc.NVL(db.GetSQL(sql),&amp;quot;0&amp;quot;);
+//			pub.EAFunc.Log(&amp;quot;报表单位：&amp;quot;+idxvalue);
+			if (1.0*idxvalue == 0 &amp;&amp; issum &amp;lt; 0) {
+				if (moneyunit == &amp;quot;1&amp;quot;) {	//报表金额单位是元	10年11月26日修改
+					sform = pub.EAFunc.Replace(arrFormula[i],&amp;quot;moneyunit&amp;quot;,&amp;quot;10000&amp;quot;);
+					sql = &amp;quot;select %s from dual&amp;quot;.format([sform]);
+					idxvalue = db.GetSQL(sql);
+//					pub.EAFunc.Log(&amp;quot;万元单位：&amp;quot;+idxvalue);
+					sql = &amp;quot;select round(10000*%s,%s) from dual&amp;quot;.format([idxvalue,retain]);
+					idxvalue = db.GetSQL(sql);
+//					idxvalue = pub.EAFunc.Round((1.0*idxvalue)*10000,retain);
+//					idxvalue = pub.EAFunc.formatMoney(Double.parseDouble(idxvalue),retain);
+//					idxvalue = idxvalue.multiply(10000);
+//					idxvalue = (idxvalue * 10000) / (1000D * 1000D);
+				}
+				else {
+					sform = pub.EAFunc.Replace(arrFormula[i],&amp;quot;moneyunit&amp;quot;,&amp;quot;1&amp;quot;);
+					sql = &amp;quot;select %s from dual&amp;quot;.format([sform]);
+					idxvalue = db.GetSQL(sql);
+//					pub.EAFunc.Log(&amp;quot;元单位：&amp;quot;+idxvalue);
+					idxvalue = pub.EAFunc.Round(idxvalue / (1.0*moneyunit),retain);
+				}
+			}
+			bds += &amp;quot;(&amp;quot;+idxvalue+&amp;quot;)&amp;quot;;
+		}
+	}
+	sql = &amp;quot;select %s ret from dual&amp;quot;.format([bds]);
+//	pub.EAFunc.Log(sql);
+	var ivalue = db.GetSQL(sql);
+	return ivalue;
+}
+
+//解释取数公式 F(&amp;apos;T030126&amp;apos;,&amp;apos;9011&amp;apos;)+F(&amp;apos;T030126&amp;apos;,&amp;apos;9011&amp;apos;)
+function parseFormula(orgid,accid,repid,yymm,indexid,indexitemid,formula,replocid)
+{
+	var fm = formula;
+	var fa = &amp;quot;&amp;quot;;
+	var p1 = 0;
+	var p2 = 0;
+	var ret = &amp;quot;&amp;quot;;
+	var moneyunit = &amp;quot;1&amp;quot;;
+	//报表金额单位 元或万元
+	sql = &amp;quot;select nvl(moneyunit,1) moneyunit from fin_repmodel where reportid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+	try {moneyunit = db.GetSQL(sql);}catch(e){}
+
+	for (var i=0;i&amp;lt;fm.length();i++) {
+		var ch = fm.charAt(i);
+		if (isOperChar(ch)) {
+			fa = fm.substring(p1,i);
+			fa = pub.EAFunc.Replace(fa,&amp;quot;F(&amp;quot;,&amp;quot;F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;quot;.format([replocid,orgid,accid,yymm,moneyunit]));
+			ret += fa + ch;
+			p1 = i+1;
+		}
+	}
+	//最后一个表达式
+	fa = fm.substring(p1,fm.length());
+	fa = pub.EAFunc.Replace(fa,&amp;quot;F(&amp;quot;,&amp;quot;F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;quot;.format([replocid,orgid,accid,yymm,moneyunit]));
+	ret += fa;
+	//pub.EAFunc.Log(&amp;quot;parseFormula:&amp;quot;+ret);
+
+	return ret;
+}
+
+function isOperChar(chr)
+{
+	var oparr = new Array(&amp;quot;+&amp;quot;,&amp;quot;-&amp;quot;,&amp;quot;*&amp;quot;,&amp;quot;/&amp;quot;);
+	for (var i=0;i&amp;lt;oparr.length();i++) {
+		if (chr == oparr[i]) return true;
+	}
+	return false;
+}
+
+//检查表间平衡 如果不平返回平衡公式信息，否则返回空
+function checkReportPH(db,orgid,accid,repid,yymm,replocid)
+{
+	var sql = &amp;quot;select a.ID,a.FORMULA,a.NOTE,b.REPID from fin_formula a,fin_formularep b where a.guid=b.formulaguid and b.repid=&amp;apos;%s&amp;apos; and a.useflg=&amp;apos;1&amp;apos;&amp;quot;.format([repid]);
+	var ds = null;
+	var retmsg = &amp;quot;&amp;quot;;
+	var phmsg = &amp;quot;&amp;quot;;
+	var isph = true;
+	
+	try {
+		//报表金额单位
+		var my_sql = &amp;quot;select nvl(moneyunit,1) moneyunit,retain from fin_repmodel where reportid=&amp;apos;%s&amp;apos;&amp;quot;.format([repid]);
+		var my_ds = db.GetXMLSQL(my_sql);
+		var moneyunit = my_ds.getStringAt(0,&amp;quot;moneyunit&amp;quot;);
+		var retain = my_ds.getStringAt(0,&amp;quot;retain&amp;quot;);
+		
+		var operstr = new Array(&amp;quot;&amp;gt;=&amp;quot;,&amp;quot;&amp;lt;=&amp;quot;,&amp;quot;&amp;gt;&amp;quot;,&amp;quot;&amp;lt;&amp;quot;,&amp;quot;=&amp;quot;);	//表达式平衡判断符，=号不能放前面
+		
+		ds = db.GetXMLSQL(sql);
+		for (var i=0;i&amp;lt;ds.getRowCount();i++) {
+			var id = ds.getStringAt(i,&amp;quot;ID&amp;quot;);
+			var formula = ds.getStringAt(i,&amp;quot;FORMULA&amp;quot;);
+			var note = ds.getStringAt(i,&amp;quot;NOTE&amp;quot;);
+			var repid = ds.getStringAt(i,&amp;quot;REPID&amp;quot;);
+			var ret = &amp;quot;&amp;quot;;
+			sql = &amp;quot;select count(*) PH from dual where 1=1 &amp;quot;;
+			var ff;
+			if (formula != &amp;quot;&amp;quot; &amp;&amp; formula != null) {
+				ff = pub.EAFunc.Replace(formula,&amp;quot;F(&amp;quot;,&amp;quot;F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;quot;.format([replocid,orgid,accid,yymm,moneyunit]));
+				sql += &amp;quot; and &amp;quot; + ff;
+			}
+			//ret = db.GetSQL(sql);
+			
+			var left = &amp;quot;&amp;quot;;
+			var right = &amp;quot;&amp;quot;;
+			var oper = &amp;quot;&amp;quot;;
+			for (var n=0;n&amp;lt;operstr.length();n++) {
+				var pos = ff.indexOf(operstr[n]);
+				if (pos &amp;gt; -1) {
+					oper = operstr[n];
+					left = ff.substring(0,pos);
+					right = ff.substring(pos+oper.length());
+					//throw new Exception(&amp;quot;ff:&amp;quot;+ff+&amp;quot; oper:&amp;quot;+oper+&amp;quot; pos:&amp;quot;+pos+&amp;quot; n=&amp;quot;+n);
+					break;
+				}
+			}
+			//sql = &amp;quot;select %s left,%s right,%s - (%s) result from dual&amp;quot;.format([left,right,left,right]);
+			sql = &amp;quot;select round(%s,%s) left,round(%s,%s) right,round(%s,%s) - round((%s),%s) result from dual&amp;quot;
+				.format([left,retain,right,retain,left,retain,right,retain]);
+//			if (id == &amp;quot;86102&amp;quot;)
+//			pub.EAFunc.Log(sql);
+			var retds = db.GetXMLSQL(sql);
+			var nleft = retds.getStringAt(0,&amp;quot;LEFT&amp;quot;);
+			var nright = retds.getStringAt(0,&amp;quot;RIGHT&amp;quot;);
+			ret = retds.getStringAt(0,&amp;quot;RESULT&amp;quot;);
+			
+			if (oper == &amp;quot;=&amp;quot; &amp;&amp; ret == 0) isph = true;
+			else if (oper == &amp;quot;&amp;gt;&amp;quot; &amp;&amp; ret &amp;gt; 0) isph = true;
+			else if (oper == &amp;quot;&amp;gt;=&amp;quot; &amp;&amp; ret &amp;gt;= 0) isph = true;
+			else if (oper == &amp;quot;&amp;lt;=&amp;quot; &amp;&amp; ret &amp;lt;= 0) isph = true;
+			else if (oper == &amp;quot;&amp;lt;&amp;quot; &amp;&amp; ret &amp;lt; 0) isph = true;
+			else isph = false;
+			
+			//公式不平
+			if (!isph) {
+				//phmsg += &amp;quot;[&amp;quot;+repid+&amp;quot;]&amp;quot;+id + &amp;quot;：&amp;quot; + note + &amp;quot; ， 差异金额（&amp;quot; + ret + &amp;quot;）。 @ 公式【&amp;quot; + ff + &amp;quot;】\n&amp;quot;;
+				//报表编号~公式编号~公式~公式名称~不平衡差异金额
+				phmsg += repid+&amp;quot;~&amp;quot;+id+&amp;quot;~&amp;quot;+ff+&amp;quot;~&amp;quot;+note+&amp;quot;~&amp;quot;+ret+&amp;quot;;&amp;quot;;
+				//pub.EAFunc.Log(sql);
+			}
+		}
+		//检查自定义的公式
+		phmsg += _user_checkReportPH(db,orgid,accid,repid,yymm,replocid);
+		
+		return phmsg;
+	}
+	catch(e) {
+		return e.toString();
+		throw new Exception(e.toString());
+	}
+}
+
+//平衡公式检查
+//formulaid-平衡公式编号
+function checkPHFormula(db,orgid,accid,repid,yymm,replocid,formulaid)
+{
+	var sql = &amp;quot;select a.ID,a.FORMULA,a.NOTE,b.REPID from fin_formula a,fin_formularep b 
+		where a.guid=b.formulaguid and b.repid=&amp;apos;%s&amp;apos; and a.id=&amp;apos;%s&amp;apos; and a.useflg=&amp;apos;1&amp;apos;&amp;quot;.format([repid,formulaid]);
+	var ds = null;
+	var retmsg = &amp;quot;&amp;quot;;
+	var phmsg = &amp;quot;1~0&amp;quot;;
+	var isph = true;
+	
+	try {
+		//报表金额单位
+		var my_sql = &amp;quot;select nvl(moneyunit,1) moneyunit,retain from fin_repmodel where reportid=&amp;apos;%s&amp;apos;&amp;quot;.format([repid]);
+		var my_ds = db.GetXMLSQL(my_sql);
+		var moneyunit = my_ds.getStringAt(0,&amp;quot;moneyunit&amp;quot;);
+		var retain = my_ds.getStringAt(0,&amp;quot;retain&amp;quot;);
+		
+		var operstr = new Array(&amp;quot;&amp;gt;=&amp;quot;,&amp;quot;&amp;lt;=&amp;quot;,&amp;quot;&amp;gt;&amp;quot;,&amp;quot;&amp;lt;&amp;quot;,&amp;quot;=&amp;quot;);	//表达式平衡判断符，=号不能放前面
+		
+		ds = db.GetXMLSQL(sql);
+		for (var i=0;i&amp;lt;ds.getRowCount();i++) {
+			var id = ds.getStringAt(i,&amp;quot;ID&amp;quot;);
+			var formula = ds.getStringAt(i,&amp;quot;FORMULA&amp;quot;);
+			var note = ds.getStringAt(i,&amp;quot;NOTE&amp;quot;);
+			var repid = ds.getStringAt(i,&amp;quot;REPID&amp;quot;);
+			var ret = &amp;quot;&amp;quot;;
+			sql = &amp;quot;select count(*) PH from dual where 1=1 &amp;quot;;
+			var ff;
+			if (formula != &amp;quot;&amp;quot; &amp;&amp; formula != null) {
+				ff = pub.EAFunc.Replace(formula,&amp;quot;F(&amp;quot;,&amp;quot;F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;quot;.format([replocid,orgid,accid,yymm,moneyunit]));
+				sql += &amp;quot; and &amp;quot; + ff;
+			}
+			//ret = db.GetSQL(sql);
+			
+			var left = &amp;quot;&amp;quot;;
+			var right = &amp;quot;&amp;quot;;
+			var oper = &amp;quot;&amp;quot;;
+			for (var n=0;n&amp;lt;operstr.length();n++) {
+				var pos = ff.indexOf(operstr[n]);
+				if (pos &amp;gt; -1) {
+					oper = operstr[n];
+					left = ff.substring(0,pos);
+					right = ff.substring(pos+oper.length());
+					//throw new Exception(&amp;quot;ff:&amp;quot;+ff+&amp;quot; oper:&amp;quot;+oper+&amp;quot; pos:&amp;quot;+pos+&amp;quot; n=&amp;quot;+n);
+					break;
+				}
+			}
+			//sql = &amp;quot;select %s left,%s right,%s - (%s) result from dual&amp;quot;.format([left,right,left,right]);
+			sql = &amp;quot;select round(%s,%s) left,round(%s,%s) right,round(%s,%s) - round((%s),%s) result from dual&amp;quot;
+				.format([left,retain,right,retain,left,retain,right,retain]);
+			
+			//pub.EAFunc.Log(sql);
+			var retds = db.GetXMLSQL(sql);
+			var nleft = retds.getStringAt(0,&amp;quot;LEFT&amp;quot;);
+			var nright = retds.getStringAt(0,&amp;quot;RIGHT&amp;quot;);
+			ret = retds.getStringAt(0,&amp;quot;RESULT&amp;quot;);
+			
+			if (oper == &amp;quot;=&amp;quot; &amp;&amp; ret == 0) isph = true;
+			else if (oper == &amp;quot;&amp;gt;&amp;quot; &amp;&amp; ret &amp;gt; 0) isph = true;
+			else if (oper == &amp;quot;&amp;gt;=&amp;quot; &amp;&amp; ret &amp;gt;= 0) isph = true;
+			else if (oper == &amp;quot;&amp;lt;=&amp;quot; &amp;&amp; ret &amp;lt;= 0) isph = true;
+			else if (oper == &amp;quot;&amp;lt;&amp;quot; &amp;&amp; ret &amp;lt; 0) isph = true;
+			else isph = false;
+			
+			//公式不平
+			if (!isph) {
+				phmsg = &amp;quot;0~&amp;quot; + ret;
+				//pub.EAFunc.Log(sql);
+			}
+		}
+	
+		return phmsg;
+	}
+	catch(e) {
+		throw new Exception(e.toString());
+	}
+
+}
+
+//根据指标项列号，获取该指标项的指标列号,指标项编号
+//返回指标列号和指标项编号 如：5,01
+function getMainCellIndexInfo(sytid,repid,col)
+{
+	var str = &amp;quot;&amp;quot;;
+	try {
+		var grdxmldb = new xmldb.EAGRDXmlDB(sytid,repid);
+		var grdcolds = grdxmldb.getGrdColDS();	
+		var indexidcol = &amp;quot;&amp;quot;;
+		var indexitemid = &amp;quot;&amp;quot;;
+		
+		for (var i = 0; i &amp;lt; grdcolds.getRowCount(); i ++) {
+			if (grdcolds.getStringAt(i, &amp;quot;ID&amp;quot;).split(&amp;quot;,&amp;quot;)[1] == col) {
+				indexitemid  = grdcolds.getStringAt(i, &amp;quot;INDEXID&amp;quot;);
+			}
+			if (grdcolds.getStringAt(i, &amp;quot;ISIDX&amp;quot;) == &amp;quot;1&amp;quot;) {
+				if (indexidcol == &amp;quot;&amp;quot; &amp;&amp; (1.0*grdcolds.getStringAt(i, &amp;quot;ID&amp;quot;).split(&amp;quot;,&amp;quot;)[1] - col) &amp;gt; 0) {
+					indexidcol = grdcolds.getStringAt(i, &amp;quot;ID&amp;quot;).split(&amp;quot;,&amp;quot;)[1];			
+				} else {
+					if ((1.0*grdcolds.getStringAt(i, &amp;quot;ID&amp;quot;).split(&amp;quot;,&amp;quot;)[1] - col) &amp;gt; 0
+						&amp;&amp; (1.0*grdcolds.getStringAt(i, &amp;quot;ID&amp;quot;).split(&amp;quot;,&amp;quot;)[1] - col) &amp;lt; (1.0*indexidcol - col)) {
+							indexidcol = grdcolds.getStringAt(i, &amp;quot;ID&amp;quot;).split(&amp;quot;,&amp;quot;)[1];
+					}
+				}
+			}			
+		}
+		str = indexidcol+ &amp;quot;,&amp;quot; +indexitemid;		
+		return str;
+	} catch ( e ) {
+		throw new Exception(e.toString());
+	}	
+}
+
+//根据指标编号和指标项，确定在报表上的单元格位置
+//返回单元格坐标：行号，列号
+function getCellIDbyIndex(sytid,grdid,indexid,indexitemid)
+{
+	var grdxmldb = new xmldb.EAGRDXmlDB(sytid,grdid);
+	var grdcolds = grdxmldb.getGrdColDS();
+	var grdds = grdxmldb.getGrdDS();
+	var dtlrng = grdds.getStringAt(0,&amp;quot;DTLRNG&amp;quot;).split(&amp;quot;,&amp;quot;);
+	var row1 = dtlrng[0];	//绑定明细范围行号
+	var sql = &amp;quot;select seqid,lmh from fin_repframe where repid=&amp;apos;%s&amp;apos; and indexid=&amp;apos;%s&amp;apos; and sytid=&amp;apos;SBCW&amp;apos;&amp;quot;.format([grdid,indexid]);
+	var retrow = -1;
+	var retcol = -1;
+	
+	try {
+		var ds = pub.EADbTool.QuerySQL(sql);
+		var r = ds.getStringAt(0,&amp;quot;SEQID&amp;quot;);
+		var lmh = ds.getStringAt(0,&amp;quot;LMH&amp;quot;);
+		
+		//单元格行号
+		retrow = (1 * r + 1 * row1 - 1);	
+		
+		var cnt = 0;
+		for (var i=0;i&amp;lt;grdcolds.getRowCount();i++) {
+			var isidx = grdcolds.getStringAt(i,&amp;quot;ISIDX&amp;quot;);			
+			if (isidx == &amp;quot;1&amp;quot;) cnt ++;
+			if (lmh == cnt) {
+				//单元格列号
+				for (var j=i-1;j&amp;gt;0;j--) {
+					var itemid = grdcolds.getStringAt(j,&amp;quot;INDEXID&amp;quot;);
+					if (grdcolds.getStringAt(j,&amp;quot;ISIDX&amp;quot;) == &amp;quot;1&amp;quot;) break;
+					if (itemid == indexitemid) {
+						retcol = grdcolds.getStringAt(j,&amp;quot;ID&amp;quot;).split(&amp;quot;,&amp;quot;)[1];
+						return retrow + &amp;quot;,&amp;quot; + retcol;
+					}
+				}				
+			}
+		}
+		return retrow + &amp;quot;,&amp;quot; + retcol;
+	}
+	catch(e) {
+		//pub.EAFunc.Log(&amp;quot;getCellIDbyIndex error:&amp;quot;+e.toString()+&amp;quot; repid=&amp;quot;+repid+&amp;quot; indexid=&amp;quot;+indexid+&amp;quot; indexitemid=&amp;quot;+indexitemid);
+		return &amp;quot;-1,-1&amp;quot;;
+	}
+}
+
+//根据报表的列取得指标项编号
+function getIdxItemid(sytid,repid,col)
+{
+	var grdxmldb = new xmldb.EAGRDXmlDB(sytid,repid);
+	var grdcolds = grdxmldb.getGrdColDS();
+	for (var i = 0; i &amp;lt; grdcolds.getRowCount(); i ++) {
+		if (grdcolds.getStringAt(i, &amp;quot;ID&amp;quot;).split(&amp;quot;,&amp;quot;)[1] == col) {
+			return grdcolds.getStringAt(i, &amp;quot;INDEXID&amp;quot;);
+		}
+	}
+}
+
+//取指标值并返回坐标
+function getReportVal(sytid,orgid,accid,repid,yymm,replocid)
+{
+	var db = null;
+	var retxml;
+
+	try {
+		db = new pub.EADatabase();
+		var grdid = db.GetSQL(&amp;quot;select grdid from fin_repmodel where reportid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;);
+		var grdxmldb = new xmldb.EAGRDXmlDB(sytid,grdid);
+		var grdcolds = grdxmldb.getGrdColDS();
+		var sql = &amp;quot;select * from fin_repframe where repid=&amp;apos;%s&amp;apos; and sytid=&amp;apos;SBCW&amp;apos; and indexid is not null order by lmh,seqid&amp;quot;.format([grdid]);
+		var ds = db.GetXMLSQL(sql);
+		//初始化返回的xml结构
+		retxml = new pub.EADS();
+		var row = -1;
+		var col = retxml.addColumn(-1,&amp;quot;ROW&amp;quot;);
+		col = retxml.addColumn(col,&amp;quot;COL&amp;quot;);
+		col = retxml.addColumn(col,&amp;quot;VAL&amp;quot;);
+		//循环报表的所有行记录
+		for (var i=0;i&amp;lt;ds.getRowCount();i++) {
+			var indexid = ds.getStringAt(i,&amp;quot;INDEXID&amp;quot;);	//指标
+			var lmh = ds.getStringAt(i,&amp;quot;LMH&amp;quot;);		//所属栏目
+			var grdlmh = 0;
+			//循环所有明细数据列绑定
+			for (var j=0;j&amp;lt;grdcolds.getRowCount();j++) {				
+				var isidx = grdcolds.getStringAt(j,&amp;quot;ISIDX&amp;quot;);
+				//如果是指标列
+				if (isidx == &amp;quot;1&amp;quot;) {
+					grdlmh ++;
+					if (grdlmh == lmh) {
+						//当前栏目的指标项
+						var itemstr = &amp;quot;&amp;quot;;
+						try {
+							itemstr = db.GetSQL(&amp;quot;select idxitmid from (select distinct idxitmid from fin_repframe where repid=&amp;apos;&amp;quot;+grdid+&amp;quot;&amp;apos; and sytid=&amp;apos;SBCW&amp;apos; and lmh=&amp;apos;&amp;quot;+lmh+&amp;quot;&amp;apos;) where rownum=1&amp;quot;);
+						}catch(e){}
+						if (itemstr != null &amp;&amp; itemstr != &amp;quot;&amp;quot; &amp;&amp; itemstr.length() &amp;gt; 0) {
+							var arridxitem = itemstr.split(&amp;quot;,&amp;quot;);
+							for (var k=0;k&amp;lt;arridxitem.length();k++) {
+								var indexitemid = arridxitem[k];
+								var rowcol = getCellIDbyIndex(sytid,grdid,indexid,indexitemid);								
+								var idxval = getIdxValue(db,orgid,accid,repid,yymm,indexid,indexitemid,replocid);
+								row = retxml.AddNullRow(row);
+								retxml.setValueAt(row,0,rowcol.split(&amp;quot;,&amp;quot;)[0]);
+								retxml.setValueAt(row,1,rowcol.split(&amp;quot;,&amp;quot;)[1]);
+								retxml.setValueAt(row,2,&amp;quot;&amp;quot;+idxval);
+								//pub.EAFunc.Log(&amp;quot;indexid=&amp;quot;+indexid+&amp;quot;,indexitemid=&amp;quot;+indexitemid+&amp;quot;,&amp;quot;+idxval);
+							}
+						}
+						else {
+							//旧的取数方式
+							for (var k=j-1;k&amp;gt;0;k--) {
+								var indexitemid = grdcolds.getStringAt(k,&amp;quot;INDEXID&amp;quot;);
+								var idxflg = grdcolds.getStringAt(k,&amp;quot;ISIDX&amp;quot;);
+								if (indexitemid != &amp;quot;&amp;quot; &amp;&amp; idxflg != &amp;quot;1&amp;quot;) {
+									var rowcol = getCellIDbyIndex(sytid,grdid,indexid,indexitemid);								
+									var idxval = getIdxValue(db,orgid,accid,repid,yymm,indexid,indexitemid,replocid);
+									row = retxml.AddNullRow(row);
+									retxml.setValueAt(row,0,rowcol.split(&amp;quot;,&amp;quot;)[0]);
+									retxml.setValueAt(row,1,rowcol.split(&amp;quot;,&amp;quot;)[1]);
+									retxml.setValueAt(row,2,&amp;quot;&amp;quot;+idxval);
+								}
+								else {
+									//break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return retxml.GetXml();
+	}
+	catch ( e ) {
+		pub.EAFunc.Log(e.toString());
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+//获取同类报表状态，判断是否可以打开当前报表（T15）
+function GetRepstat()
+{
+	var sql = &amp;quot; select * from (
+		select a.orgid,a.id repid,a.name repnam,nvl(c.name,&amp;apos;未制单&amp;apos;) statnam
+		 from ( select a.* from v_finreporg a, v_finreporg b
+			 where a.orgid=b.orgid and a.typ=b.typ and a.subtyp=b.subtyp
+			   and b.orgid=&amp;apos;%s&amp;apos; and b.id=&amp;apos;%s&amp;apos; and b.year=substr(&amp;apos;%s&amp;apos;,1,4) and a.year=substr(&amp;apos;%s&amp;apos;,1,4) ) a, v_repmodel b, v_stat c
+		 where a.orgid=b.org(+) and a.id=b.repid(+) and b.stat=c.id(+) and b.yymm(+)=&amp;apos;%s&amp;apos; and b.acc(+)=&amp;apos;%s&amp;apos;
+		) where ((repid!=&amp;apos;T15&amp;apos; and statnam like &amp;apos;%制%&amp;apos;) or (repid=&amp;apos;T15&amp;apos; and statnam!=&amp;apos;未制单&amp;apos;)) and repid not like &amp;apos;%2011&amp;apos; order by repid &amp;quot;
+		.format([thisorgid,repid,yymm,yymm,yymm,accid]);
+	var ds;
+//	throw new Exception(sql);
+  	try {
+  		ds = pub.EADbTool.QuerySQL(sql);
+  	} catch( e ) { ds = new pub.EAXmlDS(); }
+  	return ds.GetXml();
+}
+
+//更新套表状态
+//参数orgid=&amp;quot;+G_ORGID+&amp;quot;&amp;accid=&amp;quot;+G_ACCID+&amp;quot;&amp;repid=&amp;quot;+repid+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;stat=3&amp;quot;
+function updateTaoBiaoStat(db,orgid,accid,repid,yymm,stat)
+{
+	try {
+		var year = yymm.substring(0,4);
+		var sql = &amp;quot;select * from v_finreporg where typ=(select typ from v_finrep where id=&amp;apos;%s&amp;apos;) and orgid=&amp;apos;%s&amp;apos; and year=&amp;apos;%s&amp;apos;&amp;quot;.format([repid,orgid,year]);
+		var ds;
+		ds = db.GetXMLSQL(sql);
+		for (var i=0;i&amp;lt;ds.getRowCount();i++) {
+			var rpid = ds.getStringAt(i,&amp;quot;ID&amp;quot;);
+			setReportStat(db,accid,rpid,yymm,stat);
+		}
+		return &amp;quot;1&amp;quot;;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+		throw new Exception(e.toString());
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+//更新报表状态
+function setReportStat(db,accid,repid,yymm,stat)
+{
+	var eagrdxmldb = new xmldb.EAGRDXmlDB(&amp;quot;SBCW&amp;quot;,repid);
+	var grdds = eagrdxmldb.getGrdDS();
+	var bilhdrtable = grdds.getStringAt(0,&amp;quot;BILHDRTABLE&amp;quot;);
+	var bildtltable = grdds.getStringAt(0,&amp;quot;BILDTLTABLE&amp;quot;);
+	
+	var uptime = &amp;quot;NULL&amp;quot;;	//上报时间
+	if (stat == 3) uptime = &amp;quot;sysdate&amp;quot;;
+	else if (stat == 5) uptime = &amp;quot;NULL&amp;quot;;	//总部退回清空
+	else uptime = &amp;quot;REFERTIME&amp;quot;;		//等于自己本身
+	
+	var sql = &amp;quot;update %s set stat=&amp;apos;%s&amp;apos;,REFERTIME=%s where acc=&amp;apos;%s&amp;apos; and yymm=decode(length(yymm),7,&amp;apos;%s&amp;apos;,substr(&amp;apos;%s&amp;apos;,0,4))&amp;quot;
+		.format([bilhdrtable,stat,uptime,accid,yymm,yymm]);
+	db.ExcecutSQL(sql);
+	
+	sql = &amp;quot;update %s set stat=&amp;apos;%s&amp;apos; where formguid in (select guid from %s where acc=&amp;apos;%s&amp;apos; and yymm=decode(length(yymm),7,&amp;apos;%s&amp;apos;,substr(&amp;apos;%s&amp;apos;,0,4)))&amp;quot;
+		.format([bildtltable,stat,bilhdrtable,accid,yymm,yymm]);
+	db.ExcecutSQL(sql);
+	
+	//更新报表实例表
+	sql = &amp;quot;update repmodel set stat=&amp;apos;%s&amp;apos;,REFERTIME=%s where acc=&amp;apos;%s&amp;apos; and repid=&amp;apos;%s&amp;apos; and yymm=decode(length(yymm),7,&amp;apos;%s&amp;apos;,substr(&amp;apos;%s&amp;apos;,0,4))&amp;quot;
+		.format([stat,uptime,accid,repid,yymm,yymm]);
+	db.ExcecutSQL(sql);
+}
+
+//自定义报表平衡检查，跨表间的检查
+//phmsg += &amp;quot;[&amp;quot;+repid+&amp;quot;]&amp;quot;+id + &amp;quot;：&amp;quot; + note + &amp;quot; ， 差异金额（&amp;quot; + ret + &amp;quot;）。 @ 公式【&amp;quot; + ff + &amp;quot;】\n&amp;quot;;
+function _user_checkReportPH(db,orgid,accid,repid,yymm,replocid)
+{
+	var phmsg = &amp;quot;&amp;quot;;
+	return phmsg;
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

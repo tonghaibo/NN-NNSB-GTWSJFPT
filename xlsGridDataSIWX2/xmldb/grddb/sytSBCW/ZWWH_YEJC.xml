@@ -1,0 +1,210 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >ZWWH_YEJC</MWID><NAME >余额检查</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >ZWWH_YEJC.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >2</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.LoadScene(sheet,10);
+	
+//	var kmList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_ACCITEM&amp;where=&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+//	_this.SetToComboBox(&amp;quot;&amp;quot;,sheet,4,2,kmList);
+
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHOW_ZERO,1);
+	_this.SetCellText(0,6,4,&amp;quot; 0.00&amp;quot;);
+	
+//	_this.SetToSelectBox(&amp;quot;&amp;quot;,sheet,6,2,&amp;quot;V_CW_YYYY_MM&amp;quot;,&amp;quot;&amp;quot;);
+//	_sql.querytods(&amp;quot;QDYM&amp;quot;,&amp;quot;&amp;quot;);
+//	var qdym = _this.XMLDS_GetString(0,&amp;quot;QDYM&amp;quot;);		
+//	_this.SetCellText(sheet,6,2,qdym.substring(0,4)+&amp;quot;-&amp;quot;+qdym.substring(4));
+	
+	_this.SetCellText(sheet,6,2,G_LOGDAT.substring(0,7));
+}
+
+
+//选择科目
+function showKM()
+{
+	var obj = new Object();
+        obj.filter = &amp;quot;&amp;quot;;
+        obj.mjbz = &amp;quot;0&amp;quot;;
+        obj.bz = &amp;quot;&amp;quot;;
+        obj.jb = 0;
+        obj.kmbh = &amp;quot;&amp;quot;;
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_KMSEL&amp;quot;,obj,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+	var cur_kmbh = retVal;
+	if (cur_kmbh != &amp;quot;&amp;quot; &amp;&amp; cur_kmbh != &amp;quot;undefined&amp;quot; &amp;&amp; cur_kmbh != undefined) {
+		_sql.querytods(&amp;quot;KMMC&amp;quot;,&amp;quot;KMBH=&amp;quot;+cur_kmbh);
+		var kmmc = _this.XMLDS_GetString(0,&amp;quot;NAME&amp;quot;);
+		_this.SetCellText(0,4,2,cur_kmbh);
+		_this.SetCellShowText(0,4,2,kmmc);
+		_this.SetCellText(0,11,1,&amp;quot;&amp;quot;);
+	}
+	setTimeout(&amp;quot;setStatus()&amp;quot;,500);
+}
+
+//处理选择单位双击后会再次触发单击事件再次弹出选择单位的问题
+var clickbz = -1;
+function setStatus()
+{
+	clickbz = 1;
+}
+
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (row == 4 &amp;&amp; col == 4) {
+		if (clickbz == 0) return;
+		clickbz = 0;
+		showKM();
+	}
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (row == 4 &amp;&amp; col == 2) { 
+		_sql.querytods(&amp;quot;KMMC&amp;quot;,&amp;quot;KMBH=&amp;quot;+newvalue);
+		var kmmc = _this.XMLDS_GetString(0,&amp;quot;NAME&amp;quot;);
+		_this.SetCellText(0,4,2,newvalue);
+		_this.SetCellShowText(0,4,2,kmmc);
+	}
+	else if (row == 6 &amp;&amp; col == 2) { 
+		if (newvalue.indexOf(&amp;quot;-&amp;quot;) == -1) {
+			var ym = newvalue.substring(0,4)+&amp;quot;-&amp;quot;+newvalue.substring(4,6);
+			_this.SetCellText(sheet,6,2,ym);
+		}
+		
+	}
+	_this.SetCellText(0,11,1,&amp;quot;&amp;quot;);
+
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if (id == &amp;quot;开始检查&amp;quot;) {
+		if (!confirm(&amp;quot;检查余额,是否继续?&amp;quot;)) return;
+		
+		var kmbh = _this.GetCellText(0,4,2);
+		var qdym = _this.GetCellText(0,6,2);
+		
+		if (kmbh == &amp;quot;&amp;quot;) {
+			//科目为空时为所有科目
+			//alert(&amp;quot;请选择科目！&amp;quot;);
+			//return;
+		}
+		if (qdym == &amp;quot;&amp;quot;) {
+			alert(&amp;quot;请选择开始年月！&amp;quot;);
+			return;
+		}
+		
+		_this.SetCellText(0,11,1,&amp;quot;正在检查,请稍候...&amp;quot;);
+		var ret = invokeOSFunc(&amp;quot;CheckYE&amp;quot;,&amp;quot;kmbh=&amp;quot;+kmbh+&amp;quot;&amp;qdym=&amp;quot;+qdym+&amp;quot;&amp;sbh=&amp;quot;+G_ORGID+&amp;quot;&amp;zth=&amp;quot;+G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;));
+		_this.SetCellText(0,11,1,ret);
+		
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var xmldb = new JavaPackage(&amp;quot;com.xlsgrid.net.xmldb&amp;quot;);
+var web = new JavaPackage(&amp;quot;com.xlsgrid.net.web&amp;quot;);
+var orajdbc = new JavaPackage(&amp;quot;oracle.jdbc&amp;quot;);
+
+
+//余额检查
+function CheckYE()
+{
+	var db = null;
+	var retVal = &amp;quot;&amp;quot;;
+	
+	try {
+		db = new pub.EADatabase();
+		var conn = db.GetConn();
+
+		var yy = 1 * qdym.split(&amp;quot;-&amp;quot;)[0];
+		var mm = 1 * qdym.split(&amp;quot;-&amp;quot;)[1];
+		
+		var errtext = &amp;quot;&amp;quot;;
+		
+		if (kmbh != &amp;quot;&amp;quot;) {
+			var praFunc = conn.prepareCall(&amp;quot;{?=call cw_pack.check_qcye_modify(?,?,?,?,?,?,?,?,?)}&amp;quot;);
+			praFunc.registerOutParameter(1,java.sql.Types.VARCHAR);
+			praFunc.setString(2,sbh);
+			praFunc.setString(3,zth);
+			praFunc.setInt(4,yy);
+			praFunc.setInt(5,mm);
+			praFunc.setString(6,kmbh);
+			praFunc.setString(7,&amp;quot;&amp;quot;);
+			praFunc.registerOutParameter(7,java.sql.Types.VARCHAR);
+			praFunc.setInt(8,4000);
+			praFunc.setInt(9,1);
+			praFunc.setInt(10,1);
+		
+			praFunc.executeUpdate();
+			
+			retVal = praFunc.getString(1);
+			errtext = praFunc.getString(7);
+
+		}
+		else {
+			var praFunc = conn.prepareCall(&amp;quot;{?=call cw_pack.check_qcye_modify_all(?,?,?,?,?,?)}&amp;quot;);
+			praFunc.registerOutParameter(1,java.sql.Types.VARCHAR);
+			praFunc.setString(2,sbh);
+			praFunc.setString(3,zth);
+			praFunc.setInt(4,yy);
+			praFunc.setInt(5,mm);
+			praFunc.setString(6,&amp;quot;&amp;quot;);
+			praFunc.registerOutParameter(6,java.sql.Types.VARCHAR);
+			praFunc.setInt(7,4000);
+		
+			praFunc.executeUpdate();
+			
+			retVal = praFunc.getString(1);
+			errtext = praFunc.getString(6);
+
+		}
+		
+		if (errtext != &amp;quot;&amp;quot; || retVal != &amp;quot;1&amp;quot;) {
+			db.Rollback();
+		}
+		else {
+			db.Commit();
+		}
+		
+		if (errtext == &amp;quot;&amp;quot; || retVal == &amp;quot;1&amp;quot;) errtext = &amp;quot;检查完毕，余额没有错误!&amp;quot;;
+		
+		return errtext;
+
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >KMMC</ID><NAME ></NAME><DATDSC >select name from V_ACCITEM where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and id=&amp;apos;[%KMBH]&amp;apos;</DATDSC><C4 >KMMC</C4></ROW>
+<ROW num="1" ><ID >QDYM</ID><NAME >启动年月</NAME><DATDSC >select QDYM from CW_ZTB where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos;</DATDSC><C4 ></C4></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

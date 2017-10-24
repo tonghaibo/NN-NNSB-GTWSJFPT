@@ -1,0 +1,1578 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >F</MWTYP><MWID >PZGL_PZZD</MWID><NAME >记账凭证</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >PZGL_PZZD.zxg</FILE><SCENE ></SCENE><FIXED >6,1</FIXED><CATTYP ></CATTYP><DTLRNG >6,2,8,28</DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE >CW_PZB</BILHDRTABLE><BILDTLTABLE >CW_PZMXB</BILDTLTABLE><COLLIST >zt 状态,yy 年, mm 月,dd 日,pzlx 类型,pzh 凭证号,zdrxm 制单人,to_char(crtdat,&amp;apos;yyyy-mm-dd hh24:mi:ss&amp;apos;) 创建时间,fjzs 附件张数,fhrxm 复核人,to_char(chkdat,&amp;apos;yyyy-mm-dd hh24:mi:ss&amp;apos;) 复核时间,zzh 汇总字,hzdd 汇总日,jzrxm 记账人</COLLIST><WHERE > and yy=substr(&amp;apos;[%SYS_LOGDAT]&amp;apos;,0,4) and mm=substr(&amp;apos;[%SYS_LOGDAT]&amp;apos;,6,2) AND zdrxm &amp;lt;&amp;gt; &amp;apos;[%SYS_USRNAM]&amp;apos;</WHERE><ORDER >pzh</ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL >3</IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >1,2</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdcelds>
+<ROWSET>
+<ROW num="0" ><ID >0,4,3</ID><CELLID ></CELLID><NAME >凭证类型</NAME><VALFLD >PZLX</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY >0</IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 >0,4,2</C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 >0,4,3</C23><C24 ></C24><C25 >0,4,3</C25><C26 ></C26><C27 >0,4,3</C27><C28 ></C28></ROW>
+<ROW num="1" ><ID >0,3,3</ID><CELLID ></CELLID><NAME >状态</NAME><VALFLD >ZT</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 >0,3,1</C17><C18 >0,3,2</C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 >0,3,3</C25><C26 ></C26><C27 >0,3,3</C27><C28 ></C28></ROW>
+<ROW num="2" ><ID >0,1,21</ID><CELLID ></CELLID><NAME >所编号</NAME><VALFLD >SBH</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 >0,1,21</C25><C26 ></C26><C27 ></C27><C28 ></C28></ROW>
+<ROW num="3" ><ID >0,2,21</ID><CELLID ></CELLID><NAME >帐套号</NAME><VALFLD >ZTH</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 >0,2,21</C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28></ROW>
+<ROW num="4" ><ID >0,3,21</ID><CELLID ></CELLID><NAME >结算标志</NAME><VALFLD >JSBZ</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 >0,3,21</C27><C28 ></C28></ROW>
+<ROW num="5" ><ID >0,4,6</ID><CELLID ></CELLID><NAME >年</NAME><VALFLD >YY</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY >1</IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 >0,4,6</C21><C22 >0,4,6</C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 >0,4,6</C26><C27 ></C27><C28 >0,4,6</C28></ROW>
+<ROW num="6" ><ID >0,4,8</ID><CELLID ></CELLID><NAME >月</NAME><VALFLD >MM</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP >COMBOBOX</CTLTYP><LISTID >V_CW_MM</LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY >1</IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 >0,4,8</C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 >0,4,8</C26><C27 ></C27><C28 ></C28></ROW>
+<ROW num="7" ><ID >0,4,10</ID><CELLID ></CELLID><NAME >日</NAME><VALFLD >DD</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY >0</IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 >0,4,10</C22><C23 ></C23><C24 >0,4,10</C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28></ROW>
+<ROW num="8" ><ID >0,3,14</ID><CELLID ></CELLID><NAME >凭证号</NAME><VALFLD >PZH</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY >1</IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 >0,3,14</C22><C23 ></C23><C24 ></C24><C25 >0,3,14</C25><C26 ></C26><C27 ></C27><C28 ></C28></ROW>
+<ROW num="9" ><ID >0,11,15</ID><CELLID ></CELLID><NAME >制单人</NAME><VALFLD >ZDRXM</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY >0</IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 >0,11,15</C21><C22 >0,11,15</C22><C23 ></C23><C24 ></C24><C25 >0,11,15</C25><C26 >0,11,15</C26><C27 ></C27><C28 ></C28></ROW>
+<ROW num="10" ><ID >0,11,12</ID><CELLID ></CELLID><NAME >审核人</NAME><VALFLD >FHRXM</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY >0</IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 >0,11,12</C22><C23 ></C23><C24 ></C24><C25 >0,11,12</C25><C26 >0,11,12</C26><C27 ></C27><C28 ></C28></ROW>
+<ROW num="11" ><ID >0,2,24</ID><CELLID ></CELLID><NAME >表单号</NAME><VALFLD >BILID</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28></ROW>
+<ROW num="12" ><ID >0,11,6</ID><CELLID ></CELLID><NAME >记帐人姓名</NAME><VALFLD >JZRXM</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28></ROW>
+<ROW num="13" ><ID >0,4,14</ID><CELLID ></CELLID><NAME >附件张数</NAME><VALFLD >FJZS</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28></ROW>
+</ROWSET>
+</grdcelds><grdcolds>
+<ROWSET>
+<ROW num="0" ><ID >0,2</ID><NAME >摘要</NAME><VALFLD >ZY</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 >0,2</C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="1" ><ID >0,4</ID><NAME >科目编号</NAME><VALFLD >KMBH</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 >0,4</C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="2" ><ID >0,18</ID><NAME >金额</NAME><VALFLD >JE</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 >0,18</C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="3" ><ID >0,19</ID><NAME >金额方向</NAME><VALFLD >JEFX</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 >0,19</C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="4" ><ID >0,20</ID><NAME >所编号</NAME><VALFLD >SBH</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="5" ><ID >0,21</ID><NAME >帐套号</NAME><VALFLD >ZTH</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="6" ><ID >0,22</ID><NAME >年</NAME><VALFLD >YY</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="7" ><ID >0,23</ID><NAME >月</NAME><VALFLD >MM</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="8" ><ID >0,24</ID><NAME >日</NAME><VALFLD >DD</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="9" ><ID >0,25</ID><NAME >凭证类型</NAME><VALFLD >PZLX</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 >0,25</C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="10" ><ID >0,26</ID><NAME >凭证号</NAME><VALFLD >PZH</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="11" ><ID >0,27</ID><NAME >状态</NAME><VALFLD >ZT</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 >0,27</C15><C16 ></C16></ROW>
+<ROW num="12" ><ID >0,28</ID><NAME >明细序号</NAME><VALFLD >MXXH</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15><C16 >0,28</C16></ROW>
+</ROWSET>
+</grdcolds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >addRow</ID><NAME >增分录</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >addRow</C10><C11 >addRow</C11><C12 ></C12><C13 ></C13><C14 ></C14></ROW>
+<ROW num="1" ><ID >addRow2</ID><NAME >插分录</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >addRow2</C10><C11 >addRow2</C11><C12 ></C12><C13 ></C13><C14 ></C14></ROW>
+<ROW num="2" ><ID >delRow</ID><NAME >删分录</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 ></C10><C11 >delRow</C11><C12 ></C12><C13 ></C13><C14 ></C14></ROW>
+<ROW num="3" ><ID >addPzzd</ID><NAME >手工凭证制单</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >4</IMG><IMGMOUSE >4</IMGMOUSE><C10 ></C10><C11 ></C11><C12 >addPzzd</C12><C13 ></C13><C14 ></C14></ROW>
+<ROW num="4" ><ID >cypz</ID><NAME >常用凭证</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 ></C10><C11 ></C11><C12 ></C12><C13 >cypz</C13><C14 ></C14></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var sbh = &amp;quot;&amp;quot;;
+var zth = &amp;quot;&amp;quot;;
+var firstload = true;
+var kmList;
+var bz = 0;
+
+//是否按着键盘键
+var altKey,ctrlKey,shiftKey;
+var shiftSelectRow1 = -1;
+var shiftSelectRow2 = -1;
+
+var paramObj = &amp;quot;&amp;quot;;
+var jk_czxh  = &amp;quot;&amp;quot;;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{ 
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetToBoolBox(0,5,1);   
+	
+	//监听按键事件
+	document.onkeydown = controlkeydown;
+	document.onkeyup = controlkeyup;
+	
+	kmList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_ACCITEM&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;SHTNAME&amp;quot;);
+	
+	sbh = G_ORGID;
+	zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+	var yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0]; 
+	var mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1; 
+	var dd = G_LOGDAT.split(&amp;quot;-&amp;quot;)[2]*1;
+
+	if(G_GUID == &amp;quot;&amp;quot;) {
+		try{
+			paramObj = window.dialogArguments;
+			
+			if(paramObj.pzmx_xml != &amp;quot;&amp;quot;){
+				jk_czxh = paramObj.jk_czxh;
+				if(jk_czxh != &amp;quot;&amp;quot;){
+			     		ret = invokeOSFunc(&amp;quot;getCzxh&amp;quot;,&amp;quot;jk_czxh=&amp;quot;+jk_czxh);
+			     	}
+				bz = 1;
+			}
+		}catch(e){}
+		
+		if(bz == 1){
+			var pzh = getPZH(yy,mm);
+			_this.XMLDS_Reset();
+			_this.XMLDS_Parse(paramObj.pzmx_xml);
+			for(var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++){
+				var kmbh = _this.XMLDS_GetString(i,&amp;quot;KMBH&amp;quot;);
+				    sbh  = _this.XMLDS_GetString(i,&amp;quot;SBH&amp;quot;);
+				    zth  = _this.XMLDS_GetString(i,&amp;quot;ZTH&amp;quot;);
+				var yy   = _this.XMLDS_GetString(i,&amp;quot;YY&amp;quot;);
+				var mm   = _this.XMLDS_GetString(i,&amp;quot;MM&amp;quot;);
+				var dd   = _this.XMLDS_GetString(i,&amp;quot;DD&amp;quot;);
+				var pzlx = _this.XMLDS_GetString(i,&amp;quot;PZLX&amp;quot;);
+				var mxxh = _this.XMLDS_GetString(i,&amp;quot;MXXH&amp;quot;);
+				var zt   = _this.XMLDS_GetString(i,&amp;quot;ZT&amp;quot;);
+				var zy   = _this.XMLDS_GetString(i,&amp;quot;ZY&amp;quot;);
+				var je   = _this.XMLDS_GetString(i,&amp;quot;JE&amp;quot;);
+				var jefx = _this.XMLDS_GetString(i,&amp;quot;JEFX&amp;quot;);
+				var fjzs = _this.XMLDS_GetString(i,&amp;quot;FJZS&amp;quot;);
+				
+				//追加空行
+				if(i&amp;gt;=3){
+					_this.AppendRow(0,i+5);
+				}
+				//首次赋值
+				if(i == 0){
+					_this.SetCellText(0,2,3,yy+&amp;quot;-&amp;quot;+mm); 	//制单年月
+					_this.SetCellText(0,3,3,zt);       	//状态
+					_this.SetCellText(0,3,14,pzh);		//凭证号
+					_this.SetCellText(0,4,3,pzlx);		//凭证类型
+					_this.SetCellText(0,4,6,yy);		//年
+					_this.SetCellText(0,4,8,mm);		//月
+					_this.SetCellText(0,4,10,dd);		//日
+					_this.SetCellText(0,4,14,fjzs);		//附件张数
+					_this.SetCellText(0,11,15,G_USRNAM);	//制单人
+					_this.SetCellText(0,1,21,sbh);
+					_this.SetCellText(0,2,21,zth);
+				}
+				//明细表赋值
+				_this.SetCellText(0,i+6,2,zy);
+				_this.SetCellText(0,i+6,4,kmbh);
+				_this.SetToComboBox(&amp;quot;&amp;quot;,0,i+6,6,kmList);
+				_this.SetCellText(0,i+6,6,kmbh);
+				
+				if(jefx == &amp;quot;借&amp;quot;){
+					_this.SetCellText(0,i+6,13,je);
+				}else{
+					_this.SetCellText(0,i+6,15,je);
+				}
+				_this.SetCellText(0,i+6,18,je);
+				_this.SetCellText(0,i+6,19,jefx);
+				_this.SetCellText(0,i+6,20,sbh);
+				_this.SetCellText(0,i+6,21,zth);
+				_this.SetCellText(0,i+6,22,yy);
+				_this.SetCellText(0,i+6,23,mm);
+				_this.SetCellText(0,i+6,24,dd);
+				_this.SetCellText(0,i+6,25,pzlx);
+				_this.SetCellText(0,i+6,26,pzh);
+				_this.SetCellText(0,i+6,27,zt);
+				_this.SetCellText(0,i+6,28,mxxh);
+			}
+			_this.SetCellText(0,3,21,0);
+//			_this.SetMainCellRange(0,6,1,i+5,8);
+		}else{
+			loadPzzd();
+		}
+	}
+	else if(G_GUID != &amp;quot;&amp;quot;) {
+	     	for(var i=_this.GetMainCellRangeRow1(0);i&amp;lt;=_this.GetMainCellRangeRow2(0);i++) {
+	           	_this.SetToBoolBox(0,i,1);			
+			//设置科目名称
+	           	var kmbh = _this.GetCellText(0,i,4);
+			_this.SetToComboBox(&amp;quot;&amp;quot;,sheet,i,6,kmList);
+			_this.SetCellText(0,i,6,kmbh);
+			
+			if (kmbh == &amp;quot;&amp;quot;) {
+				_this.SetRowVisible(sheet,i,-1);
+		      	}
+		      	
+		      	var je = _this.GetCellText(0,i,18);
+		      	var jefx = _this.GetCellText(0,i,19);
+		      	if(jefx == &amp;quot;借&amp;quot;) {
+		      		_this.SetCellText(0,i,13,je);
+		      	}
+		      	else {
+		      		_this.SetCellText(0,i,15,je);
+		      	}
+		      	
+		      	var curyy = _this.GetCellText(0,4,6);
+		      	var curmm = _this.GetCellText(0,4,8);
+		      	_this.SetCellText(0,2,3,curyy+&amp;quot;-&amp;quot;+curmm);
+	     	}		     
+	}	
+	_this.SetToSelectBox(&amp;quot;&amp;quot;,0,2,3,&amp;quot;V_CW_YYYY_MM&amp;quot;,&amp;quot;&amp;quot;); 
+	_this.SetCellLock(0,3,14,0); //凭证号设置可输入
+	
+	//隐藏不显示列
+	for(var i=18;i&amp;lt;=_this.GetMainCellRangeCol2(0);i++) {
+	     	_this.SetColVisible(0,i,-1);
+        }      
+	
+     	//设置结算凭证按钮
+     	if(mm == 12){
+	     	var jsbz = _this.GetCellText(0,3,21);
+	     	if (jsbz == 0) {
+	     		_this.AddToolbarButton(&amp;quot;udf_jspz&amp;quot;,&amp;quot;结算凭证&amp;quot;,&amp;quot;结算凭证&amp;quot;,&amp;quot;&amp;quot;,1,3,3,80);
+	     	}
+	     	else if (jsbz == 1) {
+	     		_this.AddToolbarButton(&amp;quot;udf_qxjspz&amp;quot;,&amp;quot;取消结算&amp;quot;,&amp;quot;取消结算&amp;quot;,&amp;quot;&amp;quot;,1,3,3,80);
+	     	}
+	}
+       	//设置单选款
+	for(var i=_this.GetMainCellRangeRow1(0);i&amp;lt;=_this.GetMainCellRangeRow2(0);i++) {
+           	_this.SetToBoolBox(0,i,1);
+     	}
+     	
+     	_this.SetCellFocus(0,6,2);
+	_this.AutoFixScreenWidth();
+}
+//guid = null 凭证制单界面
+function loadPzzd(){
+	var yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];   
+	var mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1; 
+	var dd = G_LOGDAT.split(&amp;quot;-&amp;quot;)[2]*1;
+	
+	var pzh = getPZH(yy,mm);
+	
+     	_this.SetCellText(0,1,21,sbh);  
+     	_this.SetCellText(0,2,21,zth);
+     	_this.SetCellText(0,4,6,yy);  
+     	_this.SetCellText(0,4,8,mm);
+     	_this.SetCellText(0,4,10,dd);
+	_this.SetCellText(0,3,21,0);
+	
+	_this.SetCellText(0,3,3,&amp;quot;未核&amp;quot;);
+	_this.SetCellText(0,4,3,&amp;quot;记&amp;quot;);
+	_this.SetCellText(0,3,14,pzh);
+	_this.SetCellText(0,11,15,G_USRNAM);
+	_this.SetToSelectBox(&amp;quot;&amp;quot;,0,2,3,&amp;quot;V_CW_YYYY_MM&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetCellText(0,2,3,G_LOGDAT.substring(0,7));
+	
+
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	//检查是否已经结账
+	var jz_yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	var jz_mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+	var jz_sbh = G_ORGID;
+	var jz_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	var param = new Object();
+	param.yy = jz_yy;
+	param.mm = jz_mm;
+	param.sbh = jz_sbh;
+	param.zth = jz_zth;
+	var jz_retVal = invokeOSFuncExt(&amp;quot;check_jz&amp;quot;,param);
+	var jz_ret = jz_retVal.split(&amp;quot;@&amp;quot;)[0];
+	var jz_msg = jz_retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(jz_ret != 1 ){
+		alert(jz_retVal);
+		return -1;
+	}
+	
+     	if(sheet == 0) {
+     		if(row == 4 &amp;&amp; col == 14){
+     			if ( !IsNumber( newvalue,null ) ) {
+				alert(&amp;quot;输入格式不正确！&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+			}else{
+				_this.SetCellText(sheet,row,col,newvalue);
+			}
+     		}
+		if(row &amp;gt;=_this.GetMainCellRangeRow1(sheet) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(sheet)) {
+		      if(col == 13) {
+		             	_this.SetCellText(0,row,15,&amp;quot;&amp;quot;);
+		             	if ( !IsNumber( newvalue,null ) ) {
+					alert(&amp;quot;输入格式不正确！&amp;quot;);
+					_this.SetCellText(sheet,row,col,oldvalue);
+				}
+				else {
+					_this.SetCellText(sheet,row,col,1.0 * newvalue);
+					_this.SetCellText(0,row,18,newvalue);
+		             		_this.SetCellText(0,row,19,&amp;quot;借&amp;quot;);
+				}
+		             	
+		             	setValue(row);
+		      }
+		      else if(col == 15) {
+		             	_this.SetCellText(0,row,13,&amp;quot;&amp;quot;);
+		             	if ( !IsNumber( newvalue,null ) ) {
+					alert(&amp;quot;输入格式不正确！&amp;quot;);
+					_this.SetCellText(sheet,row,col,oldvalue);
+				}
+				else {
+					_this.SetCellText(sheet,row,col,1.0 * newvalue);
+					_this.SetCellText(0,row,18,newvalue);
+		             		_this.SetCellText(0,row,19,&amp;quot;贷&amp;quot;);
+				}
+		             	setValue(row);
+		      }
+		      else if(col == 4) {
+		      	     _this.SetToComboBox(&amp;quot;&amp;quot;,0,row,6,kmList);
+		      	     _this.SetCellText(0,row,6,newvalue);
+		      }
+		}
+		if(row == 5 &amp;&amp; col == 1) {
+			for(var i=_this.GetMainCellRangeRow1(sheet);i&amp;lt;=_this.GetMainCellRangeRow2(0);i++){
+				_this.SetCellText(0,i,1,newvalue);
+			}
+		}
+		if(row == 3 &amp;&amp; col == 14) {
+			if( !IsNumber( newvalue,null ) ) {
+				alert(&amp;quot;输入格式不正确！&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+			}else{
+				//检查输入的凭证号问题
+				var yy = _this.GetCellText(0,4,6);
+				var mm = _this.GetCellText(0,4,8);
+				var pzh = newvalue;
+				var guid = &amp;quot;&amp;quot;;
+				
+				var param = new Object();
+				param.sbh = sbh;
+				param.zth = zth;
+				param.yy  = yy;
+				param.mm  = mm;
+				param.pzh = pzh;
+				param.czyxm = G_USRNAM;
+				var retVal = invokeOSFuncExt(&amp;quot;checkPzh&amp;quot;,param);
+				var ret = retVal.split(&amp;quot;@&amp;quot;)[0];
+				var msg = retVal.split(&amp;quot;@&amp;quot;)[1];	
+				
+				if(ret == 1){
+					var guid = msg;
+					window.location.href=&amp;quot;show.sp?grdid=PZGL_PZZD&amp;guid=&amp;quot;+guid+getReserveQuery();
+				}else if(ret == 2){
+					if (!confirm(msg)) {
+						_this.SetCellText(sheet,row,col,oldvalue);
+					}else{
+						guid = &amp;quot;&amp;quot;;
+						window.location.href=&amp;quot;show.sp?grdid=PZGL_PZZD&amp;guid=&amp;quot;+guid+getReserveQuery();
+					}
+					
+				}else{
+					alert(retVal);
+					_this.SetCellText(sheet,row,col,oldvalue);
+					return false;
+				}
+			}//end if( !IsNumber( newvalue,null ) ) 			
+		}//end if(row == 3 &amp;&amp; col == 14)							           			
+     	}
+}
+
+//明细行给不显示的列赋值
+function setValue(row)
+{
+     var yy = _this.GetCellText(0,4,6);
+     var mm = _this.GetCellText(0,4,8);
+     var dd = _this.GetCellText(0,4,10);
+     var zt = _this.GetCellText(0,3,3);
+     var pzlx = _this.GetCellText(0,4,3);
+     var pzh = _this.GetCellText(0,3,14);
+
+     _this.SetCellText(0,row,20,sbh);
+     _this.SetCellText(0,row,21,zth);
+     _this.SetCellText(0,row,22,yy);
+     _this.SetCellText(0,row,23,mm);
+     _this.SetCellText(0,row,24,dd);
+     _this.SetCellText(0,row,25,pzlx);
+     _this.SetCellText(0,row,26,pzh);
+     _this.SetCellText(0,row,27,zt);
+}
+
+//明细行数据检查
+function checkMX()
+{    
+	_thisOnRunCellFocusChange(0,-1,-1,0,0); //
+
+     	var mxxh = 0;
+     	for(var row=_this.GetMainCellRangeRow1(0);row&amp;lt;=_this.GetMainCellRangeRow2(0);row++) {
+     		var zy = _this.GetCellText(0,row,2);
+     		var kmbh = _this.GetCellText(0,row,4);
+     		var jfje = _this.GetCellText(0,row,13);
+     		var dfje = _this.GetCellText(0,row,15);
+     		if(zy == &amp;quot;&amp;quot; &amp;&amp; kmbh == &amp;quot;&amp;quot; &amp;&amp; jfje == &amp;quot;&amp;quot; &amp;&amp; dfje == &amp;quot;&amp;quot;){
+     			//清空行
+     		   	for(var col =_this.GetMainCellRangeCol1(0);col&amp;lt;=_this.GetMainCellRangeCol2(0);col++) {
+     		   		_this.SetCellText(0,row,col,&amp;quot;&amp;quot;);
+     		   	}
+			//_this.DeleteRow(0,row);
+     		}else{
+     			if(zy != &amp;quot;&amp;quot; &amp;&amp; kmbh != &amp;quot;&amp;quot; &amp;&amp; (jfje != &amp;quot;&amp;quot; || dfje != &amp;quot;&amp;quot;)) {
+     				mxxh++;
+	     			_this.SetCellText(0,row,28,mxxh);
+     			}else {
+     		        	alert(&amp;quot;摘要或科目编号不能为空!!!&amp;quot;);
+     		        	return -1;
+     			}
+     		}
+     	}
+     	var ret = &amp;quot;&amp;quot;;
+     	if(jk_czxh != &amp;quot;&amp;quot;){
+     		ret = invokeOSFunc(&amp;quot;getCzxh&amp;quot;,&amp;quot;jk_czxh=&amp;quot;+jk_czxh);
+     	}
+}
+
+//保存单据数据前
+function _thisOnbeforesave()
+{
+	//检查是否已经结账
+	var jz_yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	var jz_mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+	var jz_sbh = G_ORGID;
+	var jz_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	var param = new Object();
+	param.yy = jz_yy;
+	param.mm = jz_mm;
+	param.sbh = jz_sbh;
+	param.zth = jz_zth;
+	var jz_retVal = invokeOSFuncExt(&amp;quot;check_jz&amp;quot;,param);
+	var jz_ret = jz_retVal.split(&amp;quot;@&amp;quot;)[0];
+	var jz_msg = jz_retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(jz_ret != 1 ){
+		alert(jz_retVal);
+		return -1;
+	}
+	
+	var yy  = _this.GetCellText(0,4,6);
+	var mm  = _this.GetCellText(0,4,8);
+	var pzh = _this.GetCellText(0,3,14);
+
+	var ret = checkMX();
+     	if(ret == &amp;quot;-1&amp;quot;){
+     		return -1;
+     	}
+     	
+     	return &amp;quot;&amp;quot;;    
+}
+
+//获取凭证号
+function getPZH(yy,mm)
+{    
+     _sql.querytods(&amp;quot;getPZH&amp;quot;,&amp;quot;yy=&amp;quot;+yy+&amp;quot;&amp;mm=&amp;quot;+mm+&amp;quot;&amp;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth);
+     var pzh = _this.XMLDS_GetStringAt(0,0);
+     return pzh;       
+}
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+     	if(sheet == 0) {
+	     	if(row &amp;gt;= _this.GetMainCellRangeRow1(sheet) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(sheet) &amp;&amp; col == 4) {
+	     		var obj = new Object();
+			obj.filter = &amp;quot;xjyhbz &amp;lt;&amp;gt; 0&amp;quot;;
+		        obj.mjbz = &amp;quot;1&amp;quot;;
+		        obj.bz = &amp;quot;&amp;quot;;
+		        obj.jb = 0;
+		        obj.kmbh = &amp;quot;&amp;quot;;     		
+	     		var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_KMSEL&amp;quot;,obj,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+	     		if(retVal  != &amp;quot;&amp;quot; &amp;&amp; retVal  != &amp;quot;undefined&amp;quot; &amp;&amp; retVal  != undefined) {
+	     			_this.SetCellText(sheet,row,4,retVal);
+				_this.SetToComboBox(&amp;quot;&amp;quot;,sheet,row,6,kmList);
+	     		        _this.SetCellText(sheet,row,6,retVal);					
+	     		}
+	     	}
+	     	else if(row &amp;gt; 5 &amp;&amp; col == 2) {
+	     		var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_CYZYSEL&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+	     		if(retVal  != &amp;quot;&amp;quot; &amp;&amp; retVal  != &amp;quot;undefined&amp;quot; &amp;&amp; retVal  != undefined) {
+	     			_this.SetCellText(0,row,2,retVal);				
+	     		}
+	     	}	
+     	}
+}
+
+//SelectBox控件修改单元格内容
+function _thisOnSelectBoxCellModify(sheet,row,col,oldvalue,newvalue,key,where)
+{
+      	if(sheet == 0) {
+      		if(row == 2 &amp;&amp; col == 3) {
+      			var yymm = _this.GetCellText(sheet,row,col);
+      			_this.SetCellText(0,4,6,yymm.split(&amp;quot;-&amp;quot;)[0]);
+      			_this.SetCellText(0,4,8,yymm.split(&amp;quot;-&amp;quot;)[1]*1);
+      			_this.SetCellText(0,3,14,getPZH(newvalue.split(&amp;quot;-&amp;quot;)[0],newvalue.split(&amp;quot;-&amp;quot;)[1]*1));
+      		}
+      	}
+}
+
+//增分录
+function addRow()
+{
+	//检查是否已经结账
+	var jz_yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	var jz_mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+	var jz_sbh = G_ORGID;
+	var jz_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	var param = new Object();
+	param.yy = jz_yy;
+	param.mm = jz_mm;
+	param.sbh = jz_sbh;
+	param.zth = jz_zth;
+	var jz_retVal = invokeOSFuncExt(&amp;quot;check_jz&amp;quot;,param);
+	var jz_ret = jz_retVal.split(&amp;quot;@&amp;quot;)[0];
+	var jz_msg = jz_retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(jz_ret != 1 ){
+		alert(jz_retVal);
+		return -1;
+	}
+	var rw = _this.GetMainCellRangeRow2(0);
+	_this.AppendRow(0,rw);
+	_this.SetCellText(0,rw+1,6,&amp;quot;&amp;quot;);
+}
+
+//插分录
+function addRow2()
+{
+	//检查是否已经结账
+	var jz_yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	var jz_mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+	var jz_sbh = G_ORGID;
+	var jz_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	var param = new Object();
+	param.yy = jz_yy;
+	param.mm = jz_mm;
+	param.sbh = jz_sbh;
+	param.zth = jz_zth;
+	var jz_retVal = invokeOSFuncExt(&amp;quot;check_jz&amp;quot;,param);
+	var jz_ret = jz_retVal.split(&amp;quot;@&amp;quot;)[0];
+	var jz_msg = jz_retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(jz_ret != 1 ){
+		alert(jz_retVal);
+		return -1;
+	}
+       	var curr_row = _this.GetCurrentRow(0);
+       	if(curr_row&amp;gt;_this.GetMainCellRangeRow1(0) &amp;&amp; curr_row&amp;lt;= _this.GetMainCellRangeRow2(0)) {
+       		_this.AppendRow(0,curr_row-1);
+       		_this.SetCellText(0,curr_row,6,&amp;quot;&amp;quot;);
+       	}else if(curr_row == -1 || curr_row == 5) {
+       		addRow();
+       	}
+}
+
+//删分录
+function delRow()
+{	
+	//检查是否已经结账
+	var jz_yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	var jz_mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+	var jz_sbh = G_ORGID;
+	var jz_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	var param = new Object();
+	param.yy = jz_yy;
+	param.mm = jz_mm;
+	param.sbh = jz_sbh;
+	param.zth = jz_zth;
+	var jz_retVal = invokeOSFuncExt(&amp;quot;check_jz&amp;quot;,param);
+	var jz_ret = jz_retVal.split(&amp;quot;@&amp;quot;)[0];
+	var jz_msg = jz_retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(jz_ret != 1 ){
+		alert(jz_retVal);
+		return -1;
+	}
+	var cou = 0;
+      	for(var row = 6;row&amp;lt;=_this.GetMainCellRangeRow2(0);row++) {
+      		var bz = _this.GetCellText(0,row,1);      		
+      		if(bz == 1) {
+      			for(var col=1;col&amp;lt;=28;col++) {
+      				_this.SetCellText(0,row,col,&amp;quot;&amp;quot;);
+      			}
+      			_this.SetRowVisible(0,row,-1);
+      			cou++;
+      		}
+      	}
+      	if(cou == 0){
+      		alert(&amp;quot;未选中记录&amp;quot;);
+      	}
+      	_this.SetCellText(0,5,1,0);
+}
+
+//单据列表加载完毕
+function _thisOnpostloadListBill(sheet)
+{
+	_this.SetColVisible(sheet,3,-1);
+	_this.SetColVisible(sheet,4,-1);
+	
+	_this.SetColWidth(sheet,5,40);
+	_this.SetColWidth(sheet,6,30);
+	_this.SetColWidth(sheet,7,30);
+	_this.SetColWidth(sheet,8,30);
+	_this.SetColWidth(sheet,9,35);
+	_this.SetColWidth(sheet,10,40);
+	_this.SetColWidth(sheet,11,40);
+	_this.SetColWidth(sheet,13,50);
+	_this.SetColWidth(sheet,14,60);
+	_this.SetColWidth(sheet,16,40);
+	_this.SetColWidth(sheet,17,40);
+	
+       //将状态码改为对应的中文名称
+       for(var i=1;i&amp;lt;= _this.GetMainCellRangeRow2(sheet);i++) {
+       		var ztm = _this.GetCellText(sheet,i,4);
+       		var text = &amp;quot;&amp;quot;;
+       		if(ztm == &amp;quot;1&amp;quot;) {
+       			text = &amp;quot;未核&amp;quot;;
+       			_this.SetCellColor(sheet,i,4,255,0,0);
+       			_this.SetCellColor(sheet,i,5,255,0,0);
+       		}else if(ztm == &amp;quot;2&amp;quot;) {
+       			text = &amp;quot;已核&amp;quot;;
+       			_this.SetCellColor(sheet,i,4,0,0,255);
+       			_this.SetCellColor(sheet,i,5,0,0,255);
+       		}
+       		_this.SetCellText(sheet,i,4,text);
+       }
+}
+
+//按键按下
+function controlkeydown()
+{
+	altKey = event.altKey;
+	ctrlKey = event.ctrlKey;
+	shiftKey = event.shiftKey;
+}
+
+//按键放开
+function controlkeyup()
+{
+	var keyCode = event.keyCode;
+	
+	if (ctrlKey == true) {
+		//上移分录 Ctrl + ↑
+		if (keyCode == 38) {
+			//alert(&amp;quot;上移分录&amp;quot;+_this.GetCurrentRow(0));
+			var dstrow = _this.GetCurrentRow(0);
+			if (dstrow &amp;lt; _this.GetMainCellRangeRow1(0)) return;
+			var srcrow = dstrow + 1;
+			
+			if (dstrow &amp;gt;= _this.GetMainCellRangeRow1(0)) {
+				var arrRowValue = new Array();
+				for (var c=_this.GetMainCellRangeCol1(0);c&amp;lt;=_this.GetMainCellRangeCol2(0);c++) {
+					arrRowValue[c] = _this.GetCellText(0,dstrow,c);
+					_this.SetCellText(0,dstrow,c,_this.GetCellText(0,srcrow,c));
+				}
+				for (var c=_this.GetMainCellRangeCol1(0);c&amp;lt;=_this.GetMainCellRangeCol2(0);c++) {
+					_this.SetCellText(0,srcrow,c,arrRowValue[c]);
+				}
+			}
+		}
+		//下移分录 Ctrl + ↓
+		else if (keyCode == 40) {
+			//alert(&amp;quot;下移分录&amp;quot;+_this.GetCurrentRow(0));
+			var dstrow = _this.GetCurrentRow(0);
+			if (dstrow &amp;gt; _this.GetMainCellRangeRow2(0)) return;
+			var srcrow = dstrow - 1;
+			
+			if (dstrow &amp;gt;= _this.GetMainCellRangeRow1(0)) {
+				var arrRowValue = new Array();
+				for (var c=_this.GetMainCellRangeCol1(0);c&amp;lt;=_this.GetMainCellRangeCol2(0);c++) {
+					arrRowValue[c] = _this.GetCellText(0,dstrow,c);
+					_this.SetCellText(0,dstrow,c,_this.GetCellText(0,srcrow,c));
+				}
+				for (var c=_this.GetMainCellRangeCol1(0);c&amp;lt;=_this.GetMainCellRangeCol2(0);c++) {
+					_this.SetCellText(0,srcrow,c,arrRowValue[c]);
+				}
+			}
+
+		}
+		//单位或个人往来帐 Ctrl + F11
+		else if (keyCode == 122) {
+			//alert(&amp;quot;单位或个人往来帐&amp;quot;);
+		}
+	}
+	
+	altKey = false;
+	ctrlKey = false;
+	shiftKey = false;
+}
+
+//按F2 标志结算凭证
+function _thisOnF2KeyDown(sheet,row,col)
+{
+	var jsbz = _this.GetCellText(0,3,21);
+	if (jsbz == &amp;quot;0&amp;quot;) jspz();
+	if (jsbz == &amp;quot;1&amp;quot;) qxjspz();
+	
+}
+
+//按F3 拷贝摘要
+function _thisOnF3KeyDown(sheet,row,col)
+{
+	//alert(&amp;quot;拷贝摘要&amp;quot;);
+}
+
+//按F5 增分录
+function _thisOnF5KeyDown(sheet,row,col)
+{
+	addRow();
+}
+
+//按F7 反向金额
+function _thisOnF7KeyDown(sheet,row,col)
+{
+	for (var r=_this.GetMainCellRangeRow1(0);r&amp;lt;=_this.GetMainCellRangeRow2(0);r++) {
+		var jfje = _this.GetCellText(0,r,13);
+		var dfje = _this.GetCellText(0,r,15);
+		if (jfje != &amp;quot;&amp;quot; &amp;&amp; jfje != &amp;quot;0&amp;quot;) {
+			_this.SetCellText(0,r,13,0-(1.0 * jfje));
+			_this.SetCellText(0,r,18,0-(1.0 * jfje));
+		}
+		if (dfje != &amp;quot;&amp;quot; &amp;&amp; dfje != &amp;quot;0&amp;quot;) {
+			_this.SetCellText(0,r,15,0-(1.0 * dfje));
+			_this.SetCellText(0,r,18,0-(1.0 * dfje));
+		}
+	}
+}	
+
+//按F8 科目、常用摘要、常用凭证
+function _thisOnF8KeyDown(sheet,row,col)
+{
+	
+	if(row &amp;gt;= _this.GetMainCellRangeRow1(sheet) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(sheet) &amp;&amp; col == 4) { //科目
+     		var obj = new Object();
+		obj.filter = &amp;quot;xjyhbz &amp;lt;&amp;gt; 0&amp;quot;;
+	        obj.mjbz = &amp;quot;1&amp;quot;;
+	        obj.bz = &amp;quot;&amp;quot;;
+	        obj.jb = 0;
+	        obj.kmbh = &amp;quot;&amp;quot;;     		
+     		var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_KMSEL&amp;quot;,obj,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+     		if(retVal  != &amp;quot;&amp;quot; &amp;&amp; retVal  != &amp;quot;undefined&amp;quot; &amp;&amp; retVal  != undefined) {
+     			_this.SetCellText(sheet,row,4,retVal);
+			_this.SetToComboBox(&amp;quot;&amp;quot;,sheet,row,6,kmList);
+     		        _this.SetCellText(sheet,row,6,retVal);					
+     		}
+     	}
+     	else if(row &amp;gt; 5 &amp;&amp; col == 2) { //常用摘要
+     		var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_CYZYSEL&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+     		if(retVal  != &amp;quot;&amp;quot; &amp;&amp; retVal  != &amp;quot;undefined&amp;quot; &amp;&amp; retVal  != undefined) {
+     			_this.SetCellText(0,row,2,retVal);				
+     		}
+     	}	
+
+}
+
+//按F9 删分录
+function _thisOnF9KeyDown(sheet,row,col)
+{
+	delRow();
+}
+
+//按F12 保存
+function _thisOnF12KeyDown(sheet,row,col)
+{
+	f_save(false);
+}
+
+//保存单据数据后
+function _thisOnaftersave(success)
+{
+	_this.XMLDS_Reset();
+	_this.XMLDS_Parse(success);
+	var ret = _this.XMLDS_GetString(0,&amp;quot;CODE&amp;quot;);
+	var msg = _this.XMLDS_GetString(0,&amp;quot;TOPIC&amp;quot;);
+	var guid = _this.XMLDS_GetString(0,&amp;quot;RETVAL&amp;quot;);
+	
+	var param = new Object();
+	param.sbh = sbh;
+	param.zth = zth;
+	param.guid = guid;
+	var pzh = invokeOSFuncExt(&amp;quot;getGuidPzh&amp;quot;,param);
+	
+	alert(msg+&amp;quot;\n&amp;quot;+&amp;quot;凭证号:&amp;quot;+pzh);
+
+	//自己刷新
+	if(bz == 0){
+		window.location = &amp;quot;show.sp?grdid=PZGL_PZZD&amp;guid=&amp;quot;+guid+getReserveQuery();
+	}else{
+		window.returnValue = &amp;quot;1&amp;quot;;
+		window.close();
+	}
+        //return success; //不返回值，后面的提示不出现
+}
+
+//凭证制单，新增
+function addPzzd()
+{
+	//检查是否已经结账
+	var jz_yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	var jz_mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+	var jz_sbh = G_ORGID;
+	var jz_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	var param = new Object();
+	param.yy = jz_yy;
+	param.mm = jz_mm;
+	param.sbh = jz_sbh;
+	param.zth = jz_zth;
+	var jz_retVal = invokeOSFuncExt(&amp;quot;check_jz&amp;quot;,param);
+	var jz_ret = jz_retVal.split(&amp;quot;@&amp;quot;)[0];
+	var jz_msg = jz_retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(jz_ret != 1 ){
+		alert(jz_retVal);
+		return -1;
+	}
+	var guid = &amp;quot;&amp;quot;;
+	window.location.href=&amp;quot;show.sp?grdid=PZGL_PZZD&amp;guid=&amp;quot;+guid+getReserveQuery();
+}
+
+//单据删除后
+function _thisOnafterdelete(success)
+{	
+//	alert(&amp;quot;aa&amp;quot;);
+	var yy = _this.GetCellText(0,4,6);
+	var mm = _this.GetCellText(0,4,8);
+	var pzh_old = _this.GetCellText(0,3,14);
+
+	var param = new Object();	
+	param.sbh = sbh;
+	param.zth = zth;
+	param.yy = yy;
+	param.mm = mm;
+	param.pzh = pzh_old;
+	param.czyxm = G_USRNAM;
+//	alert(&amp;quot;bb&amp;quot;);
+	var retVal = invokeOSFuncExt(&amp;quot;getGuid&amp;quot;,param);
+	var ret = retVal.split(&amp;quot;@&amp;quot;)[0];
+	var msg = retVal.split(&amp;quot;@&amp;quot;)[1];
+//	alert(&amp;quot;cc&amp;quot;+retVal);
+	if(ret == 1){		
+		var guid = msg;
+		alert(retVal);
+		window.location.href=&amp;quot;show.sp?grdid=PZGL_PZZD&amp;guid=&amp;quot;+guid+getReserveQuery();
+	}else{
+		var guid = &amp;quot;&amp;quot;;
+		window.location.href=&amp;quot;show.sp?grdid=PZGL_PZZD&amp;guid=&amp;quot;+guid+getReserveQuery();
+	}		
+}
+
+//审核单据前
+//function _thisOnbeforecheck()
+//{
+//	alert(&amp;quot;ok&amp;quot;);
+//	return 1;
+//	//检查是否已经结账
+//	var jz_yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+//	var jz_mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+//	var jz_sbh = G_ORGID;
+//	var jz_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+//	
+//	var param = new Object();
+//	param.yy = jz_yy;
+//	param.mm = jz_mm;
+//	param.sbh = jz_sbh;
+//	param.zth = jz_zth;
+//	var jz_retVal = invokeOSFuncExt(&amp;quot;check_jz&amp;quot;,param);
+//	var jz_ret = jz_retVal.split(&amp;quot;@&amp;quot;)[0];
+//	var jz_msg = jz_retVal.split(&amp;quot;@&amp;quot;)[1];
+//	if(jz_ret != 1 ){
+//		alert(jz_retVal);
+//		return -1;
+//	}
+//}
+//删除单据前
+function _thisOnbeforedelete(){
+	//检查是否已经结账
+	var jz_yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	var jz_mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+	var jz_sbh = G_ORGID;
+	var jz_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	var param = new Object();
+	param.yy = jz_yy;
+	param.mm = jz_mm;
+	param.sbh = jz_sbh;
+	param.zth = jz_zth;
+	var jz_retVal = invokeOSFuncExt(&amp;quot;check_jz&amp;quot;,param);
+	var jz_ret = jz_retVal.split(&amp;quot;@&amp;quot;)[0];
+	var jz_msg = jz_retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(jz_ret != 1 ){
+		alert(jz_retVal);
+		return -1;
+	}
+}
+
+//单元格焦点变动
+function _thisOnCellFocusChange(sheet,rowold,colold,rownew,colnew)
+{
+	//alert(&amp;quot;rowold=&amp;quot;+rowold+&amp;quot;,rownew=&amp;quot;+rownew);
+	if (colold == 15) {
+		if (_this.GetCellText(sheet,rownew,4) == &amp;quot;&amp;quot;) {
+			_this.SetCellText(sheet,rownew,6,&amp;quot;&amp;quot;);  //处理焦点在最后一行回车后自动新增行带上了上一行的科目名称
+		}
+	}
+}
+
+
+function _thisAddParameterOnbeforesave()
+{
+	_this.AddHttpRequestParam(&amp;quot;jk_czxh&amp;quot;,jk_czxh,0);
+//	alert(&amp;quot;add param!!!&amp;quot;);
+}
+
+
+//常用凭证
+function cypz()
+{
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_CYPZSEL&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=800px;dialogHeight=550px&amp;quot;);
+     	if(retVal  != &amp;quot;&amp;quot; &amp;&amp; retVal  != &amp;quot;undefined&amp;quot; &amp;&amp; retVal  != undefined) {
+     		//_this.SetCellText(0,row,2,retVal);
+     		//alert(&amp;quot;常用凭证号=&amp;quot;+retVal  );				
+     		var cypzh = retVal;
+     		var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+     		_sql.querytods(&amp;quot;CYPZMX&amp;quot;,&amp;quot;ZTH=&amp;quot;+zth+&amp;quot;&amp;BH=&amp;quot;+cypzh);
+     		var row1 = _this.GetMainCellRangeRow1(0);
+     		var row2 = _this.GetMainCellRangeRow2(0);
+     		var row = row1;
+     		for (var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+     			var zy = _this.XMLDS_GetString(i,&amp;quot;ZY&amp;quot;);
+     			var kmbh = _this.XMLDS_GetString(i,&amp;quot;KMBH&amp;quot;);
+     			var kmmc = _this.XMLDS_GetString(i,&amp;quot;KMMC&amp;quot;);
+     			if (row &amp;gt;= row2) _this.AppendRow(0,row);
+			_this.SetCellText(0,row,2,zy);
+			_this.SetCellText(0,row,4,kmbh);
+			_this.SetCellText(0,row,6,kmmc);
+			setValue(row);
+			row ++;
+     		}
+     		
+     	}
+
+}
+
+//结算凭证
+function jspz()
+{
+	if (!confirm(&amp;quot;将此凭证标识为结算凭证，是否继续？&amp;quot;)) return;
+	_this.SetCellText(0,3,21,&amp;quot;1&amp;quot;);
+	alert(&amp;quot;标识为结算凭证成功，请保存！&amp;quot;);
+}
+
+//取消结算凭证
+function qxjspz()
+{
+	if (!confirm(&amp;quot;将此结算凭证取消，是否继续？&amp;quot;)) return;
+	_this.SetCellText(0,3,21,&amp;quot;0&amp;quot;);
+	alert(&amp;quot;取消结算凭证成功，请保存！&amp;quot;);
+}
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var web = new JavaPackage(&amp;quot;com.xlsgrid.net.web&amp;quot;);
+
+var pz_jk_czxh = &amp;quot;&amp;quot;;
+
+//检查结账
+function check_jz(){
+	var Pub = new SBCW_CW_PUBLIC();
+	var retVal = Pub.Pub_check_jz(sbh,zth,yy,mm);
+	return retVal;
+}
+//服务端检查结账
+function check_jz2(sbh,zth,yy,mm){
+	var Pub = new SBCW_CW_PUBLIC();
+	var retVal = Pub.Pub_check_jz(sbh,zth,yy,mm);
+	return retVal;
+}
+
+function checkPZH(sbh,zth,yy,mm,pzh,zdrxm) {
+      var db= null;
+      var ret= 0;
+      try{
+           var db = new pub.EADatabase();
+           var sql = &amp;quot;SELECT count(*)
+                      FROM cw_pzb  
+                      WHERE sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; 
+                      AND  zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; 
+	              and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos;
+	              and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos;
+                      and pzh = &amp;quot;+pzh+&amp;quot;&amp;quot;;
+           ret = db.GetSQL(sql);
+           return ret;
+      }catch(e) {
+          if(db != null) db.Rollback();
+          return 1;
+      }finally {
+          if(db != null) db.Close();
+      }
+}
+//获取生成凭证后的凭证号
+function getGuidPzh(){
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	try{
+		var db = new pub.EADatabase();
+		sql = &amp;quot;select pzh from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND GUID = &amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;&amp;quot;;
+		var pzh = db.GetSQL(sql);
+	
+		return pzh;
+	}catch(e) {
+          	if(db != null) db.Rollback();
+          return 1;
+      	}finally {
+          	if(db != null) db.Close();
+      	}
+}
+
+//分配新的凭证号
+function checkNewPzb(sbh,zth,yy,mm,pzh){
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	try{
+		db = new pub.EADatabase();
+		//分配新的凭证号
+		sql = &amp;quot;select nvl(max(pzh),0) + 1 pzh from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm =&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos;&amp;quot;;
+		var pzh_new = db.GetSQL(sql);
+		if(pzh_new != pzh){
+			pzh = pzh_new;
+		}		
+
+		return pzh;
+	}catch(e){
+		if(db != null) db.Rollback();
+          	throw new Exception(e.toString());
+	}finally{
+		if(db != null) db.Close();
+	}
+}
+
+//保存之前检查数据
+function checkSave(eaContext)
+{
+      	var ret = 1;//返回1表示数据无误
+      	var sql = &amp;quot;&amp;quot;;
+      	var db = eaContext.getEADatabase();
+	var guid = eaContext.getGuid();		     
+      	
+      	//检查凭证号是否已存在      	
+      	var xmlhdr = eaContext.getXmlhdr();
+      	var hdrds = new pub.EAXmlDS(xmlhdr);
+      	var curr_pzh = hdrds.getStringAt(0,&amp;quot;pzh&amp;quot;);
+      	var yy = hdrds.getStringAt(0,&amp;quot;yy&amp;quot;);
+      	var mm = hdrds.getStringAt(0,&amp;quot;mm&amp;quot;);
+      	var sbh = hdrds.getStringAt(0,&amp;quot;sbh&amp;quot;);
+      	var zth = hdrds.getStringAt(0,&amp;quot;zth&amp;quot;);
+      	var zdrxm = hdrds.getStringAt(0,&amp;quot;zdrxm&amp;quot;);
+      	var fhrxm = hdrds.getStringAt(0,&amp;quot;fhrxm&amp;quot;);
+      	var jzrxm = hdrds.getStringAt(0,&amp;quot;jzrxm&amp;quot;);
+
+      	var tmpds = db.QuerySQL(&amp;quot;select * from cw_pzb where guid=&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;&amp;quot;);
+      	if (tmpds.getRowCount() &amp;gt; 0) {
+      		if (zdrxm == &amp;quot;&amp;quot;) zdrxm = tmpds.getStringAt(0,&amp;quot;zdrxm&amp;quot;);
+      		if (fhrxm == &amp;quot;&amp;quot;) fhrxm = tmpds.getStringAt(0,&amp;quot;fhrxm&amp;quot;);
+      		if (jzrxm == &amp;quot;&amp;quot;) jzrxm = tmpds.getStringAt(0,&amp;quot;jzrxm&amp;quot;);
+      		hdrds.setValueAt(0,&amp;quot;ZDRXM&amp;quot;,zdrxm);
+      		hdrds.setValueAt(0,&amp;quot;FHRXM&amp;quot;,fhrxm);
+      		hdrds.setValueAt(0,&amp;quot;JZRXM&amp;quot;,jzrxm);
+      	}else{
+      		var request = eaContext.getRequest();
+		var userInfo = web.EASession.GetUserinfo(request);
+		var usrname = userInfo.getUsrnam(); //操作人姓名
+		zdrxm = usrname ;
+		fhrxm = &amp;quot;&amp;quot;;
+		jzrxm = &amp;quot;&amp;quot;;
+      		hdrds.setValueAt(0,&amp;quot;ZDRXM&amp;quot;,zdrxm);
+      		hdrds.setValueAt(0,&amp;quot;FHRXM&amp;quot;,fhrxm);
+      		hdrds.setValueAt(0,&amp;quot;JZRXM&amp;quot;,jzrxm);
+      		//var request = eaContext.getRequest();
+		pz_jk_czxh = request.getParameter(&amp;quot;jk_czxh&amp;quot;);
+      	}
+      	
+      	if(fhrxm != &amp;quot;&amp;quot; ){
+      		ret = &amp;quot;凭证号&amp;quot;+curr_pzh+&amp;quot;已经审核，不允许修改!!!&amp;quot;;
+      		throw new Exception(ret);
+      	}
+
+      	if(jzrxm != &amp;quot;&amp;quot;){
+      		ret = &amp;quot;凭证号&amp;quot;+curr_pzh+&amp;quot;已经记账，不允许修改!!!&amp;quot;;
+      		throw new Exception(ret);
+      	}
+
+      	//检查借贷金额是否相等
+      	var xmldtl = eaContext.getXmldtl();
+      	var dtlds = new pub.EAXmlDS(xmldtl);
+      	
+      	if(dtlds.getRowCount() == 0) {
+      	  	ret = &amp;quot;明细不能全为空&amp;quot;;
+          	throw new Exception(ret);	
+      	}
+      	var sum_jfje = 0.0;
+      	var sum_dfje = 0.0;
+      	for(var row=0;row &amp;lt; dtlds.getRowCount();row++) {
+   	  	var jefx = dtlds.getStringAt(row,&amp;quot;jefx&amp;quot;);
+   	  	var je = dtlds.getStringAt(row,&amp;quot;je&amp;quot;);
+   	  	var mxxh = dtlds.getStringAt(row,&amp;quot;mxxh&amp;quot;);
+   	  	if(je != &amp;quot;&amp;quot;) je = je * 1.0;
+   	  	if(jefx == &amp;quot;借&amp;quot;) {
+   	  		sum_jfje += je;
+   	  	}else if(jefx == &amp;quot;贷&amp;quot;) {
+   	     		sum_dfje += je;
+   	  	}
+   	  	//明细记录是空的删除
+   	  	if (mxxh == &amp;quot;&amp;quot;) {
+   	  		dtlds.DeleteRow(row);
+   	  		row --;
+   	  	}								
+      	}//for(var row=0;row &amp;lt; dtlds.getRowCount();row++)
+      	
+      	if( pub.EAFunc.Round(sum_jfje,2) != pub.EAFunc.Round(sum_dfje,2) ) {
+       	  	ret = &amp;quot;借贷金额不平，请核对！\r\n借方金额:&amp;quot;+sum_jfje+&amp;quot;\r\n贷方金额:&amp;quot;+sum_dfje+&amp;quot;\r\n借贷差额:&amp;quot;+pub.EAFunc.Round(sum_jfje-sum_dfje,2);
+       	  	throw new Exception(ret);
+      	}else if(pub.EAFunc.Round(sum_jfje,2) == 0.00 &amp;&amp; pub.EAFunc.Round(sum_dfje,2) == 0.0) {
+          	ret = &amp;quot;明细不能全为空&amp;quot;;
+          	throw new Exception(ret);
+      	}      
+     	
+	//throw new Exception(guid)     	;
+	sql = &amp;quot;select count(1) from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and guid = &amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;&amp;quot;;
+	var statcou = db.GetSQL(sql);
+	
+	if (statcou &amp;lt;= 0) {
+		//凭证制单时候检查并重新分配新的凭证号
+		
+	      	var pzh_new = checkNewPzb(sbh,zth,yy,mm,curr_pzh);
+	      	
+	      	if(pzh_new != curr_pzh) {
+	      		//修改主表
+			hdrds.setValueAt(0,&amp;quot;PZH&amp;quot;,pzh_new);
+
+			//修改明细表
+			for(var i = 0;i&amp;lt;dtlds.getRowCount();i++ ){
+				var pzh_mx = dtlds.getStringAt(i,&amp;quot;pzh&amp;quot;);
+				if(pzh_mx != &amp;quot;&amp;quot;){
+					dtlds.setValueAt(i,&amp;quot;PZH&amp;quot;,pzh_new);
+				}
+			}//for(var i = 0;i&amp;lt;dtlds.getRowCount();i++ )
+	      	}//if(pzh_new != curr_pzh)
+      	}//if (statcou &amp;lt;= 0)
+      	
+      	//删除明细表原来的数据，避免主键冲突
+      	sql = &amp;quot;delete from cw_pzmxb where formguid=&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;&amp;quot;;
+	db.ExcecutSQL(sql);
+	
+      	eaContext.setXmlhdr(hdrds.GetXml());
+	eaContext.setXmldtl(dtlds.GetXml());
+	
+//	ret = -1;
+
+	if(pz_jk_czxh != &amp;quot;&amp;quot;){
+		var retVal = savePzb(sbh,zth,yy,mm,pz_jk_czxh,db,&amp;quot;&amp;quot;);
+		var ret = retVal.split(&amp;quot;@&amp;quot;)[0];
+		var msg = retVal.split(&amp;quot;@&amp;quot;)[0];
+		if(ret != 1){
+			ret = retVal ;
+			throw new Exception(ret);
+		}
+	}
+	
+      	return ret;
+}
+//保存凭证表，更新日记账表
+function savePzb(sbh,zth,yy,mm,jk_czxh,db,kmbh){
+	var sql = &amp;quot;&amp;quot;;
+	var pzh = &amp;quot;&amp;quot;;
+	var pzh_str = 0;
+	var fgf = &amp;quot;-&amp;quot;;
+	var pzlx = &amp;quot;记&amp;quot;;
+	
+	try{		
+//		throw new Exception(jk_czxh);
+		pzh = checkNewPzb(sbh,zth,yy,mm,pzh);
+
+		//更新cw_rjzb
+		sql = &amp;quot;select lsh,old_pch,djh,sxh,dylsh,kmbh from cw_jk_rjzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND yy = &amp;quot;+yy+&amp;quot; and mm = &amp;quot;+mm+&amp;quot; and czxh = &amp;apos;&amp;quot;+jk_czxh+&amp;quot;&amp;apos; order by lsh&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		var old_ywpch = &amp;quot;&amp;quot;;
+		var old_djh   = &amp;quot;&amp;quot;;
+		var old_lsh   = &amp;quot;&amp;quot;;
+		kmbh = ds.getStringAt(0,&amp;quot;kmbh&amp;quot;);
+		
+		for(var ds_r=0;ds_r&amp;lt; ds.getRowCount();ds_r ++){
+			var lsh = ds.getStringAt(ds_r,&amp;quot;lsh&amp;quot;);
+			var ywpch = ds.getStringAt(ds_r,&amp;quot;old_pch&amp;quot;);
+			var djh = ds.getStringAt(ds_r,&amp;quot;djh&amp;quot;);
+			var sxh = ds.getStringAt(ds_r,&amp;quot;sxh&amp;quot;);
+			var dylsh = ds.getStringAt(ds_r,&amp;quot;dylsh&amp;quot;);
+			
+			if(lsh == old_lsh) continue;
+//			if(old_lsh == dylsh) continue;
+			
+			if(ywpch != &amp;quot;&amp;quot;){
+				if(old_ywpch != ywpch) pzh_str ++;
+			}else{
+				if(djh != &amp;quot;&amp;quot;){
+					if(old_djh != djh) pzh_str ++;
+				}else{
+					pzh_str ++;
+				}
+			}
+			
+			sql = &amp;quot;update cw_rjzb set pzlx = &amp;apos;&amp;quot;+pzlx+&amp;quot;&amp;apos;,pzh = &amp;apos;&amp;quot;+pzh+&amp;quot;&amp;apos;,str_pzh = &amp;apos;&amp;quot;+pzh +&amp;quot;&amp;quot;+fgf +&amp;quot;&amp;quot;+pzh_str+&amp;quot;&amp;apos; where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND lsh in (&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+dylsh+&amp;quot;&amp;apos;) and pzh is null&amp;quot;; 
+			db.ExcecutSQL(sql);
+			
+			old_ywpch = ywpch;
+			old_djh   = djh;
+			old_lsh   = lsh;
+		}
+//		throw new Exception(sql);
+		//调用财务函数cw_rjz_pack.rjz_pzh
+		try{
+		
+			var conn = db.GetConn();
+			var statement = conn.createStatement();
+			var stmt = conn.prepareCall(&amp;quot;call cw_rjz_pack.rjz_pzh(?,?,?,?,?,?,?)&amp;quot;);//cw_rjz_pack.rjz_pzh
+			stmt.setString(1,sbh);
+			stmt.setString(2,zth);
+			stmt.setString(3,yy);
+			stmt.setString(4,mm);
+			stmt.setString(5,kmbh);
+			stmt.setString(6,pzlx);
+			stmt.setString(7,pzh);
+						
+			stmt.executeUpdate();
+			
+			stmt.close();
+
+		}catch (e){
+//			db.Rollback();
+			return -1+&amp;quot;@&amp;quot;+&amp;quot;调用财务后台包出错cw_rjz_pack.rjz_pzh&amp;quot;+e.toString();
+		}
+		
+		return &amp;quot;1&amp;quot;+&amp;quot;@&amp;quot;+pzh;
+	}catch(e) {
+//		if (db != null) db.Rollback();
+		return &amp;quot;-1&amp;quot;+&amp;quot;@&amp;quot;+&amp;quot;生成凭证出错!&amp;quot;+e.toString()+sql;
+	}
+}
+
+//单据保存前
+function fos_beforesave(eaContext)
+//var eaContext=new pub.EAContext();
+{
+	var ret = checkSave(eaContext);	
+}
+
+//单据保存后
+function fos_aftersave(eaContext)
+//var eaContext=new pub.EAContext();
+{	
+	var retVal = checkSave_after(eaContext);	
+//	var ret = retVal.split(&amp;quot;@&amp;quot;)[0];
+//	var msg = retVal.split(&amp;quot;@&amp;quot;)[1];
+//	if(ret == 1){
+//		
+//	}else{
+//		throw new Exception(msg);
+//	}
+}
+
+//单据保存后数据处理
+function checkSave_after(eaContext){
+	var db = null;
+	try{
+		db = eaContext.getEADatabase();
+		var guid = eaContext.getGuid();
+		var xmlhdr = eaContext.getXmlhdr();
+      		var ds = new pub.EAXmlDS(xmlhdr);
+      		var pzh = ds.getStringAt(0,&amp;quot;pzh&amp;quot;);
+		
+		return 1+&amp;quot;@&amp;quot;+&amp;quot;保存凭证成功，凭证号：&amp;quot;+pzh;
+	}catch(e){
+		//if(db != null) db.Rollback();
+		throw new Exception(&amp;quot;凭证保存不成功&amp;quot;+e.toString());
+	}
+}
+
+//单据审核后
+function fos_aftercheck(eaContext)
+{	
+	var db = eaContext.getEADatabase();
+//	var czyxm = eaContext.getUsrid();
+	
+	//单据审核后将旧pb系统的审核人、单据状态等字段也更新 
+	var guid = eaContext.getGuid();
+	
+        var sql = &amp;quot;update cw_pzmxb set zt = &amp;apos;已核&amp;apos; where formguid = &amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos; and zt = &amp;apos;未核&amp;apos;&amp;quot;;
+        db.ExcecutSQL(sql);
+        var sql = &amp;quot;update cw_pzb set zt = &amp;apos;已核&amp;apos;,fhrxm = chkusrnam,fhrsj = sysdate where guid = &amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos; and zt = &amp;apos;未核&amp;apos;&amp;quot;;
+        db.ExcecutSQL(sql);
+               
+        //单据审核后将金额写入指标表                
+        //updateFinIndexDetail(eaContext,&amp;quot;+&amp;quot;);
+        
+}
+
+//单据弃审前
+function fos_beforeuncheck(eaContext)
+{
+	var request = eaContext.getRequest();
+	var userInfo = web.EASession.GetUserinfo(request);
+	var logdat = userInfo.getLogdat();
+	var g_org  = eaContext.getOrgid();
+	var g_acc  = eaContext.getAccid();
+	     	
+      	var yy = logdat.substring(0,4);
+      	var mm = logdat.substring(5,7)*1;
+      	var sbh = g_org;
+	var zth = g_acc.substring(sbh.length());//pub.EAFunc.Replace(g_acc,g_org,&amp;quot;&amp;quot;);
+      	
+      	var retVal =check_jz2(sbh,zth,yy,mm);
+      	var jz_ret = retVal.split(&amp;quot;@&amp;quot;)[0];
+	var jz_msg = retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(jz_ret != 1 ){
+		throw new Exception(retVal);
+		return -1;
+	}
+	
+	var db = eaContext.getEADatabase();
+
+	//单据审核后将旧pb系统的审核人、单据状态等字段也更新 
+	var guid = eaContext.getGuid();     	
+	var sql = &amp;quot;update cw_pzmxb set zt = &amp;apos;未核&amp;apos; where formguid = &amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos; and zt = &amp;apos;已核&amp;apos;&amp;quot;;
+	db.ExcecutSQL(sql);
+	sql = &amp;quot;update cw_pzb set zt = &amp;apos;未核&amp;apos;,fhrxm = null where guid = &amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos; and zt = &amp;apos;已核&amp;apos;&amp;quot;;
+	db.ExcecutSQL(sql);
+        	
+	//单据审核后将金额写入指标表         
+	//updateFinIndexDetail(eaContext,&amp;quot;-&amp;quot;);
+                 		
+}
+
+//更新报表指标库
+function updateFinIndexDetail(eaContext,addFlag)
+{
+	return &amp;quot;&amp;quot;; //报表取数方式改变，不再使用该方法！！
+	var replocid = &amp;quot;&amp;quot;; //报表位置编号
+	var guid = eaContext.getGuid();     	
+	var orgid = eaContext.getOrgid();
+	var accid = eaContext.getAccid();
+	var db = eaContext.getEADatabase();
+	var sql = &amp;quot;select bmbh from oa_reploc where org=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+accid+&amp;quot;&amp;apos; and hzbz=&amp;apos;2&amp;apos;&amp;quot;;
+	try { replocid = db.GetSQL(sql); } catch(e) { throw new Exception(&amp;quot;科目数据写入报表指标库出错！报表位置定义编号未找到！&amp;quot;+e.toString()); }
+                
+	sql = &amp;quot;select yy,mm,kmbh,sum(decode(jefx,&amp;apos;借&amp;apos;,je,-je)) je,org,acc,sbh,zth 
+		from cw_pzmxb where formguid = &amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;
+		group by yy,mm,kmbh,org,acc,sbh,zth&amp;quot;;
+	var ds = db.QuerySQL(sql);
+	for(var row=0;row&amp;lt;ds.getRowCount();row++) {
+		var yy = ds.getStringAt(row,&amp;quot;yy&amp;quot;);
+		var mm = ds.getStringAt(row,&amp;quot;mm&amp;quot;);
+		if(mm.length() == 1) mm = &amp;quot;0&amp;quot;+mm.toString();                	
+		var kmbh = ds.getStringAt(row,&amp;quot;kmbh&amp;quot;);
+		var je = 1.0 * ds.getStringAt(row,&amp;quot;je&amp;quot;);
+		var org = ds.getStringAt(row,&amp;quot;org&amp;quot;);
+		var acc = ds.getStringAt(row,&amp;quot;acc&amp;quot;);
+		var sbh = ds.getStringAt(row,&amp;quot;sbh&amp;quot;);
+		var zth = ds.getStringAt(row,&amp;quot;zth&amp;quot;);
+	
+		var indexitemid = &amp;quot;03&amp;quot;;  //指标项 03本月数
+	
+		//获取科目编号对应的指标编号
+		var column_money = &amp;quot;money&amp;quot;+mm;
+		sql = &amp;quot;select indexid from fin_index where kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;&amp;quot;;
+		var idxds = db.QuerySQL(sql);
+		if (idxds.getRowCount() &amp;lt;= 0) {
+			throw new Exception(&amp;quot;科目 &amp;quot;+kmbh+&amp;quot; 未设置对应指标！&amp;quot;);
+		}
+		
+		for (var i=0;i&amp;lt;idxds.getRowCount();i++) {
+			var indexid = idxds.getStringAt(i,&amp;quot;INDEXID&amp;quot;);
+			
+			sql = &amp;quot;select nvl(&amp;quot;+column_money+&amp;quot;,0) &amp;quot;+column_money+&amp;quot; from fin_indexdetail 
+				where org=&amp;apos;&amp;quot;+org+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+acc+&amp;quot;&amp;apos; and indexyear = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and indexid = &amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos; and replocid=&amp;apos;&amp;quot;+replocid+&amp;quot;&amp;apos;&amp;quot;;
+			var sum_money = 0.00;       
+			var tmpds = db.QuerySQL(sql);
+			if(tmpds.getRowCount() &amp;gt; 0) {
+				sum_money = 1.0 * tmpds.getStringAt(0,column_money);
+				if (addFlag == &amp;quot;+&amp;quot;) sum_money += je;
+				else if (addFlag == &amp;quot;-&amp;quot;) sum_money -= je;
+				
+				sql = &amp;quot;update fin_indexdetail set &amp;quot;+column_money+&amp;quot;=&amp;quot;+sum_money+&amp;quot; 
+				       where org=&amp;apos;&amp;quot;+org+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+acc+&amp;quot;&amp;apos; and indexyear = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and indexid = &amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos; and replocid=&amp;apos;&amp;quot;+replocid+&amp;quot;&amp;apos;&amp;quot;;
+				db.ExcecutSQL(sql);              
+			}
+			else if(tmpds.getRowCount() == 0 &amp;&amp; addFlag == &amp;quot;+&amp;quot;) {
+				sql = &amp;quot;insert into fin_indexdetail(org,acc,indexid,indexyear,indexitemid,&amp;quot;+column_money+&amp;quot;,replocid)
+					values(&amp;apos;&amp;quot;+org+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+acc+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+indexitemid+&amp;quot;&amp;apos;,&amp;quot;+je+&amp;quot;,&amp;apos;&amp;quot;+replocid+&amp;quot;&amp;apos;)&amp;quot;;
+				db.ExcecutSQL(sql);                  	       
+			}
+		}         
+	}  
+              
+}
+
+//单据删除后
+function fos_afterdelete(eaContext)
+{
+      	var guid = eaContext.getGuid();
+      	var xmlhdr = &amp;quot;&amp;quot;;
+      	var db = null;
+      	var sql = &amp;quot;&amp;quot;;
+  	
+      	db = eaContext.getEADatabase();
+      	
+      	xmlhdr = eaContext.getXmlhdr();
+      	var ds = new pub.EAXmlDS(xmlhdr);
+      	//获取凭证表信息
+      	var curr_pzh = ds.getStringAt(0,&amp;quot;pzh&amp;quot;);
+      	var yy = ds.getStringAt(0,&amp;quot;yy&amp;quot;);
+      	var mm = ds.getStringAt(0,&amp;quot;mm&amp;quot;);
+      	var sbh = ds.getStringAt(0,&amp;quot;sbh&amp;quot;);
+      	var zth = ds.getStringAt(0,&amp;quot;zth&amp;quot;);	      	
+	
+      	//获取最大凭证号
+      	sql = &amp;quot;select nvl(max(pzh),0) from cw_pzb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy=&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm=&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos;&amp;quot;;
+      	var max_pzh = db.GetSQL(sql);
+//	      	throw new Exception(max_pzh+&amp;quot;aa&amp;quot;+curr_pzh);
+      	if(max_pzh == curr_pzh){
+      		//查询凭证是否有附件
+	      	sql = &amp;quot;select count(1) from cw_rjzb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy=&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm=&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and to_number(pzh) = to_number(&amp;quot;+curr_pzh+&amp;quot;)&amp;quot;;
+	      	var rjpzcou = db.GetSQL(sql);
+      		//更新日记账凭证号
+      		if(rjpzcou &amp;gt; 0){
+      			sql = &amp;quot;update cw_rjzb set pzh = null,pzlx = null,str_pzh = null 
+      				where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy=&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm=&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and to_number(pzh) = to_number(&amp;quot;+curr_pzh+&amp;quot;)&amp;quot;;
+      			db.ExcecutSQL(sql);
+      		}
+      	}else{
+      		//更新凭证表凭证号
+	      	if(ds.getRowCount() &amp;gt; 0) {			
+		      	sql = &amp;quot;update cw_pzmxb set pzh = to_number(pzh) -1 
+		                 where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and
+		                       yy=&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm=&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and 
+		                       to_number(pzh) &amp;gt; to_number(&amp;quot;+curr_pzh+&amp;quot;)&amp;quot;;
+		      	db.ExcecutSQL(sql);
+		     	sql = &amp;quot;update cw_pzb set pzh = to_number(pzh) -1 
+		                 where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and
+		                       yy=&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm=&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and 
+		                       to_number(pzh) &amp;gt; to_number(&amp;quot;+curr_pzh+&amp;quot;)&amp;quot;;
+		     	db.ExcecutSQL(sql);
+	      	}
+	      	
+	      	sql = &amp;quot;update cw_rjzb set pzh = null,pzlx = null,str_pzh = null 
+      				where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy=&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm=&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and to_number(pzh) = to_number(&amp;quot;+curr_pzh+&amp;quot;)&amp;quot;;
+      		db.ExcecutSQL(sql);
+	      	
+	      	//查询凭证是否有附件
+//	      	sql = &amp;quot;select count(1) from cw_rjzb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy=&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm=&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh &amp;gt; &amp;quot;+curr_pzh+&amp;quot;&amp;quot;;
+//	      	var rjpzcou = db.GetSQL(sql);
+      		//更新日记账凭证号
+//      		if(rjpzcou &amp;gt; 0){
+//      			sql = &amp;quot;update cw_rjzb set pzh = pzh - 1,str_pzh = substrb( str_pzh,1,instrb(str_pzh,&amp;apos;-&amp;apos;)-1 ) || substrb(str_pzh,instrb(str_pzh,&amp;apos;-&amp;apos;))
+//      				where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy=&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm=&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and to_number(pzh) &amp;gt; to_number(&amp;quot;+curr_pzh+&amp;quot;)&amp;quot;;
+//      			db.ExcecutSQL(sql);
+//      		}
+      	}
+                                                   
+}
+
+function checkPzh(){
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	try{
+		db = new pub.EADatabase();
+		sql = &amp;quot;select count(1) from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh = &amp;apos;&amp;quot;+pzh+&amp;quot;&amp;apos;&amp;quot;;
+		var pzhcou = db.GetSQL(sql);
+		if(pzhcou &amp;gt; 0){
+			sql = &amp;quot;select zdrxm from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh = &amp;apos;&amp;quot;+pzh+&amp;quot;&amp;apos;&amp;quot;;
+			var zdrxm = db.GetSQL(sql);
+			if(zdrxm != czyxm){
+				return -1+&amp;quot;@&amp;quot;+&amp;quot;凭证号：&amp;quot;+pzh+&amp;quot;，制单人是：&amp;quot;+zdrxm+&amp;quot;,不是本人制单，不允许查看!!!&amp;quot;;
+			}else{
+				sql = &amp;quot;select guid,zt from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh = &amp;apos;&amp;quot;+pzh+&amp;quot;&amp;apos;&amp;quot;;
+				var ds = db.QuerySQL(sql); 
+				var guid = ds.getStringAt(0,&amp;quot;guid&amp;quot;);
+				var zt   = ds.getStringAt(0,&amp;quot;zt&amp;quot;);
+				if(zt != &amp;quot;未核&amp;quot;){
+					return -1 + &amp;quot;@&amp;quot; + &amp;quot;凭证号:&amp;quot;+pzh+&amp;quot;,不是未核凭证，凭证已经：&amp;quot;+zt;
+				}
+				
+				return 1+&amp;quot;@&amp;quot;+guid;
+			}
+		}else{
+			return 2+&amp;quot;@&amp;quot;+&amp;quot;凭证号未生成过，是否要凭证手工制单&amp;quot;;
+		}
+
+	}catch(e){
+		if(db != null) db.Rollback();
+		return -1+&amp;quot;@&amp;quot;+e.toString();
+	}finally{
+		if(db != null) db.Close();
+	}
+}
+
+//获取GUID
+function getGuid(){
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	try{
+		db = new pub.EADatabase();
+		sql = &amp;quot;select pzh,guid from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh = &amp;apos;&amp;quot;+pzh+&amp;quot;&amp;apos; and zdrxm = &amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;&amp;quot;;
+		var ds = db.QuerySQL(sql);		
+		if(ds.getRowCount()&amp;lt;=0){
+			//获取最大凭证号
+			sql = &amp;quot;select nvl(max(pzh),0) pzh from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and zdrxm = &amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;&amp;quot;;
+			var max_pzh = db.GetSQL(sql);
+			if(max_pzh &amp;gt; 0){
+				sql = &amp;quot;select guid from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh = &amp;apos;&amp;quot;+max_pzh+&amp;quot;&amp;apos; and zdrxm = &amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;&amp;quot;;
+				var guid = db.GetSQL(sql);
+				return 1+&amp;quot;@&amp;quot;+guid;
+			}else{
+				return 2+&amp;quot;@&amp;quot;+&amp;quot;本人未生成有凭证!!&amp;quot;;
+			}
+		}else{
+			var ds_pzh = ds.getStringAt(0,&amp;quot;pzh&amp;quot;);
+			var ds_guid = ds.getStringAt(0,&amp;quot;guid&amp;quot;);
+			return 1+&amp;quot;@&amp;quot;+ds_guid;
+		}
+	}catch(e){
+		if(db != null) db.Rollback();
+		return -1+&amp;quot;@&amp;quot;+e.toString();
+	}finally{
+		if(db != null) db.Close();
+	}
+}
+//单据审核前
+function fos_beforecheck(eaContext)
+//var eaContext=new pub.EAContext();
+{
+	var db = eaContext.getEADatabase();
+	var request = eaContext.getRequest();
+	var userInfo = web.EASession.GetUserinfo(request);
+	var logdat = userInfo.getLogdat();
+	var g_org  = eaContext.getOrgid();
+	var g_acc  = eaContext.getAccid();
+	var usrname = userInfo.getUsrnam(); //操作人姓名
+	var guid = eaContext.getGuid();
+	var zdrxm = db.GetSQL(&amp;quot;select zdrxm from cw_pzb where guid=&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;&amp;quot;);
+	if (zdrxm == usrname) {
+		throw new Exception(&amp;quot;自己不能审核自己制单的凭证！！！&amp;quot;);
+	}
+	
+      	var yy = logdat.substring(0,4);
+      	var mm = logdat.substring(5,7)*1;
+      	
+      	var sbh = g_org;
+      	var zth = g_acc.substring(sbh.length());//pub.EAFunc.Replace(g_acc,g_org,&amp;quot;&amp;quot;);
+      	
+      	var retVal =check_jz2(sbh,zth,yy,mm);
+      	var jz_ret = retVal.split(&amp;quot;@&amp;quot;)[0];
+	var jz_msg = retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(jz_ret != 1 ){
+		throw new Exception(retVal);
+		return -1;
+	}	
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >getPZH</ID><NAME >获取凭证号</NAME><DATDSC >select nvl(max(pzh),0)+1 
+from cw_pzb 
+where sbh = &amp;apos;[%sbh]&amp;apos; and zth = &amp;apos;[%zth]&amp;apos; and yy = &amp;apos;[%yy]&amp;apos; and mm = &amp;apos;[%mm]&amp;apos;</DATDSC><C4 >getPZH</C4><C5 >getPZH</C5><C6 >getPZH</C6><C7 >getPZH</C7><C8 >getPZH</C8><C9 ></C9></ROW>
+<ROW num="1" ><ID >getMzxPzh</ID><NAME ></NAME><DATDSC >select nvl(min(pzh),0) from cw_pzb 
+where sbh = &amp;apos;[%SBH]&amp;apos;
+  AND ZTH = &amp;apos;[%ZTH]&amp;apos;
+  AND yy  = &amp;apos;[%YYYY]&amp;apos;
+  AND MM  = &amp;apos;[%MM]&amp;apos;
+  and zdrxm = &amp;apos;[%CZYXM]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 >getMzxPzh</C8><C9 >getMzxPzh</C9></ROW>
+<ROW num="2" ><ID >getKmmc</ID><NAME ></NAME><DATDSC >select cw_pack4.kmmc(&amp;apos;[%SBH]&amp;apos;,&amp;apos;[%ZTH]&amp;apos;,&amp;apos;[%KMBH]&amp;apos;) KMMC
+  from dual</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9></ROW>
+<ROW num="3" ><ID >CYPZMX</ID><NAME ></NAME><DATDSC >select mxxh,zy,kmbh,cw_pack4.kmmc(sbh,zth,KMBH) kmmc from cw_cypzmxb where sbh=&amp;apos;[%SYS_ORGID]&amp;apos; and zth=&amp;apos;[%ZTH]&amp;apos; and bh=&amp;apos;[%BH]&amp;apos; order by bh,mxxh</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

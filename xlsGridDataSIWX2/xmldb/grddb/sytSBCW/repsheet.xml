@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >repsheet</MWID><NAME >报表查询的分页标签</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >repsheet.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var bLoad = false;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.ShowToolBar(0);
+	_this.AddSheet(&amp;quot;新增&amp;quot;);// 要先增加然后再删除才能显示
+	_this.DeleteSheet(1);
+	_this.ShowTabBar(1);
+	
+	_this.SetSheetName(0,&amp;quot;欢迎&amp;quot;);
+	
+}
+
+// 新建一个sheet,返回sheetid
+function newsheet (sheetname,accid,repid,yymm)
+{
+//	for ( var s = 0 ;s&amp;lt;_this.GetSheetCount();s++ ) {
+//		if (_this.GetSheetName(s)== sheetname &amp;&amp;)
+//			return s;
+//	}
+	var sheetid = parent.wnd.query(accid,repid,yymm);
+	if (sheetid &amp;gt; -1) return sheetid;
+	if ( bLoad  == false ) {
+		_this.SetSheetName(0,sheetname);
+		bLoad = true;
+
+		return 0;
+	}
+	var n =_this.AddSheet( sheetname );
+	_this.SetCurrentSheet( n );
+	return n;
+
+}
+
+//显示表页
+function _thisOnSheetChange(sheet)
+{
+	parent.wnd.show(sheet);	
+	var shname = _this.GetSheetName(sheet);
+	
+	if (shname == &amp;quot;RepCreate&amp;quot; || shname == &amp;quot;欢迎&amp;quot; || shname == &amp;quot;RepImport&amp;quot; || shname == &amp;quot;REPSUM&amp;quot;) {
+		if (parent.document.frames[&amp;quot;_note&amp;quot;].welcomemsg != &amp;quot;&amp;quot;) {
+			parent.document.frames[&amp;quot;_note&amp;quot;].newmsg(parent.document.frames[&amp;quot;_note&amp;quot;].welcomemsg);
+		}
+		else {
+			parent.document.frames[&amp;quot;_note&amp;quot;].newmsg(&amp;quot;&amp;quot;);
+		}
+	} else {
+		var cursheet = getSheetObj(sheet);
+		var accid = cursheet.m_accid;
+		var repid = cursheet.m_repid;
+		var yymm = cursheet.m_yymm;
+//		_sql.querytods(&amp;quot;GETACCNAM&amp;quot;,&amp;quot;accid=&amp;quot;+accid+&amp;quot;&amp;sytid=&amp;quot;+G_SYTID);
+//		var accnam = _this.XMLDS_GetString(0,&amp;quot;NAME&amp;quot;);
+//		_sql.querytods(&amp;quot;REPINFO&amp;quot;,&amp;quot;accid=&amp;quot;+accid+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;reptyp=&amp;quot;+parent.reptyp+&amp;quot;&amp;repid=&amp;quot;+repid);
+//		var repinfo = _this.XMLDS_GetString(0,&amp;quot;INFO&amp;quot;);
+		repinfo = &amp;quot;报表信息：[&amp;quot;+repid+&amp;quot;]&amp;quot;+shname+&amp;quot;    所属年月 &amp;quot;+yymm + &amp;quot;    所属帐套号 &amp;quot;+accid.replace(G_ORGID,&amp;quot;&amp;quot;);
+		parent.document.frames[&amp;quot;_note&amp;quot;].newmsg(repinfo);	
+	}
+
+}
+
+//取得对应Sheet里的对象
+function getSheetObj(sheet)
+{
+	var wthis = parent.wnd;
+	for ( var i=0;i&amp;lt;wthis.aWnd.length;i++ ){
+		var obj = wthis.aWnd[i];
+		if ( sheet == obj.m_sheetid ) {
+			return obj;
+		}
+	}
+}
+
+function f_setcursheet(sheetid)
+{
+	_this.SetCurrentSheet( sheetid );
+}
+
+function _thisRefresh(_thisaccid,_thisrepid,_thisyymm,url)
+{
+	var sheetid = parent.wnd.query(_thisaccid,_thisrepid,_thisyymm);
+	parent.wnd.getframe(sheetid).location = url;
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >GETACCNAM</ID><NAME ></NAME><DATDSC >select name from acc where id=&amp;apos;[%accid]&amp;apos; and syt=&amp;apos;[%sytid]&amp;apos;</DATDSC></ROW>
+<ROW num="1" ><ID >REPINFO</ID><NAME ></NAME><DATDSC >--select b.id,b.name,a.yymm,nvl(c.name,&amp;apos;未制作&amp;apos;) stat 
+select b.id||b.name||&amp;apos;  [%yymm]  &amp;apos;||nvl(c.name,&amp;apos;未制作&amp;apos;) INFO 
+from v_repmodel a, v_finreporg b,v_stat c
+ where a.org(+) = b.orgid and a.viewtyp(+) = b.id and c.id(+)=a.stat
+   and a.yymm(+) like &amp;apos;[%yymm]%&amp;apos; and a.acc(+)=&amp;apos;[%accid]&amp;apos; 
+   and nvl(b.typ, &amp;apos; &amp;apos;) like &amp;apos;[%reptyp]%&amp;apos;   
+   and b.id=&amp;apos;[%repid]&amp;apos;</DATDSC></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

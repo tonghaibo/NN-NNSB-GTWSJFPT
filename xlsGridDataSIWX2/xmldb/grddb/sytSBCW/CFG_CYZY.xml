@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >CFG_CYZY</MWID><NAME >常用摘要设置</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CFG_CYZY.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS >xlsgrid/js/dbhelper.js</EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var vendorid = &amp;quot;&amp;quot;;
+var vendornam = &amp;quot;&amp;quot;;
+var updflg = 0;
+
+//================================================================// 
+// 函数：thisOnpost_loaddata
+// 说明：调用dbhelper的初始化动作
+// 参数：
+// 返回：
+// 样例：
+// 作者：
+// 创建日期：11/17/05 17:31:52
+// 修改日志：
+//================================================================// 
+order = &amp;quot; order by XH&amp;quot;;
+var sheet = 0 ;
+ var iORGID=&amp;quot;&amp;quot;;
+
+function _thisOnpost_loaddata(sheet)
+{     
+       
+       var thisorgid =&amp;quot;&amp;quot;;
+       setButton();
+       var  fields = &amp;quot;GUID,GUID,sys_guid();&amp;quot;+
+            &amp;quot;SBH,所编号,,.+,;&amp;quot;+  
+            &amp;quot;ZTH,账套号,,.+,;&amp;quot;+
+            &amp;quot;ORG,ORG,,.+,;&amp;quot;+
+            &amp;quot;ACC,ACC,,.+,;&amp;quot;+                                 	
+            &amp;quot;XH,序号,,.+,1;&amp;quot;+            
+            &amp;quot;ZY,摘要,,.+,1;&amp;quot;+            // 第5个字段是否列入查询条件 .+ 非空 \\d 数字
+            &amp;quot;ZJM,助记码,,.+,1;&amp;quot;;
+            
+      try{iORGID=thisorgid;
+      }catch( e ) {iORGID=orgid; }
+      
+      var where = &amp;quot;  (org =&amp;apos;&amp;quot;+G_ORGID+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+G_ACCID+&amp;quot;&amp;apos;)  &amp;quot;;
+    //  var where = &amp;quot;&amp;quot;;
+      var orderby = &amp;quot;&amp;quot;;      // 字段的列表
+      // 参数1：基表的名称
+      // 参数2：字段列表 格式是通过;分隔不同的字段，每个分隔中使用,来分隔不同的字段属性
+      //            字段属性： ID,NAME,默认值,正则表达式,是否列入查询的字段(=1是)
+      // 参数3：主键
+      // 参数4：显示空行标志 =true表示如果结果集为空，隐藏开头的两个空行,强制用户点击“新增”，以保证填入默认值
+      // 参数5：查询的表名称，在某些情况下，查询的表名称和基表名称不一样，默认=&amp;quot;&amp;quot;表示查询表名称采用基表名称
+      // 参数6：where条件，是不带where的子句如&amp;quot;ID like &amp;apos;01%&amp;apos;&amp;quot;
+      // 参数7：orederby，是不带order by的子句如&amp;quot;ID,REFID&amp;quot;, 
+
+      _dbhelper.InitSQL(&amp;quot;CW_CYZYB&amp;quot;,fields,&amp;quot;GUID&amp;quot;,false,&amp;quot;CW_CYZYB&amp;quot;,where,orderby);
+      _dbhelper.InitColumnList(fields );
+      _dbhelper.Load(1,1,2,2);                     
+     
+
+}
+
+// 基础数据维护界面：设置列的属性
+function f_dbeditpostloaddata(){
+//       var listid0 =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_LOCTYP&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+
+       _this.SetColVisible(0,3,0);
+       _this.SetColVisible(0,4,0);
+       _this.SetColVisible(0,5,0);
+       _this.SetColVisible(0,6,0);
+      
+}
+
+//屏蔽新增功能
+function f_dbeditafternewrow(sheet,row)
+{      
+	_this.SetCellText(0,row,3,G_ORGID);
+        var orglh = G_ORGID.length;
+        var zth = G_ACCID.substring(orglh);             
+        _this.SetCellText(0,row,4,zth);	
+        _this.SetCellText(0,row,5,G_ORGID);
+        _this.SetCellText(0,row,6,G_ACCID);
+	try{_sql.querytods(&amp;quot;getXH&amp;quot;,&amp;quot;sbh=&amp;quot;+G_ORGID+&amp;quot;&amp;zth=&amp;quot;+zth);}catch(e){alert(e);}
+        _this.SetCellText(0,row,7,_this.XMLDS_GetString(0,&amp;quot;xh&amp;quot;));
+
+}
+
+//屏蔽删除功能
+function f_dbeditbeforedeleterow(sheet,row)
+{     
+   
+      return 1;
+}
+
+//删除完成
+function  f_dbeditafterdeleterow(sheet,nowrow) {
+      if(_this.GetCurrentRow(0) != -1) {
+      	  if (_this.GetRowSelected(0,_this.GetCurrentRow(0)) == 1) {
+      	     alert(&amp;quot;删除成功，请点击保存！&amp;quot;);
+      	  }
+      }      
+      return 1;
+}
+
+//屏蔽保存功能
+function f_dbeditbeforesave()
+{
+  
+}
+//修改单元格内容
+function f_dbeditcellmodify(sheet,row,col,oldvalue,newvalue)
+{     
+  
+}
+
+//按键
+function _thisOnKeyin(nChar,nFlags,sheet,row,col)
+{
+	
+}
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >QDWLX</ID><NAME ></NAME><DATDSC >select dwlxbh id,dwlx name
+from SI_DWLXB</DATDSC><C4 >QDWLX</C4><C5 ></C5><C6 ></C6><C7 ></C7></ROW>
+<ROW num="1" ><ID >getCount</ID><NAME ></NAME><DATDSC >select count(*) flag 
+from cw_rjzb
+where upper(dwbh) = &amp;apos;[%DWBH]&amp;apos; and org = &amp;apos;[%SYS_ORGID]&amp;apos; and acc = &amp;apos;[%SYS_ACCID]&amp;apos;</DATDSC><C4 ></C4><C5 >getCount</C5><C6 >getCount</C6><C7 >getCount</C7></ROW>
+<ROW num="2" ><ID >getdwbh</ID><NAME ></NAME><DATDSC >select &amp;apos;J&amp;apos;||seq_dwbh_lsh.nextval from dual</DATDSC><C4 ></C4><C5 >getdwbh</C5><C6 ></C6><C7 ></C7></ROW>
+<ROW num="3" ><ID >getDWMC</ID><NAME ></NAME><DATDSC >select dwmc
+from si_dwb
+where org = &amp;apos;[%SYS_ORGID]&amp;apos;
+and   acc = &amp;apos;[%SYS_ACCID]&amp;apos;
+and   dwmc = &amp;apos;[%DWMC]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7></ROW>
+<ROW num="4" ><ID >getXH</ID><NAME >获取新增序号</NAME><DATDSC >select (nvl(max(xh),0)+1) xh from CW_CYZYB where sbh = &amp;apos;[%sbh]&amp;apos; and zth = &amp;apos;[%zth]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

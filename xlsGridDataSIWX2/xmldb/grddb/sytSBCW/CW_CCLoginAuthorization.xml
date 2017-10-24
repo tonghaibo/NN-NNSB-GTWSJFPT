@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >CW_CCLoginAuthorization</MWID><NAME >财务反结账登陆授权</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CW_CCLoginAuthorization.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >2</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >//20170118 lwq development model=&amp;gt;20170209 finish
+
+var org = &amp;quot;&amp;quot;;
+var COperators = &amp;quot;&amp;quot;;
+var roleid = &amp;quot;&amp;quot;;
+var opnum = 0;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	//接收传入参数
+	var notes = &amp;quot;&amp;quot;;
+	try {
+		objParam = window.dialogArguments;
+		if (objParam.notes != null &amp;&amp; objParam.notes != undefined) {
+			notes = objParam.notes;
+			org = objParam.org;
+			COperators = objParam.COperators;
+			roleid = objParam.roleid; 
+		}
+	} catch (e) {}
+	
+	_this.LoadScene(sheet,10);
+	
+	_this.SetCellText(0,3,2,notes); //授权提示
+	_this.SetAttribe(&amp;quot;CELL_0_7_2&amp;quot;,_this.ATTR_CELL_PASSWORD,1);	
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if(row == 5 &amp;&amp; col == 2){
+		_this.SetCellText(0,5,2,newvalue);
+	}
+	if(row == 7 &amp;&amp; col == 2 ){
+		_this.SetCellText(0,7,2,newvalue);
+	}
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if (id == &amp;quot;确认授权&amp;quot;) {
+		var User = _this.GetCellText(0,5,2);
+		var Password = _this.GetCellText(0,7,2);
+		
+		if(COperators == User){
+			alert(User+&amp;quot;，您已授权操作过，不能再次授权，请更换其他有权限用户进行授权！&amp;quot;);
+			_this.SetCellText(0,5,2,&amp;quot;&amp;quot;); //清空用户名
+			_this.SetCellText(0,7,2,&amp;quot;&amp;quot;); //清空密码
+		}else{
+			var ret = invokeOSFunc(&amp;quot;Logining&amp;quot;,&amp;quot;id=&amp;quot;+User+&amp;quot;&amp;passwd=&amp;quot;+Password+&amp;quot;&amp;org=&amp;quot;+org+&amp;quot;&amp;roleid=&amp;quot;+roleid);
+			var retSign = ret.split(&amp;quot;@&amp;quot;)[0];
+			var username = ret.split(&amp;quot;@&amp;quot;)[1];
+			if (retSign == 1) {
+				alert(&amp;quot;授权成功！&amp;quot;);
+				var newroleid = ret.split(&amp;quot;@&amp;quot;)[2];
+				var newrolename = ret.split(&amp;quot;@&amp;quot;)[3];
+				window.returnValue = User +&amp;quot;@&amp;quot;+ username +&amp;quot;@&amp;quot;+ newroleid +&amp;quot;@&amp;quot;+ newrolename;
+				window.close();
+			}else if (retSign == 0) {
+				alert(&amp;quot;密码错误，请重新输入！您还有 &amp;quot;+(2-opnum)+&amp;quot; 次机会！&amp;quot;);
+				_this.SetCellText(0,7,2,&amp;quot;&amp;quot;); //清空密码
+				//三次输错，关闭
+				opnum++;
+				if(opnum&amp;gt;=3){
+					alert(&amp;quot;三次输入密码错误！&amp;quot;);
+					window.returnValue = &amp;quot;0@&amp;quot;+User+&amp;quot;@&amp;quot;+username;
+					window.close();		
+				}
+			}else if (retSign == &amp;quot;-1&amp;quot;) {
+				alert(&amp;quot;该用户不存在！请重新输入用户名和密码！&amp;quot;);
+				_this.SetCellText(0,5,2,&amp;quot;&amp;quot;); //清空用户名
+				_this.SetCellText(0,7,2,&amp;quot;&amp;quot;); //清空密码
+			}else if (retSign == &amp;quot;-2&amp;quot;) {
+				alert(&amp;quot;该用户没有反结账模块操作权限！请重新输入拥有该模块权限的用户名和密码！&amp;quot;);
+				_this.SetCellText(0,5,2,&amp;quot;&amp;quot;); //清空用户名
+				_this.SetCellText(0,7,2,&amp;quot;&amp;quot;); //清空密码
+			}else if (retSign == &amp;quot;-3&amp;quot;) {
+				alert(&amp;quot;该用户不是财务主管、出纳人员或者会计人员！请重新输入拥有此三个角色之一的用户名和密码！&amp;quot;);
+				_this.SetCellText(0,5,2,&amp;quot;&amp;quot;); //清空用户名
+				_this.SetCellText(0,7,2,&amp;quot;&amp;quot;); //清空密码
+			}else{
+				alert(&amp;quot;登陆授权出错:&amp;quot;+ret+&amp;quot;，请联系系统开发商！&amp;quot;);
+			}
+		}//if(COperators == User)		
+	}
+}</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+//登陆验证
+function Logining()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+
+	try {
+		db = new pub.EADatabase();
+		
+		sql = &amp;quot;select * from usr where org = &amp;apos;&amp;quot;+org+&amp;quot;&amp;apos; and id = &amp;apos;&amp;quot;+id+&amp;quot;&amp;apos;&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		
+		if (ds.getRowCount()&amp;gt;0){  //验证是否存在用户
+			var  code = ds.getStringAt(0,&amp;quot;PASSWD&amp;quot;);
+			var  passwdcode = pub.EAEncrypter.decode(code);//解密
+			
+			var role = &amp;quot;&amp;quot;;
+			var roleid1 = &amp;quot;&amp;quot;;
+			var roleid2 = &amp;quot;&amp;quot;;
+			if(roleid != &amp;quot;&amp;quot;){
+				roleid1 = roleid.split(&amp;quot;@&amp;quot;)[0];	
+				roleid2 = roleid.split(&amp;quot;@&amp;quot;)[1];
+				if(roleid2 == &amp;quot;&amp;quot;){
+					role = &amp;quot;and b.id not in (&amp;apos;&amp;quot;+roleid1+&amp;quot;&amp;apos;)&amp;quot;;
+				}
+				role = &amp;quot;and b.id not in (&amp;apos;&amp;quot;+roleid1+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+roleid2+&amp;quot;&amp;apos;)&amp;quot;;
+			}
+			if(passwdcode == passwd) {  //验证密码是否正确
+				sql = &amp;quot;select b.id,b.name from (select distinct b.rol from usr a, usrrol b where a.guid = b.usr and a.id = &amp;apos;&amp;quot;+id+&amp;quot;&amp;apos; and a.org = &amp;apos;&amp;quot;+org+&amp;quot;&amp;apos;) a,
+						rol b where a.rol(+) = b.guid and (b.scope = &amp;apos;ALL&amp;apos; or b.org = &amp;apos;&amp;quot;+org+&amp;quot;&amp;apos;) and b.syt = &amp;apos;SBCW&amp;apos; and a.rol is not null and b.id = &amp;apos;20&amp;apos;&amp;quot;;
+				var dst = db.QuerySQL(sql);
+				
+				if (dst.getRowCount() &amp;gt;0 ){        //拥有模块权限，才能进一步验证授权
+					sql = &amp;quot;select b.id,b.name from (select distinct b.rol from usr a, usrrol b where a.guid = b.usr and a.id = &amp;apos;&amp;quot;+id+&amp;quot;&amp;apos; and a.org = &amp;apos;&amp;quot;+org+&amp;quot;&amp;apos;) a,
+						rol b where a.rol(+) = b.guid and (b.scope = &amp;apos;ALL&amp;apos; or b.org = &amp;apos;&amp;quot;+org+&amp;quot;&amp;apos;) and b.syt = &amp;apos;SBCW&amp;apos; and a.rol is not null 
+						and b.id in (&amp;apos;03&amp;apos;,&amp;apos;05&amp;apos;,&amp;apos;06&amp;apos;) &amp;quot;+role+&amp;quot; order by b.acc, b.id&amp;quot;;
+					var dss = db.QuerySQL(sql);
+					if (dss.getRowCount()&amp;gt;0 ){ //拥有财务主管or出纳人员or会计人员角色才能授权成功
+						db.Commit();
+						return &amp;quot;1@&amp;quot;+ds.getStringAt(0,&amp;quot;NAME&amp;quot;)+&amp;quot;@&amp;quot;+dss.getStringAt(0,&amp;quot;ID&amp;quot;)+&amp;quot;@&amp;quot;+dss.getStringAt(0,&amp;quot;NAME&amp;quot;);
+					}else{
+						return &amp;quot;-3@&amp;quot;;
+					}
+				}else{
+					return &amp;quot;-2@&amp;quot;;
+				}//if (dst.getRowCount() &amp;gt;0 )
+			}else{
+				return &amp;quot;0@&amp;quot;+ds.getStringAt(0,&amp;quot;NAME&amp;quot;);
+			}//if(passwdcode == passwd) 
+		}else{
+			return &amp;quot;-1@&amp;quot;;
+		}//if (ds.getRowCount()&amp;gt;0)
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();	
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

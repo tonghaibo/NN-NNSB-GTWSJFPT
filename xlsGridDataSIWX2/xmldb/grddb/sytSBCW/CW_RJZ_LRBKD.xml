@@ -1,0 +1,297 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >F</MWTYP><MWID >CW_RJZ_LRBKD</MWID><NAME >拨款单录入</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CW_RJZ_LRBKD.zxg</FILE><SCENE ></SCENE><FIXED >11,1</FIXED><CATTYP ></CATTYP><DTLRNG >11,2,26,14</DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE >aef3</BILHDRTABLE><BILDTLTABLE >aef4</BILDTLTABLE><COLLIST ></COLLIST><WHERE >1=1</WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL >3</IFBILL><EXTJS >xlsgrid/js/main.js</EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >2</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdcelds>
+<ROWSET>
+<ROW num="0" ><ID >0,3,3</ID><CELLID ></CELLID><NAME >年月</NAME><VALFLD >AAE002</VALFLD><DEFVAL ></DEFVAL><NOTNULL >1</NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 >0,3,3</C17></ROW>
+<ROW num="1" ><ID >0,3,7</ID><CELLID ></CELLID><NAME >险种类型</NAME><VALFLD >AAE140</VALFLD><DEFVAL ></DEFVAL><NOTNULL >1</NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 >0,3,7</C17></ROW>
+<ROW num="2" ><ID >0,4,3</ID><CELLID ></CELLID><NAME >单位编号</NAME><VALFLD >AAB001</VALFLD><DEFVAL ></DEFVAL><NOTNULL >1</NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 >0,4,3</C17></ROW>
+<ROW num="3" ><ID >0,4,7</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >AAE009</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="4" ><ID >0,5,3</ID><CELLID ></CELLID><NAME >金额</NAME><VALFLD >BAE511</VALFLD><DEFVAL ></DEFVAL><NOTNULL >1</NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 >0,5,3</C17></ROW>
+<ROW num="5" ><ID >0,5,7</ID><CELLID ></CELLID><NAME >人数</NAME><VALFLD >BAE541</VALFLD><DEFVAL ></DEFVAL><NOTNULL >1</NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 >0,5,7</C17></ROW>
+<ROW num="6" ><ID >0,6,3</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >AAB341</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="7" ><ID >0,6,7</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >AAE339</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="8" ><ID >0,6,11</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >AAE010</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="9" ><ID >0,7,3</ID><CELLID ></CELLID><NAME >社保开户银行</NAME><VALFLD >AAB340</VALFLD><DEFVAL ></DEFVAL><NOTNULL >1</NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="10" ><ID >0,7,7</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >AAB025</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="11" ><ID >0,7,11</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >AAB026</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="12" ><ID >0,8,3</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >AAE400</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="13" ><ID >0,8,7</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >AAE403</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="14" ><ID >0,8,11</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >AAE401</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="15" ><ID >0,3,16</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >AAE338</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="16" ><ID >0,4,16</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >BAE552</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="17" ><ID >0,5,16</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >BAE554</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="18" ><ID >0,6,16</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >BAE553</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="19" ><ID >0,7,16</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >BAE031</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="20" ><ID >0,8,16</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >BAE101</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="21" ><ID >0,9,16</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >BAE102</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="22" ><ID >0,10,16</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >BAE201</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="23" ><ID >0,11,16</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >BAE202</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="24" ><ID >0,12,16</ID><CELLID ></CELLID><NAME ></NAME><VALFLD >BAE007</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+</ROWSET>
+</grdcelds><grdcolds>
+<ROWSET>
+<ROW num="0" ><ID >0,2</ID><NAME >险种类型</NAME><VALFLD >AAE140</VALFLD><NOTNULL >1</NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 >0,2</C15></ROW>
+<ROW num="1" ><ID >0,3</ID><NAME ></NAME><VALFLD >AAE405</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 >0,3</C15></ROW>
+<ROW num="2" ><ID >0,4</ID><NAME ></NAME><VALFLD >AAE406</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15></ROW>
+<ROW num="3" ><ID >0,5</ID><NAME >款项</NAME><VALFLD >AAE501</VALFLD><NOTNULL >1</NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 >0,5</C14><C15 >0,5</C15></ROW>
+<ROW num="4" ><ID >0,6</ID><NAME >补退标志</NAME><VALFLD >BAE002</VALFLD><NOTNULL >1</NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 >0,6</C15></ROW>
+<ROW num="5" ><ID >0,7</ID><NAME ></NAME><VALFLD >AAE407</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15></ROW>
+<ROW num="6" ><ID >0,8</ID><NAME ></NAME><VALFLD >AAE408</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15></ROW>
+<ROW num="7" ><ID >0,9</ID><NAME ></NAME><VALFLD >AAE409</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15></ROW>
+<ROW num="8" ><ID >0,13</ID><NAME ></NAME><VALFLD >AAE400</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15></ROW>
+<ROW num="9" ><ID >0,14</ID><NAME ></NAME><VALFLD >AAE401</VALFLD><NOTNULL ></NOTNULL><COLTYP ></COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD><C13 ></C13><C14 ></C14><C15 ></C15></ROW>
+</ROWSET>
+</grdcolds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >del</ID><NAME >删除明细行</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >2</IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var xzList;
+var kxList;
+var mxxh = 0;
+var yymm =&amp;quot;&amp;quot;;
+var firstload = true;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+       xzList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_XZLX&amp;where=id != &amp;apos;99&amp;apos; and id != &amp;apos;%25&amp;apos;&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+       var btList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_BTBZ&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);       
+      _this.SetToComboBox(&amp;quot;&amp;quot;,0,3,7,xzList);  
+       kxList = _this.CreateListValue();
+       var sbh = G_ORGID;
+       var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);    
+      _sql.querytods(&amp;quot;getKX&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth);
+      for(var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+                var id = _this.XMLDS_GetStringAt(i,1);
+                var name = _this.XMLDS_GetStringAt(i,1);
+                _this.SetListValue(kxList,id,name);              
+            }
+      for(var i=11;i&amp;lt;_this.GetRowCount(0)-2;i++) {
+           _this.SetToComboBox(&amp;quot;&amp;quot;,0,i,2,xzList);
+           _this.SetToComboBox(&amp;quot;&amp;quot;,0,i,6,btList);
+           _this.SetToComboBox(&amp;quot;&amp;quot;,0,i,5,kxList);            
+      }
+                  
+      if(G_GUID==&amp;quot;&amp;quot;) {
+          _sql.querytods(&amp;quot;MAIN&amp;quot;,&amp;quot;&amp;quot;);
+          var yymmdd = _this.XMLDS_GetStringAt(0,1);
+          yymm = _this.XMLDS_GetStringAt(0,2);
+          var seq = _this.XMLDS_GetStringAt(0,0);                
+          _this.SetCellText(0,8,7,G_USRNAM);      
+          _this.SetCellText(0,8,3,seq);
+          _this.SetCellText(0,8,11,yymmdd);
+          _this.SetCellText(0,3,3,yymm); 
+          var xtbh2 = getXtbh2();
+          _this.SetCellText(0,12,16,xtbh2);                 
+      }
+      
+      _this.SetColVisible(0,15,0);
+      _this.SetColVisible(0,16,0);
+      _this.SetColVisible(0,14,0);
+      _this.SetColVisible(0,13,0);      
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if(sheet == 0){
+		if(row == 4 &amp;&amp; col == 4){
+		        var retVal = &amp;quot;&amp;quot;;
+		        retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_BKD_YHSEL&amp;in_sbbz=dw&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=1000px;dialogHeight=600px&amp;quot;);
+		        if( retVal == &amp;quot;undefined&amp;quot; || retVal == null || retVal == &amp;quot;&amp;quot;) {return;}	
+	     		var aab001 = retVal.split(&amp;quot;~&amp;quot;)[0];
+	     		var aae009 = retVal.split(&amp;quot;~&amp;quot;)[1];
+	     		var aab340 = retVal.split(&amp;quot;~&amp;quot;)[2];
+	     		var aab341 = retVal.split(&amp;quot;~&amp;quot;)[3];
+	     		var aae339 = retVal.split(&amp;quot;~&amp;quot;)[4];
+	     		var aab010 = retVal.split(&amp;quot;~&amp;quot;)[5];
+	     		var bae101 = retVal.split(&amp;quot;~&amp;quot;)[6];
+	     		var bae102 = retVal.split(&amp;quot;~&amp;quot;)[7];
+	                _this.SetCellText(0,4,3,aab001);
+	                _this.SetCellText(0,4,7,aae009);
+	                _this.SetCellText(0,6,3,aab341);
+	                _this.SetCellText(0,6,7,aae339);
+	                _this.SetCellText(0,6,11,aab010);
+	                
+                       var aae338 = &amp;quot;1&amp;quot;;
+                       var bae552 = &amp;quot;0&amp;quot;;
+                       var bae554 = &amp;quot;0&amp;quot;;
+                       var bae553 = &amp;quot;0&amp;quot;;
+                       var bae031 = &amp;quot;0&amp;quot;;	                
+	                _this.SetCellText(0,3,16,aae338 );
+	                _this.SetCellText(0,4,16,bae552 );
+	                _this.SetCellText(0,5,16,bae554 );
+	                _this.SetCellText(0,6,16,bae553 );
+	                _this.SetCellText(0,7,16,bae031 );
+	                _this.SetCellText(0,8,16,bae101 );	                	                
+	                _this.SetCellText(0,9,16,bae102 );
+//	     		return null;     		
+		}
+		else if(row == 7 &amp;&amp; col == 5) {
+		        var retVal = &amp;quot;&amp;quot;;
+			retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_BKD_YHSEL&amp;in_sbbz=sb&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=1000px;dialogHeight=600px&amp;quot;);
+		        if( retVal == &amp;quot;undefined&amp;quot; || retVal == null || retVal == &amp;quot;&amp;quot;) {return;}				
+	     		var bankno = retVal.split(&amp;quot;~&amp;quot;)[2];        
+	     		var aab340 = retVal.split(&amp;quot;~&amp;quot;)[3];
+	     		var aab025 = retVal.split(&amp;quot;~&amp;quot;)[4];
+	     		var aab026 = retVal.split(&amp;quot;~&amp;quot;)[5];
+	     		var bae201 = retVal.split(&amp;quot;~&amp;quot;)[6];
+	     		var bae202 = retVal.split(&amp;quot;~&amp;quot;)[7];	     		
+	                _this.SetCellText(0,7,3,aab340);
+	                _this.SetCellText(0,7,7,aab025);
+	                _this.SetCellText(0,7,11,aab026);
+	                _this.SetCellText(0,10,16,bae201 );	                	                
+	                _this.SetCellText(0,11,16,bae202 );	                	         
+		}
+	}
+	var xz = _this.GetCellText(0,3,7);
+      if(sheet == 0 &amp;&amp; row &amp;gt; 10 &amp; row != (_this.GetRowCount(0)-2) &amp;&amp; firstload==true &amp;&amp;xz != &amp;quot;&amp;quot;) {
+            var xz = _this.GetCellText(0,3,7);
+            //if(xz == &amp;quot;&amp;quot;) {alert(&amp;quot;险种类型不能为空&amp;quot;);return;}
+            var aae400 = _this.GetCellText(0,8,3);
+           // _this.SetToComboBox(&amp;quot;&amp;quot;,0,row,2,xzList); 
+           // _this.SetToListBox(&amp;quot;&amp;quot;,0,row,1,xzList);           
+            _this.SetCellText(sheet,row,2,xz);
+            _this.SetCellText(sheet,row,13,aae400);
+            if(_this.GetCellText(sheet,row,14)==&amp;quot;&amp;quot;) {
+                mxxh++;
+                _this.SetCellText(sheet,row,14,mxxh);            
+            }
+
+
+            _this.SetCellText(0,row,3,yymm);
+            _this.SetCellText(0,row,4,yymm);
+      }	
+}
+
+
+
+//鼠标左建点击
+function _thisOnMouseDClick(sheet,row,col)
+{
+
+}
+
+function getXtbh2()
+{
+	var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	if (1 * G_ORGID &amp;gt;= 100) return G_ORGID + zth;
+	else if (1 * G_ORGID &amp;gt;= 10) return &amp;quot;0&amp;quot; + G_ORGID + zth;
+	else return &amp;quot;00&amp;quot; + G_ORGID + zth;
+}
+
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+       if(sheet == 0) {
+            if(row == 5 &amp;&amp; col == 3) {//校验表头金额
+            	   if (!LogicalValue(newvalue,&amp;apos;number&amp;apos;)) {
+            	     	 alert(&amp;quot;输入金额格式不正确&amp;quot;);
+            	     	 _this.SetCellText(sheet,row,col,oldvalue);
+            	   }  	 
+            }
+            if(row == 5 &amp;&amp; col == 7) {//校验表头人数格式
+            	   if (!LogicalValue(newvalue,&amp;apos;integer&amp;apos;)) {
+            	     	 alert(&amp;quot;输入人数格式不正确&amp;quot;);
+            	     	 _this.SetCellText(sheet,row,col,oldvalue);
+            	   }  	             		
+            }
+            
+            if(row &amp;gt; 10 &amp;&amp; col == 7) {
+            	   if (!LogicalValue(newvalue,&amp;apos;integer&amp;apos;)) {
+            	     	 alert(&amp;quot;输入人数格式不正确&amp;quot;);
+            	     	 _this.SetCellText(sheet,row,col,oldvalue);
+            	   }              		
+            }	
+            
+            if(row &amp;gt; 10 &amp;&amp; col == 8) {
+            	   if (!LogicalValue(newvalue,&amp;apos;number&amp;apos;)) {
+            	     	 alert(&amp;quot;输入金额格式不正确&amp;quot;);
+            	     	 _this.SetCellText(sheet,row,col,oldvalue);
+            	   }  	              		
+            }	            
+       }
+}
+
+//删除明细行
+function del()
+{       
+        var bool = window.confirm(&amp;quot;是否删除所选行？&amp;quot;);
+        if(!bool) return;
+        for(var i=11;i&amp;lt;_this.GetRowCount(0)-2;i++) {
+            var bool = _this.GetCellText(0,i,1);          
+            if(bool == 1) {
+              //先清空行，再隐藏
+               for(var col=1;col&amp;lt;=14;col++) {
+                    _this.SetCellText(0,i,col,&amp;quot;&amp;quot;);
+               }
+            }
+        }
+       
+
+}
+
+
+//保存单据数据后
+function _thisOnaftersave(success)
+{     
+      if(success) {
+         firstload = false;
+         alert(&amp;quot;保存成功&amp;quot;);
+         window.close();
+      }            
+}
+
+//保存单据数据前
+function _thisOnbeforesave()
+{
+     //检查明细数据
+     var mxnum = 0;
+     for(var row=11;row&amp;lt;_this.GetRowCount(0)-2;row++) {
+          var lsh =_this.GetCellText(0,row,14);
+          if(lsh != &amp;quot;&amp;quot;) {
+	       for(var col=2;col&amp;lt;=9;col++) {
+	                var colname = _this.GetCellText(0,10,col);
+	                var colvalue = _this.GetCellText(0,row,col);
+	                if(colvalue == &amp;quot;&amp;quot;) {
+	                        alert(&amp;quot;明细数据[&amp;quot;+colname +&amp;quot;]不能为空&amp;quot;);
+	                        return -1;
+	                 }        
+	          }
+	          mxnum ++;          
+          }
+     }
+     if(mxnum == 0 ) {
+          alert(&amp;quot;明细数据不能为空&amp;quot;);
+          return -1;
+     }
+     return 0;
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >SELECT SEQ_AEF3_AAE400.nextval SEQ,TO_CHAR(SYSDATE,&amp;apos;YYYYMMDD&amp;apos;) YYMMDD,
+TO_CHAR(SYSDATE,&amp;apos;YYYYMM&amp;apos;) YYMM
+FROM DUAL</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 >MAIN</C6><C7 ></C7><C8 ></C8><C9 ></C9></ROW>
+<ROW num="1" ><ID >getKX</ID><NAME ></NAME><DATDSC >select xh id,zy name
+from cw_cyzyb
+where zth = &amp;apos;[%zth]&amp;apos; and sbh = &amp;apos;[%sbh]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 >getKX</C6><C7 >getKX</C7><C8 >getKX</C8><C9 >getKX</C9></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

@@ -1,0 +1,1644 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >WSBANK3</MWID><NAME >WSBANK3</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >WSBANK3.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >WebService</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE ></GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var dom = new JavaPackage(&amp;quot;org.w3c.dom&amp;quot;);
+var sax = new JavaPackage(&amp;quot;org.xml.sax&amp;quot;);
+var parsers = new JavaPackage(&amp;quot;javax.xml.parsers&amp;quot;);
+var soap = new JavaPackage(&amp;quot;javax.xml.soap&amp;quot;);
+var io = new JavaPackage(&amp;quot;java.io&amp;quot;);
+var util = new JavaPackage(&amp;quot;java.util&amp;quot;);
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// 参保信息查询
+//
+//function F0213001()
+function F0213001(requestXml)
+{
+	try {
+		var service = new SBCW_sbcwService();
+		var map = new java.util.HashMap();
+		map = service.parseMsgText(requestXml,false); //记录接收消息日志
+		
+		var wscall = new x_EAWebServiceCall();
+		var responseXml = parseMsgText_0213001(requestXml,map);	
+		service.parseMsgText(responseXml,true); //记录发送消息日志
+		return responseXml;		
+	}catch(e) {
+		return e.toString();
+	}
+
+}
+
+// 参保信息查询业务处理方法
+// 返回响应的报文XML
+function parseMsgText_0213001(msgText,hdrMap)
+{		
+	var responseXml = &amp;quot;&amp;quot;;
+	var service = new SBCW_sbcwService();
+	var SiSeq = service.genSiSeq(hdrMap.get(&amp;quot;RecverId&amp;quot;));
+	//响应报文信息
+	var respText = &amp;quot;&amp;lt;MsgText&amp;gt;
+				  &amp;lt;GrpHdr&amp;gt;
+				    &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+				    &amp;lt;Ref&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Ref&amp;quot;)+&amp;quot;&amp;lt;/Ref&amp;gt;
+				    &amp;lt;BusCd&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;BusCd&amp;quot;)+&amp;quot;&amp;lt;/BusCd&amp;gt;
+				    &amp;lt;TradSrc&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;TradSrc&amp;quot;)+&amp;quot;&amp;lt;/TradSrc&amp;gt;
+				    &amp;lt;Sender&amp;gt;
+				      &amp;lt;InstId&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;SenderId&amp;quot;)+&amp;quot;&amp;lt;/InstId&amp;gt;
+				    &amp;lt;/Sender&amp;gt;
+				    &amp;lt;Recver&amp;gt;
+				      &amp;lt;InstId&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;RecverId&amp;quot;)+&amp;quot;&amp;lt;/InstId&amp;gt;
+				    &amp;lt;/Recver&amp;gt;
+				    &amp;lt;Resend&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Resend&amp;quot;)+&amp;quot;&amp;lt;/Resend&amp;gt;
+				    &amp;lt;Date&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Date&amp;quot;)+&amp;quot;&amp;lt;/Date&amp;gt;
+				    &amp;lt;Time&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Time&amp;quot;)+&amp;quot;&amp;lt;/Time&amp;gt;
+				    &amp;lt;Dgst&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Dgst&amp;quot;)+&amp;quot;&amp;lt;/Dgst&amp;gt;
+				    &amp;lt;Rst&amp;gt;
+					    &amp;lt;Code&amp;gt;0000&amp;lt;/Code&amp;gt;
+					    &amp;lt;Info&amp;gt;已处理&amp;lt;/Info&amp;gt;
+				  	&amp;lt;/Rst&amp;gt;
+				  &amp;lt;/GrpHdr&amp;gt;
+				  &amp;lt;BusiText&amp;gt;
+				  	&amp;lt;Rst&amp;gt;
+					    &amp;lt;Code&amp;gt;[%BusiRstCode]&amp;lt;/Code&amp;gt;
+					    &amp;lt;Info&amp;gt;[%BusiRstInfo]&amp;lt;/Info&amp;gt;
+				  	&amp;lt;/Rst&amp;gt;
+					  &amp;lt;BkSeq&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;BkSeq&amp;quot;)+&amp;quot;&amp;lt;/BkSeq&amp;gt;
+					  &amp;lt;SiSeq&amp;gt;&amp;quot;+SiSeq+&amp;quot;&amp;lt;/SiSeq&amp;gt;
+					  [%SiAcct]
+					  [%LoopCount]
+				  &amp;lt;/BusiText&amp;gt;
+				&amp;lt;/MsgText&amp;gt;&amp;quot;;
+	
+	var db = null;
+	try {		
+		db = new pub.EADatabase();
+													
+		var dbf = parsers.DocumentBuilderFactory.newInstance();
+		var documentbuilder = dbf.newDocumentBuilder();
+		var document = documentbuilder.parse(new sax.InputSource(new io.StringReader(msgText))); 
+		var nodelist = document.getElementsByTagName(&amp;quot;MsgText&amp;quot;);                  
+		var node = nodelist.item(0);	
+		var yszl_sbjgdm = hdrMap.get(&amp;quot;RecverId&amp;quot;);
+		var yszl_yhjgdm = hdrMap.get(&amp;quot;SenderId&amp;quot;);
+		//银行账户
+		var BkAcctId = &amp;quot;&amp;quot;;
+		try { BkAcctId = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;BkAcct&amp;quot;).item(0).getElementsByTagName(&amp;quot;Id&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		//参保对象信息
+		var SiId = &amp;quot;&amp;quot;;
+		try { SiId = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;SiAcct&amp;quot;).item(0).getElementsByTagName(&amp;quot;SiId&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		//银社匹配编号
+		var SignNo = &amp;quot;&amp;quot;;
+		try { SignNo = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;SignNo&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		//客户类型
+		var CustomerType1 = &amp;quot;&amp;quot;;//个人
+		var CustomerType2 = &amp;quot;&amp;quot;;//单位
+		var ztlx = &amp;quot;&amp;quot;;		
+		try{
+			CustomerType1 = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Cust&amp;quot;).item(0).getElementsByTagName(&amp;quot;Type&amp;quot;).item(0).getFirstChild().getNodeValue();
+			if(CustomerType1 == &amp;quot;0&amp;quot;)  ztlx =&amp;quot;2&amp;quot;;
+		}catch(e){
+		
+		}
+		try{
+			CustomerType2 = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Enterprise&amp;quot;).item(0).getElementsByTagName(&amp;quot;Type&amp;quot;).item(0).getFirstChild().getNodeValue();
+			if(CustomerType2 == &amp;quot;1&amp;quot;)  ztlx =&amp;quot;1&amp;quot;;
+		}catch(e){
+		}	
+		var BusiRstCode = &amp;quot;0000&amp;quot;;
+		var BusiRstInfo = &amp;quot;交易成功&amp;quot;;
+		
+		var Name = &amp;quot;&amp;quot;;		//客户姓名
+		var CertType = &amp;quot;&amp;quot;;	//证件类型
+		var CertId = &amp;quot;&amp;quot;;	//证件号码
+		var Type = &amp;quot;&amp;quot;;		//客户类型
+		var sql = &amp;quot;&amp;quot;; 		//单位查询AB01 个人查询AC01
+//		参保信息查询广西处理模式：
+//		（1）个人查询：优先按社保机构代码加个人编号、证件号码和姓名同时查询，如果查无数据再按社保机构代码加个人编号和姓名查询，
+//			如果查无数据最后按社保机构代码加证件号码和姓名查询，才返回社保查询结果。
+//			银行再根据社保返回的参保对象信息（个人编号、姓名和社会保障号码）告知用户并核实是否本人，再操作查询应缴金额和自主缴费、代扣协议维护等业务（单笔结算交易）。
+//		（2）单位查询：优先按社保机构代码加单位编号、组织机构代码和单位名称同时查询，如果查无数据再按社保机构代码加单位编号查询，
+//			如果查无数据最后按社保机构代码加组织机构代码和单位名称查询，才返回社保查询结果。银行再根据社保返回的参保对象信息
+//			（单位编号、单位名称）告知用户并核实是否本单位，再操作查询应缴金额和自主缴费、代扣协议维护等业务（单笔结算交易）。		
+		//个人信息	
+		var custNode = null;
+		try { custNode = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Cust&amp;quot;).item(0); } catch(e) {}
+		if ( ztlx == &amp;quot;2&amp;quot;) {
+			try{Name = custNode.getElementsByTagName(&amp;quot;Name&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+			try{CertType = custNode.getElementsByTagName(&amp;quot;CertType&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+			try{CertId = custNode.getElementsByTagName(&amp;quot;CertId&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+			try{Type = custNode.getElementsByTagName(&amp;quot;Type&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+			
+			var isCheck = false;
+			sql = &amp;quot;select * from AC01 where (aac001=&amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos; ) and aac003=&amp;apos;&amp;quot;+Name+&amp;quot;&amp;apos; and AAC147=&amp;apos;&amp;quot;+CertId +&amp;quot;&amp;apos; and AAB301 = substr(&amp;apos;&amp;quot;+yszl_sbjgdm+&amp;quot;&amp;apos;,1,6)
+								and xtlb = substr(&amp;apos;&amp;quot;+yszl_sbjgdm+&amp;quot;&amp;apos;,7,1)&amp;quot;;
+			var grds = db.QuerySQL(sql);
+			if(grds.getRowCount() == 0) {
+				sql = &amp;quot;select * from AC01 where (aac001=&amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos; ) and aac003=&amp;apos;&amp;quot;+Name+&amp;quot;&amp;apos; and AAB301 = substr(&amp;apos;&amp;quot;+yszl_sbjgdm+&amp;quot;&amp;apos;,1,6) and xtlb = substr(&amp;apos;&amp;quot;+yszl_sbjgdm+&amp;quot;&amp;apos;,7,1)&amp;quot;;
+				grds = db.QuerySQL(sql);
+				if(grds.getRowCount() == 0) {
+					sql = &amp;quot;select * from AC01 where aac003=&amp;apos;&amp;quot;+Name+&amp;quot;&amp;apos; and AAC147=&amp;apos;&amp;quot;+CertId +&amp;quot;&amp;apos; and AAB301 = substr(&amp;apos;&amp;quot;+yszl_sbjgdm+&amp;quot;&amp;apos;,1,6) and xtlb = substr(&amp;apos;&amp;quot;+yszl_sbjgdm+&amp;quot;&amp;apos;,7,1)&amp;quot;;
+					grds = db.QuerySQL(sql);
+					if(grds.getRowCount() &amp;gt; 0) {
+						isCheck = true;
+					}
+				}
+				else if(grds.getRowCount() &amp;gt; 0) {
+					isCheck = true;
+				}
+			}
+			else if(grds.getRowCount() &amp;gt; 0) {
+				isCheck = true;
+			}
+			var ds = db.QuerySQL(sql);
+			var SiAcct = &amp;quot;&amp;quot;;
+			if (ds.getRowCount() &amp;gt; 0 &amp;&amp; isCheck == true) {
+				var RegionName = &amp;quot;&amp;quot;;
+				sql = &amp;quot;select aaa103 from aa10 where aaa100=&amp;apos;AAB034&amp;apos; and aaa102=&amp;apos;&amp;quot;+ds.getStringAt(0,&amp;quot;AAB301&amp;quot;)+&amp;quot;&amp;apos;&amp;quot;;
+				var tmpds = db.QuerySQL(sql);
+				if (tmpds.getRowCount() &amp;gt; 0) {
+					RegionName = tmpds.getStringAt(0,&amp;quot;AAA103&amp;quot;);
+				}
+				if(SiId == &amp;quot;&amp;quot;) {
+					SiId = ds.getStringAt(0,&amp;quot;AAC001&amp;quot;);
+				}
+				//参保对象信息
+				SiAcct = &amp;quot;&amp;lt;SiAcct&amp;gt;
+					    &amp;lt;SiCode&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAC002&amp;quot;)+&amp;quot;&amp;lt;/SiCode&amp;gt;
+					    &amp;lt;SiId&amp;gt;&amp;quot;+SiId+&amp;quot;&amp;lt;/SiId&amp;gt;
+					    &amp;lt;CardNO&amp;gt;&amp;lt;/CardNO&amp;gt;
+					    &amp;lt;Name&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAC003&amp;quot;)+&amp;quot;&amp;lt;/Name&amp;gt;
+					    &amp;lt;RegionName&amp;gt;&amp;quot;+RegionName+&amp;quot;&amp;lt;/RegionName&amp;gt;
+					  &amp;lt;/SiAcct&amp;gt;&amp;quot;;
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%SiAcct]&amp;quot;,SiAcct);
+				
+				//险种信息
+				sql = &amp;quot;select a. SiId,a.CustName,a.CertId,a.CertType,a.BkAcctId,a.InsuKind,a.SiBalance,a.SiInfo,
+         					 a.AgentProNo,
+         					 (select min(decode(jfdc,&amp;apos;&amp;apos;,&amp;apos;&amp;apos;,jfdc)) from t_yszl_grsbxxb where (aac001 = a.SiId ) and yszl_xzlx = a.InsuKind and yszl_yhjgdm=&amp;apos;&amp;quot;+yszl_yhjgdm+&amp;quot;&amp;apos;) jfdc,
+          					 (select min(decode(jfdc_value,&amp;apos;&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;；缴费档次说明：&amp;apos;||jfdc_value*100||&amp;apos;%&amp;apos;)) from t_yszl_grsbxxb where (aac001 = a.SiId ) and yszl_xzlx = a.InsuKind and yszl_yhjgdm=&amp;apos;&amp;quot;+yszl_yhjgdm+&amp;quot;&amp;apos;) jfdc_value
+					from
+						(
+							select a.aac001 SiId,a.aac003 CustName,a.AAC147 CertId,&amp;apos;0&amp;apos; CertType,
+					       &amp;apos;&amp;apos; BkAcctId,
+					       (select yszl_dm from aa10 where aaa100 = &amp;apos;AAE140&amp;apos; and aaa102 = b.AAE140) InsuKind,
+					       &amp;apos;&amp;apos; SiBalance,
+					       &amp;apos;险种名称：&amp;apos;||b.aae140_name||&amp;apos;；参保状态：&amp;apos;||b.AAC008_name||&amp;apos;；缴费状态：&amp;apos;||b.aac031_name||&amp;apos;；&amp;apos; SiInfo,
+					       &amp;apos;&amp;apos; AgentProNo
+						from ac01 a,(select *
+								  from (select aab301,aac001,aae140,
+								               aae140_name,
+								               aac008,
+								               aac008_name,
+								               aac031,
+								               aac031_name,
+								               row_number() over(partition by aae140, aae140_name order by aae140, aac030 desc，aac008, aac008_name, aac031, aac031_name) rn
+								          from ac02
+								         where aac001 = &amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos; and aab301 = substr(&amp;apos;&amp;quot;+yszl_sbjgdm+&amp;quot;&amp;apos;,1,6)) t
+								 where t.rn &amp;lt;= 1) b
+						where a.aac001=b.aac001 and (a.aac001 = &amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos;)
+						and  a.aab301 = substr(&amp;apos;&amp;quot;+yszl_sbjgdm+&amp;quot;&amp;apos;,1,6) and a.xtlb = substr(&amp;apos;&amp;quot;+yszl_sbjgdm+&amp;quot;&amp;apos;,7,1)
+						)a  order by a.InsuKind&amp;quot;;
+				var xzds = db.QuerySQL(sql);
+				hdrMap.put(&amp;quot;SiId&amp;quot;,SiId);
+				hdrMap.put(&amp;quot;yszl_sbjgdm&amp;quot;,yszl_sbjgdm);
+				hdrMap.put(&amp;quot;yszl_yhjgdm&amp;quot;,yszl_yhjgdm);
+				var LoopCount = getLoop_0213001(db,xzds,&amp;quot;0&amp;quot;,hdrMap);
+				if(xzds.getRowCount() == 0) {
+					BusiRstCode = &amp;quot;2001&amp;quot;;
+					BusiRstInfo = &amp;quot;查询参保信息为空&amp;quot;;					
+				}
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,LoopCount);
+			}
+			else {
+				SiAcct = &amp;quot;&amp;lt;SiAcct&amp;gt;&amp;lt;SiId&amp;gt;&amp;quot;+SiId+&amp;quot;&amp;lt;/SiId&amp;gt;&amp;lt;/SiAcct&amp;gt;&amp;quot;;
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%SiAcct]&amp;quot;,SiAcct);
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,&amp;quot;&amp;quot;);
+				BusiRstCode = &amp;quot;2001&amp;quot;;
+				BusiRstInfo = &amp;quot;查询ac01无此个人信息&amp;quot;;
+			}
+		}
+		
+		//单位信息
+//		var dwNode = null;
+//		try { dwNode = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Enterprise&amp;quot;).item(0); } catch(e) {}
+//		if (dwNode != null) 
+               else  {
+			try{Name = dwNode.getElementsByTagName(&amp;quot;Name&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+			try{CertType = dwNode.getElementsByTagName(&amp;quot;CertType&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+			try{CertId = dwNode.getElementsByTagName(&amp;quot;CertId&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+			try{Type = dwNode.getElementsByTagName(&amp;quot;Type&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+			
+			sql = &amp;quot;select * from AB01 where (aab001=&amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos; or aab999 = &amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos;)&amp;quot;;
+			var ds = db.QuerySQL(sql);
+			var SiAcct = &amp;quot;&amp;quot;;
+			if (ds.getRowCount() &amp;gt; 0) {
+				//参保对象信息
+				SiAcct = &amp;quot;&amp;lt;SiAcct&amp;gt;
+					    &amp;lt;SiId&amp;gt;&amp;quot;+SiId+&amp;quot;&amp;lt;/SiId&amp;gt;
+					    &amp;lt;Name&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAB004&amp;quot;)+&amp;quot;&amp;lt;/Name&amp;gt;
+					  &amp;lt;/SiAcct&amp;gt;&amp;quot;;
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%SiAcct]&amp;quot;,SiAcct);
+				
+				//险种信息
+				sql = &amp;quot;select a.aab001 SiId,a.aab004 CustName,a.AAB003 CertId,&amp;apos;1&amp;apos; CertType,
+					       &amp;apos;&amp;apos; BkAcctId,
+					       b.AAE140 InsuKind,
+					       &amp;apos;&amp;apos; SiBalance,
+					       &amp;apos;参保状态：&amp;apos;||b.AAB051_name||&amp;apos;;征收方式：&amp;apos;||b.AAB033_name SiInfo,
+					       &amp;apos;&amp;apos; AgentProNo,
+					       &amp;apos;&amp;apos; jfdc,
+					       &amp;apos;&amp;apos; jfdc_value
+					from ab01 a,ab02 b
+					where a.aab001=b.aab001 and a.aab999=&amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos;&amp;quot;;
+				var xzds = db.QuerySQL(sql);
+				if(xzds.getRowCount() == 0) {
+					BusiRstCode = &amp;quot;2001&amp;quot;;
+					BusiRstInfo = &amp;quot;2、查询参保信息为空&amp;quot;;					
+				}
+				hdrMap.put(&amp;quot;SiId&amp;quot;,SiId);	
+				hdrMap.put(&amp;quot;yszl_sbjgdm&amp;quot;,yszl_sbjgdm);
+				hdrMap.put(&amp;quot;yszl_yhjgdm&amp;quot;,yszl_yhjgdm);			
+				var LoopCount = getLoop_0213001(db,xzds,&amp;quot;1&amp;quot;,hdrMap);
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,LoopCount);
+			}
+			else {
+				SiAcct = &amp;quot;&amp;lt;SiAcct&amp;gt;&amp;lt;SiId&amp;gt;&amp;quot;+SiId+&amp;quot;&amp;lt;/SiId&amp;gt;&amp;lt;/SiAcct&amp;gt;&amp;quot;;
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%SiAcct]&amp;quot;,SiAcct);
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,&amp;quot;&amp;quot;);
+				BusiRstCode = &amp;quot;2001&amp;quot;;
+				BusiRstInfo = &amp;quot;查询ab01无此单位信息&amp;quot;;
+			}
+		}
+
+		
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstCode]&amp;quot;,BusiRstCode);
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstInfo]&amp;quot;,BusiRstInfo);
+	}
+	catch(e) {
+		//return e.toString();
+		var myerr = &amp;quot;&amp;quot;;
+		var errinfo = (e.toString()).split(&amp;quot;@@&amp;quot;);
+		if(errinfo.length()==3) {
+			myerr=errinfo[1];
+		}
+		else {
+			myerr = &amp;quot;系统异常&amp;quot;;
+		}
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstCode]&amp;quot;,&amp;quot;2001&amp;quot;);
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstInfo]&amp;quot;,myerr);
+		writeLog(hdrMap.get(&amp;quot;Ref&amp;quot;),&amp;quot;参保信息查询&amp;quot;,&amp;quot;100&amp;quot;,e.toString());		
+		if (db != null) db.Rollback();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+
+	responseXml += respText;
+								
+	return responseXml;
+	
+}
+
+//获取参保险种信息
+//typ=0 个人 =1单位 
+function getLoop_0213001(db,xzds,typ,hdrMap)
+{
+	var cnt = xzds.getRowCount();
+	var LoopCount = &amp;quot;&amp;quot;;
+	var sql = &amp;quot;&amp;quot;;
+	if (cnt &amp;gt; 0) {
+		LoopCount = &amp;quot;&amp;lt;LoopCount&amp;gt;&amp;quot;+cnt+&amp;quot;&amp;lt;/LoopCount&amp;gt;&amp;quot;;
+		LoopCount += &amp;quot;&amp;lt;TotalCount&amp;gt;&amp;quot;+cnt+&amp;quot;&amp;lt;/TotalCount&amp;gt;&amp;quot;;					
+		for (var i=0;i&amp;lt;cnt;i++) {
+			var AgentProNo = &amp;quot;&amp;quot;;
+			var AgentBkId = &amp;quot;&amp;quot;; //签约账号
+			var AgentBkName = &amp;quot;&amp;quot;;//签约户名
+			var InsuKind = xzds.getStringAt(i,&amp;quot;InsuKind&amp;quot;);
+			sql = &amp;quot;select yszl_dkxybh,yszl_sbkyhkh,yszl_hzmc from t_yszl_dkxyxxb where yszl_sbjgdm = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;yszl_sbjgdm&amp;quot;)+&amp;quot;&amp;apos; and ztlx = decode(&amp;apos;&amp;quot;+typ+&amp;quot;&amp;apos;,&amp;apos;0&amp;apos;,&amp;apos;2&amp;apos;,&amp;apos;1&amp;apos;,&amp;apos;1&amp;apos;) and ztbh = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;SiId&amp;quot;)+&amp;quot;&amp;apos; and yszl_xzlx=&amp;apos;&amp;quot;+InsuKind+&amp;quot;&amp;apos; and yszl_whywlx != &amp;apos;3&amp;apos;
+					and yszl_yhjgdm = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;yszl_yhjgdm&amp;quot;)+&amp;quot;&amp;apos;&amp;quot;;
+			try{
+				var mytmpds = db.QuerySQL(sql);
+				AgentProNo = mytmpds.getStringAt(0,&amp;quot;yszl_dkxybh&amp;quot;);
+				AgentBkId = mytmpds.getStringAt(0,&amp;quot;yszl_sbkyhkh&amp;quot;);
+				AgentBkName = mytmpds.getStringAt(0,&amp;quot;yszl_hzmc&amp;quot;);
+			}catch(eee){writeLog(hdrMap.get(&amp;quot;Ref&amp;quot;),&amp;quot;参保信息查询&amp;quot;,&amp;quot;100&amp;quot;,eee.toString());}
+			var loopItem = &amp;quot;&amp;lt;Loop&amp;gt;
+				       &amp;lt;InsuKind&amp;gt;&amp;quot;+xzds.getStringAt(i,&amp;quot;InsuKind&amp;quot;)+&amp;quot;&amp;lt;/InsuKind&amp;gt;
+				       &amp;lt;SiBalance Ccy=\&amp;quot;CNY\&amp;quot;&amp;gt;&amp;quot;+xzds.getStringAt(i,&amp;quot;SiBalance&amp;quot;)+&amp;quot;&amp;lt;/SiBalance&amp;gt;
+				       &amp;lt;SiInfo&amp;gt;&amp;quot;+xzds.getStringAt(i,&amp;quot;SiInfo&amp;quot;)+&amp;quot;缴费档次：&amp;quot;+xzds.getStringAt(i,&amp;quot;jfdc&amp;quot;)+xzds.getStringAt(i,&amp;quot;jfdc_value&amp;quot;)+&amp;quot;&amp;lt;/SiInfo&amp;gt;
+				       &amp;lt;FeeLevel&amp;gt;&amp;quot;+xzds.getStringAt(i,&amp;quot;jfdc&amp;quot;)+&amp;quot;&amp;lt;/FeeLevel&amp;gt;
+				       &amp;lt;FeeLevelText&amp;gt;&amp;quot;+xzds.getStringAt(i,&amp;quot;jfdc_value&amp;quot;)+&amp;quot;&amp;lt;/FeeLevelText&amp;gt;
+				       &amp;lt;AgentProNo&amp;gt;&amp;quot;+AgentProNo+&amp;quot;&amp;lt;/AgentProNo&amp;gt;
+				       &amp;lt;AgentBkAcct&amp;gt;
+				       		&amp;lt;Id&amp;gt;&amp;quot;+AgentBkId+&amp;quot;&amp;lt;/Id&amp;gt;
+				       		&amp;lt;Name&amp;gt;&amp;quot;+AgentBkName+&amp;quot;&amp;lt;/Name&amp;gt;
+				           &amp;lt;/AgentBkAcct&amp;gt;
+				       [%CustOrEnter]
+			     	 &amp;lt;/Loop&amp;gt;&amp;quot;;
+			if (typ == &amp;quot;0&amp;quot;) {
+				var custinfo = &amp;quot;&amp;lt;Cust&amp;gt;
+					           &amp;lt;Name&amp;gt;&amp;quot;+xzds.getStringAt(i,&amp;quot;CustName&amp;quot;)+&amp;quot;&amp;lt;/Name&amp;gt;
+						   &amp;lt;CertType&amp;gt;&amp;quot;+xzds.getStringAt(i,&amp;quot;CertType&amp;quot;)+&amp;quot;&amp;lt;/CertType&amp;gt;
+					           &amp;lt;CertId&amp;gt;&amp;quot;+xzds.getStringAt(i,&amp;quot;CertId&amp;quot;)+&amp;quot;&amp;lt;/CertId&amp;gt;
+						   &amp;lt;Type&amp;gt;&amp;quot;+xzds.getStringAt(i,&amp;quot;CertType&amp;quot;)+&amp;quot;&amp;lt;/Type&amp;gt;
+						&amp;lt;/Cust&amp;gt;&amp;quot;;
+				loopItem = pub.EAFunc.Replace(loopItem,&amp;quot;[%CustOrEnter]&amp;quot;,custinfo);
+			}
+			else if (typ == &amp;quot;1&amp;quot;) {
+				var enterinfo = &amp;quot;&amp;lt;Enterprise&amp;gt;
+					           &amp;lt;Name&amp;gt;&amp;quot;+xzds.getStringAt(i,&amp;quot;CustName&amp;quot;)+&amp;quot;&amp;lt;/Name&amp;gt;
+					           &amp;lt;CertId&amp;gt;&amp;quot;+xzds.getStringAt(i,&amp;quot;CertId&amp;quot;)+&amp;quot;&amp;lt;/CertId&amp;gt;
+						   &amp;lt;Type&amp;gt;&amp;quot;+xzds.getStringAt(i,&amp;quot;CertType&amp;quot;)+&amp;quot;&amp;lt;/Type&amp;gt;
+						&amp;lt;/Enterprise&amp;gt;&amp;quot;;
+				loopItem = pub.EAFunc.Replace(loopItem,&amp;quot;[%CustOrEnter]&amp;quot;,enterinfo);
+			}
+			else {
+				loopItem = pub.EAFunc.Replace(loopItem,&amp;quot;[%CustOrEnter]&amp;quot;,&amp;quot;&amp;quot;);
+			}
+			
+			LoopCount += loopItem;						
+		}
+	}
+	return LoopCount;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// 查询应缴费信息
+//
+//function F0213002()
+function F0213002(requestXml)
+{	
+	try {
+		var service = new SBCW_sbcwService();
+		var map = new java.util.HashMap();
+			
+		map = service.parseMsgText(requestXml,false); //记录接收消息日志
+		
+		var wscall = new x_EAWebServiceCall();
+		var responseXml = parseMsgText_0213002(requestXml,map);	
+		service.parseMsgText(responseXml,true); //记录发送消息日志
+		return responseXml;		
+	}catch(e) {
+		return e.toString();
+	}
+}
+
+// 查询应缴费金额业务处理方法
+// 返回响应的报文XML
+function parseMsgText_0213002(msgText,hdrMap)
+{		
+	var responseXml = &amp;quot;&amp;quot;;
+	//响应报文信息
+	var respText = &amp;quot;&amp;lt;MsgText&amp;gt;
+				  &amp;lt;GrpHdr&amp;gt;
+				    &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+				    &amp;lt;Ref&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Ref&amp;quot;)+&amp;quot;&amp;lt;/Ref&amp;gt;
+				    &amp;lt;BusCd&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;BusCd&amp;quot;)+&amp;quot;&amp;lt;/BusCd&amp;gt;
+				    &amp;lt;TradSrc&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;TradSrc&amp;quot;)+&amp;quot;&amp;lt;/TradSrc&amp;gt;
+				    &amp;lt;Sender&amp;gt;
+				      &amp;lt;InstId&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;SenderId&amp;quot;)+&amp;quot;&amp;lt;/InstId&amp;gt;
+				    &amp;lt;/Sender&amp;gt;
+				    &amp;lt;Recver&amp;gt;
+				      &amp;lt;InstId&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;RecverId&amp;quot;)+&amp;quot;&amp;lt;/InstId&amp;gt;
+				    &amp;lt;/Recver&amp;gt;
+				    &amp;lt;Resend&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Resend&amp;quot;)+&amp;quot;&amp;lt;/Resend&amp;gt;
+				    &amp;lt;Date&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Date&amp;quot;)+&amp;quot;&amp;lt;/Date&amp;gt;
+				    &amp;lt;Time&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Time&amp;quot;)+&amp;quot;&amp;lt;/Time&amp;gt;
+				    &amp;lt;Dgst&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Dgst&amp;quot;)+&amp;quot;&amp;lt;/Dgst&amp;gt;
+				    &amp;lt;Rst&amp;gt;
+					    &amp;lt;Code&amp;gt;0000&amp;lt;/Code&amp;gt;
+					    &amp;lt;Info&amp;gt;已处理&amp;lt;/Info&amp;gt;
+				    &amp;lt;/Rst&amp;gt;
+				  &amp;lt;/GrpHdr&amp;gt;
+				  &amp;lt;BusiText&amp;gt;
+				  	&amp;lt;Rst&amp;gt;
+					    &amp;lt;Code&amp;gt;[%BusiRstCode]&amp;lt;/Code&amp;gt;
+					    &amp;lt;Info&amp;gt;[%BusiRstInfo]&amp;lt;/Info&amp;gt;
+				  	&amp;lt;/Rst&amp;gt;
+					  &amp;lt;BkSeq&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;BkSeq&amp;quot;)+&amp;quot;&amp;lt;/BkSeq&amp;gt;
+					  &amp;lt;SiSeq&amp;gt;[%sblsh]&amp;lt;/SiSeq&amp;gt;
+					  [%LoopCount]
+				  &amp;lt;/BusiText&amp;gt;
+				&amp;lt;/MsgText&amp;gt;&amp;quot;;
+	
+	var db = null;
+	var sblsh = &amp;quot;&amp;quot;;
+	try {		
+		db = new pub.EADatabase();
+													
+		var dbf = parsers.DocumentBuilderFactory.newInstance();
+		var documentbuilder = dbf.newDocumentBuilder();
+		var document = documentbuilder.parse(new sax.InputSource(new io.StringReader(msgText))); 
+		var nodelist = document.getElementsByTagName(&amp;quot;MsgText&amp;quot;);                  
+		var node = nodelist.item(0);	
+		
+		var RecverInstId = &amp;quot;&amp;quot;;
+		try { RecverInstId = node.getElementsByTagName(&amp;quot;GrpHdr&amp;quot;).item(0).getElementsByTagName(&amp;quot;Recver&amp;quot;).item(0).getElementsByTagName(&amp;quot;InstId&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		
+		var SiId = &amp;quot;&amp;quot;; //参保对象信息
+		try { SiId = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;SiAcct&amp;quot;).item(0).getElementsByTagName(&amp;quot;SiId&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		
+		var ContriNoticeId = &amp;quot;&amp;quot;; //缴费单据号
+		try { ContriNoticeId = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;ContriNoticeId&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		
+		var StartDate = &amp;quot;&amp;quot;; //查询起始年月
+		var EndDate = &amp;quot;&amp;quot;; //查询结束年月
+		try { StartDate = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;StartDate&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		try { EndDate = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;EndDate&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		var BeginNum = &amp;quot;&amp;quot;; //查询起始序号
+		var FetchNum = &amp;quot;&amp;quot;; //每次查询获取记录数
+		try { BeginNum = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;BeginNum&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		try { FetchNum = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;FetchNum&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		var service = new SBCW_sbcwService();
+		sblsh = service.genSiSeq(RecverInstId);			
+		var BusiRstCode = &amp;quot;0000&amp;quot;;
+		var BusiRstInfo = &amp;quot;交易成功&amp;quot;;
+		var errstr = &amp;quot;&amp;quot;;
+		var Name = &amp;quot;&amp;quot;;		//客户姓名
+		var CertType = &amp;quot;&amp;quot;;	//证件类型
+		var CertId = &amp;quot;&amp;quot;;	//证件号码
+		var Type = &amp;quot;&amp;quot;;		//客户类型
+		var sql = &amp;quot;&amp;quot;; 		//单位查询AB01 个人查询AC01
+		var sbjgdm = RecverInstId;
+		var yhjgdm = hdrMap.get(&amp;quot;SenderId&amp;quot;);
+		var yhzl_dr = &amp;quot;&amp;quot;; //业务系统（东软）银行种类
+		sql = &amp;quot;select a.sbh, a.zth, b.tcqbm
+			  from cw_ztb a, cw_sbsb b
+			 where a.yszl_sbjgdm = &amp;apos;&amp;quot;+sbjgdm+&amp;quot;&amp;apos;
+			   and a.sbh = b.sbh&amp;quot;;   
+		var ds = db.QuerySQL(sql);
+		var sbh = ds.getStringAt(0,&amp;quot;sbh&amp;quot;);	   
+		var zth = ds.getStringAt(0,&amp;quot;zth&amp;quot;);	 
+		var tcqbm = ds.getStringAt(0,&amp;quot;tcqbm&amp;quot;);
+		
+		//增加银社启用控制 20170721 dxb
+		sql = &amp;quot;select yszl_qdbz,nvl(round(sysdate-to_date(yszl_qdrq,&amp;apos;yyyy-mm-dd&amp;apos;),2),-1) yszl_qdrq from cw_dfdsb  where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and szbz = &amp;apos;1&amp;apos; and yhzl in
+				(select yhzl from cw_dfdsb_yszl where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and szbz = &amp;apos;1&amp;apos; and yszl_yhjgdm = &amp;apos;&amp;quot;+yhjgdm+&amp;quot;&amp;apos;)&amp;quot;;
+		var myds = db.QuerySQL(sql);
+		if(myds.getRowCount() &amp;gt; 0) {
+			var yszl_qdbz = myds.getStringAt(0,&amp;quot;yszl_qdbz&amp;quot;);
+			var yszl_qdrq = 1.0*myds.getStringAt(0,&amp;quot;yszl_qdrq&amp;quot;);
+			if(yszl_qdbz == &amp;quot;1&amp;quot;) {
+				if(yszl_qdrq &amp;gt;= 0) {
+				
+				}
+				else {
+					throw new Exception(&amp;quot;@@1系统维护中，暂时无法缴费@@&amp;quot;);					
+				}
+			}
+			else {
+				throw new Exception(&amp;quot;@@2系统维护中，暂时无法缴费@@&amp;quot;);			
+			}
+		}
+		else {
+			throw new Exception(&amp;quot;@@3系统维护中，暂时无法缴费@@&amp;quot;);
+		}
+		
+		//增加银社最大交易数控制 20170725 dxb		
+		var pubfunc = new SBCW_PUBFUNC();
+		var checkret = pubfunc.checkYSZLMaxCount(db,sbh,zth,yhjgdm);	
+		if(checkret &amp;lt;= 0) {
+			throw new Exception(&amp;quot;@@已达到每天最大交易数，暂时无法缴费@@&amp;quot;);			
+		}				
+		var SiId_AAC001 = &amp;quot;&amp;quot;;//调东软接口要用这个编号	
+		var ztlx = &amp;quot;&amp;quot;;//主体类型 1单位 2个人
+		yhzl_dr = db.GetSQL(&amp;quot;select nvl(max(ywxt_drdm),&amp;apos;NULL&amp;apos;) from aa10 where aaa100 = &amp;apos;AAE008&amp;apos; and aaa102 in 
+					(select distinct yhzl from cw_dfdsb_yszl where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yszl_yhjgdm = &amp;apos;&amp;quot;+yhjgdm+&amp;quot;&amp;apos;)&amp;quot;);
+		if(yhzl_dr == &amp;quot;NULL&amp;quot;) {
+			throw new Exception(&amp;quot;@@交易失败，查询业务系统银行种类出错!@@&amp;quot;);
+		}
+		try{
+			Type = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Cust&amp;quot;).item(0).getElementsByTagName(&amp;quot;Type&amp;quot;).item(0).getFirstChild().getNodeValue();
+			if(Type ==  &amp;quot;0&amp;quot;) ztlx =&amp;quot;2&amp;quot;;
+		}catch(e){
+		
+		}
+		try{
+			Type= node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Enterprise&amp;quot;).item(0).getElementsByTagName(&amp;quot;Type&amp;quot;).item(0).getFirstChild().getNodeValue();
+			if(Type == &amp;quot;1&amp;quot;) ztlx =&amp;quot;1&amp;quot;;
+		}catch(e){
+		}	
+               //支持按参保对象信息或者按缴费单据号查询两种模式。若按参保对象信息查询，对于单位查询的情况，仅根据参保对象编号查询；
+          	//对于个人查询的情况，则需要同时根据参保对象编号、
+          	//个人身份证件类型、身份证件号码进行查询返回。若按缴费单据号查询，则其他上述参保对象的信息可以不输入。
+		//按缴费单据查询模式（可以不输入参保对象的信息）
+		if(ContriNoticeId != &amp;quot;&amp;quot;) {
+			
+		}
+		//个人信息	
+		var custNode = null;
+		try { custNode = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Cust&amp;quot;).item(0); } catch(e) {}
+		if (ztlx == &amp;quot;2&amp;quot;) {		
+			try { if(Name == &amp;quot;&amp;quot;) Name = custNode.getElementsByTagName(&amp;quot;Name&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+			try { if(CertType == &amp;quot;&amp;quot;) CertType = custNode.getElementsByTagName(&amp;quot;CertType&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+			try { if(CertId == &amp;quot;&amp;quot;) CertId = custNode.getElementsByTagName(&amp;quot;CertId&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+			try { if(Type == &amp;quot;&amp;quot;) Type = custNode.getElementsByTagName(&amp;quot;Type&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+			
+			sql = &amp;quot;select * from AC01 where (aac001 = &amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos;) /*and aac003=&amp;apos;&amp;quot;+Name+&amp;quot;&amp;apos;*/ and AAC147=&amp;apos;&amp;quot;+CertId +&amp;quot;&amp;apos; and aab301 = &amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos; and xtlb = substr(&amp;apos;&amp;quot;+sbjgdm+&amp;quot;&amp;apos;,7,1)&amp;quot;;
+			var ds = db.QuerySQL(sql);
+			
+			var SiAcct = &amp;quot;&amp;quot;;
+			var Enterprise = &amp;quot;&amp;quot;;
+			var ac01_aac999 = &amp;quot;&amp;quot;;
+			var bae074str = &amp;quot;&amp;quot;;
+			var debz = &amp;quot;0&amp;quot;;//大额标志，0，返回大额欠费  1，不返回大额欠费
+			//绑定标志 0-绑定 1-不绑定
+			var isbind = &amp;quot;&amp;quot;;
+			
+			if (ds.getRowCount() == 0) {
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,&amp;quot;&amp;quot;);
+				BusiRstCode = &amp;quot;2010&amp;quot;;
+				BusiRstInfo = &amp;quot;查询不到欠费记录，请检查个人信息是否正确&amp;quot;;
+				//throw new Exception(&amp;quot;@@sql=&amp;quot;+sql);
+			}
+			else {
+				//检查参保人是否正在被代扣
+				sql = &amp;quot;select nvl(max(yszl_sfdk),&amp;apos;0&amp;apos;) from t_yszl_dkxyxxb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yszl_whywlx != &amp;apos;3&amp;apos; and ztbh = &amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos;&amp;quot;;
+				if(db.GetSQL(sql ) == &amp;quot;1&amp;quot;){//代扣在途
+					throw new Exception(&amp;quot;@@此参保对象已在社保代扣过程中，不能自主缴费@@&amp;quot;);
+				}				
+				var RegionName = &amp;quot;&amp;quot;;
+				sql = &amp;quot;select aaa103 from aa10 where aaa100=&amp;apos;AAB034&amp;apos; and aaa102=&amp;apos;&amp;quot;+ds.getStringAt(0,&amp;quot;AAB301&amp;quot;)+&amp;quot;&amp;apos;&amp;quot;;
+				var tmpds = db.QuerySQL(sql);
+				if (tmpds.getRowCount() &amp;gt; 0) {
+					RegionName = tmpds.getStringAt(0,&amp;quot;AAA103&amp;quot;);
+				}	
+				ac01_aac999 = 	ds.getStringAt(0,&amp;quot;AAC001&amp;quot;);	
+				//参保对象信息
+				SiAcct = &amp;quot;&amp;lt;SiAcct&amp;gt;
+					    &amp;lt;SiCode&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAC002&amp;quot;)+&amp;quot;&amp;lt;/SiCode&amp;gt;
+					    &amp;lt;SiId&amp;gt;&amp;quot;+SiId+&amp;quot;&amp;lt;/SiId&amp;gt;
+					    &amp;lt;CardNO&amp;gt;&amp;lt;/CardNO&amp;gt;
+					    &amp;lt;Name&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAC003&amp;quot;)+&amp;quot;&amp;lt;/Name&amp;gt;
+					    &amp;lt;RegionName&amp;gt;&amp;quot;+RegionName+&amp;quot;&amp;lt;/RegionName&amp;gt;
+					  &amp;lt;/SiAcct&amp;gt;&amp;quot;;  
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%SiAcct]&amp;quot;,SiAcct);
+				//客户信息
+				Enterprise = &amp;quot;&amp;lt;Cust&amp;gt;
+						&amp;lt;Name&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAC003&amp;quot;)+&amp;quot;&amp;lt;/Name&amp;gt;
+						&amp;lt;CertType&amp;gt;0&amp;lt;/CertType&amp;gt;
+						&amp;lt;CertId&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAC147&amp;quot;)+&amp;quot;&amp;lt;/CertId&amp;gt;
+						&amp;lt;Type&amp;gt;0&amp;lt;/Type&amp;gt;
+					      &amp;lt;/Cust&amp;gt;&amp;quot;;
+				SiAcct += Enterprise;				
+				//如果单据号为空，则要调东软的接口
+				var yszl_ywjk = new SBCW_YSZL_YWJK_NN();	
+				if(ContriNoticeId == &amp;quot;&amp;quot;){	
+					//先掉东软接口判断参保人是否要绑定交基本医疗和大额医疗，如果要绑定，则掉查询应缴接口时，除了养老险种外，险种类型传“0” 表示查询基本医疗和大额医疗欠费并合成一张单
+					var jkmsg = yszl_ywjk.prc_Isbind(tcqbm,SiId ,CertId,StartDate,EndDate ,yhzl_dr,db);						
+					var jkappcode = jkmsg.split(&amp;quot;~&amp;quot;)[0];	
+					var jkerrormsg = jkmsg.split(&amp;quot;~&amp;quot;)[1];	
+					if(jkappcode == &amp;quot;0&amp;quot;) {//绑定
+						isbind = &amp;quot;0&amp;quot;;
+					}	
+					else if(jkappcode == &amp;quot;1&amp;quot;) {//不绑定
+						isbind = &amp;quot;1&amp;quot;;
+					}
+					else {//调用接口报错
+						//throw new Exception(&amp;quot;@@交易失败，查询绑定状态出错@@jkmsg=&amp;quot;+jkmsg );
+						//throw new Exception(&amp;quot;@@交易失败，&amp;quot;+jkerrormsg+&amp;quot;@@jkmsg=&amp;quot;+jkmsg );
+						//throw new Exception(&amp;quot;@@tcqbm=&amp;quot;+tcqbm+&amp;quot;,SiId=&amp;quot;+SiId+&amp;quot; ,CertId=&amp;quot;+CertId+&amp;quot;,StartDate=&amp;quot;+StartDate+&amp;quot;,EndDate=&amp;quot;+EndDate+&amp;quot; ,yhzl_dr=&amp;quot;+yhzl_dr+&amp;quot;@@&amp;quot;);
+					}		
+					
+					//获取险种类型及申报档次信息，调用业务生成欠费数据接口
+					//11、15、17属于养老有档次其他不判断申报档次 //20171018修改by flm
+					sql = &amp;quot;select jfdc_value,xzlx,xzlx_name,aac001 from (
+						select 1.00 jfdc_value,aae140 xzlx,aae140_name xzlx_name,&amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos; aac001 
+						from ac02 where aac001 = &amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos; and aac031=&amp;apos;1&amp;apos;
+						  and aae140 not in (select ywxt_drdm from aa10 where aaa100 = &amp;apos;AAE140&amp;apos; and aaa102 in(&amp;apos;11&amp;apos;,&amp;apos;15&amp;apos;,&amp;apos;17&amp;apos;))
+						union  				
+						select b.jfdc_value,(select max(nvl(ywxt_drdm,AAA102)) from aa10 where aaa100 = &amp;apos;AAE140&amp;apos; AND YSZL_DM = b.yszl_xzlx) xzlx,
+						  (select max(AAA103) from aa10 where aaa100 = &amp;apos;AAE140&amp;apos; AND YSZL_DM = b.yszl_xzlx) xzlx_name,b.aac001
+						from  aa10 c,t_yszl_grsbxxb b,ac01 d
+						where  c.aaa100 = &amp;apos;AAE140&amp;apos;
+	               					and c.yszl_dm = b.yszl_xzlx
+	               					and b.aac001 = &amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos;
+	               					and b.aac001 = d.aac001
+	              					and d.aac012 in (&amp;apos;13&amp;apos;,&amp;apos;16&amp;apos;,&amp;apos;19&amp;apos;) /*modify by flm 20170921*/
+	               					and d.aab301 = substr(&amp;apos;&amp;quot;+sbjgdm+&amp;quot;&amp;apos;,1,6)
+							and b.yszl_xzlx is not null
+							and b.jfdc_value is not null
+							and b.yszl_yhjgdm = &amp;apos;&amp;quot;+yhjgdm+&amp;quot;&amp;apos;
+							and b.yszl_xzlx not in (&amp;apos;11&amp;apos;,&amp;apos;15&amp;apos;,&amp;apos;17&amp;apos;) 
+						) order by xzlx&amp;quot;;
+					tmpds = db.QuerySQL(sql);
+					if(tmpds.getRowCount() &amp;gt; 0) {
+						var errcnt = 0;
+						var ret = &amp;quot;&amp;quot;;
+						var tmpdb = null;
+						var bdcnt = 0;//大额医疗和基本医疗
+						for(var i=0;i&amp;lt;tmpds.getRowCount();i++) {
+							var xzlx = tmpds.getStringAt(i,&amp;quot;xzlx&amp;quot;);
+							SiId_AAC001 = tmpds.getStringAt(i,&amp;quot;aac001&amp;quot;);
+							var xzlx_name = tmpds.getStringAt(i,&amp;quot;xzlx_name&amp;quot;);
+							var jfdc_value = &amp;quot;&amp;quot;;
+							try{jfdc_value = tmpds.getStringAt(i,&amp;quot;jfdc_value&amp;quot;);}catch(e){}
+							if(jfdc_value == &amp;quot;&amp;quot;) {jfdc_value = null;}
+							var mydate1 = &amp;quot;&amp;quot;;
+							var mydate2 = &amp;quot;&amp;quot;;							
+							try{
+								tmpdb = new pub.EADatabase();
+								if(StartDate == &amp;quot;&amp;quot; || EndDate == &amp;quot;&amp;quot;) {
+									//StartDate = &amp;quot;201601&amp;quot;;
+									//EndDate = &amp;quot;201612&amp;quot;;
+									//养老只能缴到当月，医疗缴到年底
+									//11企业基本养老保险
+									if(xzlx == &amp;quot;11&amp;quot;) {
+										mydate1 = (service.getDate()).substring(0,4)+&amp;quot;01&amp;quot;;
+										mydate2 = (service.getDate()).substring(0,6);										
+									}else {
+										mydate1 = (service.getDate()).substring(0,4)+&amp;quot;01&amp;quot;;
+										mydate2 = (service.getDate()).substring(0,4)+&amp;quot;12&amp;quot;;									
+									}
+								}
+								else {
+									if(xzlx == &amp;quot;11&amp;quot;) {
+										if((service.getDate()).substring(0,6) &amp;lt; EndDate ) {
+											mydate1 = StartDate;
+											mydate2 = service.getDate().substring(0,6);
+										}
+										else {
+											mydate1 = StartDate;
+											mydate2 = EndDate;												
+										}
+
+									}
+									else {
+										mydate1 = StartDate;
+										mydate2 = EndDate;									
+									}
+								}
+								//isbind = 0 绑定 xzlx=31基本医疗 xzlx=32大额医疗
+								if(isbind == &amp;quot;0&amp;quot; &amp;&amp; (xzlx == &amp;quot;31&amp;quot; || xzlx == &amp;quot;32&amp;quot;)) {
+									bdcnt++;
+								 }
+								 else {
+								 	//调用业务生成欠费数据接口
+									var tmpret = yszl_ywjk.prc_a_queryAudit(tcqbm,SiId_AAC001,CertId,xzlx,jfdc_value,mydate1 ,mydate2 ,yhzl_dr,tmpdb);
+									ret += tmpret+&amp;quot;~~&amp;quot;;
+									ret += &amp;quot;~tcqbm=&amp;quot;+tcqbm+&amp;quot;,SiId=&amp;quot;+SiId+&amp;quot;,SiId_AAC001=&amp;quot;+SiId_AAC001+&amp;quot;,CertId=&amp;quot;+CertId+&amp;quot;,xzlx=&amp;quot;+xzlx+&amp;quot;,jfdc_value=&amp;quot;+jfdc_value+&amp;quot;,StartDate=&amp;quot;+mydate1 +&amp;quot;,EndDate=&amp;quot;+mydate2+&amp;quot;,yhzl_dr=&amp;quot;+yhzl_dr ;
+									
+									writeLog(hdrMap.get(&amp;quot;Ref&amp;quot;),&amp;quot;查询应缴金额&amp;quot;,&amp;quot;10&amp;quot;,&amp;quot;险种类型：&amp;quot;+xzlx+&amp;quot;mydate1:&amp;quot;+mydate1+&amp;quot;,mydate2:&amp;quot;+mydate2+&amp;quot;,接口返回信息：&amp;quot;+ret);								
+									
+									if(tmpret.split(&amp;quot;@&amp;quot;)[0] != &amp;quot;1&amp;quot;) {
+										if(xzlx == &amp;quot;31&amp;quot;) {
+											debz = &amp;quot;1&amp;quot;;
+										}
+										errcnt++;
+										//errstr += &amp;quot;查&amp;quot;+xzlx_name+&amp;quot;失败:&amp;quot;+tmpret.split(&amp;quot;@&amp;quot;)[1]+&amp;quot;\n&amp;quot;;
+										//处理提示信息不明确问题，如：查询不到欠费记录 查大额医疗保险失败:参保人员已经缴纳期间费用!
+										//2017-08-14 by flm
+										errstr += tmpret.split(&amp;quot;@&amp;quot;)[1]+&amp;quot;\n&amp;quot;;
+										tmpdb.Rollback();				
+									}
+									else {
+										var retlsh = tmpret.split(&amp;quot;@&amp;quot;)[2];
+										if(bae074str == &amp;quot;&amp;quot;) {
+											bae074str = &amp;quot;&amp;apos;&amp;quot;+retlsh+&amp;quot;&amp;apos;&amp;quot;;
+										}
+										else {
+											bae074str = bae074str+&amp;quot;,&amp;apos;&amp;quot;+retlsh+&amp;quot;&amp;apos;&amp;quot;;
+										}	
+									 	tmpdb.Commit();
+									 }								 
+								 }
+							}catch(e) {
+									if(tmpdb != null) tmpdb.Rollback();
+							}	
+							finally {
+									if(tmpdb != null) tmpdb.Close();
+							}
+						}	
+						//绑定缴费
+						if(isbind == &amp;quot;0&amp;quot;){
+							tmpdb = new pub.EADatabase();							
+							try{
+								var tmpret = &amp;quot;&amp;quot;;						
+								var tmpret = yszl_ywjk.prc_a_queryAudit(tcqbm,SiId_AAC001,CertId,isbind,&amp;quot;1&amp;quot;,StartDate,EndDate,yhzl_dr,tmpdb);
+								if(bdcnt != 2) {
+									tmpret = &amp;quot;-1@查询基本医疗大额医疗绑定欠费时出错，请确认大额医疗和基本医疗都已经申报过！&amp;quot;;
+								}									
+								writeLog(hdrMap.get(&amp;quot;Ref&amp;quot;),&amp;quot;查询应缴金额&amp;quot;,&amp;quot;10&amp;quot;,&amp;quot;险种类型：大额，基本合并，mydate1:&amp;quot;+StartDate+&amp;quot;,mydate2:&amp;quot;+EndDate+&amp;quot;,接口返回信息：&amp;quot;+tmpret);
+								if(tmpret.split(&amp;quot;@&amp;quot;)[0] != &amp;quot;1&amp;quot;) {
+									errcnt++;
+									errstr += &amp;quot;查大额医疗、基本医疗失败:&amp;quot;+tmpret.split(&amp;quot;@&amp;quot;)[1]+&amp;quot;\n&amp;quot;;
+									tmpdb.Rollback();				
+								}
+								else {
+									var retlsh = tmpret.split(&amp;quot;@&amp;quot;)[2];
+									if(bae074str == &amp;quot;&amp;quot;) {
+										bae074str = &amp;quot;&amp;apos;&amp;quot;+retlsh+&amp;quot;&amp;apos;&amp;quot;;
+									}
+									else {
+										bae074str = bae074str+&amp;quot;,&amp;apos;&amp;quot;+retlsh+&amp;quot;&amp;apos;&amp;quot;;
+									}							
+								 	tmpdb.Commit();
+								 }								
+							}catch(e) {
+								if(tmpdb != null) tmpdb.Rollback();
+							}	
+							finally {
+								if(tmpdb != null) tmpdb.Close();
+							}
+						}	
+						if(errstr != &amp;quot;&amp;quot;) {
+							throw new Exception(&amp;quot;@@&amp;quot;+errstr+&amp;quot;@@&amp;quot;);
+							//BusiRstInfo = errstr;
+						}		
+
+					} else {
+							//throw new Exception(&amp;quot;@@查询无记录,可能个人未申报@@&amp;quot;+sql);	//20171018暂时不抛错				
+					}
+				}					
+				var LoopCount = &amp;quot;&amp;quot;;
+//				sql = &amp;quot;select bae074,(select min(yszl_dm) from aa10 where aaa100=&amp;apos;AAE140&amp;apos; and aaa102 = decode(a.aae140,&amp;apos;0&amp;apos;,&amp;apos;31&amp;apos;,a.aae140)) aae140
+//					,aac001,aac003,max(aae002) aae002,sum(aic263) aic263,max(aae208) aae208,max(aab120) aab120 from ac95 a where 1=1 and zfbz = &amp;apos;0&amp;apos; &amp;quot;;
+				//2017-9-25：修改应交金额查询不到问题：原因sql取不到险种类型：	取险种应该取接口定义的ywxt_drdm字段			
+				sql = &amp;quot;select bae074,(select nvl(min(yszl_dm),a.aae140) from aa10 where aaa100=&amp;apos;AAE140&amp;apos; and ywxt_drdm = a.aae140) aae140,
+					  aac001,aac003,max(aae002) aae002,sum(aic263) aic263,max(aae208) aae208,max(aab120) aab120 
+					from ac95 a 
+					where zfbz = &amp;apos;0&amp;apos; &amp;quot;; 
+					
+				if(bae074str != &amp;quot;&amp;quot;) {
+					sql  += &amp;quot;and bae074 in (&amp;quot;+bae074str+&amp;quot;)&amp;quot;;
+				}	
+				else {
+					sql  += &amp;quot;and 2 = 1&amp;quot;; //???
+				}
+				if(debz != &amp;quot;0&amp;quot;) {
+					sql += &amp;quot;and aae140 &amp;lt;&amp;gt; &amp;apos;32&amp;apos;&amp;quot;;
+				}
+				if (ContriNoticeId  != &amp;quot;&amp;quot;) { //按缴费单号查询
+					sql += &amp;quot;and bae074=&amp;apos;&amp;quot;+ContriNoticeId +&amp;quot;&amp;apos;&amp;quot;;
+				}
+				else { 
+					sql += &amp;quot;  and (aac001=&amp;apos;&amp;quot;+ac01_aac999+&amp;quot;&amp;apos;) and AAE135=&amp;apos;&amp;quot;+CertId+&amp;quot;&amp;apos;&amp;quot;;
+				}
+				//throw new Exception(sql);
+				//查询时间范围
+				if (StartDate != &amp;quot;&amp;quot; &amp;&amp; EndDate != &amp;quot;&amp;quot;) {
+//					sql += &amp;quot; and substrb(a.aae002,1,6)&amp;gt;=&amp;apos;&amp;quot;+StartDate+&amp;quot;&amp;apos; and substrb(a.aae002,8,6)&amp;lt;=&amp;apos;&amp;quot;+EndDate+&amp;quot;&amp;apos;&amp;quot;;
+				}
+				//业务类型
+				sql += &amp;quot;/*and AAA027 =&amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos;*/ and BAC005  in (select aaa102 from aa10 where aaa100=&amp;apos;YWLX&amp;apos; and szzt=&amp;apos;1&amp;apos;) and aae076 is null&amp;quot;;
+				//剔除已缴费年月
+				sql += &amp;quot; and not exists (select 1 from ac95 x where x.aaa027 = a.aaa027 and x.zth = a.zth and x.aab001 = a.aab001 and x.aac001 = a.aac001 and x.aae140 = decode(a.aae140,&amp;apos;0&amp;apos;,x.aae140,a.aae140)
+								and substrb(x.aae002,1,6) &amp;lt;= substrb(a.aae002,1,6) and substrb(x.aae002,8,6) &amp;gt;= substrb(a.aae002,8,6)
+     							       and x.zfbz = &amp;apos;0&amp;apos;
+     							       and x.AAE076 is not null)&amp;quot;;
+     					       
+				//帐套
+				sql += &amp;quot;  group by bae074, aae208, aac001, aac003,aae140&amp;quot;;   
+						  						       
+				var mysql = &amp;quot;select   max(bae074) ContriNoticeId,
+							decode(count(*),1,min(a.aae140),&amp;apos;310&amp;apos;) InsuKind,
+							max(aac001) aac001,
+							max(aac003) aac003,
+							sum(100*aic263) Amt1,
+							(substr(max(aae002),8,6)) FeeDate,
+							/*max(100*aab120) Dgst*/
+							&amp;apos;收&amp;apos;||max(a.aac003)||max(a.aae002)||&amp;apos;保险费&amp;apos; Dgst
+						from (&amp;quot;+sql+&amp;quot;)a
+						where aic263 &amp;gt; 0  and aae140 is not null
+						group by bae074
+						order by ContriNoticeId&amp;quot;;
+				
+//				throw new Exception(&amp;quot;@@sss@@&amp;quot;+mysql);	
+//				throw new Exception(mysql);		
+//				db.Rollback();
+//				return mysql;
+				hdrMap.put(&amp;quot;sbh&amp;quot;,sbh);
+				hdrMap.put(&amp;quot;zth&amp;quot;,zth);	
+				var LoopCount = &amp;quot;&amp;quot;;
+				try{
+					//writeLog(hdrMap.get(&amp;quot;Ref&amp;quot;),&amp;quot;查询应缴金额&amp;quot;,&amp;quot;20&amp;quot;,&amp;quot;sql=&amp;quot;+mysql);
+					LoopCount  = getLoop_0213002(db,SiAcct,mysql,BeginNum,FetchNum,0,hdrMap);
+				}catch(e) {
+					//throw new Exception(&amp;quot;@@查询不到欠费记录\n&amp;quot;+errstr+&amp;quot;@@&amp;quot;+e.toString()); //2017-08-14 by flm
+					//throw new Exception(&amp;quot;@@&amp;quot;+errstr+&amp;quot;@@&amp;quot;+e.toString());
+					BusiRstCode = &amp;quot;2001&amp;quot;;
+					BusiRstInfo = &amp;quot;查询应缴记录发生系统异常&amp;quot;;
+				}	
+				if(LoopCount == &amp;quot;&amp;quot;) {	
+					//throw new Exception(&amp;quot;@@查询不到欠费记录\n&amp;quot;+errstr+&amp;quot;@@查询不到记录,mysql=&amp;quot;+mysql); //2017-08-14 by flm
+					//throw new Exception(&amp;quot;@@&amp;quot;+errstr+&amp;quot;@@查询不到记录,mysql=&amp;quot;+mysql);		
+					BusiRstCode = &amp;quot;2010&amp;quot;;
+					BusiRstInfo = &amp;quot;查询不到欠费记录!&amp;quot;;
+				}
+//				db.Rollback();
+//				return LoopCount;
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,LoopCount);
+			}
+			
+		}
+		//单位信息
+//		var dwNode = null;
+//		try { dwNode = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Enterprise&amp;quot;); } catch(e) {}
+//		if (dwNode != null) {
+		else {
+			try { if(Name == &amp;quot;&amp;quot;) Name = custNode.getElementsByTagName(&amp;quot;Name&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+			try { if(CertType == &amp;quot;&amp;quot;) CertType = custNode.getElementsByTagName(&amp;quot;CertType&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+			try { if(CertId == &amp;quot;&amp;quot;) CertId = custNode.getElementsByTagName(&amp;quot;CertId&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+			try { if(Type == &amp;quot;&amp;quot;) Type = custNode.getElementsByTagName(&amp;quot;Type&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+			sql = &amp;quot;select * from AB01 where (aab001=&amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos; or aab999 = &amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos;) and aab301 = &amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos; &amp;quot;;
+			var ds = db.QuerySQL(sql);
+			var SiAcct = &amp;quot;&amp;quot;;
+			var Enterprise  = &amp;quot;&amp;quot;;
+			if (ds.getRowCount() &amp;gt; 0) {
+				//参保对象信息
+				SiAcct = &amp;quot;&amp;lt;SiAcct&amp;gt;
+					    &amp;lt;SiId&amp;gt;&amp;quot;+SiId+&amp;quot;&amp;lt;/SiId&amp;gt;
+					    &amp;lt;Name&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAB004&amp;quot;)+&amp;quot;&amp;lt;/Name&amp;gt;
+					  &amp;lt;/SiAcct&amp;gt;&amp;quot;;
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%SiAcct]&amp;quot;,SiAcct);
+				//客户信息
+				Enterprise = &amp;quot;&amp;lt;Enterprise&amp;gt;
+						&amp;lt;Name&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAB004&amp;quot;)+&amp;quot;&amp;lt;/Name&amp;gt;
+						&amp;lt;CertId&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAB003&amp;quot;)+&amp;quot;&amp;lt;/CertId&amp;gt;
+						&amp;lt;Type&amp;gt;1&amp;lt;/Type&amp;gt;
+					      &amp;lt;/Enterprise&amp;gt;&amp;quot;;
+				SiAcct += Enterprise;
+				var dwbh_aab999 = ds.getStringAt(0,&amp;quot;AAB999&amp;quot;);
+				//已缴费信息
+				sql = &amp;quot;select a.*,decode(a.aae140,&amp;apos;&amp;apos;,(select min(aae140) from ac95 where bae074 = a.djh and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and aaa027 = &amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos; and zfbz = &amp;apos;0&amp;apos; and aae076 is null),a.aae140) xz from v_si_djb_tmp a where 1=1 and zfbz = &amp;apos;0&amp;apos;&amp;quot;; 
+				if (ContriNoticeId  != &amp;quot;&amp;quot;) { //按缴费单号查询
+					sql += &amp;quot; and djh=&amp;apos;&amp;quot;+ContriNoticeId+&amp;quot;&amp;apos;&amp;quot;;
+				}
+				else { 
+					sql += &amp;quot;  and (dwbh=&amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos; or dwbh = &amp;apos;&amp;quot;+dwbh_aab999+&amp;quot;&amp;apos;)&amp;quot;;
+				}
+				//查询时间范围
+				if (StartDate != &amp;quot;&amp;quot; &amp;&amp; EndDate != &amp;quot;&amp;quot;) {
+//					sql += &amp;quot; and ym1&amp;gt;=&amp;apos;&amp;quot;+StartDate+&amp;quot;&amp;apos; and ym2&amp;lt;=&amp;apos;&amp;quot;+EndDate+&amp;quot;&amp;apos;&amp;quot;;
+					sql += &amp;quot; and scny&amp;gt;=&amp;apos;&amp;quot;+StartDate+&amp;quot;&amp;apos; and scny&amp;lt;=&amp;apos;&amp;quot;+EndDate+&amp;quot;&amp;apos;&amp;quot;;
+				}
+				
+				//业务类型
+				sql += &amp;quot; and sbjgdm=&amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos; and ywlx in (SELECT AAA102 FROM AA10 WHERE AAA100=&amp;apos;YWLX&amp;apos; AND SZZT=&amp;apos;1&amp;apos; AND YSZL_DM = &amp;apos;0112001&amp;apos;)  &amp;quot;;
+				//帐套
+				sql += &amp;quot; and a.zth in (select zth from cw_ztb where yszl_sbjgdm=&amp;apos;&amp;quot;+RecverInstId+&amp;quot;&amp;apos;)&amp;quot;;
+				//应缴
+				sql += &amp;quot; and lsh is null and rzbz = &amp;apos;0&amp;apos;&amp;quot;;							
+				//排序
+				sql += &amp;quot; order by dwbh,djh,xh&amp;quot;;
+//				db.Rollback();
+//				return sql;
+				var mysql = &amp;quot;select ContriNoticeId,
+					       max(SiId) SiId,
+					       max(BkAcctId) BkAcctId,
+					       max(Dgst) Dgst,
+					       max(lxbh) lxbh,
+					       max(FeeDate) FeeDate,
+					       sum(Amt1) Amt1,
+					       sum(Amt2) Amt2,
+					       sum(Amt3) Amt3,
+					       sum(Amt4) Amt4,
+					       sum(Amt5) Amt5,
+					       decode(count(*),1,min(InsuKind),&amp;apos;900&amp;apos;) InsuKind 
+					       from
+						(
+						select djh ContriNoticeId,
+					       dwbh SiId,
+					       yhzh1 BkAcctId,
+					       zy Dgst,
+					       lxbh,
+					     scny FeeDate,
+					      (select min(yszl_dm) from aa10 where aaa100 = &amp;apos;AAE140&amp;apos; and aaa102 = a.xz) InsuKind,
+					       100*sum(je1+je2+je3+je4+je5+je6+je7+je8+je9+je10+je11+je12+je13+je14+je15) Amt1,
+					       100*sum(je1+je2+je3+je4+je5) Amt2,
+					       100*sum(je6+je7+je8+je9+je10) Amt3,
+					       100*sum(je11+je12+je13+je14) Amt4,
+					       100*sum(je15) Amt5
+					from (&amp;quot;+sql+&amp;quot;) a
+					group by djh,dwbh,yhzh1,zy,lxbh,scny,xh,xz
+					order by djh,xz
+					) where /*Amt1 &amp;gt;= 0 and Amt2 &amp;gt;= 0 and  Amt3 &amp;gt;= 0 and  Amt4 &amp;gt;= 0 and  Amt5 &amp;gt;= 0 and*/ InsuKind  is not null group by ContriNoticeId 
+					order by ContriNoticeId,InsuKind&amp;quot;;
+//				throw new Exception(mysql);	
+//				db.Rollback();
+//				return mysql;
+				hdrMap.put(&amp;quot;sbh&amp;quot;,sbh);
+				hdrMap.put(&amp;quot;zth&amp;quot;,zth);								
+				var LoopCount = getLoop_0213002(db,SiAcct,mysql,BeginNum,FetchNum,1,hdrMap);
+				if(LoopCount == &amp;quot;&amp;quot;) {
+					respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,&amp;quot;&amp;quot;);
+					BusiRstCode = &amp;quot;2001&amp;quot;;
+					BusiRstInfo = &amp;quot;查询单位欠费信息无记录&amp;quot;;					
+				}
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,LoopCount);
+			}
+			else {
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,&amp;quot;&amp;quot;);
+				BusiRstCode = &amp;quot;2001&amp;quot;;
+				BusiRstInfo = &amp;quot;查询无记录&amp;quot;;				
+			}
+		}
+		db.Commit();
+		//db.Rollback();
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstCode]&amp;quot;,BusiRstCode);
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstInfo]&amp;quot;,BusiRstInfo);
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%sblsh]&amp;quot;,sblsh);
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+//		return e.toString();
+		var myerr = &amp;quot;&amp;quot;;
+		var errinfo = (e.toString()).split(&amp;quot;@@&amp;quot;);
+		if(errinfo.length()==3) {
+			myerr=errinfo[1];
+		}
+		else {
+			myerr = &amp;quot;系统异常:&amp;quot;+e.toString();
+		}
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstCode]&amp;quot;,&amp;quot;2001&amp;quot;);
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstInfo]&amp;quot;,myerr);
+		//respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstInfo]&amp;quot;,errinfo.length());
+		//throw new Exception(&amp;quot;*****=&amp;quot;+e.toString());
+		writeLog(hdrMap.get(&amp;quot;Ref&amp;quot;),&amp;quot;查询应缴金额&amp;quot;,&amp;quot;100&amp;quot;,myerr+e.toString());
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%sblsh]&amp;quot;,sblsh);
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,&amp;quot;&amp;quot;);
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+
+	responseXml += respText;
+								
+	return responseXml;
+	
+}
+
+function getLoop_0213002(db,SiAcct,mysql,BeginNum,FetchNum,typ,hdrMap)
+{
+	
+	//typ 0 个人 typ 1 单位
+	try {
+		
+		var LoopCount = &amp;quot;&amp;lt;TotalCount&amp;gt;[%totalcount]&amp;lt;/TotalCount&amp;gt;\n&amp;lt;LoopCount&amp;gt;[%LoopCount]&amp;lt;/LoopCount&amp;gt;\n&amp;lt;FeeSeq&amp;gt;1&amp;lt;/FeeSeq&amp;gt;\n&amp;quot;;
+		var ds = db.QuerySQL(mysql);
+		
+		var totalCnt = ds.getRowCount();
+		if(totalCnt == 0) return &amp;quot;&amp;quot;;
+		var beginNum = 1 * BeginNum;
+		var pageNum = 1 * FetchNum;
+		if (beginNum &amp;gt; totalCnt) return &amp;quot;&amp;quot;;
+		var EndNum = beginNum + pageNum;
+		if (EndNum &amp;gt; totalCnt) EndNum = totalCnt;
+		var cnt = 0;
+		for (var i=beginNum;i&amp;lt;EndNum;i++) {
+			cnt ++;
+			if(typ == 1) {
+				var xz = ds.getStringAt(i,&amp;quot;InsuKind&amp;quot;);
+				var BkAcctId = &amp;quot;&amp;quot;;
+				var BkAcctName = &amp;quot;&amp;quot;;
+				var sql = &amp;quot;&amp;quot;;
+				sql = &amp;quot;select yhzh,yhhm from cw_bkdyhb where sbh =&amp;apos;&amp;quot;+hdrMap.get(&amp;quot;sbh&amp;quot;)+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;zth&amp;quot;)+&amp;quot;&amp;apos; and bz = &amp;apos;12&amp;apos;	
+						and (mrtstzyhbz= &amp;apos;217&amp;apos; or mrtstzyhbz=&amp;apos;218&amp;apos;)
+						and yhzl in (select yhbm from cw_dfdsb_yszl where sbh = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;sbh&amp;quot;)+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;zth&amp;quot;)+&amp;quot;&amp;apos; and yszl_yhjgdm = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;SenderId&amp;quot;)+&amp;quot;&amp;apos;)&amp;quot;;							
+				var tmpds = db.QuerySQL(sql);
+				if(tmpds.getRowCount() &amp;gt; 0) {
+					BkAcctId = tmpds.getStringAt(0,&amp;quot;yhzh&amp;quot;);
+					BkAcctName = tmpds.getStringAt(0,&amp;quot;yhhm&amp;quot;);
+					if(BkAcctId == &amp;quot;&amp;quot; || BkAcctName == &amp;quot;&amp;quot;) {
+						throw new Exception(&amp;quot;A查询社保收款银行出错,sql=&amp;quot;+sql);
+					}
+				}else {
+					sql = &amp;quot;select yhzh,yhhm from cw_bkdyhb where sbh =&amp;apos;&amp;quot;+hdrMap.get(&amp;quot;sbh&amp;quot;)+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;zth&amp;quot;)+&amp;quot;&amp;apos; and bz = &amp;apos;12&amp;apos;	
+						and (mrtstzyhbz= &amp;apos;227&amp;apos; or mrtstzyhbz=&amp;apos;228&amp;apos;)
+						and yhzl in (select yhbm from cw_dfdsb_yszl where sbh = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;sbh&amp;quot;)+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;zth&amp;quot;)+&amp;quot;&amp;apos; and yszl_yhjgdm = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;SenderId&amp;quot;)+&amp;quot;&amp;apos;)&amp;quot;;	
+					tmpds = db.QuerySQL(sql);
+					if(tmpds.getRowCount() &amp;gt; 0) {
+						BkAcctId = tmpds.getStringAt(0,&amp;quot;yhzh&amp;quot;);
+						BkAcctName = tmpds.getStringAt(0,&amp;quot;yhhm&amp;quot;);
+						if(BkAcctId == &amp;quot;&amp;quot; || BkAcctName == &amp;quot;&amp;quot;) {
+							throw new Exception(&amp;quot;B查询社保收款银行出错,sql=&amp;quot;+sql);
+						}
+					}
+					else {
+						throw new Exception(&amp;quot;C查询社保收款银行出错,sql=&amp;quot;+sql);
+					}					
+				}
+				var loop = &amp;quot;&amp;lt;Loop&amp;gt;
+				  	 	&amp;lt;ContriNoticeId&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;ContriNoticeId&amp;quot;)+&amp;quot;&amp;lt;/ContriNoticeId&amp;gt;
+			       			&amp;quot;+SiAcct+&amp;quot;
+					            &amp;lt;InsuKind&amp;gt;&amp;quot;+xz+&amp;quot;&amp;lt;/InsuKind&amp;gt;
+					            &amp;lt;ContriType&amp;gt;正常应缴&amp;lt;/ContriType&amp;gt;
+					            &amp;lt;Amt1 Ccy =\&amp;quot;CNY\&amp;quot;&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;Amt1&amp;quot;)+&amp;quot;&amp;lt;/Amt1&amp;gt;
+					            &amp;lt;Dgst&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;Dgst&amp;quot;)+&amp;quot;&amp;lt;/Dgst&amp;gt;
+					            &amp;lt;BkAcct&amp;gt;
+					       		&amp;lt;Id&amp;gt;&amp;quot;+BkAcctId+&amp;quot;&amp;lt;/Id&amp;gt;
+					       		&amp;lt;Name&amp;gt;&amp;quot;+BkAcctName+&amp;quot;&amp;lt;/Name&amp;gt;
+					            &amp;lt;/BkAcct&amp;gt;
+                                                  &amp;lt;FeeDate&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;FeeDate&amp;quot;)+&amp;quot;&amp;lt;/FeeDate&amp;gt;
+					            &amp;lt;FeeSerno&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;ContriNoticeId&amp;quot;)+&amp;quot;&amp;lt;/FeeSerno&amp;gt;
+					            &amp;lt;FeeSeq&amp;gt;1&amp;lt;/FeeSeq&amp;gt;
+			      		&amp;lt;/Loop&amp;gt;\n&amp;quot;;
+			      		LoopCount += loop;
+		      	}
+		      	//个人
+		      	else {
+				var xz = ds.getStringAt(i,&amp;quot;InsuKind&amp;quot;);
+				var BkAcctId = &amp;quot;&amp;quot;;
+				var BkAcctName = &amp;quot;&amp;quot;;	
+				var sql = &amp;quot;&amp;quot;;
+				//2017-09-19修为过渡户帐户
+//				sql = &amp;quot;select yhzh,yhhm from cw_bkdyhb where sbh =&amp;apos;&amp;quot;+hdrMap.get(&amp;quot;sbh&amp;quot;)+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;zth&amp;quot;)+&amp;quot;&amp;apos; and bz = &amp;apos;12&amp;apos;	
+//						and (mrtstzyhbz= &amp;apos;217&amp;apos; or mrtstzyhbz=&amp;apos;218&amp;apos;)
+//						and yhzl in (select yhbm from cw_dfdsb_yszl where sbh = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;sbh&amp;quot;)+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;zth&amp;quot;)+&amp;quot;&amp;apos; and yszl_yhjgdm = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;SenderId&amp;quot;)+&amp;quot;&amp;apos;)&amp;quot;;	
+				sql = &amp;quot;select yhzh,yhhm from cw_bkdyhb where sbh =&amp;apos;&amp;quot;+hdrMap.get(&amp;quot;sbh&amp;quot;)+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;zth&amp;quot;)+&amp;quot;&amp;apos; and bz = &amp;apos;13&amp;apos;	
+						and mrtstzyhbz= &amp;apos;200&amp;apos; 
+						and yhzl in (select yhbm from cw_dfdsb_yszl where sbh = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;sbh&amp;quot;)+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;zth&amp;quot;)+&amp;quot;&amp;apos; and yszl_yhjgdm = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;SenderId&amp;quot;)+&amp;quot;&amp;apos;)&amp;quot;;	
+				  						
+				var tmpds = db.QuerySQL(sql);
+				if(tmpds.getRowCount() &amp;gt; 0) {
+					BkAcctId = tmpds.getStringAt(0,&amp;quot;yhzh&amp;quot;);
+					BkAcctName = tmpds.getStringAt(0,&amp;quot;yhhm&amp;quot;);
+					if(BkAcctId == &amp;quot;&amp;quot; || BkAcctName == &amp;quot;&amp;quot;) {
+						throw new Exception(&amp;quot;1、查询社保收款银行出错,sql=&amp;quot;+sql);
+					}
+				}else {
+					//2017-09-19修为过渡户帐户
+//					sql = &amp;quot;select yhzh,yhhm from cw_bkdyhb where sbh =&amp;apos;&amp;quot;+hdrMap.get(&amp;quot;sbh&amp;quot;)+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;zth&amp;quot;)+&amp;quot;&amp;apos; and bz = &amp;apos;12&amp;apos;	
+//						and (mrtstzyhbz= &amp;apos;227&amp;apos; or mrtstzyhbz=&amp;apos;228&amp;apos;)
+//						and yhzl in (select yhbm from cw_dfdsb_yszl where sbh = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;sbh&amp;quot;)+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;zth&amp;quot;)+&amp;quot;&amp;apos; and yszl_yhjgdm = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;SenderId&amp;quot;)+&amp;quot;&amp;apos;)&amp;quot;;	
+					sql = &amp;quot;select yhzh,yhhm from cw_bkdyhb where sbh =&amp;apos;&amp;quot;+hdrMap.get(&amp;quot;sbh&amp;quot;)+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;zth&amp;quot;)+&amp;quot;&amp;apos; and bz = &amp;apos;13&amp;apos;	
+						and mrtstzyhbz= &amp;apos;200&amp;apos;
+						and yhzl in (select yhbm from cw_dfdsb_yszl where sbh = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;sbh&amp;quot;)+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;zth&amp;quot;)+&amp;quot;&amp;apos; and yszl_yhjgdm = &amp;apos;&amp;quot;+hdrMap.get(&amp;quot;SenderId&amp;quot;)+&amp;quot;&amp;apos;)&amp;quot;;						
+					tmpds = db.QuerySQL(sql);
+					if(tmpds.getRowCount() &amp;gt; 0) {
+						BkAcctId = tmpds.getStringAt(0,&amp;quot;yhzh&amp;quot;);
+						BkAcctName = tmpds.getStringAt(0,&amp;quot;yhhm&amp;quot;);
+						if(BkAcctId == &amp;quot;&amp;quot; || BkAcctName == &amp;quot;&amp;quot;) {
+							throw new Exception(&amp;quot;1、查询社保收款银行出错,sql=&amp;quot;+sql);
+						}
+					}
+					else {
+						throw new Exception(&amp;quot;2、查询社保收款银行出错,sql=&amp;quot;+sql);
+					}					
+				}														      	
+				var loop = &amp;quot;&amp;lt;Loop&amp;gt;
+				  	 	&amp;lt;ContriNoticeId&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;ContriNoticeId&amp;quot;)+&amp;quot;&amp;lt;/ContriNoticeId&amp;gt;
+			       			&amp;quot;+SiAcct+&amp;quot;
+					            &amp;lt;InsuKind&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;InsuKind&amp;quot;)+&amp;quot;&amp;lt;/InsuKind&amp;gt;
+					            &amp;lt;ContriType&amp;gt;正常应缴&amp;lt;/ContriType&amp;gt;
+					            &amp;lt;Amt1 Ccy =\&amp;quot;CNY\&amp;quot;&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;Amt1&amp;quot;)+&amp;quot;&amp;lt;/Amt1&amp;gt;
+					            &amp;lt;Dgst&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;Dgst&amp;quot;)+&amp;quot;&amp;lt;/Dgst&amp;gt;
+					            &amp;lt;BkAcct&amp;gt;
+					       		&amp;lt;Id&amp;gt;&amp;quot;+BkAcctId+&amp;quot;&amp;lt;/Id&amp;gt;
+					       		&amp;lt;Name&amp;gt;&amp;quot;+BkAcctName+&amp;quot;&amp;lt;/Name&amp;gt;
+					            &amp;lt;/BkAcct&amp;gt;					            
+					            &amp;lt;FeeDate&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;FeeDate&amp;quot;)+&amp;quot;&amp;lt;/FeeDate&amp;gt;
+					            &amp;lt;FeeSerno&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;ContriNoticeId&amp;quot;)+&amp;quot;&amp;lt;/FeeSerno&amp;gt;
+					            &amp;lt;FeeSeq&amp;gt;1&amp;lt;/FeeSeq&amp;gt;
+			      		&amp;lt;/Loop&amp;gt;\n&amp;quot;;
+			      		LoopCount += loop;		      		
+		      	}	
+		}
+		
+		LoopCount = pub.EAFunc.Replace(LoopCount,&amp;quot;[%LoopCount]&amp;quot;,&amp;quot;&amp;quot;+cnt);
+		LoopCount = pub.EAFunc.Replace(LoopCount,&amp;quot;[%totalcount]&amp;quot;,&amp;quot;&amp;quot;+totalCnt);
+		return LoopCount;
+	}
+	catch(e) {
+		throw new Exception(e);
+	}
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// 查询已缴费信息
+//
+//function F0213003()
+function F0213003(requestXml)
+{
+	try {
+		var service = new SBCW_sbcwService();
+		var map = new java.util.HashMap();
+		map = service.parseMsgText(requestXml,true); //记录接收消息日志
+		
+		var wscall = new x_EAWebServiceCall();
+		var responseXml = parseMsgText_0213003(requestXml,map);	
+		service.parseMsgText(responseXml,true); //记录发送消息日志
+		return responseXml;		
+	}catch(e) {
+		return e.toString();
+	}
+}
+
+// 查询应缴费金额业务处理方法
+// 返回响应的报文XML
+function parseMsgText_0213003(msgText,hdrMap)
+{		
+	var responseXml = &amp;quot;&amp;quot;;
+	//响应报文信息
+	var respText = &amp;quot;&amp;lt;MsgText&amp;gt;
+				  &amp;lt;GrpHdr&amp;gt;
+				    &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+				    &amp;lt;Ref&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Ref&amp;quot;)+&amp;quot;&amp;lt;/Ref&amp;gt;
+				    &amp;lt;BusCd&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;BusCd&amp;quot;)+&amp;quot;&amp;lt;/BusCd&amp;gt;
+				    &amp;lt;TradSrc&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;TradSrc&amp;quot;)+&amp;quot;&amp;lt;/TradSrc&amp;gt;
+				    &amp;lt;Sender&amp;gt;
+				      &amp;lt;InstId&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;SenderId&amp;quot;)+&amp;quot;&amp;lt;/InstId&amp;gt;
+				    &amp;lt;/Sender&amp;gt;
+				    &amp;lt;Recver&amp;gt;
+				      &amp;lt;InstId&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;RecverId&amp;quot;)+&amp;quot;&amp;lt;/InstId&amp;gt;
+				    &amp;lt;/Recver&amp;gt;
+				    &amp;lt;Resend&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Resend&amp;quot;)+&amp;quot;&amp;lt;/Resend&amp;gt;
+				    &amp;lt;Date&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Date&amp;quot;)+&amp;quot;&amp;lt;/Date&amp;gt;
+				    &amp;lt;Time&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Time&amp;quot;)+&amp;quot;&amp;lt;/Time&amp;gt;
+				    &amp;lt;Dgst&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Dgst&amp;quot;)+&amp;quot;&amp;lt;/Dgst&amp;gt;
+				    &amp;lt;Rst&amp;gt;
+					    &amp;lt;Code&amp;gt;0000&amp;lt;/Code&amp;gt;
+					    &amp;lt;Info&amp;gt;已处理&amp;lt;/Info&amp;gt;
+				  	&amp;lt;/Rst&amp;gt;
+				  &amp;lt;/GrpHdr&amp;gt;
+				  &amp;lt;BusiText&amp;gt;
+				  	&amp;lt;Rst&amp;gt;
+					    &amp;lt;Code&amp;gt;[%BusiRstCode]&amp;lt;/Code&amp;gt;
+					    &amp;lt;Info&amp;gt;[%BusiRstInfo]&amp;lt;/Info&amp;gt;
+				  	&amp;lt;/Rst&amp;gt;
+					  &amp;lt;BkSeq&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;BkSeq&amp;quot;)+&amp;quot;&amp;lt;/BkSeq&amp;gt;
+					  &amp;lt;SiSeq&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;SiSeq&amp;quot;)+&amp;quot;&amp;lt;/SiSeq&amp;gt;
+					  [%LoopCount]
+				  &amp;lt;/BusiText&amp;gt;
+				&amp;lt;/MsgText&amp;gt;&amp;quot;;
+	
+	var db = null;
+	try {		
+		db = new pub.EADatabase();
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstCode]&amp;quot;,&amp;quot;2001&amp;quot;);
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstInfo]&amp;quot;,&amp;quot;查询不到缴费信息&amp;quot;);
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,&amp;quot;&amp;quot;);
+		responseXml += respText;
+		return responseXml;																
+		var dbf = parsers.DocumentBuilderFactory.newInstance();
+		var documentbuilder = dbf.newDocumentBuilder();
+		var document = documentbuilder.parse(new sax.InputSource(new io.StringReader(msgText))); 
+		var nodelist = document.getElementsByTagName(&amp;quot;MsgText&amp;quot;);                  
+		var node = nodelist.item(0);	
+		
+		var RecverInstId = &amp;quot;&amp;quot;;
+		try { RecverInstId = node.getElementsByTagName(&amp;quot;GrpHdr&amp;quot;).item(0).getElementsByTagName(&amp;quot;Recver&amp;quot;).item(0).getElementsByTagName(&amp;quot;InstId&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		
+		var SiId = &amp;quot;&amp;quot;; //参保对象信息
+		try { SiId = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;SiAcct&amp;quot;).item(0).getElementsByTagName(&amp;quot;SiId&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		
+		var ContriNoticeId = &amp;quot;&amp;quot;; //缴费单据号
+		try { ContriNoticeId = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;ContriNoticeId&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		
+		var StartDate = &amp;quot;&amp;quot;; //查询起始年月
+		var EndDate = &amp;quot;&amp;quot;; //查询结束年月
+		try { StartDate = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;StartDate&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		try { EndDate = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;EndDate&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		var BeginNum = &amp;quot;&amp;quot;; //查询起始序号
+		var FetchNum = &amp;quot;&amp;quot;; //每次查询获取记录数
+		try { BeginNum = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;BeginNum&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		try { FetchNum = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;FetchNum&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		
+		var BusiRstCode = &amp;quot;0000&amp;quot;;
+		var BusiRstInfo = &amp;quot;交易成功&amp;quot;;
+		
+		var Name = &amp;quot;&amp;quot;;		//客户姓名
+		var CertType = &amp;quot;&amp;quot;;	//证件类型
+		var CertId = &amp;quot;&amp;quot;;	//证件号码
+		var Type = &amp;quot;&amp;quot;;		//客户类型
+		var sql = &amp;quot;&amp;quot;; 		//单位查询AB01 个人查询AC01
+		
+		//个人信息	
+		var custNode = null;
+		try { custNode = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Cust&amp;quot;).item(0); } catch(e) {}
+		if (custNode != null) {
+			Name = custNode.getElementsByTagName(&amp;quot;Name&amp;quot;).item(0).getFirstChild().getNodeValue();
+			CertType = custNode.getElementsByTagName(&amp;quot;CertType&amp;quot;).item(0).getFirstChild().getNodeValue();
+			CertId = custNode.getElementsByTagName(&amp;quot;CertId&amp;quot;).item(0).getFirstChild().getNodeValue();
+			Type = custNode.getElementsByTagName(&amp;quot;Type&amp;quot;).item(0).getFirstChild().getNodeValue();
+			
+			sql = &amp;quot;select * from AC01 where aac001=&amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos; and aac003=&amp;apos;&amp;quot;+Name+&amp;quot;&amp;apos; and AAC147=&amp;apos;&amp;quot;+CertId +&amp;quot;&amp;apos;&amp;quot;;
+			var ds = db.QuerySQL(sql);
+			var SiAcct = &amp;quot;&amp;quot;;
+			if (ds.getRowCount() &amp;gt; 0) {
+				var RegionName = &amp;quot;&amp;quot;;
+				sql = &amp;quot;select aaa103 from aa10 where aaa100=&amp;apos;AAB034&amp;apos; and aaa102=&amp;apos;&amp;quot;+ds.getStringAt(0,&amp;quot;AAB301&amp;quot;)+&amp;quot;&amp;apos;&amp;quot;;
+				var tmpds = db.QuerySQL(sql);
+				if (tmpds.getRowCount() &amp;gt; 0) {
+					RegionName = tmpds.getStringAt(0,&amp;quot;AAA103&amp;quot;);
+				}
+				//参保对象信息
+				SiAcct = &amp;quot;&amp;lt;SiAcct&amp;gt;
+					    &amp;lt;SiCode&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAC002&amp;quot;)+&amp;quot;&amp;lt;/SiCode&amp;gt;
+					    &amp;lt;SiId&amp;gt;&amp;quot;+SiId+&amp;quot;&amp;lt;/SiId&amp;gt;
+					    &amp;lt;CardNO&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAZ500&amp;quot;)+&amp;quot;&amp;lt;/CardNO&amp;gt;
+					    &amp;lt;Name&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAC003&amp;quot;)+&amp;quot;&amp;lt;/Name&amp;gt;
+					    &amp;lt;RegionName&amp;gt;&amp;quot;+RegionName+&amp;quot;&amp;lt;/RegionName&amp;gt;
+					  &amp;lt;/SiAcct&amp;gt;&amp;quot;;
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%SiAcct]&amp;quot;,SiAcct);
+				
+				var LoopCount = &amp;quot;&amp;quot;;
+//				sql = &amp;quot;select * from ac95 where 1=1 &amp;quot;; //个人查询是查询业务的表 待定！
+//				if (ContriNoticeId  != &amp;quot;&amp;quot;) { //按缴费单号查询
+//					sql += &amp;quot; and BAZ611=&amp;apos;&amp;quot;+ContriNoticeId +&amp;quot;&amp;apos;&amp;quot;;
+//				}
+//				else { 
+//					sql += &amp;quot;  and aac001=&amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos; and AAE135=&amp;apos;&amp;quot;+CertId+&amp;quot;&amp;apos;&amp;quot;;
+//				}
+//				//查询时间范围
+//				if (StartDate != &amp;quot;&amp;quot; &amp;&amp; EndDate != &amp;quot;&amp;quot;) {
+//					sql += &amp;quot; and substr(AAE002,0,6)&amp;gt;=&amp;apos;&amp;quot;+StartDate+&amp;quot;&amp;apos; and substr(AAE002,8,6)&amp;lt;=&amp;apos;&amp;quot;+EndDate+&amp;quot;&amp;apos;&amp;quot;;
+//				}
+//				
+//				//业务类型
+//				sql += &amp;quot; and AAB034=&amp;apos;&amp;quot;+RecverInstId+&amp;quot;&amp;apos; and BAC005  in (select aaa102 from aa10 where aaa100=&amp;apos;YWLX&amp;apos; and szzt=&amp;apos;1&amp;apos;)&amp;quot;;
+//				//帐套
+//				sql += &amp;quot; and zth in (select zth from cw_ztb where yszl_sbjgdm=&amp;apos;&amp;quot;+RecverInstId+&amp;quot;&amp;apos;)&amp;quot;;
+//				
+//				//排序
+				
+				
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,LoopCount);
+			}
+			else {
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,&amp;quot;&amp;quot;);
+			}
+		}
+		
+		//单位信息
+		var dwNode = null;
+		try { dwNode = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Enterprise&amp;quot;).item(0); } catch(e) {}
+		if (dwNode != null) {
+			Name = dwNode.getElementsByTagName(&amp;quot;Name&amp;quot;).item(0).getFirstChild().getNodeValue();
+			CertType = dwNode.getElementsByTagName(&amp;quot;CertType&amp;quot;).item(0).getFirstChild().getNodeValue();
+			CertId = dwNode.getElementsByTagName(&amp;quot;CertId&amp;quot;).item(0).getFirstChild().getNodeValue();
+			Type = dwNode.getElementsByTagName(&amp;quot;Type&amp;quot;).item(0).getFirstChild().getNodeValue();
+			
+			sql = &amp;quot;select * from AB01 where aab001=&amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos;&amp;quot;;
+			var ds = db.QuerySQL(sql);
+			var SiAcct = &amp;quot;&amp;quot;;
+			if (ds.getRowCount() &amp;gt; 0) {
+				//参保对象信息
+				SiAcct = &amp;quot;&amp;lt;SiAcct&amp;gt;
+					    &amp;lt;SiId&amp;gt;&amp;quot;+SiId+&amp;quot;&amp;lt;/SiId&amp;gt;
+					    &amp;lt;Name&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAB004&amp;quot;)+&amp;quot;&amp;lt;/Name&amp;gt;
+					  &amp;lt;/SiAcct&amp;gt;&amp;quot;;
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%SiAcct]&amp;quot;,SiAcct);
+				
+				//已缴费信息
+				sql = &amp;quot;select * from v_si_djb_tmp where 1=1 &amp;quot;; 
+				if (ContriNoticeId  != &amp;quot;&amp;quot;) { //按缴费单号查询
+					sql += &amp;quot; and djh=&amp;apos;&amp;quot;+ContriNoticeId+&amp;quot;&amp;apos;&amp;quot;;
+				}
+				else { 
+					sql += &amp;quot;  and dwbh=&amp;apos;&amp;quot;+SiId+&amp;quot;&amp;apos;&amp;quot;;
+				}
+				//查询时间范围
+				if (StartDate != &amp;quot;&amp;quot; &amp;&amp; EndDate != &amp;quot;&amp;quot;) {
+					sql += &amp;quot; and ym1&amp;gt;=&amp;apos;&amp;quot;+StartDate+&amp;quot;&amp;apos; and ym2&amp;lt;=&amp;apos;&amp;quot;+EndDate+&amp;quot;&amp;apos;&amp;quot;;
+				}
+				
+				//业务类型
+				sql += &amp;quot; and sbjgdm=&amp;apos;&amp;quot;+RecverInstId+&amp;quot;&amp;apos; and ywlx  in (select aaa102 from aa10 where aaa100=&amp;apos;YWLX&amp;apos; and szzt=&amp;apos;1&amp;apos;)&amp;quot;;
+				//帐套
+				sql += &amp;quot; and zth in (select zth from cw_ztb where yszl_sbjgdm=&amp;apos;&amp;quot;+RecverInstId+&amp;quot;&amp;apos;)&amp;quot;;
+				//已缴
+				sql += &amp;quot; and lsh is not null&amp;quot;;
+				
+				//排序
+				sql += &amp;quot; order by dwbh,djh,xh&amp;quot;;
+				
+				var mysql = &amp;quot;select djh ContriNoticeId,
+					       dwbh SiId,
+					       yhzh1 BkAcctId,
+					       zy Dgst,
+					       lxbh,
+					       scny FeeDate,
+					       ym1 FeeStartDate,ym2 FeeEndDate,
+			                 to_char(min(RZSJ),&amp;apos;yyyymmdd&amp;apos;) BusiDate,
+			                 to_char(min(fzsj),&amp;apos;yyyymmddhh24mmss&amp;apos;) BusiTime,
+			                 jsfs TransMode,
+					       AAE140 InsuKind,
+					       sum(je1+je2+je3+je4+je5+je6+je7+je8+je9+je10+je11+je12+je13+je14+je15) Amt1,
+					       sum(je1+je2+je3+je4+je5) Amt2,
+					       sum(je6+je7+je8+je9+je10) Amt3,
+					       sum(je11+je12+je13+je14) Amt4,
+					       sum(je15) Amt5
+					from (&amp;quot;+sql+&amp;quot;) 
+					group by djh,dwbh,yhzh1,zy,lxbh,scny,ym1,ym2,jsfs,AAE140
+					order by djh,AAE140&amp;quot;;
+				
+				var LoopCount = getLoop_0213003(db,SiAcct,mysql,BeginNum,FetchNum);
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,LoopCount);
+			}
+			else {
+				respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,&amp;quot;&amp;quot;);
+			}
+		}
+
+		
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstCode]&amp;quot;,BusiRstCode);
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstInfo]&amp;quot;,BusiRstInfo);
+	}
+	catch(e) {
+		//return e.toString();
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstCode]&amp;quot;,&amp;quot;0001&amp;quot;);
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstInfo]&amp;quot;,e.toString());
+		if (db != null) db.Rollback();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+
+	responseXml += respText;
+
+	return responseXml;
+	
+}
+
+function getLoop_0213003(db,SiAcct,mysql,BeginNum,FetchNum)
+{
+	try {
+		var LoopCount = &amp;quot;&amp;lt;LoopCount&amp;gt;[%LoopCount]&amp;lt;/LoopCount&amp;gt;\n&amp;quot;;
+		var ds = db.QuerySQL(mysql);
+		var totalCnt = ds.getRowCount();
+		var beginNum = 1 * BeginNum;
+		var pageNum = 1 * FetchNum;
+		if (beginNum &amp;gt; totalCnt) return &amp;quot;&amp;quot;;
+		var EndNum = beginNum + pageNum;
+		if (EndNum &amp;gt; totalCnt) EndNum = totalCnt;
+		var cnt = 0;
+		for (var i=beginNum;i&amp;lt;EndNum;i++) {
+			cnt ++;
+			var loop = &amp;quot;&amp;lt;Loop&amp;gt;
+			  	 	&amp;lt;ContriNoticeId&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;ContriNoticeId&amp;quot;)+&amp;quot;&amp;lt;/ContriNoticeId&amp;gt;
+		       			&amp;quot;+SiAcct+&amp;quot;
+				            &amp;lt;InsuKind&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;InsuKind&amp;quot;)+&amp;quot;&amp;lt;/InsuKind&amp;gt;
+				            &amp;lt;ContriType&amp;gt;正常应缴&amp;lt;/ContriType&amp;gt;
+				            &amp;lt;Amt1 Ccy =\&amp;quot;CNY\&amp;quot;&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;Amt1&amp;quot;)+&amp;quot;&amp;lt;/Amt1&amp;gt;
+				            &amp;lt;Amt3 Ccy =\&amp;quot;CNY\&amp;quot;&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;Amt2&amp;quot;)+&amp;quot;&amp;lt;/Amt3&amp;gt;
+				            &amp;lt;Amt4 Ccy =\&amp;quot;CNY\&amp;quot;&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;Amt3&amp;quot;)+&amp;quot;&amp;lt;/Amt4&amp;gt;
+				            &amp;lt;Amt5 Ccy =\&amp;quot;CNY\&amp;quot;&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;Amt5&amp;quot;)+&amp;quot;&amp;lt;/Amt5&amp;gt;
+				            &amp;lt;Dgst&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;Dgst&amp;quot;)+&amp;quot;&amp;lt;/Dgst&amp;gt;
+				            &amp;lt;BkAcct&amp;gt;
+				       		&amp;lt;Id&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;BkAcctId&amp;quot;)+&amp;quot;&amp;lt;/Id&amp;gt;
+				            &amp;lt;/BkAcct&amp;gt;
+				            &amp;lt;FeeStartDate&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;FeeStartDate&amp;quot;)+&amp;quot;&amp;lt;/FeeStartDate&amp;gt;
+				            &amp;lt;FeeEndDate&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;FeeEndDate&amp;quot;)+&amp;quot;&amp;lt;/FeeEndDate&amp;gt;
+				            &amp;lt;BusiDate&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;BusiDate&amp;quot;)+&amp;quot;&amp;lt;/BusiDate&amp;gt;
+				            &amp;lt;BusiTime&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;BusiTime&amp;quot;)+&amp;quot;&amp;lt;/BusiTime&amp;gt;
+				                  &amp;lt;TransMode&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;TransMode&amp;quot;)+&amp;quot;&amp;lt;/TransMode&amp;gt;
+				                &amp;lt;FeeDate&amp;gt;&amp;quot;+ds.getStringAt(i,&amp;quot;FeeDate&amp;quot;)+&amp;quot;&amp;lt;/FeeDate&amp;gt;
+		      		&amp;lt;/Loop&amp;gt;\n&amp;quot;;
+		      	LoopCount += loop;
+		}
+		
+		LoopCount = pub.EAFunc.Replace(LoopCount,&amp;quot;[%LoopCount]&amp;quot;,&amp;quot;&amp;quot;+cnt);
+		
+		return LoopCount;
+	}
+	catch(e) {
+		return e.toString();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//
+// 社保账户变更明细查询
+//
+//function F0213006()
+function F0213006(requestXml)
+{
+	try {
+		var service = new SBCW_sbcwService();
+		var map = new java.util.HashMap();
+		map = service.parseMsgText(requestXml,false); //记录接收消息日志
+		
+		var wscall = new x_EAWebServiceCall();
+		var responseXml = parseMsgText_0213006(requestXml,map);	
+		service.parseMsgText(responseXml,true); //记录发送消息日志
+		return responseXml;		
+	}catch(e) {
+		return e.toString();
+	}
+}
+
+
+// 社保账户变更明细查询业务处理方法
+// 返回响应的报文XML
+function parseMsgText_0213006(msgText,hdrMap)
+{		
+	var responseXml = &amp;quot;&amp;quot;;
+	//响应报文信息
+	var respText = &amp;quot;&amp;lt;MsgText&amp;gt;
+				  &amp;lt;GrpHdr&amp;gt;
+				    &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+				    &amp;lt;Ref&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Ref&amp;quot;)+&amp;quot;&amp;lt;/Ref&amp;gt;
+				    &amp;lt;BusCd&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;BusCd&amp;quot;)+&amp;quot;&amp;lt;/BusCd&amp;gt;
+				    &amp;lt;TradSrc&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;TradSrc&amp;quot;)+&amp;quot;&amp;lt;/TradSrc&amp;gt;
+				    &amp;lt;Sender&amp;gt;
+				      &amp;lt;InstId&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;SenderId&amp;quot;)+&amp;quot;&amp;lt;/InstId&amp;gt;
+				    &amp;lt;/Sender&amp;gt;
+				    &amp;lt;Recver&amp;gt;
+				      &amp;lt;InstId&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;RecverId&amp;quot;)+&amp;quot;&amp;lt;/InstId&amp;gt;
+				    &amp;lt;/Recver&amp;gt;
+				    &amp;lt;Resend&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Resend&amp;quot;)+&amp;quot;&amp;lt;/Resend&amp;gt;
+				    &amp;lt;Date&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Date&amp;quot;)+&amp;quot;&amp;lt;/Date&amp;gt;
+				    &amp;lt;Time&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Time&amp;quot;)+&amp;quot;&amp;lt;/Time&amp;gt;
+				    &amp;lt;Dgst&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Dgst&amp;quot;)+&amp;quot;&amp;lt;/Dgst&amp;gt;
+				    &amp;lt;Rst&amp;gt;
+					    &amp;lt;Code&amp;gt;0000&amp;lt;/Code&amp;gt;
+					    &amp;lt;Info&amp;gt;已处理&amp;lt;/Info&amp;gt;
+				  	&amp;lt;/Rst&amp;gt;
+				  &amp;lt;/GrpHdr&amp;gt;
+				  &amp;lt;BusiText&amp;gt;
+				  	&amp;lt;Rst&amp;gt;
+					    &amp;lt;Code&amp;gt;[%BusiRstCode]&amp;lt;/Code&amp;gt;
+					    &amp;lt;Info&amp;gt;[%BusiRstInfo]&amp;lt;/Info&amp;gt;
+				  	&amp;lt;/Rst&amp;gt;
+					  &amp;lt;BkSeq&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;BkSeq&amp;quot;)+&amp;quot;&amp;lt;/BkSeq&amp;gt;
+					  &amp;lt;SiSeq&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;SiSeq&amp;quot;)+&amp;quot;&amp;lt;/SiSeq&amp;gt;
+					  [%LoopCount]
+				  &amp;lt;/BusiText&amp;gt;
+				&amp;lt;/MsgText&amp;gt;&amp;quot;;
+	
+	var db = null;
+	try {		
+		db = new pub.EADatabase();
+													
+		var dbf = parsers.DocumentBuilderFactory.newInstance();
+		var documentbuilder = dbf.newDocumentBuilder();
+		var document = documentbuilder.parse(new sax.InputSource(new io.StringReader(msgText))); 
+		var nodelist = document.getElementsByTagName(&amp;quot;MsgText&amp;quot;);                  
+		var node = nodelist.item(0);	
+		
+		var RecverInstId = &amp;quot;&amp;quot;;
+		try { RecverInstId = node.getElementsByTagName(&amp;quot;GrpHdr&amp;quot;).item(0).getElementsByTagName(&amp;quot;Recver&amp;quot;).item(0).getElementsByTagName(&amp;quot;InstId&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		
+		var SiId = &amp;quot;&amp;quot;; //参保对象信息
+		try { SiId = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;SiAcct&amp;quot;).item(0).getElementsByTagName(&amp;quot;SiId&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		
+		var ContriNoticeId = &amp;quot;&amp;quot;; //缴费单据号
+		try { ContriNoticeId = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;ContriNoticeId&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		
+		var StartDate = &amp;quot;&amp;quot;; //查询起始年月
+		var EndDate = &amp;quot;&amp;quot;; //查询结束年月
+		try { StartDate = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;StartDate&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		try { EndDate = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;EndDate&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		var BeginNum = &amp;quot;&amp;quot;; //查询起始序号
+		var FetchNum = &amp;quot;&amp;quot;; //每次查询获取记录数
+		try { BeginNum = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;BeginNum&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		try { FetchNum = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;FetchNum&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		
+		var BusiRstCode = &amp;quot;0000&amp;quot;;
+		var BusiRstInfo = &amp;quot;交易成功&amp;quot;;
+		
+		var Name = &amp;quot;&amp;quot;;		//客户姓名
+		var CertType = &amp;quot;&amp;quot;;	//证件类型
+		var CertId = &amp;quot;&amp;quot;;	//证件号码
+		var Type = &amp;quot;&amp;quot;;		//客户类型
+		var sql = &amp;quot;&amp;quot;; 		//单位查询AB01 个人查询AC01
+		
+		//个人信息	
+		var custNode = null;
+		try { custNode = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Cust&amp;quot;).item(0); } catch(e) {}
+		if (custNode != null) {
+			Name = custNode.getElementsByTagName(&amp;quot;Name&amp;quot;).item(0).getFirstChild().getNodeValue();
+			CertType = custNode.getElementsByTagName(&amp;quot;CertType&amp;quot;).item(0).getFirstChild().getNodeValue();
+			CertId = custNode.getElementsByTagName(&amp;quot;CertId&amp;quot;).item(0).getFirstChild().getNodeValue();
+			Type = custNode.getElementsByTagName(&amp;quot;Type&amp;quot;).item(0).getFirstChild().getNodeValue();
+			
+			//参保对象信息
+			respText = pub.EAFunc.Replace(respText,&amp;quot;[%SiAcct]&amp;quot;,SiAcct);				
+			var LoopCount = &amp;quot;&amp;quot;;								
+			respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,LoopCount);
+		}
+		
+		//单位信息
+		var dwNode = null;
+		try { dwNode = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Enterprise&amp;quot;).item(0); } catch(e) {}
+		if (dwNode != null) {
+			Name = dwNode.getElementsByTagName(&amp;quot;Name&amp;quot;).item(0).getFirstChild().getNodeValue();
+			CertType = dwNode.getElementsByTagName(&amp;quot;CertType&amp;quot;).item(0).getFirstChild().getNodeValue();
+			CertId = dwNode.getElementsByTagName(&amp;quot;CertId&amp;quot;).item(0).getFirstChild().getNodeValue();
+			Type = dwNode.getElementsByTagName(&amp;quot;Type&amp;quot;).item(0).getFirstChild().getNodeValue();			
+			var SiAcct = &amp;quot;&amp;quot;;
+			//参保对象信息
+			respText = pub.EAFunc.Replace(respText,&amp;quot;[%SiAcct]&amp;quot;,SiAcct);						
+			var LoopCount = &amp;quot;&amp;quot;;//getLoop_0213006(db,SiAcct,mysql,BeginNum,FetchNum);
+			respText = pub.EAFunc.Replace(respText,&amp;quot;[%LoopCount]&amp;quot;,LoopCount);
+		}
+
+		
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstCode]&amp;quot;,BusiRstCode);
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstInfo]&amp;quot;,BusiRstInfo);
+	}
+	catch(e) {
+		//return e.toString();
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstCode]&amp;quot;,&amp;quot;0001&amp;quot;);
+		respText = pub.EAFunc.Replace(respText,&amp;quot;[%BusiRstInfo]&amp;quot;,e.toString());
+		if (db != null) db.Rollback();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+
+	responseXml += respText;
+
+	return responseXml;
+	
+}
+
+function getLoop_0213006(db,SiAcct,mysql,BeginNum,FetchNum,typ)
+{
+	//typ 0 个人 typ 1 单位
+	try {
+		var LoopCount = &amp;quot;&amp;lt;TotalCount&amp;gt;[%totalcount]&amp;lt;/TotalCount&amp;gt;\n&amp;lt;LoopCount&amp;gt;[%LoopCount]&amp;lt;/LoopCount&amp;gt;\n&amp;quot;;
+		var ds = db.QuerySQL(mysql);
+		var totalCnt = ds.getRowCount();
+		var beginNum = 1 * BeginNum;
+		var pageNum = 1 * FetchNum;
+		if (beginNum &amp;gt; totalCnt) return &amp;quot;&amp;quot;;
+		var EndNum = beginNum + pageNum;
+		if (EndNum &amp;gt; totalCnt) EndNum = totalCnt;
+		var cnt = 0;
+		for (var i=beginNum;i&amp;lt;EndNum;i++) {
+			cnt ++;
+//			if(typ == 1) {
+				var loop = &amp;quot;&amp;lt;Loop&amp;gt;
+				  	 	&amp;lt;ContriNoticeId&amp;gt;01999999&amp;lt;/ContriNoticeId&amp;gt;
+			       			&amp;quot;+SiAcct+&amp;quot;
+					            &amp;lt;InsuKind&amp;gt;120&amp;lt;/InsuKind&amp;gt;
+					            &amp;lt;ContriType&amp;gt;正常应缴&amp;lt;/ContriType&amp;gt;
+					            &amp;lt;BusiType&amp;gt;1&amp;lt;/BusiType&amp;gt;
+					          		&amp;lt;Amt1&amp;gt;100000&amp;lt;/Amt1&amp;gt;
+					          		&amp;lt;Amt3&amp;gt;100000&amp;lt;/Amt3&amp;gt;
+					          		&amp;lt;Amt4&amp;gt;100000&amp;lt;/Amt4&amp;gt;
+					          		&amp;lt;Amt5&amp;gt;100000&amp;lt;/Amt5&amp;gt;					
+					            &amp;lt;Dgst&amp;gt;社保账户变更明细查询&amp;lt;/Dgst&amp;gt;
+							&amp;lt;BusiDate&amp;gt;20160503&amp;lt;/BusiDate&amp;gt;
+			      		&amp;lt;/Loop&amp;gt;\n&amp;quot;;
+			      		LoopCount += loop;
+//		      		}
+		}
+		
+		LoopCount = pub.EAFunc.Replace(LoopCount,&amp;quot;[%LoopCount]&amp;quot;,&amp;quot;&amp;quot;+1);
+		LoopCount = pub.EAFunc.Replace(LoopCount,&amp;quot;[%totalcount]&amp;quot;,&amp;quot;&amp;quot;+1);
+		return LoopCount;
+	}
+	catch(e) {
+		return e.toString();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//
+// 社保账户变更明细查询-
+//
+function F0213006()
+{
+
+}
+
+//写日志
+function writeLog(id,name,percent,percentnote)
+{
+	percentnote = percentnote.toString();
+	percentnote = pub.EAFunc.Replace(percentnote,&amp;quot;&amp;apos;&amp;quot;,&amp;quot;&amp;apos;&amp;apos;&amp;quot;);
+	if(percentnote.length() &amp;gt;= 4000) {
+		percentnote = percentnote.substring(0,3999);
+	}	
+	var sql = &amp;quot;insert into RUNOSTIMER(id,name,percent,percentnote) values (&amp;apos;&amp;quot;+id+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+name+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+percent+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+percentnote+&amp;quot;&amp;apos;)&amp;quot;;
+	pub.EADbTool.ExcecutSQL(sql);
+}
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

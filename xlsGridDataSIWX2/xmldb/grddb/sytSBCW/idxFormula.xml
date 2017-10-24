@@ -1,0 +1,275 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >idxFormula</MWID><NAME >指标取数公式定义</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >idxFormula.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >报表系统</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS >xlsgrid/js/dbhelper.js</EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >initFormula</ID><NAME >初始化报表公式</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE><C10 ></C10></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var repid = &amp;quot;&amp;quot;;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	// 第一步，定义对应数据库的字段
+	// 字段属性： ID,显示列标题,默认值,正则表达式,是否列入查询的字段(=1是)
+	var  fields = &amp;quot;GUID,GUID,sys_guid();&amp;quot;+
+	    &amp;quot;REPID,报表,,.+,1;&amp;quot;+
+	    &amp;quot;INDEXID,指标编号,,.+,1;&amp;quot;+
+	    &amp;quot;-INDEXNAME,指标名称,,.+,1;&amp;quot;+
+	    &amp;quot;INDEXITEMID,指标项编号,,.+,1;&amp;quot;+
+	    &amp;quot;-ITEMNAME,指标项名称,,.+,1;&amp;quot;+
+	    &amp;quot;FORMULA,表达式,,.+,1;&amp;quot;+
+	    &amp;quot;-AUTOSET,..,,,;&amp;quot;+
+	    &amp;quot;NOTE,备注信息,,.+,1;&amp;quot;+
+	    &amp;quot;USEFLG,有效标志,,.+,;&amp;quot;;
+	var where = &amp;quot;&amp;quot;;
+	var orderby = &amp;quot;REPID,INDEXID,INDEXITEMID&amp;quot;;
+	
+	// 字段的列表
+	// 参数1：基表的名称
+	// 参数2：字段列表 格式是通过;分隔不同的字段，每个分隔中使用,来分隔不同的字段属性
+	// 参数3：主键
+	// 参数4：显示空行标志 =true表示如果结果集为空，隐藏开头的两个空行,强制用户点击“新增”，以保证填入默认值
+	// 参数5：查询的表名称，在某些情况下，查询的表名称和基表名称不一样，默认=&amp;quot;&amp;quot;表示查询表名称采用基表名称
+	// 参数6：where条件，是不带where的子句如&amp;quot;ID like &amp;apos;01%&amp;apos;&amp;quot;
+	// 参数7：orederby，是不带order by的子句如&amp;quot;ID,REFID&amp;quot;, 
+	_dbhelper.InitSQL(&amp;quot;FIN_INDEX_FORMULA&amp;quot;,fields,&amp;quot;GUID&amp;quot;,false,&amp;quot;V_FIN_INDEX_FORMULA&amp;quot;,where,orderby);
+	_dbhelper.InitColumnList(fields);
+	_dbhelper.Load(1,1,2,2);
+	
+	// 需要调用该函数，否则按钮不会出来
+	setButton();
+	
+	//_this.SetToolbarString(&amp;quot;示例说明：F(&amp;apos;1018&amp;apos;,&amp;apos;01&amp;apos;)表示F(&amp;apos;指标&amp;apos;,&amp;apos;指标项&amp;apos;)&amp;quot;);
+	
+}
+
+function f_dbeditpostloaddata()
+{
+	_this.SetColWidth(0,3,120);
+	_this.SetColWidth(0,9,20);
+	var listrep =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_FINREP2&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	if (codeid != undefined &amp;&amp; codeid != &amp;quot;&amp;quot;) {
+		repid = codeid;
+	}
+//	var indexList = _this.CreateListValue();
+//	var xml = invokeOSFunc(&amp;quot;getRepIndexList&amp;quot;,&amp;quot;repid=&amp;quot;+repid);
+//	_this.XMLDS_Parse(xml);
+//	for (var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+//		var id = _this.XMLDS_GetString(i,&amp;quot;ID&amp;quot;);
+//		var name = _this.XMLDS_GetString(i,&amp;quot;NAME&amp;quot;);
+//		_this.SetListValue(indexList,id,name);
+//	}
+	
+	for (row = _this.GetMainCellRangeRow1(sheet); row &amp;lt;= _this.GetMainCellRangeRow2(sheet); row ++) {
+		_this.SetToComboBox(&amp;quot;&amp;quot;,sheet,row,3,listrep);
+		_this.SetToBoolBox(sheet,row,11);
+		_this.SetToSelectBox(&amp;quot;&amp;quot;,sheet,row,4,&amp;quot;V_CW_REPINDEX&amp;quot;,&amp;quot;REPID=&amp;quot;+repid);
+		_this.SetToSelectBox(&amp;quot;&amp;quot;,sheet,row,6,&amp;quot;V_FININDEX&amp;quot;,&amp;quot;TYP=2&amp;quot;);
+	}
+
+	_this.SetColWidth(sheet,3,220);
+}
+
+function f_dbeditafternewrow(sheet,nowrow)
+{	
+	_this.SetCellText(sheet,nowrow,11,1);
+	_this.SetCellText(sheet,nowrow,3,codeid);
+	_this.SetCellText(sheet,nowrow,9,&amp;quot;..&amp;quot;);
+}
+
+
+//初始化
+function initFormula()
+{
+	if (repid == &amp;quot;&amp;quot; || repid == undefined) {
+		alert(&amp;quot;请先选择报表！&amp;quot;);
+		return;
+	}
+	
+	if (!confirm(&amp;quot;初始化报表的取数公式，是否继续？&amp;quot;)) return;
+	var ret = invokeOSFunc(&amp;quot;getReportFormula&amp;quot;,&amp;quot;repid=&amp;quot;+repid);
+	if (1*ret &amp;gt;= 0) {
+		alert(&amp;quot;报表取数公式初始化成功！插入公式 &amp;quot;+ret+&amp;quot; 条&amp;quot;);
+		//window.location.href = window.location.href;
+		if (codeid = undefined || codeid == &amp;quot;undefined&amp;quot;) codeid = repid;
+		if (1*ret &amp;gt; 0) {
+			parent.window.selectFL(codeid);
+		}
+	}
+	else {
+		alert(ret);
+	} 
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (sheet == 0) {
+		if (row &amp;gt;= 1) {
+			var rpid = _this.GetCellText(sheet,row,3);
+			if (rpid != &amp;quot;&amp;quot;) {
+				repid = rpid;
+				_this.SetToSelectBox(&amp;quot;&amp;quot;,sheet,row,4,&amp;quot;V_CW_REPINDEX&amp;quot;,&amp;quot;REPID=&amp;quot;+repid);
+			}
+			
+			if (col == 9) {
+				var indexid = _this.GetCellText(sheet,row,4);
+				var indexitemid = _this.GetCellText(sheet,row,6);
+				if (indexid != &amp;quot;&amp;quot; &amp;&amp; indexitemid != &amp;quot;&amp;quot;) {
+					var formula = &amp;quot;F(&amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+indexitemid+&amp;quot;&amp;apos;)&amp;quot;;
+					_this.SetCellText(sheet,row,8,formula);
+				}
+			}
+			
+		}
+		
+	}
+}
+
+//修改单元格内容
+function f_dbeditcellmodify(sheet,row,col,oldvalue,newvalue)
+{
+	if (col == 4) {
+		_sql.querytods(&amp;quot;INDEXINFO&amp;quot;,&amp;quot;INDEXID=&amp;quot;+newvalue);
+		_this.SetCellText(0,row,5,_this.XMLDS_GetString(0,&amp;quot;INDEXNAME&amp;quot;));
+	}
+	else if (col == 6) {
+		_sql.querytods(&amp;quot;INDEXITEMINFO&amp;quot;,&amp;quot;INDEXITEMID=&amp;quot;+newvalue);
+		_this.SetCellText(0,row,7,_this.XMLDS_GetString(0,&amp;quot;ITEMNAME&amp;quot;));
+	}
+}
+
+//SelectBox控件修改单元格内容
+function _thisOnSelectBoxCellModify(sheet,row,col,oldvalue,newvalue,key,where)
+{
+	f_dbeditcellmodify(sheet,row,col,oldvalue,newvalue);
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function getRepIndexList()
+{
+	var sql = &amp;quot;select indexid id,replace(indexnam,&amp;apos;　&amp;apos;,&amp;apos;&amp;apos;) name 
+		from fin_repframe
+		where indexid is not null
+		  and repid=(select mwid from fin_repmodel where reportid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;)
+		order by hc&amp;quot;;
+	var ds = pub.EADbTool.QuerySQL(sql);
+	return ds.GetXml();
+}
+
+
+//取指标值并返回坐标
+function getReportFormula()
+{
+	var db = null;
+	var ret = 0;
+
+	try {
+		db = new pub.EADatabase();
+		var grdid = db.GetSQL(&amp;quot;select grdid from fin_repmodel where reportid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;);
+		var grdxmldb = new xmldb.EAGRDXmlDB(&amp;quot;SBCW&amp;quot;,grdid);
+		var grdcolds = grdxmldb.getGrdColDS();
+		var sql = &amp;quot;select * from fin_repframe where repid=&amp;apos;%s&amp;apos; and sytid=&amp;apos;SBCW&amp;apos; and indexid is not null order by lmh,seqid&amp;quot;.format([grdid]);
+		var ds = db.GetXMLSQL(sql);
+		//循环报表的所有行记录
+		for (var i=0;i&amp;lt;ds.getRowCount();i++) {
+			var indexid = ds.getStringAt(i,&amp;quot;INDEXID&amp;quot;);	//指标
+			var lmh = ds.getStringAt(i,&amp;quot;LMH&amp;quot;);		//所属栏目
+			var grdlmh = 0;
+			//循环所有明细数据列绑定
+			for (var j=0;j&amp;lt;grdcolds.getRowCount();j++) {				
+				var isidx = grdcolds.getStringAt(j,&amp;quot;ISIDX&amp;quot;);
+				//如果是指标列
+				if (isidx == &amp;quot;1&amp;quot;) {
+					grdlmh ++;
+					if (grdlmh == lmh) {
+						//当前栏目的指标项
+						var itemstr = &amp;quot;&amp;quot;;
+						try {
+							itemstr = db.GetSQL(&amp;quot;select idxitmid from (select distinct idxitmid from fin_repframe where repid=&amp;apos;&amp;quot;+grdid+&amp;quot;&amp;apos; and sytid=&amp;apos;SBCW&amp;apos; and lmh=&amp;apos;&amp;quot;+lmh+&amp;quot;&amp;apos;) where rownum=1&amp;quot;);
+						}catch(e){}
+						if (itemstr != null &amp;&amp; itemstr != &amp;quot;&amp;quot; &amp;&amp; itemstr.length() &amp;gt; 0) {
+							var arridxitem = itemstr.split(&amp;quot;,&amp;quot;);
+							for (var k=0;k&amp;lt;arridxitem.length();k++) {
+								var indexitemid = arridxitem[k];
+								ret += insertFormula(db,repid,indexid,indexitemid);
+							}
+						}
+						else {
+							//旧的取数方式
+							for (var k=j-1;k&amp;gt;0;k--) {
+								var indexitemid = grdcolds.getStringAt(k,&amp;quot;INDEXID&amp;quot;);
+								var idxflg = grdcolds.getStringAt(k,&amp;quot;ISIDX&amp;quot;);
+								if (indexitemid != &amp;quot;&amp;quot; &amp;&amp; idxflg != &amp;quot;1&amp;quot;) {
+									ret += insertFormula(db,repid,indexid,indexitemid);
+								}
+								else {
+									//break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		//db.Rollback();
+		db.Commit();
+		
+		return ret;
+	}
+	catch ( e ) {
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+function insertFormula(db,repid,indexid,indexitemid)
+{
+	var ret = 0;
+	var sql = &amp;quot;&amp;quot;;
+	var indexName = &amp;quot;&amp;quot;;
+	var indexitemName = &amp;quot;&amp;quot;;
+	try { indexName = db.GetSQL(&amp;quot;select indexname from fin_index where indexid=&amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos;&amp;quot;); } 
+	catch(e) { 
+		sql = &amp;quot;select name from v_cw_repindex where id=&amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos; and repid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+		var tmpds = db.QuerySQL(sql);
+		if (tmpds.getRowCount() &amp;gt; 0) {
+			indexName = tmpds.getStringAt(0,&amp;quot;NAME&amp;quot;); 
+		}
+	}
+	try { indexitemName = db.GetSQL(&amp;quot;select itemname from fin_indexitem where indexitemid=&amp;apos;&amp;quot;+indexitemid+&amp;quot;&amp;apos;&amp;quot;); } catch(e) { indexitemName = indexitemid; }
+	var formula = &amp;quot;F(&amp;apos;&amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos;&amp;apos;,&amp;apos;&amp;apos;&amp;quot;+indexitemid+&amp;quot;&amp;apos;&amp;apos;)&amp;quot;;
+	var note = indexName+&amp;quot;-&amp;quot;+indexitemName;
+	sql = &amp;quot;select * from fin_index_formula where repid=&amp;apos;%s&amp;apos; and indexid=&amp;apos;%s&amp;apos; and indexitemid=&amp;apos;%s&amp;apos;&amp;quot;.format([repid,indexid,indexitemid]);
+	if (db.GetSQLRowCount(sql) &amp;lt;= 0) {
+		sql = &amp;quot;insert into fin_index_formula(repid,indexid,indexitemid,formula,useflg,note)
+			values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;.format([repid,indexid,indexitemid,formula,&amp;quot;1&amp;quot;,note]);
+		ret += db.ExcecutSQL(sql);
+	}
+	return ret;
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >INDEXINFO</ID><NAME >指标信息</NAME><DATDSC >select * from fin_index where indexid=&amp;apos;[%INDEXID]&amp;apos;</DATDSC></ROW>
+<ROW num="1" ><ID >INDEXITEMINFO</ID><NAME >指标项信息</NAME><DATDSC >select * from fin_indexitem where indexitemid=&amp;apos;[%INDEXITEMID]&amp;apos;</DATDSC></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

@@ -1,0 +1,416 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RJZ_SFFHOLD</MWID><NAME >实付审核备份</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RJZ_SFFHOLD.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS >xlsgrid/js/main.js</EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >sfCheck</ID><NAME >实付确认</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE></ROW>
+<ROW num="1" ><ID >sfCancel</ID><NAME >取消确认</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+
+var ZXGFILE1; 
+var ZXGFILE2;
+var ZXGFILE3;
+var _sumMny = 0.0;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+//	_this.SplitSheet(0,&amp;quot;V&amp;quot;,&amp;quot;18%&amp;quot;);
+//	_this.SplitSheet(&amp;quot;1,2&amp;quot;,&amp;quot;H&amp;quot;,&amp;quot;50%&amp;quot;);
+	_this.ShowTabBar(1);
+	initLayout();
+
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetAttribe(&amp;quot;SHEET_2&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.AutoFixScreenWidth();
+	_this.SetColVisible(1,7,0);
+	ZXGFILE1 = _this.SaveTempZXGFile(1); 
+	ZXGFILE2 = _this.SaveTempZXGFile(2);
+	ZXGFILE3 = _this.SaveTempZXGFile(3);
+	
+	//银行种类
+	var yhzlList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_YHZL_ZF&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,1,2,yhzlList);
+	_this.SetCellText(0,1,2,&amp;quot;%&amp;quot;);
+
+	_this.SetToSelectBox(&amp;quot;&amp;quot;,0,2,2,&amp;quot;V_CW_YYYY_MM&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetCellText(0,2,2,G_LOGDAT.substring(0,7));
+	
+	//审核状态
+	var statList = _this.CreateListValue();
+	_this.SetListValue(statList,&amp;quot;0&amp;quot;,&amp;quot;未审核&amp;quot;);
+	_this.SetListValue(statList,&amp;quot;1&amp;quot;,&amp;quot;通过&amp;quot;);
+	_this.SetListValue(statList,&amp;quot;2&amp;quot;,&amp;quot;未通过&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,1,8,statList);
+	
+	loadMainData();
+
+}
+
+function initLayout()
+{
+	var layoutxml=&amp;quot;&amp;lt;?xml version = &amp;apos;1.0&amp;apos; encoding=\&amp;quot;GBK\&amp;quot;?&amp;gt; &amp;quot;+
+		&amp;quot;&amp;lt;ROWSET&amp;gt;&amp;quot;+
+		&amp;quot;&amp;lt;ROW &amp;gt;&amp;quot;+
+		 &amp;quot;&amp;lt;C0  height=\&amp;quot;19%\&amp;quot; width=\&amp;quot;99%\&amp;quot; ROWSPAN=\&amp;quot;2\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;0&amp;lt;/C0&amp;gt;&amp;quot;+
+		&amp;quot;&amp;lt;/ROW&amp;gt;&amp;quot;+
+		&amp;quot;&amp;lt;ROW &amp;gt;&amp;quot;+
+		 &amp;quot;&amp;lt;C0  height=\&amp;quot;79%\&amp;quot; width=\&amp;quot;49%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;1,3&amp;lt;/C0&amp;gt;&amp;quot;+
+		 &amp;quot;&amp;lt;C1  height=\&amp;quot;79%\&amp;quot; width=\&amp;quot;49%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;2&amp;lt;/C1&amp;gt;&amp;quot;+
+		&amp;quot;&amp;lt;/ROW&amp;gt;&amp;quot;+
+		&amp;quot;&amp;lt;/ROWSET&amp;gt;&amp;quot;;
+	_this.SetLayoutDS(layoutxml);
+//	var layoutxml=&amp;quot;&amp;lt;?xml version = &amp;apos;1.0&amp;apos; encoding=\&amp;quot;GBK\&amp;quot;?&amp;gt; &amp;quot;+
+//		&amp;quot;&amp;lt;ROWSET&amp;gt;&amp;quot;+
+//		&amp;quot;&amp;lt;ROW &amp;gt;&amp;quot;+
+//		 &amp;quot;&amp;lt;C0  height=\&amp;quot;16%\&amp;quot; width=\&amp;quot;99%\&amp;quot; ROWSPAN=\&amp;quot;2\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;0&amp;lt;/C0&amp;gt;&amp;quot;+
+//		&amp;quot;&amp;lt;/ROW&amp;gt;&amp;quot;+
+//		&amp;quot;&amp;lt;ROW &amp;gt;&amp;quot;+
+//		 &amp;quot;&amp;lt;C0  height=\&amp;quot;16%\&amp;quot; width=\&amp;quot;99%\&amp;quot; ROWSPAN=\&amp;quot;2\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;4&amp;lt;/C0&amp;gt;&amp;quot;+
+//		&amp;quot;&amp;lt;/ROW&amp;gt;&amp;quot;+
+//		&amp;quot;&amp;lt;ROW &amp;gt;&amp;quot;+
+//		 &amp;quot;&amp;lt;C0  height=\&amp;quot;66%\&amp;quot; width=\&amp;quot;49%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;1,3&amp;lt;/C0&amp;gt;&amp;quot;+
+//		 &amp;quot;&amp;lt;C1  height=\&amp;quot;66%\&amp;quot; width=\&amp;quot;49%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;2&amp;lt;/C1&amp;gt;&amp;quot;+
+//		&amp;quot;&amp;lt;/ROW&amp;gt;&amp;quot;+
+//		&amp;quot;&amp;lt;/ROWSET&amp;gt;&amp;quot;;
+//	_this.SetLayoutDS(layoutxml);
+}
+
+//加载数据
+function loadMainData()
+{	
+	_this.LoadZXGFile(ZXGFILE1,-1,1);
+	_this.SetFixedRow(1,1);
+	_this.SetFixedRow(1,1);
+
+	_this.SetMainCellRange(1,1,0,_this.GetRowCount(1)-2,_this.GetColCount(1)-1);
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+	var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	var yhbm = _this.GetCellText(0,1,2); //所属银行
+	var sfny = (_this.GetCellText(0,2,2)).replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;); 
+	var djh = _this.GetCellText(0,1,4); 
+	var pch = _this.GetCellText(0,2,4); 
+	var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	var xml = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;SFNY=&amp;quot;+sfny.substring(0,6)+&amp;quot;&amp;YHBM=&amp;quot;+yhbm+&amp;quot;&amp;ZTH=&amp;quot;+zth+&amp;quot;&amp;DJH=&amp;quot;+djh+&amp;quot;&amp;PCH=&amp;quot;+pch);
+	_this.SetXmlDS(1,1,0,_this.GetRowCount(1)-2,_this.GetColCount(1)-1,xml);
+
+	_this.RefreshFormula();
+	
+	loadMainDetail(1,-1);
+	
+	//取合计
+	_sql.querytods(&amp;quot;GET_DJBSUM&amp;quot;,&amp;quot;SFNY=&amp;quot;+sfny.substring(0,6)+&amp;quot;&amp;YHBM=&amp;quot;+yhbm+&amp;quot;&amp;DJH=&amp;quot;+djh+&amp;quot;&amp;PCH=&amp;quot;+pch);
+	var hdrSum = 1.0*_this.XMLDS_GetString(0,&amp;quot;JE&amp;quot;);
+	var hdrCnt = _this.XMLDS_GetString(0,&amp;quot;CNT&amp;quot;);
+	_sumMny = hdrSum;
+	
+	_sql.querytods(&amp;quot;GET_AC95SUM&amp;quot;,&amp;quot;SFNY=&amp;quot;+sfny.substring(0,6)+&amp;quot;&amp;YHBM=&amp;quot;+yhbm+&amp;quot;&amp;ZTH=&amp;quot;+zth+&amp;quot;&amp;DJH=&amp;quot;+djh+&amp;quot;&amp;PCH=&amp;quot;+pch);
+	var dtlSum = 1.0*_this.XMLDS_GetString(0,&amp;quot;JE&amp;quot;);
+	var dtlCnt = _this.XMLDS_GetString(0,&amp;quot;CNT&amp;quot;);
+	var stat = _this.XMLDS_GetString(0,&amp;quot;STAT&amp;quot;);
+	var chkusr = _this.XMLDS_GetString(0,&amp;quot;CHKUSR&amp;quot;);
+	var chkdat = _this.XMLDS_GetString(0,&amp;quot;CHKDAT&amp;quot;);
+
+//	_this.SetCellText(0,2,6,dtlSum);
+//	_this.SetCellText(0,2,7,&amp;quot;单位数：&amp;quot;+hdrCnt+&amp;quot;  人数：&amp;quot;+dtlCnt);
+	_this.SetCellText(0,1,8,stat);
+	if (stat != &amp;quot;0&amp;quot;) {
+		_this.SetCellLock(0,1,8,1); //已经确认过了不给修改，需要先取消确认
+	}
+	else {
+		_this.SetCellLock(0,1,8,0);
+	}
+	_this.SetCellText(0,2,8,chkusr);
+	_this.SetCellText(0,3,8,chkdat);
+	
+	var dxmny = convertCurrency(hdrSum).replace(&amp;quot;人民币&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetCellText(0,3,6,dxmny);
+
+	_this.SetCellText(0,3,1,&amp;quot;合计总金额：&amp;quot;+hdrSum.toFixed(2)+&amp;quot;  &amp;quot;+&amp;quot;明细总金额：&amp;quot;+dtlSum.toFixed(2)+&amp;quot;  单位数：&amp;quot;+hdrCnt+&amp;quot;  人数：&amp;quot;+dtlCnt + &amp;quot;  大写金额：&amp;quot; + dxmny);
+
+	_this.AutoFixScreenWidth();
+
+}
+
+
+//加载明细数据
+function loadMainDetail(sheet,row)
+{
+	_this.LoadZXGFile(ZXGFILE2,-1,2);
+	_this.SetFixedRow(2,1);
+	_this.SetFixedRow(2,1);
+
+	_this.SetMainCellRange(2,1,0,_this.GetRowCount(2)-2,_this.GetColCount(2)-1);
+	_this.SetAttribe(&amp;quot;SHEET_2&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+
+	var yhbm =  _this.GetCellText(0,1,2); //所属银行
+	var sfny = (_this.GetCellText(0,2,2)).replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;); 
+	var djh = _this.GetCellText(0,1,4); 
+	var pch = _this.GetCellText(0,2,4); 
+	var dwbh = _this.GetCellText(sheet,row,1);
+	var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	if (sheet == 3) {
+		yhbm = _this.GetCellText(sheet,row,1);
+		dwbh = &amp;quot;&amp;quot;;
+	}
+	
+	var xml = _sql.query(&amp;quot;DETAIL&amp;quot;,&amp;quot;SFNY=&amp;quot;+sfny.substring(0,6)+&amp;quot;&amp;YHBM=&amp;quot;+yhbm+&amp;quot;&amp;DJH=&amp;quot;+djh+&amp;quot;&amp;PCH=&amp;quot;+pch+&amp;quot;&amp;DWBH=&amp;quot;+dwbh+&amp;quot;&amp;ZTH=&amp;quot;+zth+&amp;quot;&amp;PCH=&amp;quot;+pch);
+	_this.SetXmlDS(2,1,0,_this.GetRowCount(2)-2,_this.GetColCount(2)-1,xml);
+	
+	
+	//银行审核数据
+	_this.LoadZXGFile(ZXGFILE3,-1,3);
+	_this.SetFixedRow(3,1);
+	_this.SetFixedRow(3,1);
+	_this.SetColVisible(3,1,-1);
+	
+	_this.SetMainCellRange(3,1,0,_this.GetRowCount(3)-2,_this.GetColCount(3)-1);
+	_this.SetAttribe(&amp;quot;SHEET_3&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+	var yhxml = _sql.query(&amp;quot;YHDTL&amp;quot;,&amp;quot;SFNY=&amp;quot;+sfny.substring(0,6)+&amp;quot;&amp;YHBM=&amp;DJH=&amp;quot;+djh+&amp;quot;&amp;PCH=&amp;quot;+pch+&amp;quot;&amp;DWBH=&amp;quot;+dwbh+&amp;quot;&amp;ZTH=&amp;quot;+zth+&amp;quot;&amp;PCH=&amp;quot;+pch);
+	_this.SetXmlDS(3,1,0,_this.GetRowCount(3)-2,_this.GetColCount(3)-1,yhxml);
+
+	_this.AutoFixScreenWidth();
+	_this.RefreshFormula();
+	
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 0 &amp;&amp; col &amp;lt; 6) {
+		if (row == 2 &amp;&amp; col == 2) {
+			if (newvalue.indexOf(&amp;quot;-&amp;quot;) == -1 &amp;&amp; newvalue.length == 6) {
+				_this.SetCellText(0,2,2,newvalue.substring(0,4)+&amp;quot;-&amp;quot;+newvalue.substring(4,6));
+			}
+		}
+		
+		loadMainData();
+	}
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if ((sheet == 1 || sheet == 3) &amp;&amp; row &amp;gt;= _this.GetMainCellRangeRow1(1) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(1)) {
+		loadMainDetail(sheet,row);
+		var dwSum = _this.GetCellText(1,row,5);
+		_this.SetCellText(0,1,6,dwSum);
+		_this.SetCellText(0,2,6,_this.GetCellText(2,_this.GetRowCount(2)-1,5));
+		
+//		var dxmny = convertCurrency(dwSum).replace(&amp;quot;人民币&amp;quot;,&amp;quot;&amp;quot;);
+//		_this.SetCellText(0,3,6,dxmny);
+
+	}
+}
+
+//实付确认
+function sfCheck()
+{
+	
+	var djh = _this.GetCellText(0,1,4); 
+	var pch = _this.GetCellText(0,2,4); 
+	var yhbm = _this.GetCellText(0,1,2); //所属银行
+	var sfny = (_this.GetCellText(0,2,2)).replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;); 
+	var stat = _this.GetCellText(0,1,8);
+	var czyxm = G_USRNAM;
+	
+	_sql.querytods(&amp;quot;GET_DJBSUM&amp;quot;,&amp;quot;SFNY=&amp;quot;+sfny.substring(0,6)+&amp;quot;&amp;YHBM=&amp;quot;+yhbm+&amp;quot;&amp;DJH=&amp;quot;+djh+&amp;quot;&amp;PCH=&amp;quot;+pch);
+	var mny = _this.XMLDS_GetString(0,&amp;quot;JE&amp;quot;);
+	var dxmny = convertCurrency(mny).replace(&amp;quot;人民币&amp;quot;,&amp;quot;&amp;quot;);
+	
+	if (!confirm(&amp;quot;实付确认，请确认以下信息！\n实付年月：&amp;quot;+_this.GetCellText(0,2,2)
+			+&amp;quot;\n总金额：&amp;quot;+mny+&amp;quot;\n大写金额：&amp;quot;+dxmny+&amp;quot;\n\n实付确认：&amp;quot;+_this.GetCellShowText(0,1,8))) 
+		return;
+	
+	if (stat == &amp;quot;0&amp;quot;) {
+		alert(&amp;quot;请选择审核状态，是通过或者是不通过！&amp;quot;);
+		return;
+	}
+	
+	var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	var ret = invokeOSFunc(&amp;quot;SFCheck&amp;quot;,&amp;quot;SFNY=&amp;quot;+sfny.substring(0,6)+&amp;quot;&amp;YHBM=&amp;quot;+yhbm+&amp;quot;&amp;stat=&amp;quot;+stat+&amp;quot;&amp;czyxm=&amp;quot;+czyxm+&amp;quot;&amp;ZTH=&amp;quot;+zth+&amp;quot;&amp;thisorgid=&amp;quot;+G_ORGID);
+	alert(ret);
+}
+
+//取消确认
+function sfCancel()
+{
+	var yhbm = _this.GetCellText(0,1,2); //所属银行
+	var sfny = (_this.GetCellText(0,2,2)).replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;); 
+	var czyxm = G_USRNAM;
+	
+	if (sfny == &amp;quot;&amp;quot;) {
+		alert(&amp;quot;请选择实付年月！&amp;quot;);
+		return;
+	}
+	if (!confirm(&amp;quot;取消实付审核确认，是否继续？&amp;quot;)) return;
+	
+	var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	var ret = invokeOSFunc(&amp;quot;SFunCheck&amp;quot;,&amp;quot;SFNY=&amp;quot;+sfny.substring(0,6)+&amp;quot;&amp;YHBM=&amp;quot;+yhbm+&amp;quot;&amp;czyxm=&amp;quot;+czyxm+&amp;quot;&amp;ZTH=&amp;quot;+zth+&amp;quot;&amp;thisorgid=&amp;quot;+G_ORGID);
+	alert(ret);
+
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+//实付确认
+function SFCheck()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	var invokeRet = &amp;quot;&amp;quot;;
+	try {
+		db = new pub.EADatabase();
+		
+		sql = &amp;quot;update ac95 set bae116=&amp;apos;&amp;quot;+stat+&amp;quot;&amp;apos;,bae012=&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,bae034=sysdate
+			where aae208=&amp;apos;&amp;quot;+SFNY+&amp;quot;&amp;apos;
+			  and zth=&amp;apos;&amp;quot;+ZTH+&amp;quot;&amp;apos; and aaa027=(select tcqbm from cw_sbsb where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;)&amp;quot;;
+		db.ExcecutSQL(sql);
+		
+		sql = &amp;quot;update v_si_djb_tmp set bae116=&amp;apos;&amp;quot;+stat+&amp;quot;&amp;apos;,bae012=&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,bae034=sysdate
+			where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+ZTH+&amp;quot;&amp;apos; and scny=&amp;apos;&amp;quot;+SFNY+&amp;quot;&amp;apos;&amp;quot;;
+		db.ExcecutSQL(sql);
+		
+		db.Commit();
+		return &amp;quot;实付确认成功！&amp;quot;;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+//取消实付确认
+function SFunCheck()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	var invokeRet = &amp;quot;&amp;quot;;
+	try {
+		db = new pub.EADatabase();
+		
+		sql = &amp;quot;select max(decode(BAE421,null,&amp;apos;0&amp;apos;,&amp;apos;1&amp;apos;)) kpbz from ac95 where /*aae008=&amp;apos;&amp;quot;+YHBM+&amp;quot;&amp;apos; and*/ aae208=&amp;apos;&amp;quot;+SFNY+&amp;quot;&amp;apos;
+			 and zth=&amp;apos;&amp;quot;+ZTH+&amp;quot;&amp;apos; and aaa027=(select tcqbm from cw_sbsb where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;)&amp;quot;;
+		var kpbz = &amp;quot;&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		if (ds.getRowCount() &amp;gt; 0) {
+			kpbz = ds.getStringAt(0,&amp;quot;KPBZ&amp;quot;);
+		}
+		else {
+			return &amp;quot;AC95没有查询到记录！&amp;quot;;
+		}
+		
+		if (kpbz == &amp;quot;1&amp;quot;) {
+			return &amp;quot;实付数据已拷盘，不能取消！&amp;quot;;
+		}
+		
+		sql = &amp;quot;update v_si_djb_tmp set bae116=null,bae012=null,bae034=null
+			where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+ZTH+&amp;quot;&amp;apos; and scny=&amp;apos;&amp;quot;+SFNY+&amp;quot;&amp;apos;&amp;quot;;
+		db.ExcecutSQL(sql);
+
+		sql = &amp;quot;update ac95 set bae116=null,bae012=null,bae034=null
+			where /*aae008=&amp;apos;&amp;quot;+YHBM+&amp;quot;&amp;apos; and*/ aae208=&amp;apos;&amp;quot;+SFNY+&amp;quot;&amp;apos;
+			 and zth=&amp;apos;&amp;quot;+ZTH+&amp;quot;&amp;apos; and aaa027=(select tcqbm from cw_sbsb where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;)&amp;quot;;
+		db.ExcecutSQL(sql);
+		
+		db.Commit();
+		return &amp;quot;取消实付确认成功！&amp;quot;;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select rownum,dwbh,dwmc,ym1,ym2,je,(select count(1) from ac95 where ac95.aab001=a.dwbh 
+        and ac95.aae208=a.scny and ac95.bae415=a.pch and ac95.zth=&amp;apos;[%ZTH]&amp;apos; and ac95.aae076 is null
+        and ac95.aaa027=(select tcqbm from cw_sbsb where org=&amp;apos;[%SYS_ORGID]&amp;apos;)) rs
+from (
+select dwbh,dwmc,ym1,ym2,pch,scny,
+       sum(je1+je2+je3+je4+je5+je6+je7+je8+je9+je10+je11+je12+je13+je14+je15) je
+from v_si_djb_tmp
+where scny=&amp;apos;[%SFNY]&amp;apos; --and lsh is null
+  --and aae008 like decode(&amp;apos;[%YHBM]&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;%&amp;apos;,&amp;apos;[%YHBM]&amp;apos;) 
+  and nvl(djh,&amp;apos; &amp;apos;) like &amp;apos;[%DJH]%&amp;apos;
+  and nvl(pch,&amp;apos; &amp;apos;) like &amp;apos;[%PCH]%&amp;apos;
+  and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and org=&amp;apos;[%SYS_ORGID]&amp;apos;
+group by dwbh,dwmc,ym1,ym2,pch,scny
+order by dwbh
+)a</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 ></C6><C7 >MAIN</C7><C8 >MAIN</C8><C9 >MAIN</C9><C10 >MAIN</C10><C11 >MAIN</C11><C12 ></C12><C13 >MAIN</C13><C14 ></C14></ROW>
+<ROW num="1" ><ID >DETAIL</ID><NAME ></NAME><DATDSC >select rownum,aac001,aac003,aae135,aae010,aic263
+from (
+select aac001,aac003,aae135,aae010,aic263 
+from ac95
+where aab001 like decode(&amp;apos;[%DWBH]&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;%&amp;apos;,&amp;apos;[%DWBH]&amp;apos;)
+  and aae008 like decode(&amp;apos;[%YHBM]&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;%&amp;apos;,&amp;apos;[%YHBM]&amp;apos;) 
+  and aae208=&amp;apos;[%SFNY]&amp;apos;
+  and zth=&amp;apos;[%ZTH]&amp;apos; --and aae076 is null
+  and aaa027=(select tcqbm from cw_sbsb where org=&amp;apos;[%SYS_ORGID]&amp;apos;)
+  and bae415 like &amp;apos;[%PCH]%&amp;apos; and bae074 like &amp;apos;[%DJH]%&amp;apos;
+)</DATDSC><C4 >DETAIL</C4><C5 >DETAIL</C5><C6 ></C6><C7 >DETAIL</C7><C8 >DETAIL</C8><C9 >DETAIL</C9><C10 ></C10><C11 >DETAIL</C11><C12 ></C12><C13 >DETAIL</C13><C14 >DETAIL</C14></ROW>
+<ROW num="2" ><ID >GET_DJBSUM</ID><NAME ></NAME><DATDSC >select sum(je1+je2+je3+je4+je5+je6+je7+je8+je9+je10+je11+je12+je13+je14+je15) je,
+	count(distinct dwbh) cnt
+from v_si_djb_tmp
+where scny=&amp;apos;[%SFNY]&amp;apos; and org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos;
+  and aae008 like decode(&amp;apos;[%YHBM]&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;%&amp;apos;,&amp;apos;[%YHBM]&amp;apos;) --and lsh is null
+  and nvl(djh,&amp;apos; &amp;apos;) like &amp;apos;[%DJH]%&amp;apos; and nvl(pch,&amp;apos; &amp;apos;) like &amp;apos;[%PCH]%&amp;apos;</DATDSC><C4 >GET_DJBSUM</C4><C5 >GET_DJBSUM</C5><C6 ></C6><C7 >GET_DJBSUM</C7><C8 ></C8><C9 >GET_DJBSUM</C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14></ROW>
+<ROW num="3" ><ID >GET_AC95SUM</ID><NAME ></NAME><DATDSC >select sum(aic263) je,
+	count(distinct aac001) cnt,max(nvl(bae116,&amp;apos;0&amp;apos;)) stat,
+	max(bae012) chkusr,
+	to_char(max(bae034),&amp;apos;yyyy-mm-dd hh24:mi:ss&amp;apos;) chkdat
+from ac95
+where aae008 like decode(&amp;apos;[%YHBM]&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;%&amp;apos;,&amp;apos;[%YHBM]&amp;apos;) 
+  and aae208=&amp;apos;[%SFNY]&amp;apos; and zth=&amp;apos;[%ZTH]&amp;apos;
+  and aaa027=(select tcqbm from cw_sbsb where org=&amp;apos;[%SYS_ORGID]&amp;apos;)
+  --and aae076 is null
+  and nvl(BAE074,&amp;apos; &amp;apos;) like &amp;apos;[%DJH]%&amp;apos; and nvl(BAE415,&amp;apos; &amp;apos;) like &amp;apos;[%PCH]%&amp;apos;</DATDSC><C4 >GET_AC95SUM</C4><C5 ></C5><C6 >GET_AC95SUM</C6><C7 >GET_AC95SUM</C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14></ROW>
+<ROW num="4" ><ID >YHDTL</ID><NAME ></NAME><DATDSC >select rownum,aae008,yhzl,rs,dws,je 
+from (
+select aae008,
+  (select aaa103 name from aa10 where aaa101 = &amp;apos;发放机构&amp;apos; and  aaa102=a.aae008) yhzl,
+  sum((select count(1) from ac95 where ac95.aab001=a.dwbh and ac95.aae008=a.aae008 
+        and ac95.aae208=a.scny and ac95.bae415=a.pch and ac95.zth=&amp;apos;[%ZTH]&amp;apos; and ac95.aae076 is null
+        and ac95.aaa027=(select tcqbm from cw_sbsb where org=&amp;apos;[%SYS_ORGID]&amp;apos;))) rs,
+  sum(dws) dws,sum(je) je
+from (
+select dwbh,dwmc,aae008,pch,scny,count(distinct dwbh) dws,
+       sum(je1+je2+je3+je4+je5+je6+je7+je8+je9+je10+je11+je12+je13+je14+je15) je
+from v_si_djb_tmp
+where scny=&amp;apos;[%SFNY]&amp;apos; --and lsh is null
+  and aae008 like decode(&amp;apos;[%YHBM]&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;%&amp;apos;,&amp;apos;[%YHBM]&amp;apos;) 
+  and nvl(djh,&amp;apos; &amp;apos;) like &amp;apos;[%DJH]%&amp;apos;
+  and nvl(pch,&amp;apos; &amp;apos;) like &amp;apos;[%PCH]%&amp;apos;
+  and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and org=&amp;apos;[%SYS_ORGID]&amp;apos;
+group by dwbh,dwmc,aae008,pch,scny
+order by dwbh
+) a group by aae008
+) t</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 >YHDTL</C12><C13 ></C13><C14 ></C14></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

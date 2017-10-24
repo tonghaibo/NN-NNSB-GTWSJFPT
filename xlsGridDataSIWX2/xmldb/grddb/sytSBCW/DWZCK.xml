@@ -1,0 +1,280 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >DWZCK</MWID><NAME >单位暂存款</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >DWZCK.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >Print</ID><NAME >打印</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >6</IMG><IMGMOUSE >6</IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >YY</ID><NAME >查询年</NAME><NOTNULL >1</NOTNULL><KEYVAL >V_YYYY</KEYVAL><INPCTL >list</INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 >YY</C13><C14 >YY</C14><C15 >YY</C15><C16 >YY</C16></ROW>
+<ROW num="1" ><ID >MM</ID><NAME >查询月</NAME><NOTNULL ></NOTNULL><KEYVAL >V_MM</KEYVAL><INPCTL >list</INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 >MM</C14><C15 ></C15><C16 >MM</C16></ROW>
+<ROW num="2" ><ID >DWMC</ID><NAME >单位名称</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 ></C15><C16 >DWMC</C16></ROW>
+<ROW num="3" ><ID >DWBH</ID><NAME >单位编号</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+</ROWSET>
+</grdpamds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0=&amp;quot;&amp;quot;;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	ZXGFILE0 = _this.SaveTempZXGFile(sheet);
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,&amp;quot;10%&amp;quot;);
+	
+	yyList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_YYYY&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	mmList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_MM&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	_this.SetListValue(mmList,&amp;quot;99&amp;quot;,&amp;quot; &amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,1,2,yyList);
+	_this.SetCellText(1,1,2,G_LOGDAT.split(&amp;quot;-&amp;quot;)[0]);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,1,4,mmList);
+	
+	initSheet();
+	         
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHOW_ZERO,1);
+	_this.AutoFixScreenWidth();
+          
+}
+
+function initSheet()
+{
+	var yy = _this.GetCellText(1,1,2);
+	var mm = _this.GetCellText(1,1,4);
+	var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	if (zth == &amp;quot;31&amp;quot;) {
+		_this.SetCellText(0,3,6,&amp;quot;职业年金暂存&amp;quot;);
+	}
+	
+	if(mm != &amp;quot;&amp;quot; &amp;&amp; mm != &amp;quot;99&amp;quot;) {
+          _this.SetColVisible(0,5,0);
+          _this.SetColVisible(0,6,0);
+          _this.SetColVisible(0,7,0);
+          _this.SetColVisible(0,8,0);
+          _this.SetColVisible(0,9,0); 
+          _this.SetCellText(0,2,1,&amp;quot;查询时间：&amp;quot;+yy+&amp;quot;年&amp;quot;+mm+&amp;quot;月&amp;quot;);                                     
+	}
+	else {
+          _this.SetCellText(0,2,1,&amp;quot;所编号：&amp;quot;+G_ORGID+&amp;quot;  帐套号：&amp;quot;+zth);
+          _this.SetColVisible(0,5,1);
+          _this.SetColVisible(0,6,1);
+          _this.SetColVisible(0,7,1);
+          _this.SetColVisible(0,8,1);
+          _this.SetColVisible(0,9,1);                
+	}
+}
+
+function loadData()
+{
+	_this.LoadZXGFile(ZXGFILE0,-1,0);
+	_this.SetFixedRow(0,4);
+	_this.SetMainCellRange(0,4,1,5,10);
+	
+	initSheet();
+	
+	var yy = _this.GetCellText(1,1,2);
+	var mm = _this.GetCellText(1,1,4);
+	var dwbh = _this.GetCellText(1,1,6);
+	var dwmc = _this.GetCellText(1,1,8);
+		
+	//加载银行日记账数据
+	var xml = _sql.query(&amp;quot;main&amp;quot;,&amp;quot;YY=&amp;quot;+yy+&amp;quot;&amp;MM=&amp;quot;+mm+&amp;quot;&amp;DWBH=&amp;quot;+dwbh+&amp;quot;&amp;DWMC=&amp;quot;+dwmc);
+	_this.SetXmlDS(0,4,1,_this.GetRowCount(0)-3,_this.GetColCount(0)-2,xml);			
+	_this.AutoFixColWidth(0,600);
+	_this.RefreshFormula();
+	getNewDwbh();
+	_this.AutoFixScreenWidth();
+	
+}
+
+
+function getNewDwbh() {
+          var sbh = G_ORGID;
+          var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+          var dwbhxml = _this.GetXml(0,4,2,_this.GetRowCount(0)-3,2);
+          var xml = &amp;quot;&amp;quot;;
+          var param = new Object();
+          param.sbh = sbh;
+          param.zth = zth;
+          param.dwbhxml = dwbhxml;
+          xml = _this.invokeOSFuncExt(&amp;quot;getNewDwbh&amp;quot;,param);
+          _this.SetXmlDS(0,4,3,_this.GetRowCount(0)-3,3,xml);
+          
+}
+
+
+
+
+
+//打印
+function Print()
+{
+	_this.Print(0,0);
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (sheet == 1 &amp;&amp; row == 1 &amp;&amp; col == 10) {
+		loadData();
+	}
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 1) {
+		loadData();
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub= new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+//替换SQL参数
+function replaceParam(mwobj,request,sql)
+{       
+        var mysql = &amp;quot;&amp;quot;;
+	//var yy = request.getParameter(&amp;quot;YY&amp;quot;);
+	var mm = request.getParameter(&amp;quot;MM&amp;quot;);
+	if(mm != &amp;quot;&amp;quot; &amp;&amp; mm != &amp;quot;99&amp;quot;) {
+	      mysql = &amp;quot;select &amp;apos;[%YY]&amp;apos; yy,DWB.DWBH,&amp;apos;&amp;apos; new_dwbh,DWB.DWMC ,&amp;apos;&amp;apos; aa,&amp;apos;&amp;apos; bb,&amp;apos;&amp;apos; cc,&amp;apos;&amp;apos; dd,&amp;apos;&amp;apos; ee,-1*NVL(RJZ.ye,0)  YE FROM 
+		
+		  ( select a.org,a.acc,a.yy,a.mm,a.dwbh,sum(decode(b.jefx,&amp;apos;′?&amp;apos;,b.je,-1*b.je)) ye from cw_rjzb a,cw_rjzmxb b
+		    where b.lsh=a.lsh and b.lxbh=&amp;apos;87&amp;apos; and b.lxxh = 1 and a.dwbh is not null
+		    group by a.org,a.acc,a.yy,a.mm,a.dwbh ) RJZ,
+		
+		  (SELECT org,acc,DWBH,DWMC FROM SI_DWB) DWB
+		WHERE 
+		     RJZ.org(+) = DWB.org AND RJZ.acc(+)=DWB.acc AND RJZ.DWBH(+) = DWB.DWBH
+		      and NVL(RJZ.ye,0)  &amp;lt;&amp;gt; 0
+		      and DWB.org=[%SYS_ORGID] and DWB.acc=[%SYS_ACCID]
+		      AND RJZ.YY(+)= [%YY] AND RJZ.mm(+)= [%MM]  AND DWB.DWBH LIKE &amp;apos;%[%DWBH]%&amp;apos;
+		   AND DWB.DWMC LIKE &amp;apos;%[%DWMC]%&amp;apos; 
+		AND NVL(RJZ.ye,0)  &amp;lt;&amp;gt; 0
+		
+		order by length(DWB.DWBH),DWB.DWBH &amp;quot;;
+	     return mysql;
+	}
+	return sql;
+}
+
+//显示查询参数前预处理
+//用于在查询或报表显示查询参数前的预处理。
+//可以往sb（StringBuffer）中append HTML内容或额外附近脚本
+//可以修改paramDs的内容，决定哪些参数可见或修改默认值
+//  ID:编号;  NAME:标题; KEYVAL:关键字; SQLWHE:WHERE条件; DEFVAL:默认值
+//  TIP:提示; EDTFLG:是否可修改;  VISFLG:是否可显示; KEYFLG:关键字段(没有作用)
+//  DISPORD:参数显示次序号(修改无效); INPCTL:控件类型
+function beforeShowParam(request,sb,paramDs,usrinfo)
+//var request=javax.servlet.http.HttpServletRequest(); var sb = new java.lang.StringBuffer();var paramDs = new EAXmlDS();var usrinfo = new web.EAUserinfo();
+{
+
+}
+
+function getNewDwbh() {
+	var db = null;
+	try {
+             db = new pub.EADatabase();
+             var sql = &amp;quot;select count(1) cnt from user_objects where object_name = &amp;apos;AB01&amp;apos;&amp;quot;;
+             var ds = db.QuerySQL(sql);
+             var xml = &amp;quot;&amp;quot;;
+             if(ds.getStringAt(0,&amp;quot;cnt&amp;quot;) &amp;gt; 0) {
+                 var tmpds = new pub.EAXmlDS(dwbhxml);
+                 for(var i =0;i&amp;lt;tmpds.getRowCount();i++) {
+                     var dwbh = &amp;quot;&amp;quot;;
+                     try{ dwbh = tmpds.getStringAt(i,&amp;quot;DWBH&amp;quot;);}catch(e){}
+                     var newdwbh = &amp;quot;&amp;quot;;
+                     if(dwbh!=&amp;quot;&amp;quot;) {
+	                     sql = &amp;quot;select  nvl(AAB001,AAB999) newdwbh from ab01 
+	                            where (AAB001 = upper(ltrim(rtrim(&amp;quot;+dwbh+&amp;quot;))) or AAB999 = upper(ltrim(rtrim(&amp;quot;+dwbh+&amp;quot;))))
+		                    and (bae007 in ( select bae007 from aaa2 where bae011 = &amp;quot;+zth+&amp;quot;))&amp;quot;;
+		             try{    var tmpds2 = db.QuerySQL(sql);
+		                     if(tmpds2.getRowCount() &amp;gt; 0) {
+		                          newdwbh = tmpds2.getStringAt(0,&amp;quot;newdwbh&amp;quot;);
+		                     }
+	                     }catch(e) {newdwbh = dwbh;}		                                         
+                     }
+	              xml += &amp;quot;&amp;lt;ROW num = \&amp;quot;&amp;quot;+(i+1)+&amp;quot;\&amp;quot; SELECTFLAG=\&amp;quot;0\&amp;quot; name=\&amp;quot;\&amp;quot;&amp;gt;
+	                      &amp;lt;DWBH&amp;gt;&amp;quot;+newdwbh+&amp;quot;&amp;lt;/DWBH&amp;gt;
+	                      &amp;lt;/ROW&amp;gt;&amp;quot;;       
+                 }
+                 xml = &amp;quot;&amp;lt;?xml version=&amp;apos;1.0&amp;apos;?&amp;gt;&amp;lt;ROWSET&amp;gt;&amp;quot;+xml+&amp;quot;&amp;lt;/ROWSET&amp;gt;&amp;quot;;
+             }
+             return xml;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}     
+}
+
+
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >main</ID><NAME ></NAME><DATDSC >SELECT 
+       &amp;apos;[%YY]&amp;apos; YY,
+       DWB.DWBH,
+       &amp;apos;&amp;apos; NEW_DWBH,
+       DWB.DWMC,       
+       -1 * (NVL(RJZ.ylaozc, 0) + NVL(DW_QCYE.YE, 0)) ylaozc ,   
+       -1 * (NVL(RJZ.syezc, 0) ) syezc,   
+       -1 * (NVL(RJZ.yliaozc, 0) ) yliaozc,
+       -1 * (NVL(RJZ.gszc, 0) ) gszc,  
+     (-1 * (NVL(RJZ.syuzc, 0) )) syuzc,
+        -1 * (NVL(RJZ.YE, 0) + NVL(DW_QCYE.YE, 0)) YE    
+        FROM (SELECT A.ORG,
+               A.ACC,
+               A.YY,
+               A.DWBH,
+               B.lXXH LXXH,
+               SUM(DECODE(B.JEFX, &amp;apos;贷&amp;apos;, B.JE, -1 * B.JE))  YE  ,      
+               SUM(DECODE(B.JEFX, &amp;apos;贷&amp;apos;, decode(b.LXXH,&amp;apos;1&amp;apos;,1,&amp;apos;2&amp;apos;,1,&amp;apos;3&amp;apos;,1,0)*B.JE, decode(b.LXXH,&amp;apos;1&amp;apos;,1,&amp;apos;2&amp;apos;,1,&amp;apos;3&amp;apos;,1,0)*(-1) * B.JE)) ylaozc,               
+               SUM(DECODE(B.JEFX, &amp;apos;贷&amp;apos;, decode(b.LXXH,&amp;apos;4&amp;apos;,1,&amp;apos;5&amp;apos;,1,&amp;apos;6&amp;apos;,1,0)*B.JE, decode(b.LXXH,&amp;apos;4&amp;apos;,1,&amp;apos;5&amp;apos;,1,&amp;apos;6&amp;apos;,1,0)*(-1) * B.JE)) syezc,              
+               SUM(DECODE(B.JEFX, &amp;apos;贷&amp;apos;, decode(b.LXXH,&amp;apos;7&amp;apos;,1,&amp;apos;8&amp;apos;,1,&amp;apos;9&amp;apos;,1,0)*B.JE, decode(b.LXXH,&amp;apos;7&amp;apos;,1,&amp;apos;8&amp;apos;,1,&amp;apos;9&amp;apos;,1,0)*(-1) * B.JE)) yliaozc, 
+          SUM(DECODE(B.JEFX, &amp;apos;贷&amp;apos;, decode(b.LXXH,&amp;apos;10&amp;apos;,1,&amp;apos;11&amp;apos;,1,&amp;apos;12&amp;apos;,1,0)*B.JE, decode(b.LXXH,&amp;apos;10&amp;apos;,1,&amp;apos;11&amp;apos;,1,&amp;apos;12&amp;apos;,1,0)*(-1) * B.JE)) gszc,             
+               SUM(DECODE(B.JEFX, &amp;apos;贷&amp;apos;, decode(b.LXXH,&amp;apos;13&amp;apos;,1,&amp;apos;14&amp;apos;,1,&amp;apos;15&amp;apos;,1,0)*B.JE, decode(b.LXXH,&amp;apos;13&amp;apos;,1,&amp;apos;14&amp;apos;,1,&amp;apos;15&amp;apos;,1,0)*(-1) * B.JE)) syuzc 
+      FROM CW_RJZB A, CW_RJZMXB B
+        WHERE B.LSH = A.LSH
+           AND B.LXBH = &amp;apos;87&amp;apos;
+           AND A.DWBH IS NOT NULL
+        GROUP BY A.ORG, A.ACC, A.YY, A.DWBH, B.lXXH) RJZ,
+       (SELECT ORG, ACC, YY, DWBH, SUM(DECODE(YEFX, &amp;apos;借&amp;apos;, YE, -1 * YE)) YE
+          FROM CW_DWQCYEB
+         WHERE KXLX = &amp;apos;871&amp;apos;
+         GROUP BY ORG, ACC, YY, DWBH) DW_QCYE,       
+       (SELECT DWBH, DWMC,ORG,ACC FROM SI_DWB) DWB
+ WHERE DW_QCYE.ORG(+) = DWB.ORG
+   AND DW_QCYE.ACC(+) = DWB.ACC
+   AND DW_QCYE.DWBH(+) = DWB.DWBH
+   AND RJZ.ORG(+) = DWB.ORG
+   AND RJZ.ACC(+) = DWB.ACC
+   AND RJZ.DWBH(+) = DWB.DWBH
+   AND NVL(RJZ.YE, 0) + NVL(DW_QCYE.YE, 0) &amp;lt;&amp;gt; 0
+   AND (NVL(RJZ.ylaozc, 0)+NVL(RJZ.syezc, 0)+NVL(RJZ.yliaozc, 0)+NVL(RJZ.gszc, 0)+NVL(RJZ.syuzc, 0) + NVL(DW_QCYE.YE, 0) &amp;lt;&amp;gt; 0 )  
+   AND DWB.ORG = &amp;apos;[%SYS_ORGID]&amp;apos;
+   AND DWB.ACC = &amp;apos;[%SYS_ACCID]&amp;apos;
+   AND RJZ.YY(+) = &amp;apos;[%YY]&amp;apos;
+   AND DW_QCYE.YY(+) = &amp;apos;[%YY]&amp;apos;
+   AND DWB.DWBH LIKE &amp;apos;%[%DWBH]%&amp;apos;
+   AND DWB.DWMC LIKE &amp;apos;%[%DWMC]%&amp;apos;      
+   ORDER BY LENGTH(DWB.DWBH), DWB.DWBH </DATDSC><C4 ></C4><C5 ></C5><C6 >main</C6><C7 >main</C7><C8 >main</C8><C9 >main</C9><C10 >main</C10><C11 >main</C11><C12 >main</C12><C13 >main</C13><C14 >main</C14><C15 >main</C15><C16 >main</C16></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

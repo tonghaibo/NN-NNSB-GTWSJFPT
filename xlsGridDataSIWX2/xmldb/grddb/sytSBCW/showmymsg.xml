@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >showmymsg</MWID><NAME >显示消息系统消息</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >showmymsg.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	if (guid != &amp;quot;&amp;quot;) {
+		_sql.querytods(&amp;quot;trkdtl&amp;quot;,&amp;quot;GUID=&amp;quot;+guid+&amp;quot;&amp;TOUSR=&amp;quot;+tousr+&amp;quot;&amp;TOUSRORG=&amp;quot;+tousrorg);
+		_this.SetCellText(sheet,3,2,_this.XMLDS_GetString(0,&amp;quot;ID&amp;quot;));
+		_this.SetCellText(sheet,3,6,_this.XMLDS_GetString(0,&amp;quot;PROUSR&amp;quot;));
+		_this.SetCellText(sheet,5,2,_this.XMLDS_GetString(0,&amp;quot;TITLE&amp;quot;));
+		_this.SetCellText(sheet,7,2,_this.XMLDS_GetString(0,&amp;quot;NOTE&amp;quot;));
+		_this.SetCellText(sheet,12,2,_this.XMLDS_GetString(0,&amp;quot;CRTDAT&amp;quot;));
+		var review = _this.XMLDS_GetString(0,&amp;quot;REVIEW&amp;quot;);
+		_this.SetCellText(sheet,12,6,review);
+		
+		if (review == &amp;quot;&amp;quot;) {
+			//更新为已读
+			_sql.run(&amp;quot;upReview&amp;quot;,&amp;quot;GUID=&amp;quot;+guid+&amp;quot;&amp;TOUSR=&amp;quot;+tousr+&amp;quot;&amp;TOUSRORG=&amp;quot;+tousrorg);
+		
+		}
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >trkdtl</ID><NAME ></NAME><DATDSC >select a.id,to_char(a.crtdat,&amp;apos;yyyy-mm-dd hh24:mi:ss&amp;apos;) crtdat,a.title,a.guid,c.name prousr,nvl(b.review,&amp;apos;&amp;apos;) review,a.note
+from trkhdr a,trkdtl b,v_usr c
+where a.guid=b.trkguid and a.prousr=c.id
+ and a.guid=&amp;apos;[%GUID]&amp;apos;
+ and b.tousr=&amp;apos;[%TOUSR]&amp;apos;
+ and b.tousrorg=&amp;apos;[%TOUSRORG]&amp;apos; and c.org=&amp;apos;[%TOUSRORG]&amp;apos;</DATDSC><C4 >trkdtl</C4><C5 >trkdtl</C5><C6 >trkdtl</C6></ROW>
+<ROW num="1" ><ID >upReview</ID><NAME ></NAME><DATDSC >update trkdtl set review=to_char(sysdate,&amp;apos;yyyy-mm-dd hh24:mi:ss&amp;apos;),result=&amp;apos;1&amp;apos; where trkguid=&amp;apos;[%GUID]&amp;apos; and tousrorg=&amp;apos;[%TOUSRORG]&amp;apos; and tousr=&amp;apos;[%TOUSR]&amp;apos; </DATDSC><C4 ></C4><C5 ></C5><C6 ></C6></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

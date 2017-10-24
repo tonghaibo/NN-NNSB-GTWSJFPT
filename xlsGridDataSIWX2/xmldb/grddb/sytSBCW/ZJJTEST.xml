@@ -1,0 +1,403 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >ZJJTEST</MWID><NAME >中间件测试</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >ZJJTEST.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >0</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdcelds>
+<ROWSET>
+<ROW num="0" ><ID >0,1,3</ID><CELLID ></CELLID><NAME >起始时间</NAME><VALFLD ></VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP >DATE</VALTYP><MAXLEN ></MAXLEN><CTLTYP >DATE</CTLTYP><LISTID >DATE</LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY >1</IFQUERY><IFQUERYSCOPE >1</IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD></ROW>
+<ROW num="1" ><ID >0,1,6</ID><CELLID ></CELLID><NAME >关键字</NAME><VALFLD ></VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP >STRING</VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD></ROW>
+<ROW num="2" ><ID >0,1,8</ID><CELLID ></CELLID><NAME >查询</NAME><VALFLD ></VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP >Button</CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD></ROW>
+<ROW num="3" ><ID >0,1,2</ID><CELLID ></CELLID><NAME ></NAME><VALFLD ></VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP >DATE</VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD></ROW>
+</ROWSET>
+</grdcelds><grdcolds>
+<ROWSET>
+<ROW num="0" ><ID >0,3</ID><NAME ></NAME><VALFLD ></VALFLD><NOTNULL ></NOTNULL><COLTYP >DATE</COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD></ROW>
+<ROW num="1" ><ID >0,6</ID><NAME ></NAME><VALFLD ></VALFLD><NOTNULL ></NOTNULL><COLTYP >DATE</COLTYP><LISTID ></LISTID><LABEL ></LABEL><ISIDX ></ISIDX><INDEXID ></INDEXID><WHERE ></WHERE><ORDER ></ORDER><FLD ></FLD></ROW>
+</ROWSET>
+</grdcolds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >doQuery</ID><NAME >查询</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE></ROW>
+<ROW num="1" ><ID >homePage</ID><NAME >首页</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE></ROW>
+<ROW num="2" ><ID >prevPage</ID><NAME >上一页</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE></ROW>
+<ROW num="3" ><ID >nextPage</ID><NAME >下一页</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE></ROW>
+<ROW num="4" ><ID >lastPage</ID><NAME >尾页</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >GRDPAMDS_0</ID><NAME ></NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG ></VISFLG><KEYFLG ></KEYFLG></ROW>
+</ROWSET>
+</grdpamds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var sheet1 = 0;
+var sheet2 = 1;
+var sheet3 = 2;
+var pagerows = 50; //分页每页总行数
+var curr_pageno = 1; //当前页
+var curr_maxpageno = 0; //最大分页数
+var ZXGFILE0= &amp;quot;&amp;quot;;
+var get_content= &amp;quot;&amp;quot;;
+var str=&amp;quot;&amp;quot;;
+var content=&amp;quot;&amp;quot;;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet){
+	
+	_this.SplitSheet(0, &amp;quot;V&amp;quot;, &amp;quot;10%&amp;quot;);
+	_this.SplitSheet(1, &amp;quot;H&amp;quot;, &amp;quot;16%&amp;quot;);
+	//_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+
+	_sql.querytods(&amp;quot;GETDAT12&amp;quot;,&amp;quot;DAT=&amp;quot;+G_LOGDAT);
+	_this.SetToDateBox(&amp;quot;&amp;quot;,0,1,3,_this.XMLDS_GetString(0,&amp;quot;DAT1&amp;quot;));
+	_this.SetToDateBox(&amp;quot;&amp;quot;,0,1,6,_this.XMLDS_GetString(0,&amp;quot;DAT2&amp;quot;));
+	//_this.SetFixedRow(2, 1);
+
+	var zth_view = &amp;quot;zth_view&amp;quot;;
+	var sbh_view = &amp;quot;sbh_view&amp;quot;;
+	var AdministratorList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl + &amp;quot;/XmlDB.sp?bind=usr&amp;where=org=1 &amp;quot;), &amp;quot;ID&amp;quot;, &amp;quot;NAME&amp;quot;);
+	var SBHList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl + &amp;quot;/XmlDB.sp?bind=&amp;quot; + sbh_view), &amp;quot;ID&amp;quot;, &amp;quot;NAME&amp;quot;);
+	var ZTHList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl + &amp;quot;/XmlDB.sp?bind=&amp;quot; + zth_view), &amp;quot;ID&amp;quot;, &amp;quot;NAME&amp;quot;);
+
+	_this.SetToComboBox(&amp;quot;&amp;quot;, 0, 1, 9, AdministratorList );
+	_this.SetToComboBox(&amp;quot;&amp;quot;, 0, 1, 12, SBHList );
+	_this.SetToComboBox(&amp;quot;&amp;quot;, 0, 1, 15, ZTHList );
+	_this.SetCellText(0, 1, 9, &amp;quot;xlsgrid&amp;quot;);
+	_this.SetCellText(0, 1, 12, &amp;quot;1&amp;quot;);
+	_this.SetCellText(0, 1, 15, &amp;quot;31&amp;quot;);
+
+	var xml = _sql.query(&amp;quot;loadDataCxb&amp;quot;,&amp;quot;&amp;quot;);
+	for ( var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++ ){
+		
+		_this.SetCellText(1,i+1,0,_this.XMLDS_GetString(i,&amp;quot;序号&amp;quot;));
+		_this.SetCellText(1,i+1,0,_this.XMLDS_GetString(i,&amp;quot;表名&amp;quot;));
+		if(i&amp;gt;=20) {
+			_this.AppendRow(1,i);
+		}
+	}
+	//_this.SetMainCellRange(1,2,1,_this.GetRowCount(1)-1,_this.GetColCount(1));
+	_this.SetXmlDS(1,2,1,_this.GetRowCount(1)-1,_this.GetColCount(1),xml);
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;, _this.ATTR_SHEET_SELECTFLAG, _this.SELECTFLAG_SINGLEROW);
+	_this.SetFixedRow(1, 2);//固定行
+
+	ZXGFILE0 = _this.SaveTempZXGFile(2);
+	//_this.AutoFixScreenWidth();
+		
+}
+
+
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col){
+		
+	if (sheet == 1) {
+		if (row&amp;lt; 1) return;
+		for (var r=1;r&amp;lt;=_this.GetRowcount(1);r++) {		
+			if( row==r &amp;&amp; col==2) {
+				get_content=_this.GetCellText(1,r,2);
+				_this.LoadZXGFile(ZXGFILE0,-1,2);
+				_thisfillingdata();
+				
+				loadData(1);
+			}
+		}
+	}
+}
+
+function  _thisfillingdata() {   
+	_sql.querytods( &amp;quot;selectCountcolumn&amp;quot;,&amp;quot;C=&amp;quot;+get_content);	
+	var col_total=_this.XMLDS_GetString(0,&amp;quot;count(*)&amp;quot;);
+	_sql.querytods( &amp;quot;loadDataCxbmx&amp;quot;,&amp;quot;bm=&amp;quot;+get_content);
+	//alert(col_total);
+	for( var ret=1;ret&amp;lt;col_total;ret++) {
+	
+		if(ret &amp;gt;= _this.GetColCount(2)-2) {
+	     	 	_this.AppendCol(2,ret-2);
+		}
+	}
+	
+	for( var ret=0;ret&amp;lt;col_total;ret++) {
+		var Col_N=_this.XMLDS_GetString(ret,&amp;quot;column_name&amp;quot;);
+		
+		
+		if(Col_N==&amp;quot;LOGVAR_TRANS_ID&amp;quot;) {
+			Col_N=&amp;quot;当前事务ID&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_TRIG_CZSJ&amp;quot;) {
+			Col_N=&amp;quot;触发器操作时间&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_TRIG_NEWOLD&amp;quot;) {
+			Col_N=&amp;quot;新旧数据标志&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_TRIG_CZLX&amp;quot;) {
+			Col_N=&amp;quot;触发器操作类型&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_TRIG_CZRQ&amp;quot;) {
+			Col_N=&amp;quot;触发器操作日期&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_CZY_ID&amp;quot;) {
+			Col_N=&amp;quot;操作员ID&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_CZY_XM&amp;quot;) {
+			Col_N=&amp;quot;操作员姓名&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_SQR_XM&amp;quot;) {
+			Col_N=&amp;quot;授权人姓名&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_MKMC&amp;quot;) {
+			Col_N=&amp;quot;操作模块名称&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_JMGN&amp;quot;) {
+			Col_N=&amp;quot;操作界面功能&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_CZYY&amp;quot;) {
+			Col_N=&amp;quot;操作原因&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_IPADDRESS&amp;quot;) {
+			Col_N=&amp;quot;IP地址&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_HOST&amp;quot;) {
+			Col_N=&amp;quot;机器全名&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_TERMINAL&amp;quot;) {
+			Col_N=&amp;quot;终端名&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_PROGRAM&amp;quot;) {
+			Col_N=&amp;quot;程序名&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_LOGON_TIME&amp;quot;) {
+			Col_N=&amp;quot;登录时间&amp;quot;;
+		}
+		if(Col_N==&amp;quot;LOGVAR_SQLTEXT&amp;quot;) {
+			Col_N=&amp;quot;SQL语句&amp;quot;;
+		}
+		_this.SetCellText(2,1,ret+1,Col_N);
+		str+=_this.XMLDS_GetString(ret,&amp;quot;column_name&amp;quot;)+&amp;quot;,&amp;quot;;
+	}
+	str=str.substring(0,str.length-1);
+	str=changestring(str );
+	//alert(str);
+	var row_total=&amp;quot;&amp;quot;;
+	//alert(row_total);
+	if(row_total==&amp;quot;&amp;quot;) {                 
+		row_total=0;
+	}
+	for(var ret=2;ret&amp;lt;pagerows ;ret++) {      	    
+		if(ret&amp;gt;= _this.GetRowCount(2)-2) {
+			_this.AppendRow(2,ret-2);
+		}         	          
+	}
+
+}
+
+function loadData(pageno)
+{
+	//_this.LoadZXGFile(ZXGFILE0,-1,2);
+	_this.SetFixedRow(2,2);
+	_this.SetMainCellRange(2,2,1,_this.GetRowCount(2)-1,_this.GetColCount(2)-2);
+	_this.SetAttribe(&amp;quot;SHEET_2&amp;quot;, _this.ATTR_SHEET_SELECTFLAG, _this.SELECTFLAG_SINGLEROW);
+
+	var dat1 = _this.GetCellText(0,1,3);
+	var dat2 = _this.GetCellText(0,1,6);	
+	curr_pageno = pageno;
+	
+	//获取总记录数
+	//	_sql.querytods( &amp;quot;selectCountrow&amp;quot;,&amp;quot;R=&amp;quot;+get_content);
+	//	var totalcnt1=_this.XMLDS_GetString(0,&amp;quot;max(rownum)&amp;quot;);
+	//	if (totalcnt1 == &amp;quot;&amp;quot;) {
+	//		totalcnt1 = 0;
+	//	}
+	
+	var minrow=(pageno-1)*pagerows;
+	var maxrow=pageno*pagerows;	
+	var Administrator = _this.GetCellText(0, 1, 9);
+	var SBH = _this.GetCellText(0, 1, 12);
+	var ZTH = _this.GetCellText(0, 1, 15);
+	if (get_content == &amp;quot;BACKUP_SI_DJB_TMP&amp;quot;) {
+	
+		content=&amp;quot;sbh = 459900&amp;quot;+&amp;quot; &amp;quot;;
+		
+	}
+	
+	else if (get_content == &amp;quot;BACKUP_AEF3&amp;quot;) {
+		ZTH = &amp;quot;1&amp;quot; + ZTH ;
+		content=&amp;quot;ORG=&amp;quot;+SBH+&amp;quot; &amp;quot;+&amp;quot;AND&amp;quot;+&amp;quot; &amp;quot;+&amp;quot;ACC=&amp;quot;+ZTH;
+	}
+	
+	else if (get_content == &amp;quot;BACKUP_AEF4&amp;quot;) {
+		ZTH = &amp;quot;1&amp;quot; + ZTH;
+		content=&amp;quot;ORG=&amp;quot;+SBH+&amp;quot; &amp;quot;+&amp;quot;AND&amp;quot;+&amp;quot; &amp;quot;+&amp;quot;ACC=&amp;quot;+ZTH;	
+	}
+	
+	else if (get_content == &amp;quot;BACKUP_SI_AC95_TMP&amp;quot;) {
+		content=&amp;quot;zth = &amp;quot;+ ZTH +&amp;quot; &amp;quot;;
+		
+	}
+	
+	else if (get_content == &amp;quot;BACKUP_CW_SBSB&amp;quot;) {
+
+		content=&amp;quot;sbh = &amp;quot;+ SBH +&amp;quot; &amp;quot;;
+
+	}
+	else if (get_content == &amp;quot;BACKUP_CW_CZYGLB&amp;quot;) {
+
+		content=&amp;quot;sbh = &amp;quot;+ SBH +&amp;quot; &amp;quot;;
+
+	}
+	else {
+		
+		content=&amp;quot;sbh=&amp;quot;+SBH+&amp;quot; &amp;quot;+&amp;quot;AND&amp;quot;+&amp;quot; &amp;quot;+&amp;quot; zth =&amp;quot; + ZTH;
+		
+	}
+
+	var xml = _sql.query(&amp;quot;pagerow&amp;quot;,&amp;quot;cc=&amp;quot;+str+&amp;quot;&amp;aa=&amp;quot;+get_content+&amp;quot;&amp;DAT1=&amp;quot;+dat1 +&amp;quot;&amp;DAT2=&amp;quot;+dat2+&amp;quot;&amp;Administrator=&amp;quot;+Administrator+&amp;quot;&amp;content=&amp;quot;+content+&amp;quot;&amp;minrow=&amp;quot;+minrow+&amp;quot;&amp;maxrow=&amp;quot;+maxrow );
+	_this.SetXmlDS(2, 2, 1, _this.GetRowCount(2), _this.GetColCount(2), xml);
+	//获取总记录数
+	_sql.querytods( &amp;quot;getsum&amp;quot;,&amp;quot;sum=&amp;quot;+get_content+&amp;quot;&amp;DAT1=&amp;quot;+dat1 +&amp;quot;&amp;DAT2=&amp;quot;+dat2+&amp;quot;&amp;Administrator=&amp;quot;+Administrator+&amp;quot;&amp;content=&amp;quot;+content );
+	var totalcnt=_this.XMLDS_GetString(0,&amp;quot;count(*)&amp;quot;);
+	if (totalcnt == &amp;quot;&amp;quot;){
+		totalcnt = 0;
+	}
+	
+	//计算最大分页数
+	curr_maxpageno = Math.ceil(totalcnt / pagerows);
+	str=&amp;quot;&amp;quot;;
+	var rowsinfo = &amp;quot;  [ 共 &amp;quot;+totalcnt+&amp;quot; 行  第 &amp;quot; + pageno + &amp;quot;/&amp;quot; + curr_maxpageno + &amp;quot;页 每页 &amp;quot; + pagerows + &amp;quot; 行 ]&amp;quot;;
+	_this.SetToolbarString(rowsinfo);
+
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 0) {
+		var dat1 = _this.GetCellText(0,1,3);
+		var dat2 = _this.GetCellText(0,1,6);
+		var dat11 = dat1.replace(/-/g,&amp;quot;&amp;quot;);
+		var dat22 = dat2.replace(/-/g,&amp;quot;&amp;quot;);
+		if (dat11 &amp;gt; dat22) {
+			_this.SetCellText(0,1,6,dat1);
+		}
+	
+	}
+}
+
+//查询
+function doQuery()
+{
+	if (get_content == &amp;quot;&amp;quot;) alert(&amp;quot;请选择要查询的表名！&amp;quot;);
+	try{
+		_this.LoadZXGFile(ZXGFILE0,-1,2);
+		_thisfillingdata();
+		loadData(1);
+	}
+	catch(e){
+		alert(e)	
+	}
+}
+
+//首页
+function homePage()
+{
+	_this.LoadZXGFile(ZXGFILE0,-1,2);
+	_thisfillingdata();
+	loadData(1);
+}
+
+//上一页
+function prevPage()
+{
+	var pageno = curr_pageno - 1;
+	if (pageno &amp;lt;= 0) return;
+	_this.LoadZXGFile(ZXGFILE0,-1,2);
+	_thisfillingdata();
+	loadData(pageno);
+}
+
+//下一页
+function nextPage()
+{
+	var pageno = curr_pageno + 1;
+	if (pageno &amp;gt; curr_maxpageno) return;
+	_this.LoadZXGFile(ZXGFILE0,-1,2);
+	_thisfillingdata();
+	loadData(pageno);
+}
+
+//尾页
+function lastPage()
+{
+	_this.LoadZXGFile(ZXGFILE0,-1,2);
+	_thisfillingdata();
+	loadData(curr_maxpageno);
+}
+
+function changestring(str )
+{	var str1=&amp;quot;&amp;quot;;
+	var str2=str.split(&amp;quot;,&amp;quot;);
+		
+	str2[1]=&amp;quot;decode(LOGVAR_TRIG_NEWOLD, &amp;apos;N&amp;apos;, &amp;apos;N-修改后&amp;apos;,&amp;apos;O-修改前&amp;apos;)&amp;quot;;
+	str2[2]=&amp;quot;decode(LOGVAR_TRIG_CZLX, &amp;apos;I&amp;apos;, &amp;apos;I-插入&amp;apos;, &amp;apos;U&amp;apos;, &amp;apos;U-更新&amp;apos;, &amp;apos;D-删除&amp;apos;)&amp;quot;;
+	
+	for(var i=0;i&amp;lt;str2.length;i++)
+	{
+		str1+=str2[i]+&amp;quot;,&amp;quot;;
+	}	
+	str1= str1.substring(0, str1.length - 1);
+	
+	return str1;
+		
+}
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >loadDataCxb</ID><NAME >加载查询表</NAME><DATDSC >select rownum,table_name from user_tables where table_name like &amp;apos;BACKUP_%&amp;apos;</DATDSC><C4 >loadDataCxb</C4><C5 ></C5><C6 >loadDataCxb</C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 >loadDataCxb</C10></ROW>
+<ROW num="1" ><ID >loadDataCxbmx</ID><NAME >查询表明细</NAME><DATDSC >select * from user_tab_columns where table_name=upper(&amp;apos;[%bm]&amp;apos;) order by column_id</DATDSC><C4 ></C4><C5 >aaa</C5><C6 >loadDataCxbmx</C6><C7 ></C7><C8 >loadDataCxbmx</C8><C9 ></C9><C10 ></C10></ROW>
+<ROW num="2" ><ID >selectCountcolumn</ID><NAME ></NAME><DATDSC >select count(*) from user_tab_columns where table_name=upper(&amp;apos;[%C]&amp;apos;)</DATDSC><C4 ></C4><C5 ></C5><C6 >GRDDSCDS_2</C6><C7 >selectCountcolumn</C7><C8 ></C8><C9 ></C9><C10 ></C10></ROW>
+<ROW num="3" ><ID >selectCountrow</ID><NAME ></NAME><DATDSC >select max(rownum) from [%R] </DATDSC><C4 ></C4><C5 ></C5><C6 >selectCountrow</C6><C7 ></C7><C8 >selectCountrow</C8><C9 ></C9><C10 >selectCountrow</C10></ROW>
+<ROW num="4" ><ID >Ldata</ID><NAME ></NAME><DATDSC >
+   select * from  [%cc] 
+   order by logvar_trig_czrq, LOGVAR_TRANS_ID, LOGVAR_TRIG_NEWOLD desc</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10></ROW>
+<ROW num="5" ><ID >GETDAT12</ID><NAME ></NAME><DATDSC >select to_char(trunc(to_date(&amp;apos;[%DAT]&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;),&amp;apos;MM&amp;apos;),&amp;apos;yyyy-mm-dd&amp;apos;) dat1,
+       to_char(last_day(to_date(&amp;apos;[%DAT]&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;)),&amp;apos;yyyy-mm-dd&amp;apos;) dat2 from dual</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10></ROW>
+<ROW num="6" ><ID >pagerow</ID><NAME ></NAME><DATDSC >SELECT  [%cc]
+ FROM 
+(
+  SELECT ROWNUM NO,X.*
+  FROM 
+  (
+    SELECT a.* 
+    FROM [%aa] a
+    where LOGVAR_TRIG_CZRQ &amp;gt;= replace(&amp;apos;[%DAT1]&amp;apos;, &amp;apos;-&amp;apos;, &amp;apos;&amp;apos;)
+    and LOGVAR_TRIG_CZRQ &amp;lt;= replace(&amp;apos;[%DAT2]&amp;apos;, &amp;apos;-&amp;apos;, &amp;apos;&amp;apos;)
+    and LOGVAR_CZY_ID = &amp;apos;[%Administrator]&amp;apos;
+    and [%content]
+
+    ORDER BY  logvar_trig_czrq, LOGVAR_TRANS_ID, LOGVAR_TRIG_NEWOLD desc 
+  ) X  
+) 
+WHERE NO &amp;gt; [%minrow] AND NO &amp;lt; [%maxrow] 
+
+
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 >pagerow</C8><C9 >pagerow</C9><C10 >pagerow</C10></ROW>
+<ROW num="7" ><ID >getsum</ID><NAME >记录数</NAME><DATDSC >SELECT count(*)
+ FROM [%sum]
+    where LOGVAR_TRIG_CZRQ &amp;gt;= replace(&amp;apos;[%DAT1]&amp;apos;, &amp;apos;-&amp;apos;, &amp;apos;&amp;apos;)
+    and LOGVAR_TRIG_CZRQ &amp;lt;= replace(&amp;apos;[%DAT2]&amp;apos;, &amp;apos;-&amp;apos;, &amp;apos;&amp;apos;)
+    and LOGVAR_CZY_ID = &amp;apos;[%Administrator]&amp;apos;
+
+    ORDER BY  logvar_trig_czrq, LOGVAR_TRANS_ID, LOGVAR_TRIG_NEWOLD desc 
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 >getsum</C10></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

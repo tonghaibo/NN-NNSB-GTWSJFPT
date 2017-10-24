@@ -1,0 +1,389 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >JJSYB</MWID><NAME >基金收入表</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >JJSYB.zxg</FILE><SCENE >3</SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS >xlsgrid/js/main.js</EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >QueryWskdw</ID><NAME >查询未收款单位</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 ></C10></ROW>
+<ROW num="1" ><ID >printBB</ID><NAME >打印</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >6</IMG><IMGMOUSE >6</IMGMOUSE><C10 >printBB</C10></ROW>
+<ROW num="2" ><ID >QueryYear</ID><NAME >年度汇总</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE><C10 ></C10></ROW>
+</ROWSET>
+</grdbtnds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >YM1</ID><NAME >起始年月</NAME><NOTNULL >1</NOTNULL><KEYVAL >V_YYYY_MM</KEYVAL><INPCTL >listnotnull</INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 >YM1</C13><C14 >YM1</C14><C15 >YM1</C15></ROW>
+<ROW num="1" ><ID >YM2</ID><NAME >截止年月</NAME><NOTNULL >1</NOTNULL><KEYVAL >V_YYYY_MM</KEYVAL><INPCTL >listnotnull</INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 >YM2</C13><C14 ></C14><C15 ></C15></ROW>
+</ROWSET>
+</grdpamds><grdshwds>
+<ROWSET>
+<ROW num="0" ><ID >0,3,1</ID><NAME ></NAME><DBNAME ></DBNAME><DSKEY >DSC:MAIN</DSKEY><NROW >12</NROW><NCOL >13</NCOL><PAGES ></PAGES><PAGESIZE ></PAGESIZE><URL ></URL><CTLTYP ></CTLTYP><DYNCTL ></DYNCTL><LISTID ></LISTID><ISCROSS ></ISCROSS><HROW ></HROW><HCOLS ></HCOLS><ROWORDER ></ROWORDER><VCOLS ></VCOLS><VCOLSQL ></VCOLSQL><VALUECOL ></VALUECOL><C20 >0,6,1</C20><C21 >0,6,1</C21><C22 >0,3,1</C22></ROW>
+</ROWSET>
+</grdshwds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >//20161128 lwq rewrite
+
+var ZXGFILE0=&amp;quot;&amp;quot;;
+var ZXGFILE1=&amp;quot;&amp;quot;;
+var ZXGFILE2=&amp;quot;&amp;quot;;
+var title = &amp;quot;&amp;quot;;
+var typename = &amp;quot;&amp;quot;;
+var ds_ids = &amp;quot;&amp;quot;;
+var curr_pageno = 1; //当前页
+var curr_maxpageno = 0; //最大分页数
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,&amp;quot;10%&amp;quot;);
+
+	ZXGFILE0 = _this.SaveTempZXGFile(0);
+	ZXGFILE1 = _this.SaveTempZXGFile(2);
+	ZXGFILE2 = _this.SaveTempZXGFile(3);
+	
+	_this.SetCellText(1,1,2,G_LOGDAT.substring(0,7));
+	_this.SetCellText(1,1,4,G_LOGDAT.substring(0,7));
+	_this.SetCellText(1,1,7,60);
+	_this.LoadScene(1,10);
+	var statList = _this.CreateListValue();
+
+	_this.SetListValue(statList,&amp;quot;0&amp;quot;,&amp;quot;四险收入&amp;quot;);
+	_this.SetListValue(statList,&amp;quot;1&amp;quot;,&amp;quot;医疗收入&amp;quot;);
+	_this.SetListValue(statList,&amp;quot;2&amp;quot;,&amp;quot;机关收入&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,1,9,statList);
+	_this.SetCellText(1,1,9,0);
+	
+	loadData(1);
+}
+
+//加载数据  
+function loadData(pageno)
+{
+	curr_pageno = pageno;
+	
+	var ym1 = _this.GetCellText(1,1,2);
+	var ym2 = _this.GetCellText(1,1,4);
+	var pagerows = _this.GetCellText(1,1,7); //分页每页总行数
+
+	var type =_this.GetCellText(1,1,9);//取业务类型值
+	if(type==0){	
+		_this.LoadZXGFile(ZXGFILE0,-1,0);
+		typename = &amp;quot;四险基金收入表&amp;quot;;
+		ds_ids = &amp;quot;MAIN&amp;quot;;
+	}else if (type==1){
+		_this.LoadZXGFile(ZXGFILE1,-1,0);
+		typename = &amp;quot;医疗基金收入表&amp;quot;;
+		ds_ids = &amp;quot;MAIN1&amp;quot;;
+	}else if (type==2){
+		_this.LoadZXGFile(ZXGFILE2,-1,0);
+		typename = &amp;quot;机关基金收入表&amp;quot;;
+		ds_ids = &amp;quot;MAIN2&amp;quot;;
+	}
+
+	_this.SetColVisible(0,_this.GetColCount(0)-1,-1);//隐藏最后一列
+//	_this.SetFixedRow(0,6);
+//	_this.SetMainCellRange(0,3,1,_this.GetRowCount(0)-2,_this.GetColCount(0)-1);
+	_this.SetMainCellRange(0,6,0,_this.GetRowCount(0)-2,_this.GetColCount(0)-1);
+
+	_this.SetCellText(0,3,1,G_ORGNAM);
+	_this.SetCellText(0,3,3,G_LOGDAT);
+
+	if (ym1 == ym2) {
+		title = ym1.substring(0,4)+&amp;quot;年&amp;quot;+(1*ym1.substring(5,7))+&amp;quot;月&amp;quot;+typename;
+	}
+	else if (ym1.substring(0,4) == ym2.substring(0,4)) {
+		title = ym1.substring(0,4)+&amp;quot;年&amp;quot;+(1*ym1.substring(5,7))+&amp;quot;-&amp;quot;+(1*ym2.substring(5,7))+&amp;quot;月&amp;quot;+typename;
+	}
+	else {
+		title = ym1+&amp;quot;至&amp;quot;+ym2+typename;
+	}
+	_this.SetCellText(0,1,0,title);
+
+	var param = &amp;quot;YM1=&amp;quot;+ym1+&amp;quot;&amp;YM2=&amp;quot;+ym2;
+	param += &amp;quot;&amp;thissytid=&amp;quot;+G_SYTID+&amp;quot;&amp;thisgrdid=&amp;quot;+G_GRDID+&amp;quot;&amp;dsid=&amp;quot;+ds_ids+&amp;quot;&amp;pageno=&amp;quot;+pageno+&amp;quot;&amp;pagerows=&amp;quot;+pagerows;
+	var xml = invokeOSFunc(&amp;quot;queryXml&amp;quot;,param);	
+
+//	_this.SetXmlDS(0,3,1,_this.GetRowCount(0)-2,_this.GetColCount(0)-1,xml);
+	_this.SetXmlDS(0,6,0,17,17,xml);
+	
+	//获取总记录数
+	var totalcnt = invokeOSFunc(&amp;quot;queryRowCount&amp;quot;,param); 
+	
+	//计算最大分页数
+	curr_maxpageno = Math.ceil(totalcnt / pagerows);
+	var rowsinfo = &amp;quot;  [ 共 &amp;quot;+totalcnt+&amp;quot; 行  第 &amp;quot; + pageno + &amp;quot;/&amp;quot; + curr_maxpageno + &amp;quot;页 每页 &amp;quot; + pagerows + &amp;quot; 行 ]&amp;quot;;
+	_this.SetToolbarString(rowsinfo);
+	_this.SetCellText(0,3,4,&amp;quot;第&amp;quot;+pageno+&amp;quot;页 共&amp;quot;+curr_maxpageno+&amp;quot;页&amp;quot;);
+
+	_this.AutoFixColWidth(0,400);
+	_this.SetFixedRow(0,6);
+	_this.RefreshFormula();
+	_this.AutoFixScreenWidth();
+
+}
+
+//下拉列表框选择改变
+function _thisOnListSelChange(id, oldsel, cursel)
+{
+	loadData(1);
+
+}
+
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (sheet == 1) {
+		if (row == 1 &amp;&amp; col == 11) { //查询 
+			loadData(1);
+		}
+		else if (row == 1 &amp;&amp; col == 13) { //首页
+			loadData(1);
+		}
+		else if (row == 1 &amp;&amp; col == 14) { //上一页
+			var pageno = curr_pageno - 1;
+			if (pageno &amp;lt;= 0) return;
+			loadData(pageno);
+		}
+		else if (row == 1 &amp;&amp; col == 15) { //下一页
+			var pageno = curr_pageno + 1;
+			if (pageno &amp;gt; curr_maxpageno) return;		
+			loadData(pageno);
+		}
+		else if (row == 1 &amp;&amp; col == 16) { //尾页
+			loadData(curr_maxpageno);
+		}
+		
+	}
+}
+
+
+//查询未收款单位
+function QueryWskdw()
+{
+	var ym1 = _this.GetCellText(1,1,2);
+	var ym2 = _this.GetCellText(1,1,4);
+	window.open(&amp;quot;show.sp?grdid=JJSYB_WSKDW&amp;YM1=&amp;quot;+ym1+&amp;quot;&amp;YM2=&amp;quot;+ym2);
+}
+
+//打印
+function printBB()
+{
+	if (curr_maxpageno == 0) {
+		alert(&amp;quot;没有数据，请先查询！&amp;quot;);
+		return;
+	}
+	
+	for (var i=1;i&amp;lt;=curr_maxpageno;i++) {
+		loadData(i);
+		_this.Print(0,0);
+	}
+}
+
+//年度汇总
+function QueryYear()
+{
+	window.open(&amp;quot;show.sp?grdid=JJSYB_NDHZ&amp;quot;);  //打开年度汇总窗口     
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 1) {
+		if (col == 2 || col == 4) {
+			var ym1 = _this.GetCellText(1,1,2);
+			var ym2 = _this.GetCellText(1,1,4);
+			var ym11 = ym1.replace(/-/g,&amp;quot;&amp;quot;);
+			var ym22 = ym2.replace(/-/g,&amp;quot;&amp;quot;);
+			
+			if (!IsNumber(ym11) || !IsNumber(ym22)) {
+				_this.SetCellText(sheet,row,col,oldvalue);
+			}
+			else if (ym11 &amp;gt; ym22) {
+				if (ym11.length == 6) {
+					ym1= ym11.substring(0,4)+&amp;quot;-&amp;quot;+ym11.substring(4);
+				}
+				if (ym22.length == 6) {
+					ym2= ym22.substring(0,4)+&amp;quot;-&amp;quot;+ym22.substring(4);
+				}
+				_this.SetCellText(1,1,2,formatDat(ym1));
+				_this.SetCellText(1,1,4,formatDat(ym1));
+			}
+			
+			var arr = newvalue.split(&amp;quot;-&amp;quot;);
+			if (arr.length == 2) {
+				if (!IsNumber(arr[0]) || !IsNumber(arr[1])) {
+					_this.SetCellText(sheet,row,col,oldvalue);
+				}
+				if (arr[1] == 0 || arr[1] &amp;gt; 12) {
+					_this.SetCellText(sheet,row,col,oldvalue);
+				}
+				if (arr[1] &amp;lt; 10) {
+					_this.SetCellText(sheet,row,col,arr[0]+&amp;quot;-0&amp;quot;+(1*arr[1]));
+				}
+			}
+			else {
+				if (!IsNumber(arr[0]) || arr[0].length != 6) {
+					_this.SetCellText(sheet,row,col,oldvalue);
+				}
+				else {
+					if (arr[0].substring(4) &amp;gt; 12) _this.SetCellText(sheet,row,col,oldvalue);
+					else _this.SetCellText(sheet,row,col,arr[0].substring(0,4)+&amp;quot;-&amp;quot;+arr[0].substring(4));
+				}
+			}
+				
+		}
+	}
+}
+
+function formatDat(dat)
+{
+	var arr = dat.split(&amp;quot;-&amp;quot;);
+	if (arr[1] &amp;lt; 10) {
+		return arr[0] + &amp;quot;-0&amp;quot; + (1*arr[1]);
+	}
+	return dat;
+}
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var servletpack = new JavaPackage(&amp;quot;com.xlsgrid.net.servlet&amp;quot;);
+
+//分页查询
+function queryXml()
+{
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var mwsql = new servletpack.MWSQL();
+		var sql = mwsql.GetQuerySQL(request,db,thissytid ,thisgrdid ,dsid);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%YM1]&amp;quot;,YM1);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%YM2]&amp;quot;,YM2);
+
+		sql = &amp;quot;select * from ( &amp;quot; + sql + &amp;quot; ) where rn&amp;gt;(&amp;quot;+pageno+&amp;quot;-1)*&amp;quot;+pagerows+&amp;quot; and rn&amp;lt;=&amp;quot;+pageno+&amp;quot;*&amp;quot;+pagerows;
+		//throw new Exception(sql);
+
+		var ds = db.QuerySQL(sql);
+		return ds.GetXml();
+		
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+
+//分页取总行数~总金额
+function queryRowCount()
+{	
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var mwsql = new servletpack.MWSQL();
+		var sql = mwsql.GetQuerySQL(request,db,thissytid ,thisgrdid ,dsid);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%YM1]&amp;quot;,YM1);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%YM2]&amp;quot;,YM2);
+		
+		//var cnt = db.GetSQLRowCount(sql);
+		
+		sql = &amp;quot;select count(*) cnt from ( &amp;quot; + sql + &amp;quot; )&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		var cnt = ds.getStringAt(0,&amp;quot;CNT&amp;quot;);
+		//var summny = ds.getStringAt(0,&amp;quot;SUMMNY&amp;quot;);
+		//return cnt+&amp;quot;~&amp;quot;+summny;
+		return cnt;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select t.*,rownum rn from (
+SELECT  &amp;quot;DWBH&amp;quot;,
+         (select dwmc from si_dwb b where a.dwbh=b.dwbh and a.sbh=b.sbh and a.zth=b.zth) dwmc,   
+         0 hjje,   
+         sum(&amp;quot;YLODWJE&amp;quot;) YLODWJE,   
+         sum(&amp;quot;YLOGRJE&amp;quot;) YLOGRJE,      
+	 &amp;apos;&amp;apos; YLXJ,
+         sum(&amp;quot;SYEDWJE&amp;quot;) SYEDWJE,   
+         sum(&amp;quot;SYEGRJE&amp;quot;) SYEGRJE,   
+	 &amp;apos;&amp;apos; SYXJ,
+         sum(&amp;quot;GSDWJE&amp;quot;) GSDWJE,   
+         sum(&amp;quot;SYUDWJE&amp;quot;) SYUDWJE   
+         --sum(&amp;quot;BCDWJE&amp;quot;) BCDWJE,   
+         --sum(&amp;quot;CXGRJE&amp;quot;) CXGRJE   
+     FROM &amp;quot;CW_RJZB_JJSR_VIEW&amp;quot; a  
+WHERE ORG = &amp;apos;[%SYS_ORGID]&amp;apos; AND ACC = &amp;apos;[%SYS_ACCID]&amp;apos; AND         
+        YY||&amp;apos;-&amp;apos;||triM(to_char(MM,&amp;apos;00&amp;apos;)) &amp;gt;= &amp;apos;[%YM1]&amp;apos; and YY||&amp;apos;-&amp;apos;||triM(to_char(MM,&amp;apos;00&amp;apos;)) &amp;lt;= &amp;apos;[%YM2]&amp;apos;
+GROUP BY &amp;quot;SBH&amp;quot;,&amp;quot;ZTH&amp;quot;,&amp;quot;DWBH&amp;quot; 
+ORDER BY &amp;quot;DWBH&amp;quot;
+)  t</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 >MAIN</C6><C7 >MAIN</C7><C8 >MAIN</C8><C9 >MAIN</C9><C10 ></C10><C11 >MAIN</C11><C12 ></C12><C13 >MAIN</C13><C14 >MAIN</C14><C15 ></C15></ROW>
+<ROW num="1" ><ID >MAIN1</ID><NAME ></NAME><DATDSC >  select T.*, rownum rn
+    from (SELECT DWBH,
+                 (select dwmc
+                    from si_dwb b
+                   where a.dwbh = b.dwbh
+                     and a.sbh = b.sbh
+                     and a.zth = b.zth) dwmc,
+                 0 hjje,
+                 sum(tcjjdwje) tcjjdwje,
+                 sum(tcjjgrje) tcjjgrje,
+                 &amp;apos;&amp;apos; XJ1,
+                 sum(grzhdwje) grzhdwje,
+                 sum(grzhgrje) grzhgrje,
+                 &amp;apos;&amp;apos; XJ2,
+                 sum(djtcdwje) djtcdwje,
+                 sum(djtcgrje) djtcgrje,
+                 &amp;apos;&amp;apos; XJ3,
+                 sum(deyldwje) deyldwje,
+                 sum(deylgrje) deylgrje,
+                 &amp;apos;&amp;apos; XJ4,
+                 sum(gwydwje) gwydwje,
+                 sum(lxdwje) lxdwje
+          
+            FROM cw_rijz_ylsr_view a
+           WHERE ORG = &amp;apos;[%SYS_ORGID]&amp;apos;
+             AND ACC = &amp;apos;[%SYS_ACCID]&amp;apos;
+             AND YY || &amp;apos;-&amp;apos; || triM(to_char(MM, &amp;apos;00&amp;apos;)) &amp;gt;= &amp;apos;[%YM1]&amp;apos;
+             and YY || &amp;apos;-&amp;apos; || triM(to_char(MM, &amp;apos;00&amp;apos;)) &amp;lt;= &amp;apos;[%YM2]&amp;apos;
+          
+           GROUP BY SBH, ZTH, DWBH
+           ORDER BY DWBH) t</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 >MAIN1</C9><C10 >MAIN1</C10><C11 ></C11><C12 >MAIN1</C12><C13 >MAIN1</C13><C14 >MAIN1</C14><C15 ></C15></ROW>
+<ROW num="2" ><ID >MAIN2</ID><NAME ></NAME><DATDSC >select t.*,rownum rn from (
+SELECT DWBH,
+         (select dwmc from si_dwb b where a.dwbh=b.dwbh and a.sbh=b.sbh and a.zth=b.zth) dwmc,
+         0 hjje,
+         sum(YLDWJE) YLDWJE,
+         sum(YLGRJE) YLGRJE        
+     FROM CW_RJZB_JGSR_VIEW a  
+WHERE ORG = &amp;apos;[%SYS_ORGID]&amp;apos; 
+      AND ACC = &amp;apos;[%SYS_ACCID]&amp;apos; 
+      AND YY||&amp;apos;-&amp;apos;||triM(to_char(MM,&amp;apos;00&amp;apos;)) &amp;gt;= &amp;apos;[%YM1]&amp;apos; 
+      and YY||&amp;apos;-&amp;apos;||triM(to_char(MM,&amp;apos;00&amp;apos;)) &amp;lt;= &amp;apos;[%YM2]&amp;apos;
+GROUP BY SBH,ZTH,DWBH 
+ORDER BY DWBH
+)  t</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

@@ -1,0 +1,813 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >PZGL_PZSH</MWID><NAME >凭证审核</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >PZGL_PZSH.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS >xlsgrid/js/main.js</EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var cur_sbh = &amp;quot;&amp;quot;;
+var cur_zth = &amp;quot;&amp;quot;;
+var cur_yyyy = &amp;quot;&amp;quot;;
+var cur_mm  = &amp;quot;&amp;quot;;
+var cur_min_pzh = &amp;quot;&amp;quot;;
+var cur_max_pzh = &amp;quot;&amp;quot;;
+var cur_tbdw = &amp;quot;&amp;quot;;//填报单位
+var cur_username = &amp;quot;&amp;quot;;
+
+var sheet_dypz = 0;
+var sheet_param = 1;
+
+var ZXGFILE0=&amp;quot;&amp;quot;;
+var initToolbtn = true;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	ZXGFILE0 = _this.SaveTempZXGFile(sheet_dypz);
+	
+	var yyList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_YYYY&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	var mmList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_MM&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	var pzztList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_CSB&amp;where=LXDM=&amp;apos;ZT&amp;apos; order by to_number(pxsx)&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	
+	cur_sbh  = G_ORGID;
+	cur_zth  = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	cur_yyyy = G_LOGDAT.substring(0,4);
+	cur_mm   = 1*(G_LOGDAT.substring(5,7));
+	cur_username = G_USRNAM;
+	
+	_this.SetToComboBox(&amp;quot;&amp;quot;,sheet_param,1,1,yyList); _this.SetCellText(sheet_param,1,1,cur_yyyy);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,sheet_param,1,3,mmList); _this.SetCellText(sheet_param,1,3,cur_mm);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,sheet_param,1,6,pzztList);  _this.SetCellText(sheet_param,1,6,&amp;quot;%&amp;quot;);
+	
+	_sql.querytods(&amp;quot;getTbdw&amp;quot;,&amp;quot;SBH=&amp;quot;+cur_sbh);
+	cur_tbdw = _this.XMLDS_GetString(0,&amp;quot;SMC&amp;quot;);
+	//获取非该操作员最大最小凭证号
+	getPzh();
+	_this.SetCellText(sheet_param,1,8,cur_min_pzh);	
+	_this.SetColVisible(sheet_dypz,15,-1);
+	initLayout();
+	pzData(cur_sbh,cur_zth,cur_yyyy,cur_mm,cur_min_pzh,&amp;quot;&amp;quot;);
+	
+	_this.AutoFixScreenWidth();
+}
+
+//页面布局
+function initLayout(){
+	_this.SplitSheet(sheet_param,&amp;quot;V&amp;quot;,&amp;quot;10%&amp;quot;);
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+//	_this.AddToolbarButton(&amp;quot;udf_pzfj&amp;quot;,&amp;quot;凭证附件查询&amp;quot;,&amp;quot;凭证附件查询&amp;quot;,&amp;quot;&amp;quot;,1,4,4,40);
+	var xmlmenu = &amp;quot;&amp;lt;item id=\&amp;quot;first_pz\&amp;quot; name=\&amp;quot;首张凭证\&amp;quot;/&amp;gt;&amp;quot;
+			+ &amp;quot;&amp;lt;item id=\&amp;quot;pra_pz\&amp;quot; name=\&amp;quot;上一张凭证\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;next_pz\&amp;quot; name=\&amp;quot;下一张凭证\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;last_pz\&amp;quot; name=\&amp;quot;最后凭证\&amp;quot;/&amp;gt;&amp;quot;;
+	_this.AddToolbarButton(&amp;quot;btn_page&amp;quot;,&amp;quot;翻凭证&amp;quot;,&amp;quot;翻凭证&amp;quot;,xmlmenu,1,16,16,80);
+	
+	var xmlmenu1 = &amp;quot;&amp;lt;item id=\&amp;quot;reviewed_pz\&amp;quot; name=\&amp;quot;审核当前凭证\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;reviewed_allpz\&amp;quot; name=\&amp;quot;审核全部凭证\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;reviewed_qxallpz\&amp;quot; name=\&amp;quot;取消全部审核凭证\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;reviewed_qxpz\&amp;quot; name=\&amp;quot;取消审核当前凭证\&amp;quot;/&amp;gt;&amp;quot;
+	_this.AddToolbarButton(&amp;quot;btn_checkpz&amp;quot;,&amp;quot;凭证审核&amp;quot;,&amp;quot;凭证审核&amp;quot;,xmlmenu1,1,16,16,80);
+	//_this.AddToolbarButton(&amp;quot;udf_printpz&amp;quot;,&amp;quot;打印当前凭证&amp;quot;,&amp;quot;打印当前凭证&amp;quot;,&amp;quot;&amp;quot;,1,6,6,80);
+	_this.AddToolbarButton(&amp;quot;btn_haveerrpz&amp;quot;,&amp;quot;有错误凭证报告&amp;quot;,&amp;quot;有错误凭证报告&amp;quot;,&amp;quot;&amp;quot;,1,3,3,80);
+	var xmlmenu2 = &amp;quot;&amp;lt;item id=\&amp;quot;markerror\&amp;quot; name=\&amp;quot;标识错误\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;qxmarkerror\&amp;quot; name=\&amp;quot;取消标识错误\&amp;quot;/&amp;gt;&amp;quot;;
+	_this.AddToolbarButton(&amp;quot;markerror&amp;quot;,&amp;quot;标识错误&amp;quot;,&amp;quot;标识错误&amp;quot;,xmlmenu2,1,3,3,80);	
+	
+}
+
+//获取非操作员最大最小凭证号
+function getPzh()
+{
+	_sql.querytods(&amp;quot;getMinPzh&amp;quot;,&amp;quot;SBH=&amp;quot;+cur_sbh+&amp;quot;&amp;ZTH=&amp;quot;+cur_zth+&amp;quot;&amp;YYYY=&amp;quot;+cur_yyyy+&amp;quot;&amp;MM=&amp;quot;+cur_mm+&amp;quot;&amp;ZDRXM=&amp;quot;+cur_username);
+	cur_min_pzh = _this.XMLDS_GetString(0,&amp;quot;MIN_PZH&amp;quot;);
+	cur_max_pzh = _this.XMLDS_GetString(0,&amp;quot;MAX_PZH&amp;quot;);
+}
+
+//加载凭证数据
+function pzData(sbh,zth,yy,mm,pzh,filter){
+	_this.SetToolbarString(&amp;quot;正在加载数据...&amp;quot;);
+	
+	_this.LoadZXGFile(ZXGFILE0,-1,sheet_dypz);//清空主数据区
+	_this.SetFixedRow(sheet_dypz,7);
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );	
+	_this.SetMainCellRange(sheet_dypz,7,1,13,14);//设置主数据区
+	
+	_sql.querytods(&amp;quot;pzData&amp;quot;,&amp;quot;SBH=&amp;quot;+sbh+&amp;quot;&amp;ZTH=&amp;quot;+zth+&amp;quot;&amp;YYYY=&amp;quot;+yy+&amp;quot;&amp;MM=&amp;quot;+mm+&amp;quot;&amp;PZH=&amp;quot;+pzh+&amp;quot;&amp;FILTER=&amp;quot;+filter);
+	
+	var xml_count = _this.XMLDS_GetRowCount();
+	var PageCou = Math.ceil( xml_count / 7);//总页数 进一法:向上取整,有小数就整数部分加1
+	var page = 0;
+
+	for(var i = 0;i&amp;lt;= (1*xml_count-1); i++){
+		var yy    = _this.XMLDS_GetString(i,&amp;quot;YY&amp;quot;);
+		var mm    = _this.XMLDS_GetString(i,&amp;quot;MM&amp;quot;);
+		var dd    = _this.XMLDS_GetString(i,&amp;quot;DD&amp;quot;);
+		var cwbz  = _this.XMLDS_GetString(i,&amp;quot;CWBZ&amp;quot;);
+		var chbz  = _this.XMLDS_GetString(i,&amp;quot;CHBZ&amp;quot;);
+		var jsbz  = _this.XMLDS_GetString(i,&amp;quot;JSBZ&amp;quot;);
+		var zt    = _this.XMLDS_GetString(i,&amp;quot;ZT&amp;quot;);
+		var fjzs  = _this.XMLDS_GetString(i,&amp;quot;FJZS&amp;quot;);
+		var dxfjzs = convertCurrency(fjzs).replace(&amp;quot;人民币&amp;quot;,&amp;quot;&amp;quot;);
+		dxfjzs = dxfjzs.replace(&amp;quot;元整&amp;quot;,&amp;quot;张&amp;quot;)
+		var zdr   = _this.XMLDS_GetString(i,&amp;quot;ZDRXM&amp;quot;);
+		var fhr   = _this.XMLDS_GetString(i,&amp;quot;FHRXM&amp;quot;);
+		var jzr   = _this.XMLDS_GetString(i,&amp;quot;JZRXM&amp;quot;);
+		var zzh   = _this.XMLDS_GetString(i,&amp;quot;STR_ZZH&amp;quot;);	//汇总字
+		
+		var zy    = _this.XMLDS_GetString(i,&amp;quot;ZY&amp;quot;);
+		var kmmc  = _this.XMLDS_GetString(i,&amp;quot;KMMC&amp;quot;);
+		var jfje  = _this.XMLDS_GetString(i,&amp;quot;JFJE&amp;quot;);
+		var dfje  = _this.XMLDS_GetString(i,&amp;quot;DFJE&amp;quot;);
+		var jzzt   = _this.XMLDS_GetString(i,&amp;quot;DG2&amp;quot;);	//记账状态
+		var page = Math.floor(i/7) + 1;			//页号
+		
+		//第二页以上追加行
+		if(page  &amp;gt; 1){
+			//最后一行，追加行到整数倍的行数
+			//6代表电子表格第7  减去1 js是从1开始，故：要加6则只需要加5即可
+//			if(i == (1*xml_count-1)){
+//				for(var j=i+6;j&amp;lt;= 7*PageCou+6-1;j++){
+//					_this.AppendRow(sheet_dypz,j);//在i+6行处新增1行
+//					_this.SetCellText(sheet_dypz,j+1,15,page);
+//					_this.SetMainCellRange(sheet_dypz,7,1,_this.GetRowCount(sheet_dypz)-4,14);
+//				}												
+//			}else
+//			{
+				_this.AppendRow(sheet_dypz,i+6);//在i+6行处新增1行
+				_this.SetMainCellRange(sheet_dypz,7,1,_this.GetRowCount(sheet_dypz)-4,14);
+//			}			
+		}
+		
+		//表头数据赋值
+		if(i == 0){
+			_this.SetCellText(sheet_dypz,1,2,cwbz);			//错误标志
+			_this.SetCellText(sheet_dypz,1,3,chbz);			//冲红标志
+			_this.SetCellText(sheet_dypz,1,13,&amp;quot;1/1号&amp;quot;);		//页数
+			_this.SetCellText(sheet_dypz,2,3,jsbz);			//结算标志
+			_this.SetCellText(sheet_dypz,2,2,jzzt);			//状态
+			if (jzzt == &amp;quot;未核&amp;quot;) _this.SetCellColor(sheet_dypz,2,2,255,0,0);
+			else if (jzzt == &amp;quot;已核&amp;quot;) _this.SetCellColor(sheet_dypz,2,2,0,0,255);
+			
+			_this.SetCellText(sheet_dypz,2,12,pzh);			//凭证号
+			_this.SetCellText(sheet_dypz,4,7,yy+&amp;quot;年&amp;quot;);		//年
+			_this.SetCellText(sheet_dypz,4,8,mm+&amp;quot;月&amp;quot;);		//月
+			_this.SetCellText(sheet_dypz,4,9,dd+&amp;quot;日&amp;quot;);		//日
+			_this.SetCellText(sheet_dypz,4,12,dxfjzs);		//附件
+			_this.SetCellText(sheet_dypz,4,14,zzh);			//汇总字
+			_this.SetCellText(sheet_dypz,4,2,cur_tbdw);		//填报单位
+		}
+		//表间数据赋值  js数据是从0开始，主数据区是第7行，则赋值从7开始 7行为一页 则共为13
+		_this.SetCellText(sheet_dypz,i+7,1,zy);
+		_this.SetCellText(sheet_dypz,i+7,6,kmmc);
+		_this.SetCellText(sheet_dypz,i+7,10,jfje);
+		_this.SetCellText(sheet_dypz,i+7,12,dfje);
+		_this.SetCellText(sheet_dypz,i+7,14,jzzt);
+		_this.SetCellText(sheet_dypz,i+7,15,page);
+		
+		//注脚数据赋值
+		_this.SetCellText(sheet_dypz,_this.GetRowCount(sheet_dypz) - 1,13,zdr);
+		_this.SetCellText(sheet_dypz,_this.GetRowCount(sheet_dypz) - 1,10,fhr);
+		_this.SetCellText(sheet_dypz,_this.GetRowCount(sheet_dypz) - 1,6 ,jzr);
+	}
+	
+	//设置标识错误按钮
+//	if (initToolbtn == true) {
+//		var cwbz = _this.GetCellText(sheet_dypz,1,2);
+//		if (cwbz == &amp;quot;&amp;quot; || cwbz == &amp;quot;0&amp;quot;) {
+//			_this.AddToolbarButton(&amp;quot;btn_markerrpz1&amp;quot;,&amp;quot;标识错误&amp;quot;,&amp;quot;标识错误&amp;quot;,&amp;quot;&amp;quot;,1,3,3,80);
+//		}
+//		else {
+//			_this.AddToolbarButton(&amp;quot;btn_markerrpz0&amp;quot;,&amp;quot;取消标识错误&amp;quot;,&amp;quot;取消标识错误&amp;quot;,&amp;quot;&amp;quot;,1,3,3,80);
+//		}
+//		initToolbtn = false;
+//	}
+	
+	_this.SetColVisible(sheet_dypz,15,-1); //隐藏page列
+	_this.SetToolbarString(&amp;quot;&amp;quot;);
+	_this.AutoFixScreenWidth();
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if(sheet == sheet_param){
+		if(row == 1 &amp;&amp; (col == 1 || col == 3 || col == 6 || col == 8)){
+			cur_yyyy = _this.GetCellText(sheet_param,1,1);
+			cur_mm   = _this.GetCellText(sheet_param,1,3);
+			var pzh  = _this.GetCellText(sheet_param,1,8);
+			
+			_sql.querytods(&amp;quot;check_pzh&amp;quot;,&amp;quot;SBH=&amp;quot;+cur_sbh+&amp;quot;&amp;ZTH=&amp;quot;+cur_zth+&amp;quot;&amp;YYYY=&amp;quot;+cur_yyyy+&amp;quot;&amp;MM=&amp;quot;+cur_mm+&amp;quot;&amp;PZH=&amp;quot;+pzh);
+			var czyxm = _this.XMLDS_GetString(0,&amp;quot;ZDRXM&amp;quot;);
+			if(czyxm == &amp;quot;&amp;quot;){
+				alert(cur_yyyy+&amp;quot;年&amp;quot;+cur_mm+&amp;quot;月无此凭证号&amp;quot;+pzh);
+				_this.SetCellText(sheet_param,1,8,oldvalue);
+				return false;
+			}else if(czyxm == cur_username){
+				alert(cur_yyyy+&amp;quot;年&amp;quot;+cur_mm+&amp;quot;月,凭证号：&amp;quot;+pzh+&amp;quot;是本人生成凭证，不允许自己审核自己凭证&amp;quot;);
+				_this.SetCellText(sheet_param,1,8,oldvalue);
+				return false;
+			}
+			
+			if(1*pzh &amp;gt; 1*cur_max_pzh){
+				alert(&amp;quot;输入凭证号大于最大凭证号!!!!&amp;quot;);
+				_this.SetCellText(sheet_param,1,8,oldvalue);
+				return false;
+			}
+			pzData(cur_sbh,cur_zth,cur_yyyy,cur_mm,pzh,&amp;quot;&amp;quot;);
+		}
+	}
+}
+
+//点击菜单项
+function _thisOnMenuItemSelect(sheet,row,col,menuitemid)
+{
+//	var xmlmenu = &amp;quot;&amp;lt;item id=\&amp;quot;first_pz\&amp;quot; name=\&amp;quot;首张凭证\&amp;quot;/&amp;gt;&amp;quot;
+//			+ &amp;quot;&amp;lt;item id=\&amp;quot;pra_pz\&amp;quot; name=\&amp;quot;上一张凭证\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;next_pz\&amp;quot; name=\&amp;quot;下一张凭证\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;last_pz\&amp;quot; name=\&amp;quot;最后凭证\&amp;quot;/&amp;gt;&amp;quot;;
+//	_this.AddToolbarButton(&amp;quot;btn_page&amp;quot;,&amp;quot;翻页/翻凭证&amp;quot;,&amp;quot;翻页/翻凭证&amp;quot;,xmlmenu,1,16,16,80);
+//	
+//	var xmlmenu1 = &amp;quot;&amp;lt;item id=\&amp;quot;reviewed_pz\&amp;quot; name=\&amp;quot;审核当前凭证\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;reviewed_allpz\&amp;quot; name=\&amp;quot;审核全部凭证\&amp;quot;/&amp;gt;
+//			&amp;lt;item id=\&amp;quot;reviewed_qxallpz\&amp;quot; name=\&amp;quot;取消全部审核凭证\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;reviewed_qxpz\&amp;quot; name=\&amp;quot;取消审核当前凭证\&amp;quot;/&amp;gt;&amp;quot;
+//	_this.AddToolbarButton(&amp;quot;btn_printpz&amp;quot;,&amp;quot;打印凭证&amp;quot;,&amp;quot;打印凭证&amp;quot;,xmlmenu1,1,16,16,80);
+
+	var begin_pz = 0;
+	var end_pz   = 0;
+	
+	if(menuitemid == &amp;quot;first_pz&amp;quot;){			//首张凭证
+		first_pz();
+	}else if(menuitemid == &amp;quot;pra_pz&amp;quot;){		//上一张凭证
+		pra_pz();
+	}else if(menuitemid == &amp;quot;next_pz&amp;quot;){		//下一张凭证
+		next_pz();
+	}else if(menuitemid == &amp;quot;last_pz&amp;quot;){		//最后一张凭证
+		last_pz();
+	}else if(menuitemid == &amp;quot;reviewed_pz&amp;quot;){		//审核当前凭证
+		reviewed_pz();
+	}else if(menuitemid == &amp;quot;reviewed_allpz&amp;quot;){	//审核全部凭证
+		reviewed_allpz();
+	}else if(menuitemid == &amp;quot;reviewed_qxallpz&amp;quot;){	//取消全部审核凭证
+		reviewed_qxallpz();
+	}else if(menuitemid == &amp;quot;reviewed_qxpz&amp;quot;){	//取消审核当前凭证
+		reviewed_qxpz();
+	}else if(menuitemid == &amp;quot;markerror&amp;quot;) {
+		markerrpz(1);
+	}else if(menuitemid == &amp;quot;qxmarkerror&amp;quot;) {
+		markerrpz(0);
+	}
+}
+
+//打印当前凭证
+function printpz()
+{
+	if (!confirm(&amp;quot;打印当前凭证，是否继续？&amp;quot;)) return ;
+	_this.Print(0,0);
+}
+
+//首张凭证
+function first_pz(){
+	var pzh = _this.GetCellText(sheet_param,1,8);
+	cur_yyyy = _this.GetCellText(sheet_param,1,1);
+	cur_mm   = _this.GetCellText(sheet_param,1,3);
+	
+	if(pzh == cur_min_pzh){
+		alert(&amp;quot;该凭证&amp;quot;+pzh+&amp;quot;已是非本人第一张凭证&amp;quot;);
+		return false;
+	}else{
+		pzh = cur_min_pzh;
+	}
+	
+	pzData(cur_sbh,cur_zth,cur_yyyy,cur_mm,pzh,&amp;quot;&amp;quot;);
+	_this.SetCellText(sheet_param,1,8,pzh);
+}
+//最后一张凭证
+function last_pz(){
+	var pzh = _this.GetCellText(sheet_param,1,8);
+	cur_yyyy = _this.GetCellText(sheet_param,1,1);
+	cur_mm   = _this.GetCellText(sheet_param,1,3);
+	
+	if(pzh == cur_max_pzh){
+		alert(&amp;quot;该凭证&amp;quot;+cur_max_pzh+&amp;quot;已是非本人最后张凭证&amp;quot;);
+		return false;
+	}else{
+		pzh = cur_max_pzh;
+	}
+	
+	pzData(cur_sbh,cur_zth,cur_yyyy,cur_mm,pzh,&amp;quot;&amp;quot;);
+	_this.SetCellText(sheet_param,1,8,pzh);
+}
+//上一张凭证
+function pra_pz(){
+	var pzh = _this.GetCellText(sheet_param,1,8);
+	cur_yyyy = _this.GetCellText(sheet_param,1,1);
+	cur_mm   = _this.GetCellText(sheet_param,1,3);	
+	
+	if(pzh == cur_min_pzh){
+		alert(&amp;quot;该凭证&amp;quot;+pzh+&amp;quot;已是非本人第一张凭证&amp;quot;);
+		return false;
+	}else{		
+		//上一张凭证号
+		var pra_pzh = 1*pzh - 1;
+
+		for(var i=pra_pzh;i&amp;gt;=cur_min_pzh;i--){
+			var pzh = i;
+			_sql.querytods(&amp;quot;check_pzh&amp;quot;,&amp;quot;SBH=&amp;quot;+cur_sbh+&amp;quot;&amp;ZTH=&amp;quot;+cur_zth+&amp;quot;&amp;YYYY=&amp;quot;+cur_yyyy+&amp;quot;&amp;MM=&amp;quot;+cur_mm+&amp;quot;&amp;PZH=&amp;quot;+pzh);
+			var czyxm = _this.XMLDS_GetString(0,&amp;quot;ZDRXM&amp;quot;);
+			if(czyxm == &amp;quot;&amp;quot;){
+				alert(cur_yyyy+&amp;quot;年&amp;quot;+cur_mm+&amp;quot;月无此凭证号&amp;quot;+pzh);
+				return false;
+			}else if(czyxm == cur_username){
+				continue;
+			}
+			
+			pzData(cur_sbh,cur_zth,cur_yyyy,cur_mm,pzh,&amp;quot;&amp;quot;);
+			_this.SetCellText(sheet_param,1,8,pzh);
+			break;
+		}
+	}
+	
+	
+}
+//下一张凭证
+function next_pz(){
+	var pzh = _this.GetCellText(sheet_param,1,8);
+	cur_yyyy = _this.GetCellText(sheet_param,1,1);
+	cur_mm   = _this.GetCellText(sheet_param,1,3);
+	
+	if(pzh == cur_max_pzh){
+		alert(&amp;quot;该凭证&amp;quot;+cur_max_pzh+&amp;quot;已是非本人最后一张凭证&amp;quot;);
+		return false;
+	}else{
+		//下一张凭证
+		var next_pzh = 1*pzh + 1;
+		
+		for(var i=next_pzh;i&amp;lt;=cur_max_pzh;i++){
+			var pzh = i;
+			_sql.querytods(&amp;quot;check_pzh&amp;quot;,&amp;quot;SBH=&amp;quot;+cur_sbh+&amp;quot;&amp;ZTH=&amp;quot;+cur_zth+&amp;quot;&amp;YYYY=&amp;quot;+cur_yyyy+&amp;quot;&amp;MM=&amp;quot;+cur_mm+&amp;quot;&amp;PZH=&amp;quot;+pzh);
+			var czyxm = _this.XMLDS_GetString(0,&amp;quot;ZDRXM&amp;quot;);
+			if(czyxm == &amp;quot;&amp;quot;){
+				alert(cur_yyyy+&amp;quot;年&amp;quot;+cur_mm+&amp;quot;月无此凭证号&amp;quot;+pzh);
+				return false;
+			}else if(czyxm == cur_username){
+				continue;
+			}
+			
+			pzData(cur_sbh,cur_zth,cur_yyyy,cur_mm,pzh,&amp;quot;&amp;quot;);
+			_this.SetCellText(sheet_param,1,8,pzh);
+			break;
+		}
+	}
+}
+//审核当前凭证
+function reviewed_pz(){
+	var pzh = _this.GetCellText(sheet_param,1,8);
+	
+	var param = new Object();
+	param.bz = 1;
+	param.sbh = cur_sbh;
+	param.zth = cur_zth;
+	param.pzh = pzh;
+	param.yy  = cur_yyyy;
+	param.mm  = cur_mm;
+	param.czyxm = cur_username;
+	
+	var retVal = invokeOSFuncExt(&amp;quot;reviewed&amp;quot;,param);
+	var ret = retVal.split(&amp;quot;@&amp;quot;)[0];
+	var msg = retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(ret == 1){
+		alert(&amp;quot;审核成功&amp;quot;+&amp;quot;\n&amp;quot;+msg);
+		pzData(cur_sbh,cur_zth,cur_yyyy,cur_mm,pzh,&amp;quot;&amp;quot;);
+		return 1;
+	}else{
+		alert(&amp;quot;审核失败&amp;quot;+&amp;quot;\n&amp;quot;+msg);
+	}
+}
+//取消审核当前凭证
+function reviewed_qxpz(){
+	var pzh = _this.GetCellText(sheet_param,1,8);
+	
+	var param = new Object();
+	param.bz = 4;
+	param.sbh = cur_sbh;
+	param.zth = cur_zth;
+	param.pzh = pzh;
+	param.yy  = cur_yyyy;
+	param.mm  = cur_mm;
+	param.czyxm = cur_username;
+	
+	var retVal = invokeOSFuncExt(&amp;quot;reviewed&amp;quot;,param);
+	var ret = retVal.split(&amp;quot;@&amp;quot;)[0];
+	var msg = retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(ret == 1){
+		alert(&amp;quot;审核成功&amp;quot;+&amp;quot;\n&amp;quot;+msg);
+		pzData(cur_sbh,cur_zth,cur_yyyy,cur_mm,pzh,&amp;quot;&amp;quot;);
+		return 1;
+	}else{
+		alert(&amp;quot;审核失败&amp;quot;+&amp;quot;\n&amp;quot;+msg);
+	}	
+}
+
+function reviewed_allpz(){
+	var pzh = _this.GetCellText(sheet_param,1,8);
+
+	var param = new Object();
+	param.bz = 2;
+	param.sbh = cur_sbh;
+	param.zth = cur_zth;
+	param.min_pzh = cur_min_pzh;
+	param.max_pzh = cur_max_pzh
+	param.yy  = cur_yyyy;
+	param.mm  = cur_mm;
+	param.czyxm = cur_username;
+	
+	var retVal = invokeOSFuncExt(&amp;quot;reviewed&amp;quot;,param);
+	var ret = retVal.split(&amp;quot;@&amp;quot;)[0];
+	var msg = retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(ret == 1){
+		alert(&amp;quot;审核成功&amp;quot;+&amp;quot;\n&amp;quot;+msg);
+		pzData(cur_sbh,cur_zth,cur_yyyy,cur_mm,pzh,&amp;quot;&amp;quot;);
+		return 1;
+	}else{
+		alert(&amp;quot;审核失败&amp;quot;+&amp;quot;\n&amp;quot;+msg);
+	}
+}
+
+function reviewed_qxallpz(){
+	var pzh = _this.GetCellText(sheet_param,1,8);
+	
+	var param = new Object();
+	param.bz = 3;
+	param.sbh = cur_sbh;
+	param.zth = cur_zth;
+	param.min_pzh = cur_min_pzh;
+	param.max_pzh = cur_max_pzh
+	param.yy  = cur_yyyy;
+	param.mm  = cur_mm;
+	param.czyxm = cur_username;
+	
+	var retVal = invokeOSFuncExt(&amp;quot;reviewed&amp;quot;,param);
+	var ret = retVal.split(&amp;quot;@&amp;quot;)[0];
+	var msg = retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(ret == 1){
+		alert(&amp;quot;全部取消审核成功&amp;quot;+&amp;quot;\n&amp;quot;+msg);
+		pzData(cur_sbh,cur_zth,cur_yyyy,cur_mm,pzh,&amp;quot;&amp;quot;);
+		return 1;
+	}else{
+		alert(&amp;quot;全部取消审核失败&amp;quot;+&amp;quot;\n&amp;quot;+msg);
+	}
+}
+
+//标识凭证错误
+function markerrpz(bz)
+{
+//	if (bz == 1) {
+//		if (!confirm(&amp;quot;标识为错误凭证，是否继续？&amp;quot;)) return;
+//	}
+//	else {
+//		if (!confirm(&amp;quot;取消错误凭证，是否继续？&amp;quot;)) return;
+//	}
+	
+	var pzh = _this.GetCellText(sheet_param,1,8);
+	var param = new Object();
+	param.sbh = cur_sbh;
+	param.zth = cur_zth;
+	param.thisaccid = G_ACCID;
+	param.pzh  = pzh;
+	param.czyxm = cur_username;
+	param.bz = bz;
+	param.yy = cur_yyyy;
+	param.mm = cur_mm;
+
+	var ret = invokeOSFuncExt(&amp;quot;markErrpz&amp;quot;,param);
+	alert(ret);
+	pzData(cur_sbh,cur_zth,cur_yyyy,cur_mm,pzh,&amp;quot;&amp;quot;);
+	
+}
+
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if (id == &amp;quot;btn_markerrpz1&amp;quot;) {  //标识错误凭证
+		markerrpz(1);
+	}
+	else if (id == &amp;quot;btn_markerrpz0&amp;quot;) { //取消错误标识
+		markerrpz(0);
+	}
+	else if (id == &amp;quot;btn_haveerrpz&amp;quot;) { //有错误凭证报告
+		var ret = invokeOSFunc(&amp;quot;haveErrpz&amp;quot;,&amp;quot;sbh=&amp;quot;+cur_sbh+&amp;quot;&amp;zth=&amp;quot;+cur_zth+&amp;quot;&amp;yy=&amp;quot;+cur_yyyy+&amp;quot;&amp;mm=&amp;quot;+cur_mm);
+		alert(ret);
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var cur_min_pzh = &amp;quot;&amp;quot;;
+var cur_max_pzh = &amp;quot;&amp;quot;;
+
+function reviewed(){
+	var sql = &amp;quot;&amp;quot;;
+	var db  = null;
+	try{
+		db = new pub.EADatabase();
+		var retVal = &amp;quot;&amp;quot;;
+		
+		if(bz == 1){
+			cur_min_pzh = pzh;
+			cur_max_pzh = pzh;
+			sql = &amp;quot;select count(*) from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh = &amp;apos;&amp;quot;+cur_min_pzh+&amp;quot;&amp;apos; and zt = &amp;apos;未核&amp;apos;&amp;quot;;
+			var cnt = db.GetSQL(sql);
+			if(cnt == 0) {
+				db.Rollback();
+				return 2+&amp;quot;@&amp;quot;+&amp;quot;凭证号：&amp;quot;+cur_min_pzh+&amp;quot;已经审核过&amp;quot;;
+			}
+			sql = &amp;quot;select cwbz from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh = &amp;apos;&amp;quot;+cur_min_pzh+&amp;quot;&amp;apos; &amp;quot;;
+			var cwbz = db.GetSQL(sql);
+			if(cwbz == &amp;quot;1&amp;quot;) {
+				db.Rollback();
+				return 2+&amp;quot;@&amp;quot;+&amp;quot;凭证号：&amp;quot;+cur_min_pzh+&amp;quot;是错误凭证，不能审核&amp;quot;;				
+			}
+			sql = &amp;quot;update cw_pzb set zt = &amp;apos;已核&amp;apos;,fhrxm = &amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,fhrsj = sysdate,stat = 2 where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; 
+				and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh = &amp;apos;&amp;quot;+cur_min_pzh+&amp;quot;&amp;apos;&amp;quot;;
+			db.ExcecutSQL(sql);
+			
+			sql = &amp;quot;update cw_pzmxb set zt = &amp;apos;已核&amp;apos;,stat = 2 where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; 
+				and pzh = &amp;apos;&amp;quot;+cur_min_pzh+&amp;quot;&amp;apos;&amp;quot;;
+			db.ExcecutSQL(sql);
+			
+			db.Commit();
+			return 1+&amp;quot;@&amp;quot;+&amp;quot;凭证号：&amp;quot;+cur_min_pzh+&amp;quot;审核成功！！&amp;quot;;
+			
+		}else if(bz == 2){
+			cur_min_pzh = min_pzh;
+			cur_max_pzh = max_pzh;
+			
+			sql = &amp;quot;select a.* from cw_pzb a where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh &amp;gt;= &amp;apos;&amp;quot;+cur_min_pzh+&amp;quot;&amp;apos; 
+				and pzh &amp;lt;= &amp;apos;&amp;quot;+cur_max_pzh+&amp;quot;&amp;apos; and zt = &amp;apos;未核&amp;apos; and cwbz=&amp;apos;0&amp;apos;&amp;quot;;
+			var ds = db.QuerySQL(sql);
+			
+			if(ds.getRowCount() &amp;gt; 0){
+				for(var i = 0;i&amp;lt; ds.getRowCount();i++){
+					var pzh   = ds.getStringAt(i,&amp;quot;pzh&amp;quot;);
+					var zdrxm = ds.getStringAt(i,&amp;quot;zdrxm&amp;quot;);
+					var fhrxm = ds.getStringAt(i,&amp;quot;fhrxm&amp;quot;);
+//					throw new Exception(zdrxm );
+					if(zdrxm != czyxm){ 										
+						sql = &amp;quot;update cw_pzb set zt = &amp;apos;已核&amp;apos;,fhrxm = &amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,fhrsj = sysdate,stat = 2 where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; 
+							and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh = &amp;apos;&amp;quot;+pzh+&amp;quot;&amp;apos;&amp;quot;;
+						db.ExcecutSQL(sql);
+						
+						sql = &amp;quot;update cw_pzmxb set zt = &amp;apos;已核&amp;apos;,stat = 2 where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; 
+							and pzh = &amp;apos;&amp;quot;+pzh+&amp;quot;&amp;apos;&amp;quot;;
+						db.ExcecutSQL(sql);
+					}
+				}//for(var i = 0;i&amp;lt; ds.getRowCount();i++)
+			}//if(ds.getRowCount() &amp;gt; 0)
+			else {
+				db.Rollback();
+				return 2+&amp;quot;@&amp;quot;+&amp;quot;没有可以审核的凭证&amp;quot;;
+			}			
+			sql = &amp;quot;SELECT TO_CHAR(WM_CONCAT(PZH)) PZH_STR, COUNT(1) COU, FHRXM,decode(zt,&amp;apos;未核&amp;apos;,&amp;apos;未核&amp;apos;,&amp;apos;已核&amp;apos;) ZT
+				  FROM (SELECT * 
+				          FROM CW_PZB
+				         WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;
+				           AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;
+				           AND YY = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos;
+				           AND MM = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos;
+				         ORDER BY PZH)
+				 GROUP BY FHRXM,decode(zt,&amp;apos;未核&amp;apos;,&amp;apos;未核&amp;apos;,&amp;apos;已核&amp;apos;)&amp;quot;;
+			var ds_str = db.QuerySQL(sql);
+			for(var j = 0;j&amp;lt; ds_str.getRowCount();j++){
+				var pzh_str = ds_str.getStringAt(j,&amp;quot;PZH_STR&amp;quot;);
+				var cou     = ds_str.getStringAt(j,&amp;quot;COU&amp;quot;);
+				var fhr     = ds_str.getStringAt(j,&amp;quot;FHRXM&amp;quot;);
+				var zt      = ds_str.getStringAt(j,&amp;quot;ZT&amp;quot;);
+				
+				retVal += &amp;quot;审核人员：&amp;quot;+fhr+&amp;quot;,&amp;quot;+yy+&amp;quot;年&amp;quot;+mm+&amp;quot;月,状态:&amp;quot;+zt+&amp;quot;,凭证&amp;quot;+cou+&amp;quot;张！&amp;quot;+pzh_str+&amp;quot;\n&amp;quot;;
+			}
+
+			db.Commit();
+			return 1+&amp;quot;@&amp;quot;+retVal;
+		}else if(bz == 3){
+			cur_min_pzh = min_pzh;
+			cur_max_pzh = max_pzh;
+
+			sql = &amp;quot;select * from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh &amp;gt;= &amp;apos;&amp;quot;+cur_min_pzh+&amp;quot;&amp;apos; 
+				and pzh &amp;lt;= &amp;apos;&amp;quot;+cur_max_pzh+&amp;quot;&amp;apos; and zt = &amp;apos;已核&amp;apos; &amp;quot;;
+			var ds = db.QuerySQL(sql);
+			
+			if(ds.getRowCount() &amp;gt; 0){
+				for(var i = 0;i&amp;lt; ds.getRowCount();i++){
+					var pzh   = ds.getStringAt(i,&amp;quot;pzh&amp;quot;);
+					var zdrxm = ds.getStringAt(i,&amp;quot;zdrxm&amp;quot;);
+					var fhrxm = ds.getStringAt(i,&amp;quot;fhrxm&amp;quot;);
+					
+					if(fhrxm == czyxm){
+						sql = &amp;quot;update cw_pzb set zt = &amp;apos;未核&amp;apos;,fhrxm = null,fhrsj = null,stat = 1 where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; 
+							and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh = &amp;apos;&amp;quot;+pzh+&amp;quot;&amp;apos;&amp;quot;;
+						db.ExcecutSQL(sql);
+						
+						sql = &amp;quot;update cw_pzmxb set zt = &amp;apos;未核&amp;apos;,stat = 1 where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; 
+							and pzh = &amp;apos;&amp;quot;+pzh+&amp;quot;&amp;apos;&amp;quot;;
+						db.ExcecutSQL(sql);
+					}
+				}//for(var i = 0;i&amp;lt; ds.getRowCount();i++)
+			}//if(ds.getRowCount() &amp;gt; 0)
+			else {
+				db.Rollback();
+				return 2+&amp;quot;@&amp;quot;+&amp;quot;没有可以取消审核的凭证&amp;quot;;
+			}			
+			sql = &amp;quot;SELECT TO_CHAR(WM_CONCAT(PZH)) PZH_STR, COUNT(1) COU, FHRXM,decode(zt,&amp;apos;未核&amp;apos;,&amp;apos;未核&amp;apos;,&amp;apos;已核&amp;apos;) ZT
+				  FROM (SELECT * 
+				          FROM CW_PZB
+				         WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;
+				           AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;
+				           AND YY = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos;
+				           AND MM = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos;
+				         ORDER BY PZH)
+				 GROUP BY FHRXM,decode(zt,&amp;apos;未核&amp;apos;,&amp;apos;未核&amp;apos;,&amp;apos;已核&amp;apos;)&amp;quot;;
+			var ds_str = db.QuerySQL(sql);
+			for(var j = 0;j&amp;lt; ds_str.getRowCount();j++){
+				var pzh_str = ds_str.getStringAt(j,&amp;quot;PZH_STR&amp;quot;);
+				var cou     = ds_str.getStringAt(j,&amp;quot;COU&amp;quot;);
+				var fhr     = ds_str.getStringAt(j,&amp;quot;FHRXM&amp;quot;);
+				var zt      = ds_str.getStringAt(j,&amp;quot;ZT&amp;quot;);
+				
+				retVal += &amp;quot;审核人员：&amp;quot;+fhr+&amp;quot;,&amp;quot;+yy+&amp;quot;年&amp;quot;+mm+&amp;quot;月,状态:&amp;quot;+zt+&amp;quot;,凭证&amp;quot;+cou+&amp;quot;张！&amp;quot;+pzh_str+&amp;quot;\n&amp;quot;;
+			}
+
+			db.Commit();
+			return 1+&amp;quot;@&amp;quot;+retVal;
+		}else if(bz == 4){
+			cur_min_pzh = pzh;
+			cur_max_pzh = pzh;
+			sql = &amp;quot;select count(*) from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh = &amp;apos;&amp;quot;+cur_min_pzh+&amp;quot;&amp;apos; and zt = &amp;apos;已核&amp;apos;&amp;quot;;
+			var cnt = db.GetSQL(sql);
+			if(cnt == 0) {
+				db.Rollback();
+				return 2+&amp;quot;@&amp;quot;+&amp;quot;凭证号：&amp;quot;+cur_min_pzh+&amp;quot;不是已核凭证&amp;quot;;
+			}			
+			sql = &amp;quot;update cw_pzb set zt = &amp;apos;未核&amp;apos;,fhrxm = null,fhrsj = null,stat = 1 where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; 
+				and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzh = &amp;apos;&amp;quot;+cur_min_pzh+&amp;quot;&amp;apos;&amp;quot;;
+			db.ExcecutSQL(sql);
+			
+			sql = &amp;quot;update cw_pzmxb set zt = &amp;apos;未核&amp;apos;,stat = 1 where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; 
+				and pzh = &amp;apos;&amp;quot;+cur_min_pzh+&amp;quot;&amp;apos;&amp;quot;;
+			db.ExcecutSQL(sql);
+			
+			db.Commit();
+			return 1+&amp;quot;@&amp;quot;+&amp;quot;凭证号：&amp;quot;+cur_min_pzh+&amp;quot;取消审核成功！！&amp;quot;;
+		}
+
+	}catch (e) {
+		if (db != null) db.Rollback();
+		return -1+&amp;quot;@&amp;quot;+e.toString();
+	}finally{
+		if (db != null) db.Close();
+	}
+}
+
+//标识错误凭证
+function markErrpz()
+{
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		
+		var sql = &amp;quot;select * from cw_pzb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and pzh=&amp;apos;&amp;quot;+pzh+&amp;quot;&amp;apos; and yy=&amp;quot;+yy+&amp;quot; and mm=&amp;quot;+mm;
+		var ds = db.QuerySQL(sql);
+		if (ds.getRowCount() &amp;gt; 0) {
+			var zt = ds.getStringAt(0,&amp;quot;ZT&amp;quot;);
+			var cwbz = ds.getStringAt(0,&amp;quot;CWBZ&amp;quot;);
+			var zdrxm = ds.getStringAt(0,&amp;quot;ZDRXM&amp;quot;);
+			
+			if (bz == &amp;quot;1&amp;quot;) {
+				if (zdrxm == czyxm) {
+					return &amp;quot;审核和制单不能同一个人，不能审核凭证！&amp;quot;;
+				}
+				if (zt != &amp;quot;未核&amp;quot;) {
+					return &amp;quot;此凭证状态不是未核, 不能标识错误标志！&amp;quot;;
+				}
+				if (cwbz == &amp;quot;1&amp;quot;) {
+					return &amp;quot;此凭证已经是错误凭证！&amp;quot;;
+				}
+			}
+			else {
+				if (cwbz == &amp;quot;0&amp;quot; || cwbz == &amp;quot;&amp;quot;) {
+					return &amp;quot;此凭证无错误，不用取消错误标识！&amp;quot;;
+				}
+			}
+			
+			sql = &amp;quot;update cw_pzb set cwbz=&amp;apos;&amp;quot;+bz+&amp;quot;&amp;apos; where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and pzh=&amp;apos;&amp;quot;+pzh+&amp;quot;&amp;apos; and yy=&amp;quot;+yy+&amp;quot; and mm=&amp;quot;+mm;
+			db.ExcecutSQL(sql);
+			db.Commit();
+			
+			return &amp;quot;操作成功！&amp;quot;;
+		}
+	
+		return &amp;quot;无凭证，不能标识错误凭证！&amp;quot;;
+		
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+//有错误凭证报告
+function haveErrpz()
+{
+	var sql = &amp;quot;select * from cw_pzb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy=&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm=&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and zt = &amp;apos;未核&amp;apos; and cwbz = 1 order by pzlx, pzh&amp;quot;;
+	var ds = pub.EADbTool.QuerySQL(sql);
+	var str = &amp;quot;&amp;quot;;
+	for (var i=0;i&amp;lt;ds.getRowCount();i++) {
+		var pzh = ds.getStringAt(i,&amp;quot;PZH&amp;quot;);
+		if (str == &amp;quot;&amp;quot;) str += pzh;
+		else str = &amp;quot;,&amp;quot; + pzh;
+	}
+	if (str != &amp;quot;&amp;quot;) {
+		return &amp;quot;错误凭证：&amp;quot; + str + &amp;quot; 号，共 &amp;quot; + ds.getRowCount() + &amp;quot; 张.&amp;quot;;
+	}
+	
+	return &amp;quot;没有错误凭证&amp;quot;;
+}
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >getTbdw</ID><NAME ></NAME><DATDSC >select smc SMC from cw_sbsb where sbh = &amp;apos;[%SBH]&amp;apos;
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7></ROW>
+<ROW num="1" ><ID >getMinPzh</ID><NAME ></NAME><DATDSC >SELECT NVL(MIN(PZH), 0) MIN_PZH,NVL(MAX(PZH), 0) MAX_PZH
+  FROM CW_PZB
+ WHERE SBH = &amp;apos;[%SBH]&amp;apos;
+   AND ZTH = &amp;apos;[%ZTH]&amp;apos;
+   AND YY = &amp;apos;[%YYYY]&amp;apos;
+   AND MM = &amp;apos;[%MM]&amp;apos;
+   AND ZDRXM &amp;lt;&amp;gt; &amp;apos;[%ZDRXM]&amp;apos;</DATDSC><C4 >getMinPzh</C4><C5 >getMinPzh</C5><C6 ></C6><C7 >getMinPzh</C7></ROW>
+<ROW num="2" ><ID >pzData</ID><NAME ></NAME><DATDSC >SELECT A.SBH,
+       A.ZTH,
+       A.YY,
+       A.MM,
+       A.DD,
+       A.PZH,
+       A.PZLX,
+       A.MXXH,
+       A.ZY,
+       A.KMBH,
+       DECODE(A.JEFX, &amp;apos;借&amp;apos;, A.JE, NULL) JFJE,
+       DECODE(A.JEFX, &amp;apos;贷&amp;apos;, A.JE, NULL) DFJE,
+       A.JE,
+       A.JEFX,
+       A.SL,
+       A.DJ,
+       A.WLBH,
+       A.JSFS,
+       A.JSPH,
+       A.PJRQ,
+       A.GDZCBH,
+       A.CHBZ,
+       A.CODE,
+       cw_pack4.kmmc(a.sbh,a.zth,a.kmbh) KMMC,
+       &amp;apos;&amp;apos; ZZY,
+       a.zt DG2,
+       A.ZZH,
+       A.HZDD,
+       DECODE(A.ZT, &amp;apos;记总帐&amp;apos;, NULL, DECODE(A.ZZH, NULL, NULL, &amp;apos;已汇&amp;apos;)) STR_ZZH,
+       DECODE(C.CWBZ, 1, &amp;apos;有错误&amp;apos;, NULL) CWBZ,
+       DECODE(C.CHBZ, 1, &amp;apos;冲红凭证&amp;apos;, NULL) CHBZ,
+       DECODE(C.JSBZ, 1, &amp;apos;结算凭证&amp;apos;, NULL) JSBZ,
+       C.ZDRXM,
+       C.FHRXM,
+       C.JZRXM,
+       C.FJZS
+  FROM CW_PZMXB A, CW_KMB B, CW_PZB C
+ WHERE A.SBH = B.SBH
+   AND A.ZTH = B.ZTH
+   AND A.KMBH = B.KMBH
+   AND A.SBH = C.SBH
+   AND A.ZTH = C.ZTH
+   AND A.YY = C.YY
+   AND A.MM = C.MM
+   AND A.PZH = C.PZH
+   AND A.SBH = &amp;apos;[%SBH]&amp;apos;
+   AND A.ZTH = &amp;apos;[%ZTH]&amp;apos;
+   AND A.YY = &amp;apos;[%YYYY]&amp;apos;
+   AND A.MM = &amp;apos;[%MM]&amp;apos;
+   AND A.PZH = &amp;apos;[%PZH]&amp;apos;
+ ORDER BY A.MXXH ASC
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 >pzData</C7></ROW>
+<ROW num="3" ><ID >check_pzh</ID><NAME ></NAME><DATDSC >SELECT ZDRXM
+  FROM CW_PZB
+ WHERE SBH = &amp;apos;[%SBH]&amp;apos;
+   AND ZTH = &amp;apos;[%ZTH]&amp;apos;
+   AND YY = &amp;apos;[%YYYY]&amp;apos;
+   AND MM = &amp;apos;[%MM]&amp;apos;
+   AND PZH = &amp;apos;[%PZH]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 >check_pzh</C6><C7 ></C7></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

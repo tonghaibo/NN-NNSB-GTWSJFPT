@@ -1,0 +1,174 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >YSZL_SN_ORG_EDIT</MWID><NAME >枢纽落地机构修改或增加</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >YSZL_SN_ORG_EDIT.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >//数据加载完毕
+var  luodi_org=&amp;quot;&amp;quot;
+var  orgname=&amp;quot;&amp;quot;;
+var  luodi_org_url=&amp;quot;&amp;quot;;
+var  ip=&amp;quot;&amp;quot;;
+var  port=&amp;quot;&amp;quot;;
+var  orgstatus=&amp;quot;&amp;quot;;
+var  tradsrc=&amp;quot;&amp;quot;;
+var  server_type=&amp;quot;&amp;quot;;
+var  timeout=&amp;quot;&amp;quot;;
+var  org_contacts=&amp;quot;&amp;quot;;
+var  telephone=&amp;quot;&amp;quot;;
+var  prikey_filename=&amp;quot;&amp;quot;;
+var  operation_type=&amp;quot;add&amp;quot;
+function _thisOnpost_loaddata(sheet)
+{
+	paramObj = window.dialogArguments;
+	if(paramObj.luodi_org!=&amp;quot;&amp;quot;){
+	   luodi_org= paramObj.luodi_org;
+	   orgname=paramObj.orgname;
+           luodi_org_url=paramObj.luodi_org_url;
+           ip=paramObj.ip;
+           port=paramObj.port;
+           orgstatus=paramObj.orgstatus;
+           tradsrc=paramObj.tradsrc;
+           server_type=paramObj.server_type;
+           timeout=paramObj.timeout;
+           org_contacts=paramObj.org_contacts;
+           telephone=paramObj.telephone;
+           prikey_filename=paramObj.prikey_filename;
+           operation_type=&amp;quot;edit&amp;quot;;
+           _this.setCellLock(0,1,2,1);
+       
+	}
+	_this.SetCellText(0,1,2,luodi_org);
+	_this.SetCellText(0,2,2,orgname);
+	_this.SetCellText(0,3,2,luodi_org_url);
+	_this.SetCellText(0,4,2,ip);
+	_this.SetCellText(0,5,2,port);
+	
+	var orgstatuslist = _this.CreateListValue();
+	 
+	_this.SetListValue(orgstatuslist ,&amp;quot;00&amp;quot;,&amp;quot;有效-00&amp;quot;);
+	_this.SetListValue(orgstatuslist ,&amp;quot;01&amp;quot;,&amp;quot;无效-01&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,6,2,orgstatuslist);
+	if(orgstatus==&amp;quot;有效&amp;quot;){
+	    orgstatus=&amp;quot;00&amp;quot;;
+	}else{
+	   orgstatus=&amp;quot;01&amp;quot;;
+	}
+	 _this.SetCellText(0,6,2,orgstatus);
+	
+	var tradsrclist = _this.CreateListValue();
+	_this.SetListValue(tradsrclist,&amp;quot;B&amp;quot;,&amp;quot;银行-B&amp;quot;);
+	_this.SetListValue(tradsrclist,&amp;quot;S&amp;quot;,&amp;quot;社保-S&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,7,2,tradsrclist );
+	if(tradsrc==&amp;quot;银行&amp;quot;){
+	    tradsrc=&amp;quot;B&amp;quot;;
+	}else{
+	   tradsrc=&amp;quot;S&amp;quot;;
+	}
+	_this.SetCellText(0,7,2,tradsrc);
+	
+	var server_typelist= _this.CreateListValue();
+	_this.SetListValue(server_typelist,&amp;quot;ws&amp;quot;,&amp;quot;WebService&amp;quot;);
+	_this.SetListValue(server_typelist,&amp;quot;socket&amp;quot;,&amp;quot;socket&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,8,2,server_typelist);
+	_this.SetCellText(0,8,2,server_type);
+	
+	if(timeout==&amp;quot;&amp;quot;){
+	   timeout=&amp;quot;5000&amp;quot;;
+	}
+	   
+	_this.SetCellText(0,9,2,timeout);
+	_this.SetCellText(0,10,2,org_contacts);
+	_this.SetCellText(0,11,2,telephone);
+	_this.SetCellText(0,12,2,prikey_filename);
+	 
+ 
+	_this.AutoFixScreenWidth();
+	 
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+    if(id==&amp;quot;保存&amp;quot;)
+    {
+        var param = new Object();  //传过去参数
+        param.luodi_org=_this.GetCellText(0,1,2);
+        //alert(param.luodi_org);
+	param.orgname=_this.GetCellText(0,2,2);
+	param.luodi_org_url=_this.GetCellText(0,3,2);
+	param.ip=_this.GetCellText(0,4,2);
+        param.port=_this.GetCellText(0,5,2);
+        param.orgstatus=_this.GetCellText(0,6,2);
+        param.tradsrc=_this.GetCellText(0,7,2);
+        param.server_type=_this.GetCellText(0,8,2);
+        param.timeout=_this.GetCellText(0,9,2);
+        param.org_contacts=_this.GetCellText(0,10,2);
+        param.telephone=_this.GetCellText(0,11,2);
+        param.prikey_filename=_this.GetCellText(0,12,2);
+
+         if(operation_type==&amp;quot;add&amp;quot;)
+         {
+              var ret =  _this.invokeOSFuncExt(&amp;quot;add_org&amp;quot;,param);//这里调用服务端的函数 add
+              alert(ret);
+         }
+         if(operation_type==&amp;quot;edit&amp;quot;)
+	 {
+	      var ret =  _this.invokeOSFuncExt(&amp;quot;edit_org&amp;quot;,param);//这里调用服务端的函数 edit
+              alert(ret);
+	 } 
+	 window.close();        
+    }
+    
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >function add_org() {
+    var db = null;
+    try{
+        db = new pub.EADatabase();
+        var sql = &amp;quot;insert into TAB_INFO_ROUTER(LUODI_ORG, ORGNAME,LUODI_ORG_URL,IP,PORT,ORGSTATUS,TRADSRC,SERVER_TYPE,TIMEOUT,ORG_CONTACTS,TELEPHONE,PRIKEY_FILENAME)values(&amp;apos;&amp;quot;+luodi_org+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+orgname+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+luodi_org_url+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+ip+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+port+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+orgstatus+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+tradsrc+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+server_type+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+timeout+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+org_contacts+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+telephone+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+prikey_filename+&amp;quot;&amp;apos;)&amp;quot;;
+        
+ 
+        var cnt = db.ExcecutSQL(sql);
+        if(cnt&amp;gt;0){
+          return &amp;quot;新增成功&amp;quot;;
+        }
+        
+    }catch(e) {
+      if(db != null) db.Rollback();
+      return e.toString();
+    }finally {
+      if(db != null) db.Close();
+    }
+}
+function edit_org() {
+    var db = null;
+    try{
+        db = new pub.EADatabase();
+	var sql = &amp;quot;update TAB_INFO_ROUTER set ORGNAME=&amp;apos;&amp;quot;+orgname+&amp;quot;&amp;apos;,LUODI_ORG_URL=&amp;apos;&amp;quot;+luodi_org_url+&amp;quot;&amp;apos;,IP=&amp;apos;&amp;quot;+ip+&amp;quot;&amp;apos;,PORT=&amp;apos;&amp;quot;+port+&amp;quot;&amp;apos;,ORGSTATUS=&amp;apos;&amp;quot;+orgstatus+&amp;quot;&amp;apos;,TRADSRC=&amp;apos;&amp;quot;+tradsrc+&amp;quot;&amp;apos;,SERVER_TYPE=&amp;apos;&amp;quot;+server_type+&amp;quot;&amp;apos;,TIMEOUT=&amp;apos;&amp;quot;+timeout+&amp;quot;&amp;apos;,ORG_CONTACTS=&amp;apos;&amp;quot;+org_contacts+&amp;quot;&amp;apos;,TELEPHONE=&amp;apos;&amp;quot;+telephone+&amp;quot;&amp;apos;,PRIKEY_FILENAME=&amp;apos;&amp;quot;+prikey_filename+&amp;quot;&amp;apos; where luodi_org=&amp;apos;&amp;quot;+luodi_org+&amp;quot;&amp;apos;&amp;quot;;
+        var cnt = db.ExcecutSQL(sql);
+        if(cnt&amp;gt;0){
+           return &amp;quot;机构修改成功&amp;quot;;
+        }
+
+       
+    }catch(e) {
+      if(db != null) db.Rollback();
+      return e.toString();
+    }finally {
+      if(db != null) db.Close();
+    }
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

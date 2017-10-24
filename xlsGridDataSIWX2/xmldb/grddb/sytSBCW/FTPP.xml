@@ -1,0 +1,1142 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >FTPP</MWID><NAME >上传和下载</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >FTPP.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdcelds>
+<ROWSET>
+<ROW num="0" ><ID >4,0,1</ID><CELLID ></CELLID><NAME ></NAME><VALFLD ></VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP >COMBOBOX</CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD></ROW>
+</ROWSET>
+</grdcelds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >xa</ID><NAME >下载保存更新本地</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE><C10 >xa</C10></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var sheet_0 = 0;
+var sheet_1 = 1;
+var sheet_2 = 2;
+var sheet_3 = 3;
+var sheet_4 = 4;
+var _SZBZ = &amp;quot;1&amp;quot;; //收支标志 1收2支
+var _BANK = &amp;quot;101&amp;quot;; //默认银行
+var host = &amp;quot;&amp;quot;;
+var user = &amp;quot;&amp;quot;;
+var userpwd = &amp;quot;&amp;quot;;
+var loginPath = &amp;quot;&amp;quot;;
+var downPath = &amp;quot;&amp;quot;;
+var keepbendipath;
+var keepyuanchengpath;
+var keepfilename;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet) {
+	var layoutxml = &amp;quot;&amp;lt;?xml version = &amp;apos;1.0&amp;apos; encoding=\&amp;quot;GBK\&amp;quot;?&amp;gt; &amp;quot; +
+		&amp;quot;&amp;lt;ROWSET&amp;gt;&amp;quot; +
+
+		&amp;quot;&amp;lt;ROW &amp;gt;&amp;quot; +
+		&amp;quot;&amp;lt;C0  height=\&amp;quot;15%\&amp;quot; width=\&amp;quot;50%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;2&amp;lt;/C0&amp;gt;&amp;quot; +
+		&amp;quot;&amp;lt;C1  height=\&amp;quot;15%\&amp;quot; width=\&amp;quot;49%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;3&amp;lt;/C1&amp;gt;&amp;quot; +
+		&amp;quot;&amp;lt;/ROW&amp;gt;&amp;quot; +
+		&amp;quot;&amp;lt;ROW &amp;gt;&amp;quot; +
+
+		&amp;quot;&amp;lt;C0  height=\&amp;quot;65%\&amp;quot; width=\&amp;quot;50%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;0&amp;lt;/C0&amp;gt;&amp;quot; +
+		&amp;quot;&amp;lt;C1  height=\&amp;quot;65%\&amp;quot; width=\&amp;quot;50%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;1&amp;lt;/C1&amp;gt;&amp;quot; +
+		&amp;quot;&amp;lt;/ROW&amp;gt;&amp;quot; +
+		&amp;quot;&amp;lt;ROW &amp;gt;&amp;quot; +
+		&amp;quot;&amp;lt;C0  height=\&amp;quot;75%\&amp;quot; width=\&amp;quot;100%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;4&amp;lt;/C0&amp;gt;&amp;quot; +
+		//&amp;quot;&amp;lt;C1  height=\&amp;quot;80%\&amp;quot; width=\&amp;quot;45%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;4&amp;lt;/C1&amp;gt;&amp;quot; +
+		&amp;quot;&amp;lt;/ROW&amp;gt;&amp;quot; +
+
+		&amp;quot;&amp;lt;/ROWSET&amp;gt;&amp;quot;;
+
+
+	_this.SetLayoutDS(layoutxml);
+	_this.SetRowVisible(4, 6, -1);
+	_this.SetCellLock(4, 4, 1, 1);
+	_this.SetCellLock(4, 4, 4, 1);
+	_this.SetCellLock(4, 4, 6, 1);
+	_this.SetMainCellRange(1, 4, 1, 15, 7);
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;, _this.ATTR_SHEET_SELECTFLAG, _this.SELECTFLAG_SINGLEROW);
+	_this.SetMainCellRange(0, 4, 1, 15, 7);
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;, _this.ATTR_SHEET_SELECTFLAG, _this.SELECTFLAG_SINGLEROW);
+
+	var mulList = _this.CreateListValue();
+	_this.SetListValue(mulList, &amp;quot;0&amp;quot;, &amp;quot;自动选择银行模式&amp;quot;);
+	_this.SetListValue(mulList, &amp;quot;1&amp;quot;, &amp;quot;手动连接模式&amp;quot;);
+	_this.SetToRadioBox(&amp;quot;&amp;quot;, 4, 0, 1, mulList);
+	_this.SetCellText(4, 0, 1, &amp;quot;0&amp;quot;);
+	ZXGFILE0 = _this.SaveTempZXGFile(1);
+	ZXGFILE1 = _this.SaveTempZXGFile(0);
+
+	try {
+		_SZBZ = szbz;
+	}
+	catch (e) {}
+	try {
+		_BANK = bank;
+	}
+	catch (e) {}
+
+	var bankView = &amp;quot;V_CW_YHZL_ZF&amp;quot;;
+	if (_SZBZ == &amp;quot;1&amp;quot;) bankView = &amp;quot;V_CW_YHZL_FTP&amp;quot;;
+
+	var yhzlList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl + &amp;quot;/XmlDB.sp?bind=&amp;quot; + bankView + &amp;quot;&amp;where=name!=&amp;apos;全部&amp;apos;and szbz=&amp;quot; + _SZBZ), &amp;quot;ID&amp;quot;, &amp;quot;NAME&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;, 4, 2, 1, yhzlList);
+	_this.SetCellText(4, 2, 1, _BANK);
+	setFtpInfo(_BANK);
+	var partha = &amp;quot;C:\\&amp;quot;;
+	_this.SetCellText(2, 1, 2, partha);
+
+	listFile(readFile(partha));
+
+
+	//	_this.SetFixedRow(2,2);
+	//
+	//	_this.SetFixedRow(3,2);
+	_this.AutoFixScreenWidth();
+}
+
+function setFtpInfo(yhbm) {
+	_sql.querytods(&amp;quot;FTPINFO&amp;quot;, &amp;quot;YHBM=&amp;quot; + yhbm);
+	host = _this.XMLDS_GetString(0, &amp;quot;FTP_IP&amp;quot;);
+	user = _this.XMLDS_GetString(0, &amp;quot;FTP_GXSI_LOGIN_NAME2&amp;quot;);
+	userpwd = _this.XMLDS_GetString(0, &amp;quot;FTP_GXSI_LOGIN_PASSWD2&amp;quot;);
+	if (user == &amp;quot;&amp;quot;) {
+		user = _this.XMLDS_GetString(0, &amp;quot;FTP_GXSI_LOGIN_NAME&amp;quot;);
+		userpwd = _this.XMLDS_GetString(0, &amp;quot;FTP_GXSI_LOGIN_PASSWD&amp;quot;);
+	}
+	_this.SetCellText(4, 4, 1, host);
+	_this.SetCellText(4, 4, 4, user);
+	_this.SetCellText(4, 4, 6, userpwd);
+	_this.SetCellShowText(4, 4, 6, &amp;quot;******&amp;quot;);
+	loginPath = _this.XMLDS_GetString(0, &amp;quot;FTP_GXSI_LOGIN_PATH&amp;quot;);
+	downPath = _this.XMLDS_GetString(0, &amp;quot;FTP_DOWN_PATH&amp;quot;);
+	var workPath = loginPath;
+	if (downPath != &amp;quot;/&amp;quot;) {
+		workPath = loginPath + &amp;quot;/&amp;quot; + downPath;
+	}
+	_this.SetCellText(3, 1, 2, workPath);
+	listFiles(host, user, userpwd, workPath);
+
+
+}
+ //远程目录列表
+function listFiles(host, user, userpwd, path) { 		
+	var result = false;
+
+	_this.LoadZXGFile(ZXGFILE0, -1, 1);
+	_this.SetMainCellRange(1, 4, 1, 15, 7);
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;, _this.ATTR_SHEET_SELECTFLAG, _this.SELECTFLAG_SINGLEROW);
+	//	_this.SetFixedRow(1,4);
+	//	_this.SetFixedCol(1,8);
+
+	_this.SetFixedRow(1, 4);
+	var param = new Object();
+	param.host = host;
+	param.user = user;
+	param.userpwd = userpwd;
+	param.path = path;
+	var ret = invokeOSFuncExt(&amp;quot;ftpListFiles&amp;quot;, param);
+	if (ret != &amp;quot;&amp;quot; &amp;&amp; ret.substring(0, 1) == &amp;quot;[&amp;quot;) {
+		ret = ret.substring(1, ret.length - 1);
+		var files = ret.split(&amp;quot;,&amp;quot;);
+		files.sort();
+		var r = 6;
+		for (var i = 0; i &amp;lt; files.length; i++) {
+			if (r &amp;gt;= 15) _this.AppendRow(1, r);
+			var file = files[i].split(&amp;quot;`&amp;quot;);
+			var fname = file[0]; //file[0].replace(/(^\s*)|(\s*$)/g, &amp;quot;&amp;quot;); //去除前后空格
+			var ftime = file[1];
+			var ftype = file[2];
+			var fsize = (file[3] / 1024).toFixed(2) + &amp;quot; KB&amp;quot;;
+			if (ftype == 1) {
+				_this.SetCellShowText(1, r, 6, &amp;quot;目录&amp;quot;);
+				_this.SetCellColor(1, r, 6, 0, 0, 255);
+			}
+			else ftype = &amp;quot;文件&amp;quot;;
+
+			_this.SetCellText(1, r, 1, (i + 1));
+			_this.SetToBoolBox(1, r, 2);
+			_this.SetCellText(1, r, 3, fname);
+			_this.SetCellText(1, r, 5, ftime);
+			_this.SetCellText(1, r, 6, ftype);
+			_this.SetCellText(1, r, 7, fsize);
+			r++;
+		}
+		_this.SetCellColor(1, 4, 1, 0, 255, 0);
+		_this.SetCellColor(1, 5, 1, 255, 0, 255);
+
+		result = true;
+
+	}
+	else {
+		alert(ret);
+	}
+
+	return result;
+}
+ //本地目录列表
+function listFile(fileArray) {			
+	try {
+
+		var result = false;
+		_this.LoadZXGFile(ZXGFILE1, -1, 0);
+		_this.SetMainCellRange(0, 4, 1, 15, 7);
+		_this.SetFixedRow(0, 4);
+
+
+		var r = 6;
+		for (var i = 0; i &amp;lt; fileArray.length; i++) {
+			var file = fileArray[i].split(&amp;quot;,&amp;quot;);
+			var ftype = file[0];
+			var fname = file[1];
+			var fsize = file[2];
+			var ftime = file[3];
+			if (ftype == &amp;quot;文件夹&amp;quot;) {
+				_this.SetCellShowText(0, r, 6, &amp;quot;目录&amp;quot;);
+				_this.SetCellColor(0, r, 6, 0, 0, 255);
+			}
+			else ftype = &amp;quot;文件&amp;quot;;
+
+			_this.SetCellText(0, r, 1, (i + 1));
+			_this.SetToBoolBox(0, r, 2);
+			_this.SetCellText(0, r, 3, fname);
+			_this.SetCellText(0, r, 5, ftime);
+			_this.SetCellText(0, r, 6, ftype);
+			_this.SetCellText(0, r, 7, fsize);
+			r++;
+			if (r &amp;gt;= 15) _this.AppendRow(0, r);
+
+			result = true;
+		}
+		_this.SetCellColor(0, 4, 1, 0, 255, 0);
+		_this.SetCellColor(0, 5, 1, 255, 0, 255);
+
+		return true;
+
+	}
+	catch (e) {
+		return;
+
+	}
+
+
+
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet, row, col, oldvalue, newvalue) {
+
+	if (sheet == 4 &amp;&amp; row == 2 &amp;&amp; col == 1) {
+		setFtpInfo(newvalue);
+
+	}
+	else if (sheet == 1) {
+		if (_this.GetCellText(sheet, row, 6) != &amp;quot;目录&amp;quot; &amp;&amp; _this.GetCellText(sheet, row, 2) == &amp;quot;1&amp;quot;) {
+			_this.SetCellText(sheet, row, 2, &amp;quot;0&amp;quot;);
+		}
+		else
+		{
+			_this.SetCellText(sheet, row, 2, &amp;quot;1&amp;quot;);
+		}
+	}
+
+
+	else if (sheet == 4 &amp;&amp; row == 0 &amp;&amp; col == 1) {
+		if (_this.GetCellText(4, 0, 1) == 1) {
+			_this.SetRowVisible(4, 2, -1);
+			_this.SetCellText(4, 4, 1, &amp;quot;&amp;quot;);
+			_this.SetCellText(4, 4, 4, &amp;quot;&amp;quot;);
+			_this.SetCellText(4, 4, 6, &amp;quot;&amp;quot;);
+			_this.SetRowVisible(4, 6, 1);
+			alert(&amp;quot;请手动输入IP地址、用户名和密码！&amp;quot;);
+
+			_this.SetCellLock(4, 4, 1, 0);
+			_this.SetCellLock(4, 4, 4, 0);
+			_this.SetCellLock(4, 4, 6, 0);
+
+
+
+		}
+		else {
+			_this.SetRowVisible(4, 2, 1);
+
+			_this.SetRowVisible(4, 6, -1);
+			_this.SetCellLock(4, 4, 1, 1);
+			_this.SetCellLock(4, 4, 4, 1);
+			_this.SetCellLock(4, 4, 6, 1);
+			_this.SetCellText(4, 4, 1, host);
+			_this.SetCellText(4, 4, 4, user);
+			_this.SetCellText(4, 4, 6, userpwd);
+			_this.SetCellShowText(4, 4, 6, &amp;quot;******&amp;quot;);
+
+
+		}
+
+	}
+
+	if (sheet == 2 &amp;&amp; row == 1 &amp;&amp; col == 2) {
+
+
+		listFile(readFile(newvalue));
+
+
+
+	}
+	if (sheet == 0) {
+		
+		if (_this.GetCellText(sheet, row, 6) != &amp;quot;目录&amp;quot; &amp;&amp; _this.GetCellText(sheet, row, 2) == &amp;quot;1&amp;quot;) {
+			_this.SetCellText(sheet, row, 2, &amp;quot;0&amp;quot;);
+
+
+		}
+		else
+		{
+			_this.SetCellText(sheet, row, 2, &amp;quot;1&amp;quot;);
+		}
+
+		
+	}
+
+
+}
+
+//function selectOneRow(sheet, row) {
+//		for (var r = 4; r &amp;lt; _this.GetRowCount(sheet) - 1; r++) {
+//			if (_this.GetCellText(sheet, r, 1) != &amp;quot;&amp;quot;) {
+//				_this.SetCellText(sheet, r, 2, &amp;quot;0&amp;quot;);
+//			}
+//		}
+//		_this.SetCellText(sheet, row, 2, &amp;quot;1&amp;quot;);
+//	}
+	//鼠标左键点击
+
+function _thisOnMouseLClick(sheet, row, col) {
+	if (sheet == 1) {
+		if (_this.GetCellText(sheet, row, 1) != &amp;quot;&amp;quot; &amp;&amp; _this.GetCellText(sheet, row, 6) == &amp;quot;文件&amp;quot;) {
+			if (_this.GetCellText(sheet, row, 2) == &amp;quot;0&amp;quot;) {
+				_this.SetCellText(sheet, row, 2, &amp;quot;1&amp;quot;);
+			}
+			else {
+				_this.SetCellText(sheet, row, 2, &amp;quot;0&amp;quot;);
+			}
+		
+		}
+
+
+	}
+	if (sheet == 0) {
+		if (_this.GetCellText(sheet, row, 1) != &amp;quot;&amp;quot; &amp;&amp; _this.GetCellText(sheet, row, 6) == &amp;quot;文件&amp;quot;) {
+			if (_this.GetCellText(sheet, row, 2) == &amp;quot;1&amp;quot;) {
+				_this.SetCellText(sheet, row, 2, &amp;quot;0&amp;quot;);
+			}
+			else {
+				_this.SetCellText(sheet, row, 2, &amp;quot;1&amp;quot;);
+			}
+		}
+	
+			
+
+	}
+
+
+
+}
+
+
+//鼠标双击
+function _thisOnMouseDClick(sheet, row, col) {
+
+
+		if (sheet == 1) {
+
+
+			if (row == 5 &amp;&amp; col == 1) {
+				returnmulu();
+			}
+			var dir = _this.GetCellText(sheet, row, 3);
+			var isdir = _this.GetCellText(sheet, row, 6);
+			if (isdir == &amp;quot;1&amp;quot;) {
+				var curpath = _this.GetCellText(3, 1, 2);
+				var path;
+				if (curpath == &amp;quot;/&amp;quot;) {
+					path = curpath + dir;
+				}
+				else {
+					path = curpath + &amp;quot;/&amp;quot; + dir;
+
+				}
+
+				var rst = listFiles(host, user, userpwd, path);
+				if (rst == true) {
+					_this.SetCellText(3, 1, 2, path);
+				}
+				else {
+					alert(&amp;quot;当前目录不正确!\n&amp;quot; + path);
+				}
+			}
+
+
+		}
+		if (sheet == 0 &amp;&amp; row == 5 &amp;&amp; col == 1) {
+
+			bendireturnmulu();
+
+		}
+		if (sheet == 0 &amp;&amp; row &amp;gt; 5) {
+			var dir1 = _this.GetCellText(sheet, row, 3);
+			var isdir1 = _this.GetCellText(sheet, row, 6);
+			if (isdir1 == &amp;quot;文件夹&amp;quot;) {
+				var curpath = _this.GetCellText(2, 1, 2);
+				if (curpath == &amp;quot;C:\\&amp;quot; || curpath == &amp;quot;D:\\&amp;quot; || curpath == &amp;quot;E:\\&amp;quot; || curpath == &amp;quot;F:\\&amp;quot;) {
+					curpath = curpath + dir1;
+				}
+				else {
+					curpath = curpath + &amp;quot;\\&amp;quot; + dir1;
+
+
+				}
+
+				listFile(readFile(curpath));
+				_this.SetCellText(2, 1, 2, curpath)
+
+			}
+
+
+
+
+		}
+	}
+	//自动创建文件目录
+
+function autoCreateFolder(path) {
+	try {
+		var fso = new ActiveXObject(&amp;quot;Scripting.FileSystemObject&amp;quot;);
+		var a = &amp;quot;&amp;quot;;
+		var p = path.split(&amp;quot;\\&amp;quot;);
+		var root = p[0];
+		var subdir = &amp;quot;&amp;quot;;
+
+		for (var i = 1; i &amp;lt; p.length; i++) {
+			subdir += &amp;quot;\\&amp;quot; + p[i]
+			var dir = root + subdir;
+			//var dir=&amp;quot;C:\\User&amp;quot;;
+			if (!fso.FolderExists(dir)) {
+
+				a = fso.CreateFolder(dir); //创建文件夹目录
+
+			}
+		}
+		//   alert(dir );
+		if (a == undefined) {
+			alert(&amp;quot;自动创建文件目录（&amp;quot; + path + &amp;quot;）失败！&amp;quot;);
+			return false;
+		}
+
+
+		return true;
+	}
+	catch (e) {
+		alert(&amp;quot;创建文件目录失败!&amp;quot; + path + e);
+		return false;
+	}
+}
+//打开本地目录
+function openFile() {
+
+	try {
+		var Message = &amp;quot;请选择上传文件夹&amp;quot;;
+
+		var Shell = new ActiveXObject(&amp;quot;Shell.Application&amp;quot;);
+		//var Folder = Shell.BrowseForFolder(0, Message, 64, 17); //起始目录为：我的电脑
+		var Folder = Shell.BrowseForFolder(0, Message, 0x0011, 0);
+		if (Folder != null) {
+			Folder = Folder.items(); // 返回 FolderItems 对象
+			Folder = Folder.item(); // 返回 Folderitem 对象
+			Folder = Folder.Path; // 返回路径
+			_this.SetCellText(2, 1, 2, Folder);
+
+		}
+		return Folder;
+	}
+	catch (e) {
+		alert(&amp;quot;选择的路径不对，请重新选择！&amp;quot;);
+
+
+	}
+
+}
+//读取本地目录列表
+var filecontent = &amp;quot;&amp;quot;;
+var count = 0;
+
+function readFile(path1) {
+
+
+	var fso = new ActiveXObject(&amp;quot;Scripting.FileSystemObject&amp;quot;);
+
+	var fldr = fso.GetFolder(path1);
+
+	var ff = new Enumerator(fldr.SubFolders);
+
+	var fileArray = new Array();
+	//var fileArray1= new Array();
+	var fsize;
+	for (var i = 0; !ff.atEnd(); ff.moveNext()) {
+		//取文件对象
+		s = ff.item();
+
+
+		//输出文件的类型和名称;
+		if (path1 == &amp;quot;C:\\&amp;quot; || path1 == &amp;quot;D:\\&amp;quot; || path1 == &amp;quot;E:\\&amp;quot; || path1 == &amp;quot;F:\\&amp;quot;) {
+			//输出文件的类型和名称;
+			fsize = &amp;quot;&amp;quot;;
+
+		}
+		else {
+
+			fsize = (s.size / 1024).toFixed(2) + &amp;quot; KB&amp;quot;;
+		}
+		var cal = new Date(s.DateLastModified);
+		var year = cal.getFullYear();
+		var month = cal.getMonth() + 1;;
+		var day = cal.getDate();
+		var hour = cal.getHours();
+		var min = cal.getMinutes();
+		var sec = cal.getSeconds();
+		var ftime = formatDateTime(year, month, day, hour, min, sec);
+		filecontent = s.type + &amp;quot;,&amp;quot; + s.name + &amp;quot;,&amp;quot; + fsize + &amp;quot;,&amp;quot; + ftime;
+		fileArray[i] = filecontent;
+		//fileArray1[i]= filecontent;
+
+
+		i++;
+
+	}
+	count = fileArray.length;
+	var fso1 = new ActiveXObject(&amp;quot;Scripting.FileSystemObject&amp;quot;);
+	//var path1 = _this.GetCellText(2, 1, 2);
+	var fldr1 = fso1.GetFolder(path1);
+
+	//var dd = new Enumerator(fldr1.SubFolders);
+	var dd = new Enumerator(fldr1.Files);
+
+	var fsize1;
+	for (var f = count; !dd.atEnd(); dd.moveNext()) {
+		//取文件对象
+		d = dd.item();
+
+		if (path1 == &amp;quot;C:\\&amp;quot; || path1 == &amp;quot;D:\\&amp;quot; || path1 == &amp;quot;E:\\&amp;quot; || path1 == &amp;quot;F:\\&amp;quot;) {
+			//输出文件的类型和名称;
+			fsize1 = &amp;quot;&amp;quot;;
+
+		}
+		else {
+
+			fsize1 = (d.size / 1024).toFixed(2) + &amp;quot; KB&amp;quot;;
+		}
+
+		var cal = new Date(d.DateLastModified);
+		var year = cal.getFullYear();
+		var month = cal.getMonth() + 1;
+		var day = cal.getDate();
+		var hour = cal.getHours();
+		var min = cal.getMinutes();
+		var sec = cal.getSeconds();
+		var ftime = formatDateTime(year, month, day, hour, min, sec);
+
+
+		filecontent = d.type + &amp;quot;,&amp;quot; + d.name + &amp;quot;,&amp;quot; + fsize1 + &amp;quot;,&amp;quot; + ftime;
+
+		fileArray[f] = filecontent;
+
+		f++;
+
+	}
+
+
+	return fileArray;
+
+
+}
+
+function formatDateTime(y, m, d, h, f, s) {
+	var mm = m &amp;lt; 10 ? (&amp;quot;0&amp;quot; + m) : m;
+	var dd = d &amp;lt; 10 ? (&amp;quot;0&amp;quot; + d) : d;
+	var hh = h &amp;lt; 10 ? (&amp;quot;0&amp;quot; + h) : h;
+	var ff = f &amp;lt; 10 ? (&amp;quot;0&amp;quot; + f) : f;
+	var ss = s &amp;lt; 10 ? (&amp;quot;0&amp;quot; + s) : s;
+
+	return y + &amp;quot;-&amp;quot; + mm + &amp;quot;-&amp;quot; + dd + &amp;quot; &amp;quot; + hh + &amp;quot;:&amp;quot; + ff + &amp;quot;:&amp;quot; + ss;
+
+}
+//远程返回上一级
+function returnmulu() {
+	var curpath = _this.GetCellText(3, 1, 2);
+	var path = curpath.substring(0, curpath.lastIndexOf(&amp;quot;/&amp;quot;));
+	_this.SetCellText(3, 1, 2, path)
+	if (_this.GetCellText(3, 1, 2) == &amp;quot;&amp;quot;) {
+
+		_this.SetCellText(3, 1, 2, &amp;quot;/&amp;quot;)
+	}
+
+	listFiles(host, user, userpwd, path);
+
+}
+//本地返回上一级
+function bendireturnmulu() {
+	var curpath = _this.GetCellText(2, 1, 2);
+
+	var pathi = curpath.substring(0, curpath.lastIndexOf(&amp;quot;\\&amp;quot;));
+	if (pathi == &amp;quot;C:&amp;quot; || pathi == &amp;quot;D:&amp;quot; || pathi == &amp;quot;E:&amp;quot; || pathi == &amp;quot;F:&amp;quot;) {
+		pathi = pathi + &amp;quot;\\&amp;quot;;
+	}
+
+	_this.SetCellText(2, 1, 2, pathi);
+
+
+	var a = listFile(readFile(pathi));
+	if (a == false) {
+		return &amp;quot;ftp设置工作目录不成功，请检查目录&amp;quot; + pathi + &amp;quot;是否正确！&amp;quot;;
+	}
+
+}
+//刷新界面
+function xa()
+
+{	
+	try{
+	keepyuanchengpath = _this.GetCellText(3, 1, 2);
+	keepbendipath = _this.GetCellText(2, 1, 2);
+	_this.SetCellText(2, 1, 2, keepbendipath);
+
+	_this.SetCellText(3, 1, 2, keepyuanchengpath);
+
+	for (var i = 0; i &amp;lt; keepfilename.length; i++) {
+		MoveFiles(keepfilename[i], _this.GetCellText(2, 1, 2) + &amp;quot;\\&amp;quot; + keepfilename[i]);
+		listFile(readFile(keepbendipath));
+		listFiles(host, user, userpwd, keepyuanchengpath);
+	}
+	}
+	catch(e)
+	{
+	}
+
+
+	//window.location.reload();
+}
+function deletefile()
+{
+	var fso, tf;
+	fso = new ActiveXObject(&amp;quot;Scripting.FileSystemObject&amp;quot;);
+
+	for (var r = 6; r &amp;lt; _this.GetRowCount(0); r++) {
+		if (_this.GetCellText(0, r, 2) == &amp;quot;1&amp;quot;) {
+			tf = fso.GetFile(_this.GetCellText(2, 1, 2) + &amp;quot;\\&amp;quot; + _this.GetCellText(0, r, 3));
+			if (confirm(&amp;quot;是否删除该选中的文件&amp;quot; + _this.GetCellText(2, 1, 2) + &amp;quot;\\&amp;quot; + _this.GetCellText(0, r, 3) + &amp;quot;？&amp;quot;)) {
+				tf.Delete();
+				alert(&amp;quot;删除文件&amp;quot;+_this.GetCellText(0, r, 3)+&amp;quot;成功！&amp;quot;);
+
+
+			}
+			else {
+				return;
+			}
+
+		}
+	}
+
+
+
+
+	listFile(readFile(_this.GetCellText(2, 1, 2)));
+
+}
+
+
+
+
+//点击按钮
+function _thisOnButtonCtrlClick(id, sheet, row, col) {
+
+
+	if (id == &amp;quot;浏览&amp;quot;) {
+
+		var c = openFile();
+		if (c != null) {
+			listFile(readFile(c));
+		}
+
+	}
+	if (id == &amp;quot;连接&amp;quot;) {
+		host = _this.GetCellText(4, 4, 1);
+		user = _this.GetCellText(4, 4, 4);
+		userpwd = _this.GetCellText(4, 4, 6);
+		if (host == &amp;quot;&amp;quot; || user == &amp;quot;&amp;quot; || userpwd == &amp;quot;&amp;quot;) {
+			alert(&amp;quot;输入不能为空！&amp;quot;);
+			return;
+		}
+
+		var param = new Object();
+		param.ftpip1 = host;
+		param.ftpuser1 = user;
+		param.ftppasswd1 = userpwd;
+
+		var address = invokeOSFuncExt(&amp;quot;getaddress&amp;quot;, param);
+
+
+		if (address.substring(0, 1) == &amp;quot;/&amp;quot;) {
+			alert(&amp;quot;连接成功!&amp;quot;);
+			_this.SetCellText(3, 1, 2, &amp;quot;&amp;quot;);
+			_this.SetCellText(3, 1, 2, address);
+			listFiles(host, user, userpwd, address);
+		}
+		else
+
+		{
+			alert(&amp;quot;连接失败!&amp;quot;);
+			return;
+
+		}
+
+
+
+
+	}
+	if (id == &amp;quot;删除&amp;quot;) {
+		
+		deletefile();
+
+
+	}
+
+	if (id == &amp;quot;下载&amp;quot;) {
+		var filename1 = &amp;quot;&amp;quot;;
+		var ret = &amp;quot;&amp;quot;;
+		//var genmulu = &amp;quot;&amp;quot;;
+		var flag = 0;
+		var genmulu = new Array();
+		keepfilename = new Array();
+		var fsoo = new ActiveXObject(&amp;quot;Scripting.FileSystemObject&amp;quot;);
+
+
+		var i = 0;
+		for (var r = 4; r &amp;lt; _this.GetRowCount(1); r++) {
+			if (_this.GetCellText(1, r, 2) == &amp;quot;1&amp;quot;) {
+				genmulu[i] = _this.GetCellText(1, r, 3);
+				i++;
+			}
+		}
+
+		var mulu = _this.GetCellText(3, 1, 2);
+
+
+		filename1 = _this.GetCellText(2, 1, 2) + &amp;quot;\\&amp;quot;;
+
+
+		//		if (autoCreateFolder(filename1)) {
+		//			alert(&amp;quot;自动创建目录成功&amp;quot;);
+		//		}	
+		var g;
+		for (g = 0; g &amp;lt; genmulu.length; g++) {
+		
+			var txt = invokeOSFunc(&amp;quot;downLoadFile&amp;quot;, &amp;quot;mulu=&amp;quot; + mulu + &amp;quot;&amp;genmulu=&amp;quot; + genmulu[g] + &amp;quot;&amp;ip=&amp;quot; + host + &amp;quot;&amp;loginname=&amp;quot; + user + &amp;quot;&amp;mima=&amp;quot; + userpwd);
+			//sleep(3000);
+			if (txt == &amp;quot;true&amp;quot;) {
+				//alert(genmulu[g]);
+				var url = G_HOMEURL;
+				var passwd = &amp;quot;gxsb5879003&amp;quot;;
+				var filematch = &amp;quot;&amp;quot;;
+				var file = &amp;quot;&amp;quot;;
+				var filepath = &amp;quot;/u/filestoreu/download/&amp;quot; + genmulu[g]; //应用服务器上的文件
+				filepath = encodeURI(encodeURI(filepath));
+				var url1 = url + &amp;quot;FTPP.sp?action=down&amp;filepath=&amp;quot; + filepath;
+
+				window.open (url1 ,&amp;apos;&amp;apos; , &amp;apos;height=400, width=400, top=99999,left=99999, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no&amp;apos;) ;
+
+			}
+			
+			keepfilename[g] = genmulu[g];
+
+		}
+
+	}
+	if (id == &amp;quot;上传&amp;quot;) {
+
+		//_this.SetToolbarString(&amp;quot;正在上传中，请稍后。。。。。&amp;quot;);
+		var bendifilename = new Array();
+		var bendifilesize = new Array();
+		var yuanchengfilename = &amp;quot;&amp;quot;;
+		var flag1 = 0;
+		var flag2 = 0;
+		var i = 0;
+
+		for (var r = 4; r &amp;lt; _this.GetRowCount(0); r++) {
+			if (_this.GetCellText(0, r, 2) == &amp;quot;1&amp;quot;) {
+				bendifilename[i] = _this.GetCellText(0, r, 3);
+				bendifilesize[i] = _this.GetCellText(0, r, 7);
+				i++;
+			}
+		}
+
+
+
+		var g = 0;
+		for (g = 0; g &amp;lt; bendifilename.length; g++) {
+			for (var c = 6; c &amp;lt; _this.GetRowCount(1); c++) {
+				if (bendifilename[g] == _this.GetCellText(1, c, 3)) {
+					flag1 = 1;
+				}
+
+			}
+
+			var filepath = _this.GetCellText(2, 1, 2) + &amp;quot;\\&amp;quot; + bendifilename[g];
+			//var uploadpath = _this.GetCellText(3, 1, 2) + &amp;quot;/&amp;quot; + bendifilename;
+			var uploadpath1 = _this.GetCellText(3, 1, 2) + &amp;quot;/&amp;quot;;
+			var webdir1 = &amp;quot;/u/filestoreu/upload/&amp;quot; + bendifilename[g];
+			//var webdir = &amp;quot;/u/filestore/&amp;quot;;
+			var webpath = &amp;quot;u/upload/&amp;quot;;
+
+			//	try {	
+			_this.OpenHttpRequest(&amp;quot;uploadFile.sp&amp;quot;, &amp;quot;UPLOAD&amp;quot;);
+
+			_this.AddHttpRequestParam(&amp;quot;uploadfile&amp;quot;, filepath, 1); //本地文件的路径
+			_this.AddHttpRequestParam(&amp;quot;path&amp;quot;, webpath, 0); //远程保存的目录
+			_this.AddHttpRequestParam(&amp;quot;filename&amp;quot;, bendifilename[g], 0); //注意这里只能是文件名，用于远程保存的文件名
+			_this.AddHttpRequestParam(&amp;quot;handle&amp;quot;, &amp;quot;REPORTSTORE&amp;quot;, 0);
+			
+
+			var ret = _this.SendHttpRequest();
+
+
+			_this.CloseHttpRequest();
+			var fso;
+			var s = filepath;
+
+			fso = new ActiveXObject(&amp;quot;Scripting.FileSystemObject&amp;quot;);
+			if (fso.FileExists(s)) {
+				//alert(&amp;quot;存在&amp;quot;);
+				flag2 = 1;
+
+			}
+			else {
+				//alert(&amp;quot;不存在&amp;quot;);
+				flag2 = 0;
+			}
+
+			if (flag1 == 1 &amp;&amp; flag2 == 1) {
+				if (confirm(&amp;quot;拷盘文件&amp;quot; + bendifilename[g] + &amp;quot;已存在，是否覆盖？&amp;quot;)) {
+					alert(&amp;quot;覆盖成功！&amp;quot;);
+
+
+				}
+				else {
+					return;
+				}
+			}
+
+
+			var b = invokeOSFunc(&amp;quot;uploadFile&amp;quot;, &amp;quot;bendifilename=&amp;quot; + bendifilename[g] + &amp;quot;&amp;ftpip=&amp;quot; + host + &amp;quot;&amp;ftpuser=&amp;quot; + user + &amp;quot;&amp;ftppasswd=&amp;quot; + userpwd + &amp;quot;&amp;webdir1=&amp;quot; + webdir1 + &amp;quot;&amp;uploadpath1=&amp;quot; + uploadpath1);
+
+		}
+		if (b == &amp;quot;true&amp;quot; &amp;&amp; ret != &amp;quot;&amp;quot; &amp;&amp; flag2 == 1) {
+			alert(&amp;quot;上传成功 ！&amp;quot;);
+			listFiles(host, user, userpwd, _this.GetCellText(3, 1, 2));
+			_this.SetToolbarString(&amp;quot; &amp;quot;);
+		}
+		else {
+			alert(&amp;quot;上传失败！选择上传的目录不正确！&amp;quot;);
+			_this.SetToolbarString(&amp;quot; &amp;quot;);
+			return;
+		}
+
+
+
+		flag1 = 0;
+	}
+
+
+}
+//下载文件自动保存本地目录
+function MoveFiles(filename, path) {
+	var wshNetwork = new ActiveXObject(&amp;quot;WScript.Network&amp;quot;);
+	var fso, f;
+	fso = new ActiveXObject(&amp;quot;Scripting.FileSystemObject&amp;quot;);
+//	f=fso.GetFile(path );
+	if (fso.FileExists(&amp;quot;C:\\Users\\&amp;quot; + wshNetwork.UserName + &amp;quot;\\Downloads\\&amp;quot; + filename)) {
+		if(fso.FileExists(path)){
+			if (confirm(&amp;quot;路径为&amp;quot; + path + &amp;quot;的文件已存在，是否覆盖？&amp;quot;)) {
+					alert(&amp;quot;覆盖成功！&amp;quot;);
+				var fs = new ActiveXObject(&amp;quot;Scripting.FileSystemObject&amp;quot;);
+				f=fs.GetFile(path );
+				f.Delete();
+
+				
+				}
+				else
+				{
+				return;
+				}
+				}
+				var strPath = fso.MoveFile(&amp;quot;C:\\Users\\&amp;quot; + wshNetwork.UserName + &amp;quot;\\Downloads\\&amp;quot; + filename, path);
+			
+	}
+
+
+}
+function sleep(d){
+  for(var t = Date.now();Date.now() - t &amp;lt;= d;);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var ftppack = new JavaPackage(&amp;quot;org.apache.commons.net.ftp&amp;quot;);
+
+function ftpListFiles() {
+	var eaftp = null;
+	try {
+		eaftp = new pub.EAFtpClient2();
+		eaftp.ftpClient = new ftppack.FTPClient();
+		eaftp.ftpClient.setControlEncoding(&amp;quot;UTF-8&amp;quot;); //处理文件名是中文乱码问题
+		eaftp.ftpClient.connect(host);
+		eaftp.ftpClient.login(user, userpwd);
+		//eaftp.connectServer(host,user,userpwd);  //登录FTP
+		var rst = eaftp.ftpClient.changeWorkingDirectory(path);
+		if (rst == false) {
+			return &amp;quot;ftp设置工作目录不成功，请检查目录[&amp;quot; + path + &amp;quot;]是否正确！&amp;quot;;
+		}
+		//	var files = eaftp.listRemoteFiles(&amp;quot;*&amp;quot;);
+		//	java.lang.System.out.println(&amp;quot;ftp files=&amp;quot;+files);
+		var files = &amp;quot;[&amp;quot;;
+		eaftp.ftpClient.enterLocalPassiveMode(); //20160418添加,处理listFiles()方法返回空问题
+		var ftpFiles = eaftp.ftpClient.listFiles();
+		//return ftpFiles ;
+		//	return ftpFiles.length();
+		for (var i = 0; i &amp;lt; ftpFiles.length(); i++) {
+			if (ftpFiles[i] != null) {
+				var fname = ftpFiles[i].getName();
+				var ftype = ftpFiles[i].getType();
+				var fsize = ftpFiles[i].getSize();
+				var cal = ftpFiles[i].getTimestamp();
+				var year = cal.get(java.util.Calendar.YEAR);
+				var month = cal.get(java.util.Calendar.MONTH) + 1;
+				var day = cal.get(java.util.Calendar.DAY_OF_MONTH);
+				var hour = cal.get(java.util.Calendar.HOUR_OF_DAY);
+				var min = cal.get(java.util.Calendar.MINUTE);
+				var sec = cal.get(java.util.Calendar.SECOND);
+				//var ftime = year + &amp;quot;-&amp;quot; + month + &amp;quot;-&amp;quot; + day + &amp;quot; &amp;quot; + hour + &amp;quot;:&amp;quot; + min + &amp;quot;:&amp;quot; + sec;
+				var ftime = formatDateTime(year, month, day, hour, min, sec);
+				if (files == &amp;quot;[&amp;quot;) {
+					files += fname + &amp;quot;`&amp;quot; + ftime + &amp;quot;`&amp;quot; + ftype + &amp;quot;`&amp;quot; + fsize;
+				} else {
+					files += &amp;quot;,&amp;quot; + fname + &amp;quot;`&amp;quot; + ftime + &amp;quot;`&amp;quot; + ftype + &amp;quot;`&amp;quot; + fsize;
+				}
+			}
+		}
+		files += &amp;quot;]&amp;quot;;
+		return files;
+	} catch(e) {
+		//throw new Exception(e);
+		return e.toString();
+	} finally {
+		if (eaftp != null) eaftp.closeConnect();
+	}
+	//return pub.EAFunc.Replace(files.toString(),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);
+}
+
+function formatDateTime(y, m, d, h, f, s) {
+	var mm = m &amp;lt; 10 ? (&amp;quot;0&amp;quot; + m) : m;
+	var dd = d &amp;lt; 10 ? (&amp;quot;0&amp;quot; + d) : d;
+	var hh = h &amp;lt; 10 ? (&amp;quot;0&amp;quot; + h) : h;
+	var ff = f &amp;lt; 10 ? (&amp;quot;0&amp;quot; + f) : f;
+	var ss = s &amp;lt; 10 ? (&amp;quot;0&amp;quot; + s) : s;
+
+	return y + &amp;quot;-&amp;quot; + mm + &amp;quot;-&amp;quot; + dd + &amp;quot; &amp;quot; + hh + &amp;quot;:&amp;quot; + ff + &amp;quot;:&amp;quot; + ss;
+
+}
+
+//下载拷盘文件保存到应用服务器
+function downLoadFile() {
+	//	var c = &amp;quot;&amp;quot;;
+	//	var txt = null;
+	//	var sr = null;
+	//	var eaftp = new pub.EAFtpClient2();
+	//
+	//	eaftp.connectServer(ip, loginname, mima); //登录FTP
+	//	eaftp.ftpClient.changeWorkingDirectory(mulu);
+	//	var destFile = &amp;quot;/u/dsdd/&amp;quot; + genmulu; //下载保存
+	//	var b = eaftp.download(mulu + &amp;quot;/&amp;quot; + genmulu, destFile);
+	//	eaftp.closeConnect();
+	//	if (b == true) {
+	//		txt = pub.EAFunc.readFile(destFile);
+	//	}
+	//
+	//
+	//	return txt;
+	var eaftp = new pub.EAFtpClient2();
+	eaftp.ftpClient = new ftppack.FTPClient();
+	eaftp.ftpClient.setControlEncoding(&amp;quot;UTF-8&amp;quot;);
+	eaftp.ftpClient.connect(ip);
+	eaftp.ftpClient.login(loginname, mima);
+	eaftp.ftpClient.setFileType(ftppack.FTP.BINARY_FILE_TYPE);
+	eaftp.ftpClient.enterLocalPassiveMode();
+	eaftp.ftpClient.setFileTransferMode(ftppack.FTP.STREAM_TRANSFER_MODE);
+	var b = eaftp.download(mulu + &amp;quot;/&amp;quot; + genmulu, &amp;quot;/u/filestoreu/download/&amp;quot; + genmulu);
+
+	eaftp.closeConnect();
+
+	return b;
+
+}
+function uploadFile() {
+	var eaftp = &amp;quot;&amp;quot;;
+
+	try {
+		//上传FTP
+		eaftp = new pub.EAFtpClient2();
+		eaftp.ftpClient = new ftppack.FTPClient();
+		eaftp.ftpClient.setControlEncoding(&amp;quot;UTF-8&amp;quot;); //处理文件名是中文乱码问题
+		eaftp.ftpClient.connect(ftpip);
+		eaftp.ftpClient.login(ftpuser, ftppasswd);
+		eaftp.ftpClient.setFileType(ftppack.FTP.BINARY_FILE_TYPE);
+		eaftp.ftpClient.enterLocalPassiveMode();
+		eaftp.ftpClient.setFileTransferMode(ftppack.FTP.STREAM_TRANSFER_MODE);
+
+		var localFile = new java.io.File(webdir1);
+		eaftp.ftpClient.changeWorkingDirectory(uploadpath1);
+		var inputStream = new java.io.FileInputStream(localFile);
+		var b = eaftp.ftpClient.storeFile(bendifilename, inputStream);
+
+		eaftp.closeConnect();
+		return b;
+	} catch(e) {
+		//throw new Exception(e);
+		return e.toString();
+	} finally {
+		if (eaftp != null) eaftp.closeConnect();
+	}
+
+	//				var localFile = new java.io.File(&amp;quot;/u/filestore/u/uploadreturn_JB_GSDS151126.TXT&amp;quot;);
+	//				var localFile = new java.io.File(webdir1);
+	//				eaftp.ftpClient.changeWorkingDirectory(&amp;quot;/dsdf/gsyh/gsyh_ftpdown/jgyl/&amp;quot;);
+	//				var inputStream = new java.io.FileInputStream(localFile);
+	//				var b = eaftp.ftpClient.storeFile(&amp;quot;mytestaa.txt&amp;quot;,inputStream);
+	//				if (b == true) { //上传成功	
+	//				}
+	//				eaftp.closeConnect();	
+	//				return b;
+
+}
+
+//作为.sp服务时的入口
+//预定义变量：request,response
+function Response() {
+	var action = request.getParameter(&amp;quot;action&amp;quot;);
+
+	var filematch = request.getParameter(&amp;quot;filematch&amp;quot;); // 文件匹配 如262*.*
+	if (filematch == null) filematch = &amp;quot;&amp;quot;;
+	var mrequest = null;
+	var ubp = null;
+
+	if (action == null || mrequest == null) {
+		try {
+			ubp = new JavaPackage(&amp;quot;javazoom.upload&amp;quot;);
+			request.setCharacterEncoding(ubp.MultipartFormDataRequest.DEFAULTENCODING);
+			mrequest = new ubp.MultipartFormDataRequest(request);
+			action = mrequest.getParameter(&amp;quot;action&amp;quot;);
+		} catch(e) {
+			pub.EAFunc.Log(e.toString());
+		}
+	}
+
+	var file = request.getParameter(&amp;quot;file&amp;quot;);
+	var filepath = request.getParameter(&amp;quot;filepath&amp;quot;);
+	//filepath = URLDecoder.decode(filepath , &amp;quot;utf-8&amp;quot;);
+	filepath  = java.net.URLDecoder.decode(filepath,&amp;quot;utf8&amp;quot;);
+	
+	
+	if (action == &amp;quot;down&amp;quot;) {
+		//var fullfile = cvshome+file;
+		var fullfile = filepath;
+		fullfile = pub.EAFunc.Replace(fullfile, &amp;quot;\\&amp;quot;, &amp;quot;/&amp;quot;);
+		pub.EAFunc.file2Response(response, fullfile);
+	} else return &amp;quot;unknow action&amp;quot;;
+}
+//得到FTP登录的默认路径
+function getaddress() {
+	var c = &amp;quot;&amp;quot;;
+	//var ftpip1 = &amp;quot;172.16.100.80&amp;quot;;
+	//	var ftpuser1 = &amp;quot;gxsi&amp;quot;;
+	//	var ftppasswd1 = &amp;quot;gxsi5879003&amp;quot;;
+	try {
+		var eaftp1 = new pub.EAFtpClient2();
+
+		eaftp1.ftpClient = new ftppack.FTPClient();
+		eaftp1.ftpClient.setControlEncoding(&amp;quot;UTF-8&amp;quot;);
+		eaftp1.ftpClient.connect(ftpip1);
+		eaftp1.ftpClient.login(ftpuser1, ftppasswd1);
+		c = eaftp1.ftpClient.printWorkingDirectory();
+		return c;
+	} catch(e) {
+		return e.toString();
+	}
+
+	eaftp.closeConnect();
+
+}
+function occupy(){
+	
+	var file=new java.io.File(filepath); 
+	if(file.canRead()){ 
+ 	return &amp;quot;无人使用&amp;quot;;
+	}else{ 
+ 	return &amp;quot;有人使用&amp;quot;;
+	} 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >FTPINFO</ID><NAME >FTP信息</NAME><DATDSC >select * from CW_DFDSB where acc=&amp;apos;[%SYS_ACCID]&amp;apos; and yhbm=&amp;apos;[%YHBM]&amp;apos;</DATDSC><C4 >FTPINFO</C4></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

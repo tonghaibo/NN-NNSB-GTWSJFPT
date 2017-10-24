@@ -1,0 +1,201 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >YSZL_DKXYB</MWID><NAME >查询代扣协议</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >YSZL_DKXYB.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var sbh = &amp;quot;&amp;quot;;
+var zth = &amp;quot;&amp;quot;;
+var ZXGFILE0 = &amp;quot;&amp;quot;;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	sbh = G_ORGID;
+	zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+	initLayout();
+    	_this.SetMainCellRange(0,2,1,_this.GetRowCount(0)-1,_this.GetColCount(0)-1);
+    	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );	
+	ZXGFILE0  = _this.SaveTempZXGFile(0);
+	loadMainData();
+}
+//布局初始化
+function initLayout()
+{
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,&amp;quot;100&amp;quot;);
+	var dkzqList = &amp;quot;&amp;quot;;
+	dkzqList = _this.CreateListValue();
+	_this.SetListValue(dkzqList ,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+	_this.SetListValue(dkzqList ,&amp;quot;1&amp;quot;,&amp;quot;月扣&amp;quot;);
+	_this.SetListValue(dkzqList ,&amp;quot;2&amp;quot;,&amp;quot;季扣&amp;quot;);
+	_this.SetListValue(dkzqList ,&amp;quot;3&amp;quot;,&amp;quot;半年&amp;quot;);
+	_this.SetListValue(dkzqList ,&amp;quot;4&amp;quot;,&amp;quot;一年&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,1,8,dkzqList);
+	var xzList = &amp;quot;&amp;quot;;//用银社直连的险种
+	xzList = _this.CreateListValue();
+	var yhjgdmList = &amp;quot;&amp;quot;;
+	yhjgdmList = _this.CreateListValue();
+	_this.SetListValue(yhjgdmList,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+	_sql.querytods(&amp;quot;getYHJGDM&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth);
+	for(var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+		var yhjgdm = _this.XMLDS_GetString(i,&amp;quot;yszl_yhjgdm&amp;quot;);
+		var yhmc = _this.XMLDS_GetString(i,&amp;quot;yhmc&amp;quot;);
+		_this.SetListValue(yhjgdmList,yhjgdm,yhjgdm+&amp;quot;-&amp;quot;+yhmc);
+	}
+	_sql.querytods(&amp;quot;getXZLX&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetListValue(xzList,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+	for(var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+		var xzdm = _this.XMLDS_GetString(i,&amp;quot;yszl_dm&amp;quot;);
+		var xzmc = _this.XMLDS_GetString(i,&amp;quot;aaa103&amp;quot;);
+		_this.SetListValue(xzList,xzdm,xzdm+&amp;quot;-&amp;quot;+xzmc);
+	}	
+	var ztlxlist = _this.CreateListValue();
+	_this.SetListValue(ztlxlist ,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+	_this.SetListValue(ztlxlist ,&amp;quot;1&amp;quot;,&amp;quot;单位&amp;quot;);
+	_this.SetListValue(ztlxlist ,&amp;quot;2&amp;quot;,&amp;quot;个人&amp;quot;);	
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,1,11,xzList );
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,2,2,yhjgdmList);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,2,5,ztlxlist );
+	_this.SetColVisible(0,1,-1);
+	_this.SetColVisible(0,2,-1);
+	_this.SetColVisible(0,3,-1);	
+	_this.SetColVisible(0,12,-1);
+	_this.SetColVisible(0,14,-1); 
+	_this.SetCellText(1,2,2,&amp;quot;%&amp;quot;);
+	_this.SetCellText(1,1,11,&amp;quot;%&amp;quot;);
+	_this.SetCellText(1,1,8,&amp;quot;%&amp;quot;);
+	_this.SetCellText(1,2,5,&amp;quot;%&amp;quot;);
+}
+
+//加载主数据
+function loadMainData()
+{
+	_this.LoadZXGFile(ZXGFILE0 ,-1,0);
+    	_this.SetMainCellRange(0,2,1,_this.GetRowCount(0)-2,_this.GetColCount(0)-1);
+    	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetColVisible(0,1,-1);
+	_this.SetColVisible(0,2,-1);
+	_this.SetColVisible(0,3,-1);	
+	_this.SetColVisible(0,12,-1);  
+	_this.SetColVisible(0,14,-1);    	
+    	var filter = &amp;quot;&amp;quot;;
+    	var ztbh = _this.GetCellText(1,1,2);	
+    	var ztmc = _this.GetCellText(1,1,5);	
+    	var dkzq = _this.GetCellText(1,1,8);	
+    	var xzlx = _this.GetCellText(1,1,11);	
+    	var yszl_yhjgdm = _this.GetCellText(1,2,2);
+    	var ztlx = _this.GetCellText(1,2,5);	
+    	if(ztbh != &amp;quot;&amp;quot;) {
+    		filter += &amp;quot; and ztbh = &amp;apos;&amp;quot;+ztbh+&amp;quot;&amp;apos;&amp;quot;;
+    	}
+     	if(ztmc != &amp;quot;&amp;quot;) {
+    		filter += &amp;quot; and ztmc = &amp;apos;&amp;quot;+ztmc+&amp;quot;&amp;apos;&amp;quot;;
+    	}
+    	if(dkzq != &amp;quot;&amp;quot;) {
+    		filter += &amp;quot; and nvl(yszl_dkzq,&amp;apos; &amp;apos;) = decode(&amp;apos;&amp;quot;+dkzq+&amp;quot;&amp;apos;,&amp;apos;%&amp;apos;,nvl(yszl_dkzq,&amp;apos; &amp;apos;),&amp;apos;&amp;quot;+dkzq+&amp;quot;&amp;apos;)&amp;quot;;
+    	}   
+     	if(xzlx != &amp;quot;&amp;quot;) {
+    		filter += &amp;quot; and nvl(yszl_xzlx,&amp;apos; &amp;apos;) = decode(&amp;apos;&amp;quot;+xzlx+&amp;quot;&amp;apos;,&amp;apos;%&amp;apos;,nvl(yszl_xzlx,&amp;apos; &amp;apos;),&amp;apos;&amp;quot;+xzlx+&amp;quot;&amp;apos;)&amp;quot;;
+    	}      	
+    
+    	if(ztlx != &amp;quot;&amp;quot;) {
+    		filter += &amp;quot; and nvl(ztlx,&amp;apos; &amp;apos;) = decode(&amp;apos;&amp;quot;+ztlx+&amp;quot;&amp;apos;,&amp;apos;%&amp;apos;,nvl(ztlx,&amp;apos; &amp;apos;),&amp;apos;&amp;quot;+ztlx+&amp;quot;&amp;apos;)&amp;quot;;
+    	}
+    	filter += &amp;quot; and yszl_yhjgdm = decode(&amp;apos;&amp;quot;+yszl_yhjgdm+&amp;quot;&amp;apos;,&amp;apos;%&amp;apos;,yszl_yhjgdm,&amp;apos;&amp;quot;+yszl_yhjgdm+&amp;quot;&amp;apos;)&amp;quot;;    			
+	var xml = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;filter=&amp;quot;+filter);	
+	_this.SetXmlDS(0,_this.GetMainCellRangeRow1(0),_this.GetMainCellRangeCol1(0),_this.GetMainCellRangeRow2(0),_this.GetMainCellRangeCol2(0),xml);	
+	var cnt = 0;
+	for(var i = _this.GetMainCellRangeRow1(0);i&amp;lt;= _this.GetMainCellRangeRow2(0);i++) {
+		if(_this.GetCellText(0,i,5) != &amp;quot;&amp;quot;) {
+			cnt++; 
+			var ztlx = _this.GetCellText(0,i,4);
+			if(ztlx == &amp;quot;2&amp;quot;) {
+				_this.SetCellShowText(0,i,4,&amp;quot;个人&amp;quot;);
+			}
+			else if(ztlx == &amp;quot;1&amp;quot;) {
+				_this.SetCellShowText(0,i,4,&amp;quot;单位&amp;quot;);
+			}			
+			else {
+				_this.SetCellShowText(0,i,4,&amp;quot;其他&amp;quot;);
+			}
+		}
+	}
+	_this.SetCellText(0,_this.GetRowCount(0)-1,4,&amp;quot;合计:&amp;quot;+cnt+&amp;quot;笔&amp;quot;);
+	_this.AutoFixColWidth(0,600);
+	_this.SetColVisible(0,1,-1);
+	_this.SetColVisible(0,2,-1);
+	_this.SetColVisible(0,3,-1); 
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if(id == &amp;quot;查询&amp;quot;) {
+		loadMainData();
+	}
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if(sheet == 1) {
+		loadMainData();
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME >代扣协议表</NAME><DATDSC >
+select   
+   yszl_sbjgdm   
+   ,sbh           /* 财务内部所编号 */
+   ,zth           /* 账套号 */
+   ,ztlx          /* 主体类型(1-单位，2-个人) */
+   ,ztbh          /* 主体编号(单位编号或个人编号) */
+   ,ztmc          /* 主体名称(单位名称或姓名) */
+   ,zjdm          /* 证件代码(单位为组织机构代码或个人为身份证号码) */
+   ,decode(yszl_zjlx,&amp;apos;0&amp;apos;,&amp;apos;身份证&amp;apos;,&amp;apos;1&amp;apos;,&amp;apos;护照&amp;apos;,&amp;apos;4&amp;apos;,&amp;apos;港澳台居民往来通行证&amp;apos;,&amp;apos;101&amp;apos;,&amp;apos;营业执照&amp;apos;,yszl_zjlx) yszl_zjlx     /* 银社直连证件类型(0-身份证,1-护照,4-港澳台居民往来通行证,101-营业执照) */
+   ,yszl_dkxybh   /* 银社直连代扣协议编号(格式：银行规定) */
+   ,yszl_xzlx     /* 银社直连险种类型(110-养老保险, 310-医疗保险) */
+   ,(select aaa103 from aa10 where aaa100 = &amp;apos;AAE140&amp;apos; and yszl_dm = a.yszl_xzlx) xzlx_name
+   ,yszl_whywlx   /*维护业务类型*/
+   ,decode(yszl_whywlx,&amp;apos;3&amp;apos;,&amp;apos;解约&amp;apos;,&amp;apos;在签&amp;apos;) qybz /* 代扣协议状态(1-在签、0-终止) */
+   ,yszl_dkzq     /* 代扣周期(1-月扣、2-季度、3-半年、4-年扣) */
+   ,yszl_dkksrq   /* 代扣开始日期(yyyymmdd)=签订日期下月 */
+   ,yszl_dkjzrq   /* 代扣截止日期(yyyymmdd)=默认99991231 */
+   ,yszl_yhjgdm   /* 银社直连银行机构代码 */
+   ,yszl_yhlsh    /* 银社直连银行流水号 */
+   ,yszl_SiSeqNo  /* 银社直连社保流水号 */
+   ,yszl_yhhh     /* 银行账户_银行行号 */
+   ,yszl_sbkyhkh  /* 银行账户_社保卡银行卡号(银行账号) */
+   ,yszl_hzmc     /* 银行账户_户主名称(户名) */
+   ,yszl_yhzhzt   /* 银行账户_银行账户状态(0-正常, 1-冻结, 2-挂失, 3-销户, 9-未激活) */
+   ,yszl_yhzhlx   /* 银行账户_银行账户类型(1-存折, 2-储蓄卡, 3-多币种卡) */
+   ,yszl_ywktbz   /* 银行账户_业务开通标志(Y开通，N未开通) */
+   ,yszl_khrq     /* 银行账户_开户日期(yyyymmdd) */
+   ,yszl_yxrq     /* 银行账户_有效日期(yyyymmdd) */
+   ,yszl_dqye     /* 银行账户_当前余额 */
+   ,jbr           /* 经办人(写银行机构代码) */
+   ,jbsj         /* 经办时间(签订日期)=sysdate */
+from t_yszl_dkxyxxb a where sbh = &amp;apos;[%sbh]&amp;apos; and zth = &amp;apos;[%zth]&amp;apos;   
+[%filter]
+order by ztlx,ztbh,jbsj</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 >MAIN</C6><C7 >MAIN</C7><C8 >MAIN</C8><C9 ></C9><C10 >MAIN</C10><C11 >MAIN</C11></ROW>
+<ROW num="1" ><ID >getYHJGDM</ID><NAME >查询银行机构代码</NAME><DATDSC >select yszl_yhjgdm,yhmc from cw_dfdsb_yszl 
+where szbz=&amp;apos;1&amp;apos; and sbh = &amp;apos;[%sbh]&amp;apos; and zth = &amp;apos;[%zth]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 >getYHJGDM</C9><C10 ></C10><C11 ></C11></ROW>
+<ROW num="2" ><ID >getXZLX</ID><NAME >查询险种类型</NAME><DATDSC >
+select yszl_dm,aaa103 from aa10 
+where aaa100 = &amp;apos;AAE140&amp;apos; and yszl_dm is not null order by yszl_dm</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 >getXZLX</C9><C10 ></C10><C11 ></C11></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

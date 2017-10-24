@@ -1,0 +1,419 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >YSZL_JFDCGX</MWID><NAME >缴费档次更新</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >YSZL_JFDCGX.zxg</FILE><SCENE ></SCENE><FIXED >1,0</FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >syncDo</ID><NAME >发送缴费档次文件</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >syncDo</C10></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0 = &amp;quot;&amp;quot;;
+//更新缴费档次
+function syncDo()
+{
+	var sbh = G_ORGID;
+	var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+	var ksrq = _this.GetCellText(1,1,5);
+	var jzrq = _this.GetCellText(1,1,8);
+	var yhjgdm = _this.GetCellText(1,1,2);
+	if(yhjgdm == &amp;quot;&amp;quot;) {
+		alert(&amp;quot;银行机构代码不能为空&amp;quot;);
+		return;
+	}
+	if (!confirm(&amp;quot;更新缴费档次信息到银行，是否继续？&amp;quot;)) return;	
+	var param = new Object();
+	param.sbh = sbh;
+	param.zth = zth;
+	param.thisorgid = G_ORGID;
+	param.thisaccid = G_ACCID;
+	param.yhjgdm = yhjgdm;
+	param.ksrq = ksrq;
+	param.jzrq = jzrq;
+	var ret = invokeOSFuncExt(&amp;quot;F0121001&amp;quot;,param); 
+	_this.SetCellText(1,1,8,ret);
+	alert(ret);
+}
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,40);
+	_this.SetToDateBox(&amp;quot;&amp;quot;,1,1,5,(G_LOGDAT.substring(0,4))+&amp;quot;-01-01&amp;quot;);
+//	_this.SetToDateBox(&amp;quot;&amp;quot;,1,1,8,(G_LOGDAT.substring(0,4))+&amp;quot;-12-31&amp;quot;);
+	_this.SetToSelectBox(&amp;quot;&amp;quot;,1,1,2,&amp;quot;v_shuniu_org&amp;quot;,&amp;quot;&amp;quot;);
+	ZXGFILE0 = _this.SaveTempZXGFile(0);
+	loadData();
+}
+
+function loadData()
+{
+	try{
+		var sbh = G_ORGID;
+		var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+		var yszl_sbjgdm = &amp;quot;&amp;quot;;
+		yszl_sbjgdm = _this.invokeOSFunc(&amp;quot;getYSZL_SBJGDM&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth);
+		if(yszl_sbjgdm == 9999) {
+			alert(&amp;quot;查询银社直连社保机构代码时出错!&amp;quot;);
+		}
+		_this.LoadZXGFile(ZXGFILE0,-1,0);
+		var ksrq = _this.GetCellText(1,1,5);
+		var jzrq = _this.GetCellText(1,1,8);
+		var xml = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;ksrq=&amp;quot;+ksrq+&amp;quot;&amp;jzrq=&amp;quot;+jzrq+&amp;quot;&amp;yszl_sbjgdm=&amp;quot;+yszl_sbjgdm+&amp;quot;&amp;xtbh=&amp;quot;+yszl_sbjgdm.substring(6,7));
+		_this.SetXmlDS(0,1,0,3,8,xml);
+		_this.AutoFixScreenWidth();
+	}catch(e){
+		_this.SetCellText(0,1,1,e);
+	}	
+}
+
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if(sheet == 1) {
+		loadData();
+	}
+}
+
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if(id == &amp;quot;查询&amp;quot;) {
+		loadData();
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var web = new JavaPackage(&amp;quot;com.xlsgrid.net.web&amp;quot;);
+var servletpack = new JavaPackage(&amp;quot;com.xlsgrid.net.servlet&amp;quot;);
+var ftppack = new JavaPackage(&amp;quot;org.apache.commons.net.ftp&amp;quot;);
+var timepack = new JavaPackage( &amp;quot;com.xlsgrid.net.time&amp;quot; );
+var jschftp = new JavaPackage( &amp;quot;com.jcraft.jsch&amp;quot; );
+var storeRoot = &amp;quot;/filestore&amp;quot;;
+
+//更新缴费档次到银行
+function F0121001()
+{
+	var db = null;
+	var fileStr = &amp;quot;&amp;quot;;
+	try {
+		db = new pub.EADatabase();
+		var sysdate = getSysDate();
+		var yymmdd = sysdate.substring(0,8);
+		var hhmmss = sysdate.substring(8);		
+		var sbcode = db.GetSQL(&amp;quot;select yszl_sbjgdm from cw_ztb where org = &amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and acc = &amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos;&amp;quot;);// 社保经办机构代码 (银社直连社保机构代码)
+		var xtbh = sbcode.substring(6,7);	
+		var wjlxdm = &amp;quot;0121001&amp;quot;;//文件类型代码
+		var busycode = &amp;quot;0114002&amp;quot;;//业务功能号
+		var wjclpch = db.GetSQL(&amp;quot;select fn_get_YSZL_FILE_CLPCH(&amp;apos;&amp;quot;+sbcode+&amp;quot;&amp;apos;) from dual&amp;quot;);//文件处理批次号
+		wjclpch = formatStr(wjclpch,20,0,&amp;quot;&amp;quot;);
+		var sbcwservice = new SBCW_sbcwService();
+		var yszl_sblsh = sbcwservice.genSiSeq(sbcode);   //本次交易报文的社保流水号	
+		var filesxh = db.GetSQL(&amp;quot;select trim(to_char(nvl(max(seq),0)+1,&amp;apos;000&amp;apos;)) from si_wsfile_log where sbinstid=&amp;apos;&amp;quot;+sbcode+&amp;quot;&amp;apos; and rq = to_char(sysdate,&amp;apos;yyyymmdd&amp;apos;)&amp;quot;); //文件顺序号		
+		var wjm = &amp;quot;&amp;quot;;
+//		var yhjgdm = db.GetSQL(&amp;quot;select yszl_yhjgdm from cw_dfdsb_yszl where org = &amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and acc = &amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos; and yhbm = &amp;apos;&amp;quot;+yhbm+&amp;quot;&amp;apos;&amp;quot;);			
+		wjm += &amp;quot;RS&amp;quot;+sbcode+&amp;quot;ToBK&amp;quot;+yhjgdm+&amp;quot;_&amp;quot;+wjlxdm+&amp;quot;_&amp;quot;+yymmdd+&amp;quot;&amp;quot;+filesxh; //要生成的文件名，不含路径
+		var sql = &amp;quot;insert into si_wsfile_log(sbinstid,rq,seq,filename) values (&amp;apos;&amp;quot;+sbcode+&amp;quot;&amp;apos;,to_char(sysdate,&amp;apos;yyyymmdd&amp;apos;),&amp;apos;&amp;quot;+filesxh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+wjm+&amp;quot;txt.gz&amp;apos;)&amp;quot;;
+		var cnt = db.ExcecutSQL(sql);				
+		//生成文件
+		var sql = &amp;quot;select rownum,aab301 sbinstid,decode(AAE140,&amp;apos;320&amp;apos;,&amp;apos;330&amp;apos;,aae140) xz,jfdc FeeLevel,fjdc_name FeeLevelNote,100*jfjs_xx low,100*jfjs_sx up,ksny rq1,jzny rq2,xzmc,ztbz
+				from 
+				(
+				select 
+					    &amp;apos;&amp;quot;+sbcode+&amp;quot;&amp;apos; aab301, /* 社保机构代码*/
+					   decode(a.xtlb,
+		                      &amp;apos;0&amp;apos;,
+		                      (select yszl_dm
+		                         from aa10 b
+		                        where b.aaa100 = &amp;apos;AAE140&amp;apos;
+		                          AND a.aae140 = b.ywxt_drdm),
+		                      &amp;apos;8&amp;apos;,
+		                      (select yszl_dm
+		                         from aa10 b
+		                        where b.aaa100 = &amp;apos;AAE140&amp;apos;
+		                          AND a.aae140 = b.ywxt_yhdm)) aae140,
+					decode(a.xtlb,
+			                      &amp;apos;0&amp;apos;,
+			                      (select substrb(aaa103,0,20)
+			                         from aa10 b
+			                        where b.aaa100 = &amp;apos;AAE140&amp;apos;
+			                          AND a.aae140 = b.ywxt_drdm),
+			                      &amp;apos;8&amp;apos;,
+			                      (select substrb(aaa103,0,20)
+			                         from aa10 b
+			                        where b.aaa100 = &amp;apos;AAE140&amp;apos;
+			                          AND a.aae140 = b.ywxt_yhdm)) xzmc,
+					    jfdc ,  /* 缴费档次(1-60%,2-70%,3-80%,4-90%,5-100%,6-150%,7-200%,8-250%,9-300%)*/
+					    fjdc_name, /* 缴费档次中文说明*/
+					    spgz_nd, /* 年度社平 */
+					    spgz_yf, /* 月社平 */
+					    jfjs_xx, /* 缴费基数下限 */
+					    jfjs_sx, /* 缴费基数上限 */
+					    (select to_char(last_day(add_months(to_date(a.ksny,&amp;apos;yyyymm&amp;apos;),-1)) + 1,&amp;apos;yyyymmdd&amp;apos;) from dual) ksny, /* 生效日期 */
+					    (select to_char(last_day(add_months(to_date(a.jzny,&amp;apos;yyyymm&amp;apos;),-0)),&amp;apos;yyyymmdd&amp;apos;) from dual) jzny, /* 失效日期 */
+					decode(a.xtlb,
+			                      &amp;apos;0&amp;apos;,
+			                      (select aaa102_sjbh
+			                         from aa10 b
+			                        where b.aaa100 = &amp;apos;AAE140&amp;apos;
+			                          AND a.aae140 = b.ywxt_drdm),
+			                      &amp;apos;8&amp;apos;,
+			                      (select aaa102_sjbh
+			                         from aa10 b
+			                        where b.aaa100 = &amp;apos;AAE140&amp;apos;
+			                          AND a.aae140 = b.ywxt_yhdm)) ztbz/*单位还是个人说明*/				    
+					from aa02 a
+					where a.aab301 = substr(&amp;apos;&amp;quot;+sbcode+&amp;quot;&amp;apos;,1,6)  			
+				)where substr(ksny,0,6)= substr(replace(&amp;apos;&amp;quot;+ksrq+&amp;quot;&amp;apos;,&amp;apos;-&amp;apos;,&amp;apos;&amp;apos;),0,6) 
+				       and AAE140 &amp;lt;&amp;gt; &amp;apos;99&amp;apos; and aae140 &amp;lt;&amp;gt; &amp;apos;999&amp;apos; and aae140 not in (&amp;apos;510&amp;apos;,&amp;apos;410&amp;apos;,&amp;apos;210&amp;apos;) and jzny is not null  /*and ztbz is not null*/&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		for (var k=0;k&amp;lt;ds.getRowCount();k++) {
+			var sbinstid = formatStr(ds.getStringAt(k,&amp;quot;sbinstid&amp;quot;),30,0,&amp;quot;&amp;quot;);
+			var xz = formatStr(ds.getStringAt(k,&amp;quot;xz&amp;quot;),5,0,&amp;quot;&amp;quot;);
+			var FeeLevel = formatStr(ds.getStringAt(k,&amp;quot;FeeLevel&amp;quot;),1,0,&amp;quot;&amp;quot;);
+			var FeeLevelNote = formatStr(ds.getStringAt(k,&amp;quot;FeeLevelNote&amp;quot;),100,0,&amp;quot;&amp;quot;);
+			var low = formatStr(ds.getStringAt(k,&amp;quot;low&amp;quot;),17,1,&amp;quot;INT&amp;quot;);
+			var up = formatStr(ds.getStringAt(k,&amp;quot;up&amp;quot;),17,1,&amp;quot;INT&amp;quot;);
+			var rq1 = formatStr(ds.getStringAt(k,&amp;quot;rq1&amp;quot;),8,0,&amp;quot;&amp;quot;);
+			var rq2 = formatStr(ds.getStringAt(k,&amp;quot;rq2&amp;quot;),8,0,&amp;quot;&amp;quot;);
+			var backup1 = formatStr(&amp;quot;&amp;quot;,10,0,&amp;quot;&amp;quot;);
+			var backup2 = formatStr(ds.getStringAt(k,&amp;quot;ztbz&amp;quot;),10,0,&amp;quot;&amp;quot;);
+			var backup3 = formatStr(ds.getStringAt(k,&amp;quot;xzmc&amp;quot;),20,0,&amp;quot;&amp;quot;);			
+			var line = sbinstid+xz+FeeLevel+FeeLevelNote+low+up+rq1+rq2+backup1+backup2+backup3+&amp;quot;\n&amp;quot;;
+			fileStr += line;
+		}
+		if(fileStr.length() == 0) {
+			db.Rollback();
+			return &amp;quot;生成档次文件错误！生成文件为空&amp;quot;;
+		}
+//		db.Rollback();
+//		return fileStr;
+		
+		//上传文件到FTP目录
+		sql = &amp;quot;select * from CW_DFDSB_YSZL where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yszl_yhjgdm=&amp;apos;&amp;quot;+yhjgdm+&amp;quot;&amp;apos;&amp;quot;;
+		var ftpds = db.QuerySQL(sql); //ftp的配置信息
+		if (ftpds.getRowCount() &amp;gt; 0) {
+			//var wjm = &amp;quot;&amp;quot;;//ftpds.getStringAt(0,&amp;quot;WJM&amp;quot;);
+			var ftpip = ftpds.getStringAt(0,&amp;quot;FTP_IP&amp;quot;);
+			var ftpport = ftpds.getStringAt(0,&amp;quot;FTP_PORT&amp;quot;);
+			var ftpuser = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_NAME&amp;quot;);
+			var ftppasswd = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_PASSWD&amp;quot;);		
+			var ftploginpath = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_PATH&amp;quot;);			
+			var ftpuppath = ftpds.getStringAt(0,&amp;quot;FTP_UP_PATH&amp;quot;);
+			var upwjm = ftploginpath +&amp;quot;/&amp;quot;+ ftpuppath; 					
+			var fileName = &amp;quot;/u/yszl_dsdf/&amp;quot;+ftpuppath+&amp;quot;/&amp;quot;+wjm+&amp;quot;.txt&amp;quot;; ///u/dsdf/sy_NY20151217.txt
+			var fileName2 = &amp;quot;/u/yszl_dsdf/&amp;quot;+ftpuppath+&amp;quot;/&amp;quot;+wjm+&amp;quot;.txt.gz&amp;quot;;
+			pub.EAFunc.WriteToFileEx(fileName,fileStr,false);  //生成本地文件,覆盖方式
+			sbcwservice.Gzip(fileName,fileName2);
+
+			//上传sftp				
+			var jsch = new jschftp.JSch();
+			var sftp = null;
+			var sshSession = null;
+			try{
+				sshSession = jsch.getSession(ftpuser,ftpip,&amp;quot;22&amp;quot;);
+				sshSession.setPassword(ftppasswd);
+				var config = new java.util.Properties();
+				config.put(&amp;quot;StrictHostKeyChecking&amp;quot;,&amp;quot;no&amp;quot;);
+				sshSession.setConfig(config);
+				sshSession.connect();
+				var channel = sshSession.openChannel(&amp;quot;sftp&amp;quot;);
+				channel.connect();
+				sftp = channel;
+				//上传一个文件
+				sftp.cd(ftploginpath + &amp;quot;/&amp;quot; + ftpuppath);
+				var localFile = new java.io.File(fileName2);
+				sftp.put(new java.io.FileInputStream(localFile),localFile.getName());
+				sftp.ls(ftploginpath + &amp;quot;/&amp;quot; + ftpuppath + &amp;quot;/&amp;quot;+localFile.getName());
+				sftp.quit();
+				sshSession.disconnect();
+			}catch(ee){
+				if(sftp != null) sftp.quit();
+				if(sshSession != null) sshSession.disconnect();
+				if(db != null) db.Rollback();
+				return &amp;quot;上传文件到sftp失败:&amp;quot;+ee.toString()+&amp;quot;\n&amp;quot;+ftploginpath + &amp;quot;/&amp;quot; + ftpuppath;
+			}
+//			db.Rollback();
+//			return &amp;quot;上传文件到ftp成功&amp;quot;;
+			//上传成功后调用批量文件就绪通知接口
+			//构造xml
+			var ref = sbcwservice.genRef(sbcode.trim());//报文标识
+			var md5 = pub.EAFunc.getFileMD5(fileName2);//md5码
+			wjm += &amp;quot;.txt.gz&amp;quot;;
+			//var sblsh = db.GetSQL(&amp;quot;select fn_get_YSZL_SBJYLSH(&amp;apos;&amp;quot;+sbcode.trim()+&amp;quot;&amp;apos;) from dual&amp;quot;);        				
+		      var wb = new SBCW_WSSI4();
+		      //function F0114002(BusCd,SenderId,RecverId,SiSeq,FileName,FileMD5)
+		      var retMap = new java.util.HashMap();
+		      retMap = wb.F0114002(busycode,sbcode.trim(),yhjgdm.trim(),yszl_sblsh,wjm.trim(),md5,ref);
+//		      return retMap;
+		      var retcode = retMap.get(&amp;quot;RstCode&amp;quot;);
+		      var retinfo = retMap.get(&amp;quot;RstInfo&amp;quot;);
+			if (retcode != &amp;quot;0000&amp;quot;) { //返回失败
+				db.Rollback();
+				return &amp;quot;更新缴费档次出错：&amp;quot;+retinfo ;				
+			}
+
+		}	
+		else {
+			db.Rollback();
+			return &amp;quot;发送缴费档次文件失败，cw_dfdsb_yszl表没有配&amp;quot;;
+		}			
+		//发送批量文件就绪通知银行
+		db.Commit();
+		return &amp;quot;发送缴费档次文件成功&amp;quot;;
+		
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return &amp;quot;更新缴费档次出错：&amp;quot;+e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+	
+}
+
+//补全长度空格
+function formatStr(str,len,bef,typ)
+{
+	str = &amp;quot;&amp;quot;+str;
+	var slen = getWordCount(str);//str.length();
+	if (slen &amp;gt; len) return str.substring(0,len);
+	var trim = &amp;quot;&amp;quot;;
+	if(typ == &amp;quot;int&amp;quot; || typ == &amp;quot;INT&amp;quot;) {
+		for (var i=0;i&amp;lt;(len-slen);i++) {
+			trim += &amp;quot;0&amp;quot;;
+		}			
+	}
+	else {
+		for (var i=0;i&amp;lt;(len-slen);i++) {
+			trim += &amp;quot; &amp;quot;;
+		}	
+	}
+	if (bef == 1) return trim + str;
+	else return str + trim;
+}
+
+function getSysDate()
+{
+	var dt = pub.EADbTool.GetSQL(&amp;quot;select to_char(sysdate,&amp;apos;yyyymmddhh24miss&amp;apos;) from dual&amp;quot;);
+	return dt;
+}
+
+function getWordCount(s)
+{
+        var length = 0;
+        for(var i = 0; i &amp;lt; s.length(); i++) {
+		var ascii = java.lang.Character.codePointAt(s, i);
+		if(ascii &amp;gt;= 0 &amp;&amp; ascii &amp;lt;=255)
+			length++;
+		else
+			length += 2;
+	}
+        return length;
+}
+function getYSZL_SBJGDM()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	var yszl_sbjgdm = &amp;quot;&amp;quot;;
+	try{
+		db = new pub.EADatabase();
+		sql = &amp;quot;select nvl(max(yszl_sbjgdm),9999) from cw_ztb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+		yszl_sbjgdm = db.GetSQL(sql);
+		return yszl_sbjgdm;
+	}catch(e){
+		if(db != null) db.Rollback();
+		return 9999;
+	}finally {
+		if(db != null) db.Close();
+	}
+}
+
+
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select rownum,
+       aab301 sbinstid,
+       aae140||&amp;apos;-&amp;apos;||xzmc xzmc,
+       jfdc FeeLevel,
+       fjdc_name FeeLevelNote,
+        jfjs_xx low,
+        jfjs_sx up,
+       ksny rq1,
+       jzny rq2
+  from (select &amp;apos;[%yszl_sbjgdm]&amp;apos; aab301, /* 社保机构代码*/
+               decode(a.xtlb,
+                      &amp;apos;0&amp;apos;,
+                      (select yszl_dm
+                         from aa10 b
+                        where b.aaa100 = &amp;apos;AAE140&amp;apos;
+                          AND a.aae140 = b.ywxt_drdm),
+                      &amp;apos;8&amp;apos;,
+                      (select yszl_dm
+                         from aa10 b
+                        where b.aaa100 = &amp;apos;AAE140&amp;apos;
+                          AND a.aae140 = b.ywxt_yhdm)) aae140,
+               decode(a.xtlb,
+                      &amp;apos;0&amp;apos;,
+                      (select substrb(aaa103, 0, 20)
+                         from aa10 b
+                        where b.aaa100 = &amp;apos;AAE140&amp;apos;
+                          AND a.aae140 = b.ywxt_drdm),
+                      &amp;apos;8&amp;apos;,
+                      (select substrb(aaa103, 0, 20)
+                         from aa10 b
+                        where b.aaa100 = &amp;apos;AAE140&amp;apos;
+                          AND a.aae140 = b.ywxt_yhdm)) xzmc,
+               jfdc, /* 缴费档次(1-60%,2-70%,3-80%,4-90%,5-100%,6-150%,7-200%,8-250%,9-300%)*/
+               fjdc_name, /* 缴费档次中文说明*/
+               spgz_nd, /* 年度社平 */
+               spgz_yf, /* 月社平 */
+               jfjs_xx, /* 缴费基数下限 */
+               jfjs_sx, /* 缴费基数上限 */
+               (select to_char(last_day(add_months(to_date(a.ksny, &amp;apos;yyyymm&amp;apos;),
+                                                   -1)) + 1,
+                               &amp;apos;yyyymmdd&amp;apos;)
+                  from dual) ksny, /* 生效日期 */
+               (select to_char(last_day(add_months(to_date(a.jzny, &amp;apos;yyyymm&amp;apos;),
+                                                   -0)),
+                               &amp;apos;yyyymmdd&amp;apos;)
+                  from dual) jzny, /* 失效日期 */
+               decode(a.xtlb,
+                      &amp;apos;0&amp;apos;,
+                      (select aaa102_sjbh
+                         from aa10 b
+                        where b.aaa100 = &amp;apos;AAE140&amp;apos;
+                          AND a.aae140 = b.ywxt_drdm),
+                      &amp;apos;8&amp;apos;,
+                      (select aaa102_sjbh
+                         from aa10 b
+                        where b.aaa100 = &amp;apos;AAE140&amp;apos;
+                          AND a.aae140 = b.ywxt_yhdm)) ztbz /*单位还是个人说明*/
+          from aa02 a
+         where a.xtlb = &amp;apos;[%xtbh]&amp;apos; and aab301=substr(&amp;apos;[%yszl_sbjgdm]&amp;apos;,1,6)) 
+ where substr(ksny, 0, 6) = substr(replace(&amp;apos;[%ksrq]&amp;apos;, &amp;apos;-&amp;apos;, &amp;apos;&amp;apos;), 0, 6)
+   and AAE140 &amp;lt;&amp;gt; &amp;apos;99&amp;apos;
+   and aae140 &amp;lt;&amp;gt; &amp;apos;999&amp;apos;
+   and ztbz is not null and jzny is not null 
+</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 >MAIN</C6><C7 >MAIN</C7><C8 >MAIN</C8><C9 >MAIN</C9><C10 >MAIN</C10><C11 >MAIN</C11><C12 >MAIN</C12></ROW>
+<ROW num="1" ><ID >yhds</ID><NAME >查询银行</NAME><DATDSC >select distinct yhmc,yszl_yhjgdm from cw_dfdsb_yszl where org = &amp;apos;[%SYS_ORGID]&amp;apos; and acc = &amp;apos;[%SYS_ACCID]&amp;apos; and yszl_yhjgdm is not null</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >repOptions</MWID><NAME >报表定义</NAME><NOTE ></NOTE><FILE >repOptions.zxg</FILE><FIXED ></FIXED><CATTYP >报表系统</CATTYP><DTLRNG ></DTLRNG><JAVACLS ></JAVACLS><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//================================================================// 
+// 函数：_thisOnpost_loaddata
+// 说明：载入数据
+// 参数：
+// 返回：
+// 样例：
+// 作者：
+// 创建日期：12/10/05 23:45:15
+// 修改日志：
+//================================================================// 
+function _thisOnpost_loaddata(sheet)
+{
+       _this.ShowToolBar(0); 
+       _this.SetSheetName(0,&amp;quot;选择菜单&amp;quot;);
+          		
+	var treexml = &amp;quot;&amp;lt;报表系统 imageid=\&amp;quot;0\&amp;quot;&amp;gt;&amp;quot;
+		+ &amp;quot;&amp;lt;报表定义 typ=\&amp;quot;report\&amp;quot; imageid=\&amp;quot;1\&amp;quot;/&amp;gt;&amp;quot;
+		+ &amp;quot;&amp;lt;指标类型定义 typ=\&amp;quot;indextyp\&amp;quot; imageid=\&amp;quot;1\&amp;quot;/&amp;gt;&amp;quot;
+		+ &amp;quot;&amp;lt;指标定义 typ=\&amp;quot;index\&amp;quot; imageid=\&amp;quot;1\&amp;quot;/&amp;gt;&amp;quot;
+		+ &amp;quot;&amp;lt;指标项定义 typ=\&amp;quot;indexitem\&amp;quot; imageid=\&amp;quot;1\&amp;quot;/&amp;gt;&amp;quot;
+		+ &amp;quot;&amp;lt;取数公式定义 typ=\&amp;quot;indexformula\&amp;quot; imageid=\&amp;quot;1\&amp;quot;/&amp;gt;&amp;quot;
+		+ &amp;quot;&amp;lt;附件定义 typ=\&amp;quot;appendixformula\&amp;quot; imageid=\&amp;quot;1\&amp;quot;/&amp;gt;&amp;quot;
+		+ &amp;quot;&amp;lt;平衡公式定义 typ=\&amp;quot;formula\&amp;quot; imageid=\&amp;quot;1\&amp;quot;/&amp;gt;&amp;quot;
+//		+ &amp;quot;&amp;lt;平衡公式定义2 typ=\&amp;quot;formula2\&amp;quot; imageid=\&amp;quot;1\&amp;quot;/&amp;gt;&amp;quot;
+		+ &amp;quot;&amp;lt;平衡公式分配 typ=\&amp;quot;repformula\&amp;quot; imageid=\&amp;quot;1\&amp;quot;/&amp;gt;&amp;quot;
+       		+ &amp;quot;&amp;lt;报表分配 typ=\&amp;quot;reporg\&amp;quot; imageid=\&amp;quot;1\&amp;quot;/&amp;gt;&amp;quot;
+       		+ &amp;quot;&amp;lt;报表存放位置 typ=\&amp;quot;reploc\&amp;quot; imageid=\&amp;quot;1\&amp;quot;/&amp;gt;&amp;quot;
+//       		+ &amp;quot;&amp;lt;绘制报表模板 typ=\&amp;quot;repframe\&amp;quot; imageid=\&amp;quot;8\&amp;quot;/&amp;gt;&amp;quot;
+//       		+ &amp;quot;&amp;lt;编制报表指标 typ=\&amp;quot;refindex\&amp;quot; imageid=\&amp;quot;9\&amp;quot;/&amp;gt;&amp;quot;
+       		+ &amp;quot;&amp;lt;/报表系统&amp;gt;&amp;quot;;
+	
+	_this.SetToTreeCtrl(&amp;quot;Tree_1&amp;quot;,0,-1,-1,treexml);
+}
+
+
+function _thisOnTreeItemClick(id, hItem, tagid, attribe, value)
+{
+      var typ = getXmlAttribute(attribe,&amp;quot;typ&amp;quot;);
+      if (typ== &amp;quot;report&amp;quot;) parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;xlsgrid/jsp/pages/dbEdit.jsp?grdid=FIN_REPMODEL&amp;flag=FIN_REPMODEL&amp;quot;;			//报表定义
+      else if (typ == &amp;quot;indextyp&amp;quot;) parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;xlsgrid/jsp/pages/dbEdit.jsp?grdid=FIN_IDXTYPE&amp;flag=&amp;quot;;				//指标类型定义
+      else if (typ == &amp;quot;index&amp;quot;) parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;xlsgrid/jsp/pages/dbEdit.jsp?grdid=FIN_INDEX&amp;flag=FIN_INDEX&amp;quot;;			//指标定义
+      else if (typ == &amp;quot;indexitem&amp;quot;) parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;xlsgrid/jsp/pages/dbEdit.jsp?grdid=FIN_INDEXITEM&amp;flag=FIN_INDEXITEM&amp;quot;;		//指标项定义
+      else if (typ == &amp;quot;indexformula&amp;quot;) parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;xlsgrid/jsp/pages/dbEdit.jsp?grdid=idxFormula&amp;flag=FIN_INDEX_FORMULA&amp;quot;;  	//取数公式定义
+      else if (typ == &amp;quot;appendixformula&amp;quot;) parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;xlsgrid/jsp/pages/dbEdit.jsp?grdid=appendixFormula&amp;flag=FIN_INDEX_FORMULA&amp;quot;;//附件定义
+      else if (typ == &amp;quot;formula&amp;quot;) parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;xlsgrid/jsp/pages/dbEdit.jsp?grdid=FIN_BDS&amp;flag=FIN_FORMULA&amp;quot;;			//平衡公式定义
+      else if (typ == &amp;quot;formula2&amp;quot;) window.open(&amp;quot;show.sp?grdid=FIN_FORMULADEF&amp;quot;);
+      else if (typ == &amp;quot;repformula&amp;quot;) parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;xlsgrid/jsp/pages/dbEdit.jsp?grdid=FIN_REPBDS&amp;flag=FIN_INDEX_FORMULA&amp;quot;;		//平衡公式分配
+      else if (typ == &amp;quot;reporg&amp;quot;) parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;show.sp?grdid=RepDis&amp;quot;;								//报表分配
+      else if (typ == &amp;quot;reploc&amp;quot;) parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;show.sp?grdid=RepLoc&amp;quot;;								//报表存放位置
+      else if (typ == &amp;quot;repframe&amp;quot;) parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;show.sp?grdid=repidxsel&amp;quot;;
+      else if (typ == &amp;quot;refindex&amp;quot;) parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;show.sp?grdid=repdefine&amp;quot;;
+   
+}
+
+//================================================================// 
+// 函数：getXmlAttribute
+// 说明：返回XML节点字符串的某个属性值
+// 参数：attribe 参数字符串，如 ID=&amp;quot;101&amp;quot; NAME=&amp;quot;scott&amp;quot;  
+//       attribename 参数名称 如 ID
+// 返回：如 101
+// 样例：
+// 作者：
+// 创建日期：03/11/06 21:18:02
+// 修改日志：
+//================================================================// 
+function getXmlAttribute(attribe,attribename)
+{
+            var loc = attribe.indexOf( attribename+&amp;quot;=\&amp;quot;&amp;quot; );
+            if(loc&amp;lt;0) return &amp;quot;&amp;quot;;
+            var loc1 = attribe.indexOf( &amp;quot;\&amp;quot;&amp;quot; , loc+attribename.length+2);
+            var ret = attribe.substring( loc+attribename.length+2,loc1 ) ;
+            
+            return ret;
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><REFID1 >0参考编号1</REFID1><REFNAM1 >0参考名称1</REFNAM1><REFID2 >0参考编号2</REFID2><REFNAM2 >0参考名称2</REFNAM2><NOTE >0备注信息</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0参考编号1</REFID1><REFNAM1 >0参考名称1</REFNAM1><REFID2 >0参考编号2</REFID2><REFNAM2 >0参考名称2</REFNAM2></ROW>
+</ROWSET>
+</flddtl></mdroot>

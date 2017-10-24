@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >YLFTJ</MWID><NAME >预拨医疗机构医疗费统计表</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >YLFTJ.zxg</FILE><SCENE ></SCENE><FIXED >6,1</FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >DAT1</ID><NAME >开始日期</NAME><NOTNULL >1</NOTNULL><KEYVAL >DAT</KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG></ROW>
+<ROW num="1" ><ID >DAT2</ID><NAME >截止日期</NAME><NOTNULL >1</NOTNULL><KEYVAL >V_YYYY_MM</KEYVAL><INPCTL >list</INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG></ROW>
+</ROWSET>
+</grdpamds><grdshwds>
+<ROWSET>
+<ROW num="0" ><ID >0,6,1</ID><NAME ></NAME><DBNAME ></DBNAME><DSKEY >DSC:MAIN</DSKEY><NROW >3</NROW><NCOL >14</NCOL><PAGES ></PAGES><PAGESIZE ></PAGESIZE><URL ></URL><CTLTYP ></CTLTYP><DYNCTL ></DYNCTL><LISTID ></LISTID><ISCROSS ></ISCROSS><HROW ></HROW><HCOLS ></HCOLS><ROWORDER ></ROWORDER><VCOLS ></VCOLS><VCOLSQL ></VCOLSQL><VALUECOL ></VALUECOL></ROW>
+<ROW num="1" ><ID >0,3,3</ID><NAME ></NAME><DBNAME ></DBNAME><DSKEY >[%DAT1]至[%DAT2]</DSKEY><NROW ></NROW><NCOL ></NCOL><PAGES ></PAGES><PAGESIZE ></PAGESIZE><URL ></URL><CTLTYP ></CTLTYP><DYNCTL ></DYNCTL><LISTID ></LISTID><ISCROSS ></ISCROSS><HROW ></HROW><HCOLS ></HCOLS><ROWORDER ></ROWORDER><VCOLS ></VCOLS><VCOLSQL ></VCOLSQL><VALUECOL ></VALUECOL></ROW>
+</ROWSET>
+</grdshwds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE ></GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select rownum,dwbh,dwmc,tc,gz,gwybz,zjgwybz,xj,yb_tc,yb_gz,yb_gwybz,yb_zjgwybz,qnzbhj,bz from (
+SELECT DISTINCT B.DWBH,
+                B.DWMC,
+                NVL(B.ZJE, 0) TC,
+                NVL(B.GZ_ZJE, 0) GZ,
+                NVL(B.GWY_ZJE, 0) GWYBZ,
+                NVL(B.ZGWY_ZJE, 0) ZJGWYBZ,
+                NVL(B.ZJE, 0) + NVL(B.GZ_ZJE, 0) + NVL(B.GWY_ZJE, 0) + NVL(B.ZGWY_ZJE, 0) XJ,
+                
+               sum(nvl(A.JE,0) * decode(nvl(a.BK_JE,0),0,0,1))   yb_tc , /*区分预缴统筹、个帐、公务员、准公务员*/
+               sum(nvl(a.gz_je,0) * decode(nvl(a.BK_JE,0),0,0,1)) yb_gz,
+               sum(nvl(a.gwy_je,0) * decode(nvl(a.BK_JE,0),0,0,1)) yb_gwybz,
+             sum(nvl(a.zgwy_je,0) * decode(nvl(a.BK_JE,0),0,0,1)) yb_zjgwybz,
+
+                SUM(nvl(A.BK_JE,0)) QNZBHJ,
+                C.BZ
+  FROM CW_ZEKZMXB A,
+       CW_ZEKZB B,
+       (SELECT DISTINCT C.XH, LISTAGG(C.MM, &amp;apos;,&amp;apos;) WITHIN
+         GROUP(
+         ORDER BY C.XH,C.MM) AS BZ
+          FROM CW_ZEKZMXB C
+         WHERE C.BK_JE IS NULL
+           AND C.ORG = &amp;apos;[%SYS_ORGID]&amp;apos;
+           AND C.ACC = &amp;apos;[%SYS_ACCID]&amp;apos;
+           AND C.YY = substr(&amp;apos;[%DAT1]&amp;apos;,0,4)
+           AND c.mm&amp;gt;= substr(&amp;apos;[%DAT1]&amp;apos;,5,2)/*20170222 lyh modify截取错误substr(&amp;apos;[%DAT1]&amp;apos;,6,2)*/
+           AND C.MM &amp;lt;= substr(&amp;apos;[%DAT2]&amp;apos;,5,2)/*20170222 lyh modify截取错误substr(&amp;apos;[%DAT1]&amp;apos;,6,2)*/
+         GROUP BY C.XH) C
+ WHERE A.SBH = B.SBH
+   AND A.ZTH = B.ZTH
+   AND A.XH = B.XH
+   AND B.XH = C.XH(+)
+   AND B.ORG =&amp;apos;[%SYS_ORGID]&amp;apos;
+   AND B.ACC = &amp;apos;[%SYS_ACCID]&amp;apos;
+   AND A.YY = substr(&amp;apos;[%DAT1]&amp;apos;,0,4)
+   AND A.MM &amp;gt;= substr(&amp;apos;[%DAT1]&amp;apos;,5,2)/*20170222 lyh modify截取错误substr(&amp;apos;[%DAT1]&amp;apos;,6,2)*/
+   AND A.MM &amp;lt;= substr(&amp;apos;[%DAT2]&amp;apos;,5,2)/*20170222 lyh modify截取错误substr(&amp;apos;[%DAT1]&amp;apos;,6,2)*/
+ GROUP BY B.DWBH,
+          B.XH,
+          B.DWMC,
+          B.ZJE,
+          B.GZ_ZJE,
+          B.GWY_ZJE,
+          B.ZGWY_ZJE,
+          NVL(B.ZJE, 0) + NVL(B.GZ_ZJE, 0) + NVL(B.GWY_ZJE, 0) +
+          NVL(B.ZGWY_ZJE, 0),
+          C.BZ
+ ORDER BY B.DWBH
+) 
+  </DATDSC><C4 >MAIN</C4><C5 >MAIN</C5></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

@@ -1,0 +1,197 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >WSSI4</MWID><NAME >WSSI4</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >WSSI4.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >WebService</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD >1</HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >测试</ID><NAME ></NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE><C10 ></C10></ROW>
+<ROW num="1" ><ID >linkTest</ID><NAME >连通性测试</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE><C10 >GRDBTNDS_2</C10></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//测试
+function Test()
+{
+	var osname = _this.GetCellText(0,3,2);
+	var ret = invokeOSFunc(osname,&amp;quot;&amp;quot;);
+	_this.SetCellText(0,5,2,ret);
+}
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,40);
+	_this.SetToSelectBox(&amp;quot;&amp;quot;,1,1,2,&amp;quot;v_shuniu_org&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetToSelectBox(&amp;quot;&amp;quot;,1,1,4,&amp;quot;v_shuniu_org&amp;quot;,&amp;quot;&amp;quot;);
+	_this.AutoFixScreenWidth();
+}
+
+function linkTest()
+{
+	var osname = &amp;quot;F0114001&amp;quot;;
+	var sendjgdm = _this.GetCellText(1,1,2);
+	var recvjgdm = _this.GetCellText(1,1,4);
+	if(sendjgdm == &amp;quot;&amp;quot;) {
+		alert(&amp;quot;社保机构代码不能为空&amp;quot;);
+		return;
+	}
+	var ret = invokeOSFunc(osname,&amp;quot;sendjgdm=&amp;quot;+sendjgdm+&amp;quot;&amp;recvjgdm=&amp;quot;+recvjgdm);
+	_this.SetCellText(0,5,2,ret);
+}</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var ws = new JavaPackage(&amp;quot;com.xlsgrid.net.ws&amp;quot;);
+
+//系统连通性测试
+function F0114001()
+{
+	var sbcwService = new SBCW_sbcwService();
+	var ref = sbcwService .genRef(sendjgdm);
+	var seqno = sbcwService .genSiSeq(sendjgdm);
+	var xml = &amp;quot;&amp;lt;soapenv:Envelope xmlns:soapenv=\&amp;quot;http://schemas.xmlsoap.org/soap/envelope/\&amp;quot;&amp;gt;
+		     &amp;lt;soapenv:Header/&amp;gt;
+		     &amp;lt;soapenv:Body&amp;gt;
+			&amp;lt;MsgText&amp;gt;
+			  &amp;lt;GrpHdr&amp;gt;
+			    &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+			    &amp;lt;Ref&amp;gt;&amp;quot;+ref+&amp;quot;&amp;lt;/Ref&amp;gt;
+			    &amp;lt;BusCd&amp;gt;0114001&amp;lt;/BusCd&amp;gt;
+			    &amp;lt;TradSrc&amp;gt;S&amp;lt;/TradSrc&amp;gt;
+			    &amp;lt;Sender&amp;gt;
+			      &amp;lt;InstId&amp;gt;&amp;quot;+sendjgdm+&amp;quot;&amp;lt;/InstId&amp;gt;
+			    &amp;lt;/Sender&amp;gt;
+			    &amp;lt;Recver&amp;gt;
+			      &amp;lt;InstId&amp;gt;&amp;quot;+recvjgdm+&amp;quot;&amp;lt;/InstId&amp;gt;
+			    &amp;lt;/Recver&amp;gt;
+			    &amp;lt;Resend&amp;gt;N&amp;lt;/Resend&amp;gt;
+			    &amp;lt;Date&amp;gt;20160329&amp;lt;/Date&amp;gt;
+			    &amp;lt;Time&amp;gt;100900&amp;lt;/Time&amp;gt;
+			    &amp;lt;Dgst&amp;gt;系统连通性测试&amp;lt;/Dgst&amp;gt;
+			    &amp;lt;Rst&amp;gt;
+				    &amp;lt;Code&amp;gt;0001&amp;lt;/Code&amp;gt;
+				    &amp;lt;Info&amp;gt;待处理111111&amp;lt;/Info&amp;gt;
+			  	&amp;lt;/Rst&amp;gt;
+			  &amp;lt;/GrpHdr&amp;gt;
+			  &amp;lt;BusiText&amp;gt;
+				  &amp;lt;SiSeq&amp;gt;&amp;quot;+seqno+&amp;quot;&amp;lt;/SiSeq&amp;gt;
+			  &amp;lt;/BusiText&amp;gt;
+			&amp;lt;/MsgText&amp;gt;
+		      &amp;lt;/soapenv:Body&amp;gt;
+		      &amp;lt;/soapenv:Envelope&amp;gt;&amp;quot;;
+
+	var sblsh = sbcwService.genSiSeq(sendjgdm);
+	var map = new java.util.HashMap();
+	map = sbcwService.parseMsgText(xml,false);
+	var wscall = new x_EAWebServiceCall();	
+	var ret = wscall.SendWeblogic(sbcwService.shuNiuUrl, xml, &amp;quot;UTF-8&amp;quot;,null,null);
+	map = sbcwService.parseMsgText(ret,true);
+	return ret;
+	
+}
+//
+// 批量文件就绪通知
+//function F0114002()
+//function F0114002(requestxml)
+//{
+//      	var sbcwService = new SBCW_sbcwService();
+//	var map = new java.util.HashMap();
+//	map = sbcwService.parseMsgText(requestxml,true);
+//	var wscall = new x_EAWebServiceCall();	
+//	var ret = wscall.SendWeblogic(sbcwService.shuNiuUrl, requestxml, &amp;quot;UTF-8&amp;quot;,null,null);
+//	//map = sbcwService.parseMsgText(ret,true);
+//	//var info = map.get(&amp;quot;RstInfo&amp;quot;);
+//	//return map;	
+//	return ret;                    
+//}
+
+//批量文件就绪通知
+//BusCd 业务功能号,SenderId 发送机构代码，RecverId 接收机构代码,SiSeq 社保流水号,FileName 文件名，不包含路径,FileMD5 文件MD5码
+//返回code~info
+function F0114002(BusCd,SenderId,RecverId,SiSeq,FileName,FileMD5,ref)
+{
+	try{
+		var service = new SBCW_sbcwService();
+		var yymmdd = service.getDate();
+		var hhmmss = service.getTime();
+		//var ref = service.genRef(SenderId);
+		//构造xml
+		var requestxml = &amp;quot;&amp;lt;soapenv:Envelope xmlns:soapenv=\&amp;quot;http://schemas.xmlsoap.org/soap/envelope/\&amp;quot;&amp;gt;
+			           &amp;lt;soapenv:Header/&amp;gt;
+			            &amp;lt;soapenv:Body&amp;gt;
+					&amp;lt;MsgText&amp;gt;
+					  &amp;lt;GrpHdr&amp;gt;
+					    &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+					    &amp;lt;Ref&amp;gt;&amp;quot;+ref+&amp;quot;&amp;lt;/Ref&amp;gt;
+					    &amp;lt;BusCd&amp;gt;&amp;quot;+BusCd+&amp;quot;&amp;lt;/BusCd&amp;gt;
+					    &amp;lt;TradSrc&amp;gt;S&amp;lt;/TradSrc&amp;gt;
+					    &amp;lt;Sender&amp;gt;
+					      &amp;lt;InstId&amp;gt;&amp;quot;+SenderId+&amp;quot;&amp;lt;/InstId&amp;gt;
+					    &amp;lt;/Sender&amp;gt;
+					    &amp;lt;Recver&amp;gt;
+					      &amp;lt;InstId&amp;gt;&amp;quot;+RecverId+&amp;quot;&amp;lt;/InstId&amp;gt;
+					    &amp;lt;/Recver&amp;gt;
+					    &amp;lt;Resend&amp;gt;N&amp;lt;/Resend&amp;gt;
+					    &amp;lt;Date&amp;gt;&amp;quot;+yymmdd+&amp;quot;&amp;lt;/Date&amp;gt;
+					    &amp;lt;Time&amp;gt;&amp;quot;+hhmmss+&amp;quot;&amp;lt;/Time&amp;gt;
+					    &amp;lt;Dgst&amp;gt;批量文件就绪通知&amp;lt;/Dgst&amp;gt;
+					    &amp;lt;Rst&amp;gt;
+						    &amp;lt;Code&amp;gt;0001&amp;lt;/Code&amp;gt;
+						    &amp;lt;Info&amp;gt;待处理&amp;lt;/Info&amp;gt;
+					  &amp;lt;/Rst&amp;gt;
+					  &amp;lt;/GrpHdr&amp;gt;
+					  &amp;lt;BusiText&amp;gt;
+						  &amp;lt;SiSeq&amp;gt;&amp;quot;+SiSeq+&amp;quot;&amp;lt;/SiSeq&amp;gt;
+						  &amp;lt;FileName&amp;gt;&amp;quot;+FileName+&amp;quot;&amp;lt;/FileName&amp;gt;
+					     &amp;lt;FileMD5&amp;gt;&amp;quot;+FileMD5+&amp;quot;&amp;lt;/FileMD5&amp;gt;
+					  &amp;lt;/BusiText&amp;gt;
+					&amp;lt;/MsgText&amp;gt;
+			           &amp;lt;/soapenv:Body&amp;gt;
+			      &amp;lt;/soapenv:Envelope&amp;gt;
+	                          &amp;quot;;	
+	                          
+		var map = new java.util.HashMap();
+		map = service.parseMsgText(requestxml,true);
+		var wscall = new x_EAWebServiceCall();	
+		var ret = wscall.SendWeblogic(service.shuNiuUrl, requestxml, &amp;quot;UTF-8&amp;quot;,null,null);
+		//return ret;
+		map = service.parseMsgText(ret,true);
+		var RstCode = map.get(&amp;quot;RstCode&amp;quot;);
+		var RstInfo = map.get(&amp;quot;RstInfo&amp;quot;);
+		//return RstCode + &amp;quot;~&amp;quot; + RstInfo;
+		return map;
+	}catch(e){
+		throw new Exception(e);
+	}                        
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

@@ -1,0 +1,408 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >CFG_YSZLFTP</MWID><NAME >SFTP配置</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CFG_YSZLFTP.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >newYHZL</ID><NAME >新增银行种类</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >4</IMG><IMGMOUSE >4</IMGMOUSE><C10 >newYHZL</C10><C11 ></C11><C12 ></C12></ROW>
+<ROW num="1" ><ID >newDSDF</ID><NAME >新增代收代发</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >4</IMG><IMGMOUSE >4</IMGMOUSE><C10 >newDSDF</C10><C11 >newDSDF</C11><C12 >newDSDF</C12></ROW>
+<ROW num="2" ><ID >delRow</ID><NAME >删除</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >2</IMG><IMGMOUSE >2</IMGMOUSE><C10 >delRow</C10><C11 >delRow</C11><C12 ></C12></ROW>
+<ROW num="3" ><ID >saveDSDF</ID><NAME >保存</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >5</IMG><IMGMOUSE >5</IMGMOUSE><C10 ></C10><C11 ></C11><C12 ></C12></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE1;
+var dsdfList;
+var qdList;
+var _szbz = &amp;quot;%&amp;quot;;
+var _yhzl = &amp;quot;&amp;quot;;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SplitSheet(0,&amp;quot;H&amp;quot;,&amp;quot;20%&amp;quot;);
+	ZXGFILE1 = _this.SaveTempZXGFile(1);
+	
+	dsdfList = _this.CreateListValue();
+	_this.SetListValue(dsdfList,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+	_this.SetListValue(dsdfList,&amp;quot;1&amp;quot;,&amp;quot;代收&amp;quot;);
+	_this.SetListValue(dsdfList,&amp;quot;2&amp;quot;,&amp;quot;代发&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,0,4,dsdfList);
+	_this.SetCellText(1,0,4,&amp;quot;%&amp;quot;);
+	
+	qdList = _this.CreateListValue();
+	_this.SetListValue(qdList,&amp;quot;0&amp;quot;,&amp;quot;未启用&amp;quot;);
+	_this.SetListValue(qdList,&amp;quot;1&amp;quot;,&amp;quot;启用&amp;quot;);
+	
+	loadDS1();
+	loadDS2(&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+	
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+}
+
+
+function loadDS1()
+{
+	var xml = _sql.query(&amp;quot;DS1&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetMainCellRange(0,1,0,11,3);
+	_this.SetFixedRow(0,1);
+	_this.SetColVisible(0,1,-1);
+	_this.SetXmlDS(0,1,0,11,3,xml);
+	for (var r=_this.GetMainCellRangeRow1(0);r&amp;lt;=_this.GetMainCellRangeRow2(0);r++) {
+		if (_this.GetCellText(0,r,2) != &amp;quot;&amp;quot;) {
+			_this.SetToBoolBox(0,r,0);
+		}
+	}
+	_this.AutoFixScreenWidth();
+}
+
+function loadDS2(szbz,yhzl)
+{
+	_this.LoadZXGFile(ZXGFILE1,-1,1);
+	_this.SetFixedRow(1,3);
+	_this.SetColVisible(1,1,-1);
+	_this.SetMainCellRange(1,3,0,_this.GetRowCount(1)-1,_this.GetColCount(1)-1);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,0,4,dsdfList);
+	_this.SetCellText(1,0,4,_szbz);
+	var xml = _sql.query(&amp;quot;DS2&amp;quot;,&amp;quot;SZBZ=&amp;quot;+szbz+&amp;quot;&amp;YHZL=&amp;quot;+yhzl);
+	_this.SetXmlDS(1,3,0,_this.GetRowCount(1)-1,_this.GetColCount(1)-1,xml);
+	for (var r=_this.GetMainCellRangeRow1(1);r&amp;lt;=_this.GetMainCellRangeRow2(1);r++) {
+		if (_this.GetCellText(1,r,2) != &amp;quot;&amp;quot;) {
+			_this.SetToBoolBox(1,r,0);
+			_this.SetToComboBox(&amp;quot;&amp;quot;,1,r,2,dsdfList);
+			_this.SetToComboBox(&amp;quot;&amp;quot;,1,r,21,qdList);
+			_this.SetToDateBox(&amp;quot;&amp;quot;,1,r,22,_this.GetCellText(1,r,22));
+			if (_this.GetCellText(1,r,21) == 0) _this.SetCellColor(1,r,21,255,0,0);
+			else _this.SetCellColor(1,r,21,0,0,255);
+		}
+	}
+	_this.AutoFixColWidth(1,600);
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (sheet == 0 &amp;&amp; row &amp;gt;= _this.GetMainCellRangeRow1(0) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(0)) {
+		_yhzl = _this.GetCellText(sheet,row,2);
+		if (_yhzl != &amp;quot;&amp;quot;) {
+			loadDS2(_szbz,_yhzl);
+			//单选
+			for (var r=_this.GetMainCellRangeRow1(0);r&amp;lt;=_this.GetMainCellRangeRow2(0);r++) {
+				_this.SetCellText(0,r,0,0);
+			}
+			_this.SetCellText(0,row,0,1);
+		}
+	}
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 1 &amp;&amp; row == 0 &amp;&amp; col == 4) {
+		_szbz = newvalue;
+		loadDS2(_szbz,_yhzl);
+	}
+	if (col === 0) {
+		selectOneRow(sheet,row);
+	}
+	//修改标志
+//	if (_this.GetCellText(sheet,row,2) != &amp;quot;&amp;quot;) {
+//		_this.SetCellText(sheet,row,1,&amp;quot;*&amp;quot;);
+//	}
+
+	//修改标志符:只要FLG为添加“+”就屏蔽修改单元格：黄小星2017/8/9
+	if (_this.GetCellText(sheet,row,2) != &amp;quot;&amp;quot;&amp;&amp;sheet==0) {
+		_this.SetCellText(sheet,row,1,&amp;quot;*&amp;quot;);
+	}
+	if (_this.GetCellText(sheet,row,2) != &amp;quot;&amp;quot;&amp;&amp;_this.GetCellText(sheet,row,1)!=&amp;quot;+&amp;quot;&amp;&amp;sheet==1) {
+		_this.SetCellText(sheet,row,1,&amp;quot;*&amp;quot;);
+	}
+
+}
+function selectOneRow(sheet,row)
+{
+	for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;=_this.GetMainCellRangeRow2(sheet);r++) {
+		_this.SetCellText(sheet,r,0,&amp;quot;0&amp;quot;);
+	}
+	_this.SetCellText(sheet,row,0,&amp;quot;1&amp;quot;);
+}
+
+
+//新增银行种类
+function newYHZL()
+{
+	var row = 0;
+	for (var r=_this.GetMainCellRangeRow1(0);r&amp;lt;=_this.GetMainCellRangeRow2(0);r++) {
+		if (_this.GetCellText(0,r,2) != &amp;quot;&amp;quot;) {
+			row = r;
+			break;
+		}
+	}
+	_this.AppendRow(0,_this.GetRowCount(0)-1);
+	row = _this.GetRowCount(0)-1;
+	_this.SetCellFocus(0,row,2);
+	_this.SetCellText(0,row,1,&amp;quot;+&amp;quot;);
+	
+}
+//添加空行直接修改该行值:黄小星2017/8/9
+function addlist(row){
+	var  list = _this.CreateListValue();
+	_this.SetListValue(list,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+	_this.SetListValue(list,&amp;quot;1&amp;quot;,&amp;quot;代收&amp;quot;);
+	_this.SetListValue(list,&amp;quot;2&amp;quot;,&amp;quot;代发&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,row,2,list);
+	_this.SetCellText(1,row,2,&amp;quot;1&amp;quot;);
+	
+	var qlist = _this.CreateListValue();
+	_this.SetListValue(qlist,&amp;quot;0&amp;quot;,&amp;quot;未启用&amp;quot;);
+	_this.SetListValue(qlist,&amp;quot;1&amp;quot;,&amp;quot;启用&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,row,21,qlist);
+	_this.SetCellText(1,row,21,&amp;quot;0&amp;quot;);
+	_this.SetToBoolBox(1,row,0);
+}
+//判断空行即直接在空行添加：黄小星2017/8/9
+function pdRow(){ 
+	var count=&amp;quot;&amp;quot;;
+	var flg=0;
+	for(count=3;count&amp;lt;_this.GetRowCount(1);count++){
+	var rs =_this.GetCellText(1,count,2);
+	if(rs==&amp;quot;&amp;quot;){
+		addlist(count);
+		//row = _this.GetRowCount(1)-1;
+		_this.SetCellFocus(1,count,2);
+		_this.SetCellText(1,count,1,&amp;quot;+&amp;quot;);
+		flg=1;
+		break;
+		}			
+	}
+	if(flg==0){
+	
+		_this.AppendRow(1,_this.GetRowCount(1)-1);
+		row = _this.GetRowCount(1)-1;
+		_this.SetCellFocus(1,row,2);
+		_this.SetCellText(1,row,1,&amp;quot;+&amp;quot;);
+	}
+	
+
+}
+
+//新增代收代发
+function newDSDF()
+{
+	pdRow();
+	
+//	var row = 0;
+//	for (var r=_this.GetMainCellRangeRow1(1);r&amp;lt;=_this.GetMainCellRangeRow2(1);r++) {
+//		if (_this.GetCellText(1,r,2) != &amp;quot;&amp;quot;) {
+//			row = r;
+//			break;
+//		}
+//	}
+//	_this.AppendRow(1,_this.GetRowCount(1)-1);
+//	row = _this.GetRowCount(1)-1;
+//	_this.SetCellFocus(1,row,2);
+//	_this.SetCellText(1,row,1,&amp;quot;+&amp;quot;);	
+}
+
+//删除
+function delRow()
+{
+	var cursheet = _this.GetCurrentSheet();
+	if (cursheet &amp;lt; 0)  return;
+	for (var r=_this.GetMainCellRangeRow1(cursheet);r&amp;lt;=_this.GetMainCellRangeRow2(cursheet);r++) {
+		if (_this.GetCellText(cursheet,r,0) == &amp;quot;1&amp;quot; &amp;&amp; cursheet == 0) {
+			//检查是否有明细记录
+			if (_this.GetCellText(1,3,3) != &amp;quot;&amp;quot;) {
+				alert(&amp;quot;该银行已经配置有参数数据，不能删除！&amp;quot;);
+				return;
+			}
+			
+			_this.SetCellText(cursheet,r,1,&amp;quot;-&amp;quot;);
+			_this.SetRowVisible(cursheet,r,-1);
+			break;
+		}
+		else if (_this.GetCellText(cursheet,r,0) == &amp;quot;1&amp;quot;) {
+			_this.SetCellText(cursheet,r,1,&amp;quot;-&amp;quot;);
+			_this.SetRowVisible(cursheet,r,-1);
+		}
+	}
+}
+
+//保存
+function saveDSDF()
+{
+	var param = new Object();
+	param.xml1 = _this.GetXml(0,1,0,_this.GetRowCount(0)-1,3);
+	//_this.SetCellText(1,0,7,param.xml1);
+	param.xml2 = _this.GetXml(1,3,0,_this.GetRowCount(1)-1,_this.GetColCount(1)-1);
+	//alert(param.xml2);
+	//_this.SetCellText(1,0,6,param.xml2);
+	param.thisorgid = G_ORGID;
+	param.thisaccid = G_ACCID;
+	param.zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	try {
+		var ret = invokeOSFuncExt(&amp;quot;Save&amp;quot;,param);
+		alert(ret);
+	}
+	catch (e) {
+		alert(&amp;quot;保存失败:&amp;quot;+e.toString());
+	}
+}
+
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function Save()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	var upcnt = 0;
+	var adcnt = 0;
+	var decnt = 0;
+	
+	try {
+		db = new pub.EADatabase();
+		
+		var yhds = new pub.EAXmlDS(xml1);
+		var dsdfds = new pub.EAXmlDS(xml2);
+		
+		//银行种类
+		for (var i=0;i&amp;lt;yhds.getRowCount();i++) {
+			var flg = yhds.getStringAt(i,&amp;quot;FLG&amp;quot;);
+			var id = yhds.getStringAt(i,&amp;quot;ID&amp;quot;);
+			var name = yhds.getStringAt(i,&amp;quot;NAME&amp;quot;);
+			if (id != &amp;quot;&amp;quot;) {
+				if (flg == &amp;quot;+&amp;quot;) {
+					sql = &amp;quot;insert into aa10(aaa100,AAA102,AAA103) values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;.format([&amp;quot;BAE010&amp;quot;,id,name]);
+					db.ExcecutSQL(sql);
+				}
+				else if (flg == &amp;quot;-&amp;quot;) {
+					sql = &amp;quot;delete from aa10 where aaa100=&amp;apos;%s&amp;apos; and aaa102=&amp;apos;%s&amp;apos;&amp;quot;.format([&amp;quot;BAE010&amp;quot;,id]);
+					db.ExcecutSQL(sql);
+				}
+				else if (flg == &amp;quot;*&amp;quot;) {
+					//20161216 lyh modify aa10表
+//					sql = &amp;quot;update aaa100 set AAA103=&amp;apos;%s&amp;apos; where aaa100=&amp;apos;%s&amp;apos; and aaa102=&amp;apos;%s&amp;apos;&amp;quot;.format([name,&amp;quot;BAE010&amp;quot;,id]);
+					sql = &amp;quot;update aa10 set AAA103=&amp;apos;%s&amp;apos; where aaa100=&amp;apos;%s&amp;apos; and aaa102=&amp;apos;%s&amp;apos;&amp;quot;.format([name,&amp;quot;BAE010&amp;quot;,id]);
+					db.ExcecutSQL(sql);
+				}
+			}
+		}
+		
+//		select &amp;apos;&amp;apos; sel,&amp;apos;&amp;apos; flg,szbz,yhbm, yhmc, WJM, wjml,nvl(FGFBZ,&amp;apos;0&amp;apos;) FGFBZ, jshhh_head, 
+//		  jshhh_len, /*20120703 钱福军 增加医保财务代收拷盘对应结算行行号开头规则*/
+//		  ftp_ServerName, /*20130521 qfj ftp服务器名字*/
+//		  ftp_ip, /*20130521 qfj ftp服务器IP地址(URL)*/
+//		  ftp_port, /*20130521 qfj ftp服务器端口*/
+//		  ftp_gxsi_login_name, /*20130521 qfj ftp服务器gxsi社保用户登录名*/
+//		  ftp_gxsi_login_passwd, /*20130521 qfj ftp服务器gxsi社保用户登录密码*/
+//		  ftp_gxsi_login_path, /*20130521 qfj ftp服务器gxsi社保用户登录默认目录*/
+//		  ftp_up_path, /*20130521 qfj 社保ftpup上传目录（权限：社保读写，银行只读）*/
+//		  ftp_down_path, /*20130521 qfj 社保ftpdown下载目录（权限：社保只读，银行读写）*/
+//		  ftp_file_type /*20130521 qfj 文件类型：未加密，加密无压缩，加密带压缩*/
+//		from cw_dfdsb
+		//代收代发参数
+		for (var i=0;i&amp;lt;dsdfds.getRowCount();i++) {
+			var flg = dsdfds.getStringAt(i,&amp;quot;FLG&amp;quot;);
+			var szbz = dsdfds.getStringAt(i,&amp;quot;SZBZ&amp;quot;);
+			var yhbm = dsdfds.getStringAt(i,&amp;quot;YHBM&amp;quot;);
+			var yhmc = dsdfds.getStringAt(i,&amp;quot;yhmc&amp;quot;);
+			var wjm = dsdfds.getStringAt(i,&amp;quot;wjm&amp;quot;);
+			var wjml = dsdfds.getStringAt(i,&amp;quot;wjml&amp;quot;);
+			var fgfbz = dsdfds.getStringAt(i,&amp;quot;fgfbz&amp;quot;);
+			var jshhh_head = dsdfds.getStringAt(i,&amp;quot;jshhh_head&amp;quot;);
+			var jshhh_len = dsdfds.getStringAt(i,&amp;quot;jshhh_len&amp;quot;);
+			var ftp_ServerName = dsdfds.getStringAt(i,&amp;quot;ftp_ServerName&amp;quot;);
+			var ftp_ip = dsdfds.getStringAt(i,&amp;quot;ftp_ip&amp;quot;);
+			var ftp_port = dsdfds.getStringAt(i,&amp;quot;ftp_port&amp;quot;);
+			var ftp_gxsi_login_name = dsdfds.getStringAt(i,&amp;quot;ftp_gxsi_login_name&amp;quot;);
+			var ftp_gxsi_login_passwd = dsdfds.getStringAt(i,&amp;quot;ftp_gxsi_login_passwd&amp;quot;);
+			var ftp_gxsi_login_path = dsdfds.getStringAt(i,&amp;quot;ftp_gxsi_login_path&amp;quot;);
+			var ftp_up_path = dsdfds.getStringAt(i,&amp;quot;ftp_up_path&amp;quot;);
+			var ftp_file_type = dsdfds.getStringAt(i,&amp;quot;ftp_file_type&amp;quot;);
+			var yhzl = dsdfds.getStringAt(i,&amp;quot;yhzl&amp;quot;);
+
+			if (szbz != &amp;quot;&amp;quot;) {
+				if (flg == &amp;quot;+&amp;quot;) {
+					//添加yszl_max
+					sql = &amp;quot;insert into cw_dfdsb_yszl(sbh,zth,yhzl,org,acc,szbz,yhbm,yhmc,wjm,wjml,fgfbz,jshhh_head,jshhh_len,ftp_ServerName,ftp_ip,ftp_port,ftp_gxsi_login_name,ftp_gxsi_login_passwd,ftp_gxsi_login_path,ftp_up_path,ftp_file_type) 
+						values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;
+						.format([thisorgid,zth,yhzl,thisorgid,thisaccid,szbz,yhbm,yhmc,wjm,wjml,fgfbz,jshhh_head,jshhh_len,ftp_ServerName,ftp_ip,ftp_port,ftp_gxsi_login_name,ftp_gxsi_login_passwd,ftp_gxsi_login_path,ftp_up_path,ftp_file_type]);
+					adcnt += db.ExcecutSQL(sql);
+					//db.Rollback();
+					//return sql;
+				}
+				else if (flg == &amp;quot;-&amp;quot;) {
+					sql = &amp;quot;delete from cw_dfdsb_yszl where szbz=&amp;apos;%s&amp;apos; and yhzl=&amp;apos;%s&amp;apos; and yhbm=&amp;apos;%s&amp;apos; and org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos;&amp;quot;.format([szbz,yhzl,yhbm,thisorgid,thisaccid]);
+					decnt += db.ExcecutSQL(sql);
+				}
+				else if (flg == &amp;quot;*&amp;quot;) {
+				//添加yszl_max
+					sql = &amp;quot;update cw_dfdsb_yszl set szbz=&amp;apos;%s&amp;apos;,yhbm=&amp;apos;%s&amp;apos;,yhmc=&amp;apos;%s&amp;apos;,wjm=&amp;apos;%s&amp;apos;,wjml=&amp;apos;%s&amp;apos;,fgfbz=&amp;apos;%s&amp;apos;,jshhh_head=&amp;apos;%s&amp;apos;,jshhh_len=&amp;apos;%s&amp;apos;,ftp_ServerName=&amp;apos;%s&amp;apos;,ftp_ip=&amp;apos;%s&amp;apos;,ftp_port=&amp;apos;%s&amp;apos;,ftp_gxsi_login_name=&amp;apos;%s&amp;apos;,ftp_gxsi_login_passwd=&amp;apos;%s&amp;apos;,
+						ftp_gxsi_login_path=&amp;apos;%s&amp;apos;,ftp_up_path=&amp;apos;%s&amp;apos;,ftp_file_type=&amp;apos;%s&amp;apos; where org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and yhzl=&amp;apos;%s&amp;apos; and yhbm=&amp;apos;%s&amp;apos;&amp;quot;
+						.format([szbz,yhbm,yhmc,wjm,wjml,fgfbz,jshhh_head,jshhh_len,ftp_ServerName,ftp_ip,ftp_port,ftp_gxsi_login_name,ftp_gxsi_login_passwd,ftp_gxsi_login_path,ftp_up_path,ftp_file_type,thisorgid,thisaccid,yhzl,yhbm]);
+					upcnt += db.ExcecutSQL(sql);
+				}
+			}
+		}
+		
+		db.Commit();
+		
+		return &amp;quot;保存成功!新增&amp;quot;+adcnt+&amp;quot;,删除&amp;quot;+decnt+&amp;quot;,更新&amp;quot;+upcnt;
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return &amp;quot;保存失败：&amp;quot; + e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >DS1</ID><NAME ></NAME><DATDSC >select &amp;apos;&amp;apos; sel,&amp;apos;&amp;apos; flg,AAA102 id,AAA103 name
+from aa10 
+where aaa100=&amp;apos;BAE010&amp;apos;
+union all
+select &amp;apos;&amp;apos; sel,&amp;apos;&amp;apos; flg,&amp;apos;000&amp;apos; id,&amp;apos;全部&amp;apos; name
+from dual</DATDSC><C4 >DS1</C4><C5 >DS1</C5><C6 >DS1</C6><C7 >DS1</C7><C8 ></C8><C9 ></C9><C10 >DS1</C10><C11 ></C11><C12 ></C12><C13 >DS1</C13></ROW>
+<ROW num="1" ><ID >DS2</ID><NAME ></NAME><DATDSC >select &amp;apos;&amp;apos; sel,&amp;apos;&amp;apos; flg,szbz,yhbm, yhmc, WJM, wjml,nvl(FGFBZ,&amp;apos;0&amp;apos;) FGFBZ, jshhh_head, 
+  jshhh_len, /*20120703 钱福军 增加医保财务代收拷盘对应结算行行号开头规则*/
+  ftp_ServerName, /*20130521 qfj ftp服务器名字*/
+  ftp_ip, /*20130521 qfj ftp服务器IP地址(URL)*/
+  ftp_port, /*20130521 qfj ftp服务器端口*/
+  ftp_gxsi_login_name, /*20130521 qfj ftp服务器gxsi社保用户登录名*/
+  ftp_gxsi_login_passwd, /*20130521 qfj ftp服务器gxsi社保用户登录密码*/
+  ftp_gxsi_login_path, /*20130521 qfj ftp服务器gxsi社保用户登录默认目录*/
+  ftp_up_path, /*20130521 qfj 社保ftpup上传目录（权限：社保读写，银行只读）*/
+  ftp_down_path, /*20130521 qfj 社保ftpdown下载目录（权限：社保只读，银行读写）*/
+  ftp_file_type, /*20130521 qfj 文件类型：未加密，加密无压缩，加密带压缩*/
+  yhzl
+from cw_dfdsb_yszl
+where org = &amp;apos;[%SYS_ORGID]&amp;apos;
+	and acc = &amp;apos;[%SYS_ACCID]&amp;apos;
+	and szbz like &amp;apos;[%SZBZ]%&amp;apos;
+	AND yhzl=decode(&amp;apos;[%YHZL]&amp;apos;,&amp;apos;000&amp;apos;,yhzl,&amp;apos;&amp;apos;,yhzl,&amp;apos;[%YHZL]&amp;apos;)
+order by yhzl,yhbm,szbz</DATDSC><C4 >DS2</C4><C5 >DS2</C5><C6 ></C6><C7 ></C7><C8 >DS2</C8><C9 >DS2</C9><C10 >DS2</C10><C11 >DS2</C11><C12 >DS2</C12><C13 ></C13></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

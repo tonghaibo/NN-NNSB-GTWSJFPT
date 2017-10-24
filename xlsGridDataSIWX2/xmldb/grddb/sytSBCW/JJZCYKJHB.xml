@@ -1,0 +1,565 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >JJZCYKJHB</MWID><NAME >基金支出用款计划申请表</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >JJZCYKJHB.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >2</WIDTHMOD><HEIGHTMOD >9</HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >//20170316 lwq development model=&amp;gt;20170324 finish
+var title = &amp;quot;本级社会保险基金支出用款计划申请表&amp;quot;;
+var _scny = &amp;quot;&amp;quot;; //生成年月
+var nowyy = &amp;quot;&amp;quot;;
+var nowmm = &amp;quot;&amp;quot;;
+var nowdd = &amp;quot;&amp;quot;;
+var address = &amp;quot;&amp;quot;;
+
+var ZXGFILE = &amp;quot;&amp;quot;;
+var ZXGFILE2 = &amp;quot;&amp;quot;;
+
+var xjs = 0; //本月申请用款金额小计
+
+var ychh = &amp;quot;&amp;quot;; //隐藏行的行号(新插入一行)
+var i = 0; //该中间件中全局变量Insert()一次自增1
+
+var khhmcyl = &amp;quot;&amp;quot;; //医疗开户行（Save()时）
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,&amp;quot;10%&amp;quot;);
+	_this.AutoFixColWidth(0,600); //自适应列宽
+	
+	_this.SetToSelectBox(&amp;quot;CELL_1_1_2&amp;quot;,1,1,2,&amp;quot;V_CW_YYYY_MM&amp;quot;,&amp;quot;&amp;order=id desc&amp;quot;);
+	try { _scny = SCNY; } catch(e) {}
+	if (_scny == &amp;quot;&amp;quot;) {
+		_this.SetCellText(1,1,2,G_LOGDAT.substring(0,7));
+	}
+	else {
+		_this.SetCellText(1,1,2,_scny);
+	}
+	
+	nowyy = G_LOGDAT.substring(0,4);
+	nowmm = G_LOGDAT.substring(5,7);
+	nowdd = G_LOGDAT.substring(8,10);
+	
+	address = G_ORGNAM;
+	
+	_this.SetCellText(0,1,1,nowyy+&amp;quot;年&amp;quot;+nowmm+&amp;quot;月&amp;quot;+address+title); //标题
+	_this.SetCellText(0,3,2,address+&amp;quot;财务处&amp;quot;); //填报部门
+	_this.SetCellText(0,3,5,nowyy+&amp;quot;年&amp;quot;+nowmm+&amp;quot;月&amp;quot;+nowdd+&amp;quot;日&amp;quot;); //年月日
+	
+	ZXGFILE = _this.SaveTempZXGFile(0);
+	ZXGFILE2 = _this.SaveTempZXGFile(2);
+	
+//	_this.AddToolbarButton(&amp;quot;udf_Insert&amp;quot;,&amp;quot;插入&amp;quot;,&amp;quot;插入&amp;quot;,&amp;quot;&amp;quot;,1,3,3,40); //暂时不提供插入新一行单元格
+	_this.AddToolbarButton(&amp;quot;udf_Save&amp;quot;,&amp;quot;保存&amp;quot;,&amp;quot;保存&amp;quot;,&amp;quot;&amp;quot;,1,5,5,40);
+	_this.AddToolbarButton(&amp;quot;udf_print&amp;quot;,&amp;quot;打印&amp;quot;,&amp;quot;打印&amp;quot;,&amp;quot;&amp;quot;,1,6,6,60);
+	
+	//是否重新生成本月
+	var cxscList = _this.CreateListValue();
+	_this.SetListValue(cxscList ,&amp;quot;1&amp;quot;,&amp;quot;是&amp;quot;);
+	_this.SetListValue(cxscList ,&amp;quot;0&amp;quot;,&amp;quot;否&amp;quot;);
+	_this.SetToRadioBox(&amp;quot;&amp;quot;,1,1,6,cxscList);
+	_this.SetCellText(1,1,6,&amp;quot;0&amp;quot;);
+	
+	//是否显示医疗保险 
+	var ylList = _this.CreateListValue();
+	_this.SetListValue(ylList ,&amp;quot;1&amp;quot;,&amp;quot;是&amp;quot;);
+	_this.SetListValue(ylList ,&amp;quot;0&amp;quot;,&amp;quot;否&amp;quot;);
+	_this.SetToRadioBox(&amp;quot;&amp;quot;,1,1,9,ylList);
+	_this.SetCellText(1,1,9,&amp;quot;0&amp;quot;);
+	ShowYL(0);
+	
+}
+
+//是否显示医疗项
+function ShowYL(sign){
+	if(sign == 0){
+		_this.SetRowVisible(0,_this.GetRowCount(0)-2,-1);//隐藏医疗保险
+		_this.SetRowVisible(0,_this.GetRowCount(0)-3,-1);//隐藏医疗保险
+		_this.SetRowVisible(0,_this.GetRowCount(0)-4,-1);//隐藏医疗保险
+	}else if (sign == 1){
+		_this.SetRowVisible(0,_this.GetRowCount(0)-2,1);//显示医疗保险
+		_this.SetRowVisible(0,_this.GetRowCount(0)-3,1);//显示医疗保险
+		_this.SetRowVisible(0,_this.GetRowCount(0)-4,1);//显示医疗保险
+		
+		_this.MergeCells(0,_this.GetRowCount(0)-4,1,_this.GetRowCount(0)-2,1);
+		_this.MergeCells(0,_this.GetRowCount(0)-4,2,_this.GetRowCount(0)-2,2);
+	}
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 1) {
+		if (row == 1 &amp;&amp; col == 2) {
+			var ym1 = _this.GetCellText(sheet,1,2);
+			if (ym1.indexOf(&amp;quot;-&amp;quot;) == -1) {
+				var ym11 = ym1.substring(0,4)+&amp;quot;-&amp;quot;+ym1.substring(4,6);
+				_this.SetCellText(sheet,1,2,ym11);
+				_this.SetCellText(0,1,1,ym11.substring(0,4)+&amp;quot;年&amp;quot;+ym11.substring(5,7)+&amp;quot;月&amp;quot;+address+title); //标题
+				_this.SetCellText(0,3,5,ym11.substring(0,4)+&amp;quot;年&amp;quot;+ym11.substring(5,7)+&amp;quot;月&amp;quot;+nowdd+&amp;quot;日&amp;quot;); //年月日
+			}
+			ym1 = ym1.replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;);
+			if (ym1.length &amp;lt; 6) {
+				alert(&amp;quot;输入的期限不正确，请检查！格式：YYYYMM/YYYY-MM 201701/2017-01&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+				_this.SetCellText(0,1,1,oldvalue.substring(0,4)+&amp;quot;年&amp;quot;+oldvalue.substring(5,7)+&amp;quot;月&amp;quot;+address+title); //标题
+				_this.SetCellText(0,3,5,oldvalue.substring(0,4)+&amp;quot;年&amp;quot;+oldvalue.substring(5,7)+&amp;quot;月&amp;quot;+nowdd+&amp;quot;日&amp;quot;); //年月日
+			}
+		}	
+	}
+	if(sheet == 0 &amp;&amp; row == 3 &amp;&amp; col == 5){
+		if(newvalue.length != 11 || (1 * newvalue.substring(5,7)) &amp;gt; 12){
+			alert(&amp;quot;输入的日期不正确，请检查！格式：YYYY年MM月DD日 2017年01月01日&amp;quot;);
+			_this.SetCellText(sheet,row,col,oldvalue);
+		}
+	}
+	if(sheet == 0 &amp;&amp; col == 8 ){  //输入本月申请用款金额
+		TotalYKJE();
+	}
+	if(sheet == 1 &amp;&amp; row == 1 &amp;&amp; col == 9){
+		ShowYL(newvalue);
+	}
+}
+
+//本月申请用款金额小计
+function TotalYKJE(){
+	var oldxz = &amp;quot;&amp;quot;;	  //险种旧值
+	var startrowxz = 6; //相同险种行的开始行
+	for (var r=6;r&amp;lt;=_this.GetRowCount(0)-5;r++) { //医疗保险不计算，为表内公式计算
+		var xj = _this.GetCellText(0,r,1);
+		var nowxz = _this.GetCellText(0,r,1); //当前行的险种值
+		if(r == startrowxz ){  //如果当前行等于相同行的开始行，将当前行的险种值赋值给oldxz
+			oldxz = nowxz;
+		}
+		if(oldxz == nowxz &amp;&amp; oldxz != &amp;quot;&amp;quot; &amp;&amp; oldxz != null){ 
+			var sk = _this.GetCellText(0,r,8);  //申款金额
+			if( sk != &amp;quot;&amp;quot; &amp;&amp; sk != null) { //非小计行进行各输入值的合计算
+				xjs = xjs + (1.0 * sk);
+			}
+		}else if(oldxz != nowxz &amp;&amp; xj.indexOf(&amp;quot;小计&amp;quot;) == 0 &amp;&amp; oldxz != &amp;quot;&amp;quot; &amp;&amp; oldxz != null){ //小计行显示各输入值的合计值
+			_this.SetCellText(0,r,8,xjs);
+			_this.SetCellLock(0,r,8,1); //小计行不可编辑
+			xjs = 0;
+			oldxz = _this.GetCellText(0,r+1,1); //重新赋值oldxz下一个险种
+			startrowxz = (r+1);
+//			alert(oldxz+&amp;quot;,&amp;quot;+startrowxz+&amp;quot;,&amp;quot;+xjs);
+			continue;
+		}
+//		alert(oldxz+&amp;quot;,&amp;quot;+startrowxz+&amp;quot;,&amp;quot;+xj+&amp;quot;,&amp;quot;+nowxz+&amp;quot;,&amp;quot;+sk+&amp;quot;,&amp;quot;+xjs);
+	}
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if(id == &amp;quot;查询&amp;quot;){
+		loadData();
+	}
+}
+
+function loadData() {
+	_this.LoadZXGFile(ZXGFILE,-1,0);
+	var queryYM = _this.GetCellText(1,1,2);
+	_this.SetCellText(0,1,1,queryYM.substring(0,4)+&amp;quot;年&amp;quot;+queryYM.substring(5,7)+&amp;quot;月&amp;quot;+address+title); //标题
+	_this.SetCellText(0,3,5,queryYM.substring(0,4)+&amp;quot;年&amp;quot;+queryYM.substring(5,7)+&amp;quot;月&amp;quot;+nowdd+&amp;quot;日&amp;quot;); //年月日
+	
+	var sbh = G_ORGID;
+	var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	var ylxs = _this.GetCellText(1,1,9); //是否显示医疗项
+	ShowYL(ylxs);
+	
+	var filter = &amp;quot;&amp;quot;; //本年1月-上月查询语句
+	var queryYY = parseInt(queryYM.substring(0,4));
+	var queryMM = parseInt(queryYM.substring(5,7));
+	if(queryMM &amp;gt; 1) {
+		queryMM = queryMM - 1;
+		filter = &amp;quot;and to_date(&amp;apos;&amp;quot;+queryYM.substring(0,4)+&amp;quot;&amp;apos; || &amp;apos;01&amp;apos;, &amp;apos;yyyymm&amp;apos;) &amp;lt;= to_date(yy || mm, &amp;apos;yyyymm&amp;apos;) and to_date(yy || mm, &amp;apos;yyyymm&amp;apos;) &amp;lt; to_date(&amp;apos;&amp;quot;+queryYM.replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;)+&amp;quot;&amp;apos;, &amp;apos;yyyymm&amp;apos;) &amp;quot;; 
+	}else if(queryMM == 1){
+		queryYY = queryYY - 1;
+		queryMM = 12;
+//		filter = &amp;quot;and to_date(&amp;apos;&amp;quot;+queryYY+&amp;quot;&amp;apos; || &amp;apos;01&amp;apos;, &amp;apos;yyyymm&amp;apos;) &amp;lt;= to_date(yy || mm, &amp;apos;yyyymm&amp;apos;) and to_date(yy || mm, &amp;apos;yyyymm&amp;apos;) &amp;lt;= to_date(&amp;apos;&amp;quot;+queryYY+&amp;quot;&amp;apos; || &amp;apos;&amp;quot;+queryMM+&amp;quot;&amp;apos;, &amp;apos;yyyymm&amp;apos;) &amp;quot;;
+		filter = &amp;quot;and (to_date(yy || mm, &amp;apos;yyyymm&amp;apos;) between to_date(&amp;apos;&amp;quot;+queryYY+&amp;quot;&amp;apos; || &amp;apos;01&amp;apos;, &amp;apos;yyyymm&amp;apos;) and to_date(&amp;apos;&amp;quot;+queryYY+&amp;quot;&amp;apos; || &amp;apos;&amp;quot;+queryMM+&amp;quot;&amp;apos;, &amp;apos;yyyymm&amp;apos;))&amp;quot;; 
+	}
+	
+	var cxsc = _this.GetCellText(1,1,6); //是否重新生成本月
+	var param = &amp;quot;&amp;quot;;
+	var xml = &amp;quot;&amp;quot;;
+	if(cxsc == 1){
+		param = &amp;quot;YY=&amp;quot;+queryYY+&amp;quot;&amp;MM=&amp;quot;+queryMM+&amp;quot;&amp;SBH=&amp;quot;+sbh+&amp;quot;&amp;ZTH=&amp;quot;+zth+&amp;quot;&amp;FILTER=&amp;quot;+filter;
+		xml = _sql.query(&amp;quot;main&amp;quot;,param );
+	}else{
+		param = &amp;quot;YYMM=&amp;quot;+queryYM.replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;)+&amp;quot;&amp;SBH=&amp;quot;+sbh+&amp;quot;&amp;ZTH=&amp;quot;+zth;
+		_sql.querytods(&amp;quot;mainls&amp;quot;,param );
+	    	if(_this.XMLDS_GetRowCount()&amp;gt;0){
+			xml = _sql.query(&amp;quot;mainls&amp;quot;,param );
+			
+			_sql.querytods(&amp;quot;mainylls&amp;quot;,param );
+			if(_this.XMLDS_GetRowCount()&amp;gt;0){
+				ShowYL(1);
+				_this.SetCellText(1,1,9,&amp;quot;1&amp;quot;);
+		    		var ylkkh = _this.XMLDS_GetString(0,&amp;quot;KHH&amp;quot;); //获取医疗开户行
+		    		_this.SetCellText(0,_this.GetRowCount(0)-4,2,ylkkh ); //医疗合计行的开户行
+				xmlyl = _sql.query(&amp;quot;mainylls&amp;quot;,param );
+		    		_this.SetXmlDS(0,_this.GetRowCount(0)-3,1,_this.GetRowCount(0)-2,8,xmlyl );
+	    		}
+	    	}else{
+	    		param = &amp;quot;YY=&amp;quot;+queryYY+&amp;quot;&amp;MM=&amp;quot;+queryMM+&amp;quot;&amp;SBH=&amp;quot;+sbh+&amp;quot;&amp;ZTH=&amp;quot;+zth+&amp;quot;&amp;FILTER=&amp;quot;+filter;
+			xml = _sql.query(&amp;quot;main&amp;quot;,param );
+	    	}
+    	}
+    	_this.SetXmlDS(0,6,1,7,8,xml);
+    	
+    	//合并相同单元格
+	var oldxz = &amp;quot;&amp;quot;;	  //险种旧值
+	var oldkhh = &amp;quot;&amp;quot;;  //开户行旧值
+	var startrowxz = 6; //相同险种行的开始行
+	var startrowkhh = 6; //相同开户行行的开始行
+//	alert(_this.GetRowCount(0));
+	for (var r1=6;r1&amp;lt;=_this.GetRowCount(0)-5;r1++) {  
+		var nowxz = _this.GetCellText(0,r1,1); //当前行的险种值
+		var nowkhh = _this.GetCellText(0,r1,2); //当前行的开户行值
+		if(r1 == startrowxz ){  //如果当前行等于相同行的开始行，将当前行的险种值赋值给oldxz
+			oldxz = nowxz;
+			oldkhh = nowkhh;
+		}
+		if(oldkhh != nowkhh &amp;&amp; oldkhh != &amp;quot;&amp;quot; &amp;&amp; nowkhh != &amp;quot;&amp;quot;){
+			_this.MergeCells(0,startrowkhh,2,r1-1,2);
+			oldkhh = nowkhh ;
+			startrowkhh = r1;
+		}
+		else if (oldxz == nowxz &amp;&amp; oldkhh == nowkhh &amp;&amp; oldkhh != &amp;quot;&amp;quot; &amp;&amp; nowkhh != &amp;quot;&amp;quot;){ 
+			_this.MergeCells(0,startrowkhh,2,r1,2);
+		}
+		if(oldxz != nowxz &amp;&amp; oldxz != &amp;quot;&amp;quot; &amp;&amp; oldxz != null){ 
+			_this.MergeCells(0,startrowxz,1,r1-1,1);
+			oldxz = nowxz;
+			startrowxz = r1;
+			continue;
+		}
+		else if(oldxz == nowxz &amp;&amp; r1==_this.GetRowCount(0)-2 &amp;&amp; oldxz != &amp;quot;&amp;quot; &amp;&amp; nowxz != null){
+			_this.MergeCells(0,startrowxz,1,r1,1);
+		}
+	}
+	
+	var hjzc = 0;
+	var hjbn = 0;
+	var hjzcye = 0;
+	var hjsr = 0;
+	
+	//合并小计\开户行单元格
+	for (var r2=6;r2&amp;lt;=_this.GetRowCount(0)-5;r2++) {  
+		var xj = _this.GetCellText(0,r2,1); 
+		if(xj.indexOf(&amp;quot;小计&amp;quot;) == 0){
+			_this.SetCellLock(0,r2,8,1); //小计行不可编辑
+			_this.MergeCells(0,r2,1,r2,3);
+			hjzc = hjzc + (1.0 * _this.GetCellText(0,r2,4));
+			hjbn = hjbn + (1.0 * _this.GetCellText(0,r2,5));
+			hjzcye = hjzcye + (1.0 * _this.GetCellText(0,r2,6));
+			hjsr = hjsr + (1.0 * _this.GetCellText(0,r2,7));
+		}
+		var details = _this.GetCellText(0,r2,3);
+		if(details == &amp;quot;&amp;quot;){
+			_this.MergeCells(0,r2,2,r2,3);
+		}
+	}
+//    	alert(hjzc +&amp;quot;,&amp;quot;+hjbn+&amp;quot;,&amp;quot;+hjzcye +&amp;quot;,&amp;quot;+hjsr );
+    	_this.SetCellText(0,_this.GetRowCount(0)-1,4,hjzc);  //总合计行上月支出户支出额
+    	_this.SetCellText(0,_this.GetRowCount(0)-1,5,hjbn);  //总合计行本年累计支出额
+    	_this.SetCellText(0,_this.GetRowCount(0)-1,6,hjzcye);//总合计行上月末支出户余额
+    	_this.SetCellText(0,_this.GetRowCount(0)-1,7,hjsr);  //总合计行上月末收入户余额
+    	
+    	
+    	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHOW_ZERO,1); //显示零
+	_this.SetCellFocus(0,1,1);  //焦点定位,为了点击打印时打印的是SHEET_0页面内容
+	
+//	_this.SetRowVisible(0,_this.GetRowCount(0)-2,-1); //隐藏倒数第二行
+//	ychh = _this.GetRowCount(0)-2; //获取隐藏行的行号
+}
+
+//插入
+function Insert(){
+	i++;
+	_this.SetRowVisible(0,ychh,1);
+	_this.SetCellLock(0,ychh,1,0);
+	_this.SetCellLock(0,ychh,2,0);
+	_this.SetCellLock(0,ychh,3,0);
+	_this.SetCellLock(0,ychh,4,0);
+	_this.SetCellLock(0,ychh,5,0);
+	_this.SetCellLock(0,ychh,6,0);
+	_this.SetCellLock(0,ychh,7,0);
+	_this.SetCellLock(0,ychh,8,0);
+	if (i &amp;gt; 1){
+		var copyRow = _this.InsertRow(0,_this.GetRowCount(0)-1);
+		if(copyRow &amp;gt; 0){
+			_this.SetCellLock(0,_this.GetRowCount(0)-2,1,0);
+			_this.SetCellLock(0,_this.GetRowCount(0)-2,2,0);
+			_this.SetCellLock(0,_this.GetRowCount(0)-2,3,0);
+			_this.SetCellLock(0,_this.GetRowCount(0)-2,4,0);
+			_this.SetCellLock(0,_this.GetRowCount(0)-2,5,0);
+			_this.SetCellLock(0,_this.GetRowCount(0)-2,6,0);
+			_this.SetCellLock(0,_this.GetRowCount(0)-2,7,0);
+			_this.SetCellLock(0,_this.GetRowCount(0)-2,8,0);
+		}
+	}
+}
+
+//保存
+function Save(){
+	var ylxs = _this.GetCellText(1,1,9); //是否显示医疗项
+	var yr = 0; //判断医疗项XML是否加入xml
+	if(ylxs == 1){
+		yr = 3;
+	}
+	var xml = &amp;quot;&amp;lt;?xml version = &amp;apos;1.0&amp;apos;?&amp;gt;&amp;lt;ROWSET&amp;gt;\n&amp;quot;;
+	var num = 0;
+	for (var r=6;r&amp;lt;=(_this.GetRowCount(0)-5+yr);r++) {
+		var xzz =  _this.GetCellText(0,6,1);
+		if(xzz == &amp;quot;&amp;quot; || xzz == null){
+			alert(&amp;quot;当前表格数据为空，请检查后再保存！&amp;quot;)
+			return;			
+		}
+		var xz =  _this.GetCellText(0,r,1);
+		var details =  _this.GetCellText(0,r,3);
+		if(details.indexOf(&amp;quot;合计&amp;quot;) == 0){
+			khhmcyl = _this.GetCellText(0,r,2);
+		}
+		if (xz.indexOf(&amp;quot;小计&amp;quot;) != 0 &amp;&amp; details.indexOf(&amp;quot;合计&amp;quot;) != 0){
+			num ++;
+			xml += &amp;quot;&amp;lt;ROW num=\&amp;quot;&amp;quot;+num+&amp;quot;\&amp;quot;&amp;gt;\n&amp;quot;;
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(0,1)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(0,r,1) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(0,1)+&amp;quot;&amp;gt;\n&amp;quot;;	//险种
+			if(xz.indexOf(&amp;quot;医疗保险&amp;quot;) == 0){
+				xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(0,2)+&amp;quot;&amp;gt;&amp;quot; + khhmcyl +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(0,2)+&amp;quot;&amp;gt;\n&amp;quot;;	//开户行
+			}else{
+				xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(0,2)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(0,r,2) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(0,2)+&amp;quot;&amp;gt;\n&amp;quot;;	//开户行
+			}
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(0,3)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(0,r,3) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(0,3)+&amp;quot;&amp;gt;\n&amp;quot;;	//空行\医疗项的明细Details
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(0,4)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(0,r,4) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(0,4)+&amp;quot;&amp;gt;\n&amp;quot;;	//上月支出户支出额
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(0,5)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(0,r,5) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(0,5)+&amp;quot;&amp;gt;\n&amp;quot;;	//本年累计支出额
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(0,6)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(0,r,6) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(0,6)+&amp;quot;&amp;gt;\n&amp;quot;;	//上月末支出户余额
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(0,7)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(0,r,7) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(0,7)+&amp;quot;&amp;gt;\n&amp;quot;;	//上月末收入户余额
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(0,8)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(0,r,8) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(0,8)+&amp;quot;&amp;gt;\n&amp;quot;;	//本月申请用款金额
+			xml += &amp;quot;&amp;lt;/ROW&amp;gt;\n&amp;quot;;
+		}		
+	}
+	xml += &amp;quot;&amp;lt;/ROWSET&amp;gt;&amp;quot;;
+//	alert(xml);
+      	var sbh  = G_ORGID;
+      	var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+	var datas = _this.GetCellText(0,3,5);
+	var yy = datas.substring(0,4);
+	var mm = datas.substring(5,7);
+	var dd = datas.substring(8,10);
+	
+	var param = new Object();
+	param.sbh = sbh;
+	param.zth = zth;
+	param.yy = yy;
+	param.mm = mm;
+	param.dd = dd;
+	param.xml = xml;
+	param.czyxm = G_USRNAM;
+	var ret = _this.invokeOSFuncExt(&amp;quot;save&amp;quot;,param);
+//	alert(ret);
+       if(ret == 1) {
+       		alert(&amp;quot;保存成功&amp;quot;);
+       		return;
+       }
+       else {
+       		alert(&amp;quot;保存失败&amp;quot;);
+       		return;
+       }
+}
+
+//打印
+function print()
+{
+	_this.Print(0,0);
+}</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function save() {
+
+	var db = null;
+	var ret = &amp;quot;&amp;quot;;
+	var sql = &amp;quot;&amp;quot;;
+	try{
+		db = new pub.EADatabase();
+		var insds = new pub.EAXmlDS(xml);
+		
+		var pch = 1;
+		sql = &amp;quot;select * from CW_YKJHSQB where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy=&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm=&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and bz=&amp;apos;0&amp;apos;&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		if (ds.getRowCount()&amp;gt;0){
+			var code = 1 * ds.getStringAt(0,&amp;quot;PCH&amp;quot;);
+			pch = code+1;
+		}
+		if(pch &amp;gt; 1){
+			sql = &amp;quot;update CW_YKJHSQB set bz = &amp;apos;1&amp;apos;,zfsj = sysdate where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy=&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm=&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and bz=&amp;apos;0&amp;apos;&amp;quot;;
+			db.ExcecutSQL(sql);
+		}
+		
+		for(var i = 0;i&amp;lt;insds.getRowCount();i++) {
+			var xz = insds.getStringAt(i,&amp;quot;XZ&amp;quot;);
+			var khh = insds.getStringAt(i,&amp;quot;KHH&amp;quot;);
+			var details = insds.getStringAt(i,&amp;quot;DETAILS&amp;quot;);
+			if(details != &amp;quot;&amp;quot; &amp;&amp; details != null){
+				khh = khh +&amp;quot;-&amp;quot;+ details;
+			}
+			var syzcje = insds.getStringAt(i,&amp;quot;SYZCJE&amp;quot;);
+			if(syzcje != &amp;quot;&amp;quot; &amp;&amp; syzcje != null) {
+				syzcje = syzcje;
+			}
+			else {
+				syzcje = 0;
+			}						
+			var bnljzcje = insds.getStringAt(i,&amp;quot;BNLJZCJE&amp;quot;);
+			if(bnljzcje != &amp;quot;&amp;quot; &amp;&amp; bnljzcje != null) {
+				bnljzcje = bnljzcje;
+			}
+			else {
+				bnljzcje = 0;
+			}						
+			var syzcye = insds.getStringAt(i,&amp;quot;SYZCYE&amp;quot;);
+			if(syzcye != &amp;quot;&amp;quot; &amp;&amp; syzcye != null) {
+				syzcye = syzcye;
+			}
+			else {
+				syzcye = 0;
+			}						
+			var symsrye = insds.getStringAt(i,&amp;quot;SYMSRYE&amp;quot;);
+			if(symsrye != &amp;quot;&amp;quot; &amp;&amp; symsrye != null) {
+				symsrye = symsrye;
+			}
+			else {
+				symsrye = 0;
+			}
+			var bysqykje = insds.getStringAt(i,&amp;quot;BYSQYKJE&amp;quot;);	
+			if(bysqykje != &amp;quot;&amp;quot; &amp;&amp; bysqykje != null) {
+				bysqykje = bysqykje;
+			}
+			else {
+				bysqykje = 0;
+			}					
+			var bz = &amp;quot;0&amp;quot;;
+			sql = &amp;quot;insert into CW_YKJHSQB (sbh,zth,yy,mm,dd,xz,khh,syzcje,bnljzcje,syzcye,symsrye,bysqykje,czyxm,czsj,bz,pch,lsh,zfsj) values (&amp;apos;&amp;quot;
+					+sbh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+dd+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+xz+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+khh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+syzcje+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+bnljzcje+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+syzcye+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+symsrye+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+bysqykje+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,sysdate,&amp;apos;&amp;quot;+bz+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+pch+&amp;quot;&amp;apos;,SEQ_ykjhsqb_LSH.Nextval,&amp;apos;&amp;apos;)&amp;quot;;
+			db.ExcecutSQL(sql);
+		}
+		db.Commit();
+		return 1;//成功返回1				
+	}catch(e){
+		if(db != null) db.Rollback();
+		return e.toString();
+	}finally {
+		if(db != null) db.Close();
+	}
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >main</ID><NAME >生成主数据</NAME><DATDSC >select decode(grouping(t.khh), 0, t.xz, &amp;apos;小计&amp;apos;) xz,
+       t.khh,
+       &amp;apos;&amp;apos; details,
+       abs(sum((t.zcje - nvl(d.czje,0)))) SYZCJE,
+       abs(sum((t.BNLJZCJE - nvl(e.BNLJCZJE,0)))) BNLJZCJE,
+       abs(sum(t.zcqmye)) SYZCYE,
+       abs(sum(t.srqmye)) SYMSRYE,
+       &amp;apos;&amp;apos; BYSQYKJE
+  from (select a.sbh,
+               a.zth,
+               a.yy,
+               a.mm,
+               a.xzbh,
+               a.xz,
+               a.yhzl,
+               a.khh,
+               a.zcje,
+               c.BNLJZCJE,
+               a.zcqmye,
+               b.srqmye
+          from v_cw_zch a,
+               v_cw_srh b,
+               (select sbh, zth, xzbh, yhzl, sum(zcje) BNLJZCJE
+                  from v_cw_zch
+                 where sbh = &amp;apos;[%SBH]&amp;apos;
+                   and zth = &amp;apos;[%ZTH]&amp;apos;
+                    [%FILTER]
+                 group by sbh, zth, xzbh, yhzl) c
+         where a.sbh = b.sbh
+           and a.zth = b.zth
+           and a.yy = b.yy
+           and a.mm = b.mm
+           and a.xzbh = b.xzbh
+           and a.khh = b.khh
+           and a.sbh = c.sbh
+           and a.zth = c.zth
+           and a.xzbh = c.xzbh
+           and a.yhzl = c.yhzl
+           and a.sbh = &amp;apos;[%SBH]&amp;apos; /*所编号*/
+           and a.zth = &amp;apos;[%ZTH]&amp;apos; /*账套号*/
+           and to_date(a.yy || a.mm, &amp;apos;yyyymm&amp;apos;) =
+               to_date(&amp;apos;[%YY]&amp;apos; || &amp;apos;[%MM]&amp;apos;, &amp;apos;yyyymm&amp;apos;) /*当前登陆年月or生成年月的上月*/
+        ) t,
+       v_cw_zchczje d,
+       (select sbh, zth, xzbh, yhzl, sum(czje) BNLJCZJE
+          from v_cw_zchczje
+         where sbh = &amp;apos;[%SBH]&amp;apos;
+           and zth = &amp;apos;[%ZTH]&amp;apos;
+            [%FILTER]
+         group by sbh, zth, xzbh, yhzl) e
+ where t.sbh = d.sbh(+)
+   and t.zth = d.zth(+)
+   and t.yy = d.yy(+)
+   and t.mm = d.mm(+)
+   and t.xzbh = d.xzbh(+)
+   and t.yhzl = d.yhzl(+)
+   and t.sbh = e.sbh(+)
+   and t.zth = e.zth(+)
+   and t.xzbh = e.xzbh(+)
+   and t.yhzl = e.yhzl(+)
+ group by t.xz, rollup(t.khh)</DATDSC><C4 >main</C4><C5 >main</C5><C6 >main</C6><C7 >main</C7><C8 >main</C8><C9 ></C9></ROW>
+<ROW num="1" ><ID >mainls</ID><NAME >cw_ykjhsqb数据</NAME><DATDSC >select decode(grouping(khh), 0, xz, &amp;apos;小计&amp;apos;) xz,
+       decode(INSTR(khh,&amp;apos;-&amp;apos;),0,khh,substr(khh, 0,(INSTR(khh,&amp;apos;-&amp;apos;)-1))) khh,
+       decode(INSTR(khh,&amp;apos;-&amp;apos;),0,&amp;apos;&amp;apos;,substr(khh, (INSTR(khh,&amp;apos;-&amp;apos;)+1))) details,
+       sum(syzcje) syzcje,
+       sum(bnljzcje) bnljzcje,
+       sum(syzcye) syzcye,
+       sum(symsrye) symsrye,
+       sum(bysqykje) bysqykje
+  from cw_ykjhsqb
+ where sbh = &amp;apos;[%SBH]&amp;apos;
+   and zth = &amp;apos;[%ZTH]&amp;apos;
+   and to_date(yy || mm, &amp;apos;yyyymm&amp;apos;) = to_date(&amp;apos;[%YYMM]&amp;apos;, &amp;apos;yyyymm&amp;apos;)
+   and bz = 0
+   and xz &amp;lt;&amp;gt; &amp;apos;医疗保险&amp;apos;
+ group by xz,rollup(khh)</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 >mainls</C7><C8 >mainls</C8><C9 ></C9></ROW>
+<ROW num="2" ><ID >mainylls</ID><NAME >cw_ykjhsqb医疗数据</NAME><DATDSC >select xz,
+       decode(INSTR(khh,&amp;apos;-&amp;apos;),0,khh,substr(khh, 0,(INSTR(khh,&amp;apos;-&amp;apos;)-1))) khh,
+       decode(INSTR(khh,&amp;apos;-&amp;apos;),0,&amp;apos;&amp;apos;,substr(khh, (INSTR(khh,&amp;apos;-&amp;apos;)+1))) details,
+       syzcje,
+       bnljzcje,
+       syzcye,
+       symsrye,
+       bysqykje
+  from cw_ykjhsqb
+ where sbh = &amp;apos;[%SBH]&amp;apos;
+   and zth = &amp;apos;[%ZTH]&amp;apos;
+   and to_date(yy || mm, &amp;apos;yyyymm&amp;apos;) = to_date(&amp;apos;[%YYMM]&amp;apos;, &amp;apos;yyyymm&amp;apos;)
+   and bz = 0
+   and xz = &amp;apos;医疗保险&amp;apos;
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 >mainylls</C8><C9 >mainylls</C9></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

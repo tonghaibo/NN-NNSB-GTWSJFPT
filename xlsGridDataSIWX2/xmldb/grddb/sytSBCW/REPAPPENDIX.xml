@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >REPAPPENDIX</MWID><NAME >报表附件录入</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >REPAPPENDIX.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var param;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.ShowToolBar(0);
+	_this.AutoFixScreenWidth();
+	
+	param = window.dialogArguments;
+	_sql.querytods(&amp;quot;APPENDIXVAL&amp;quot;,&amp;quot;ACCID=&amp;quot;+param.thisaccid+&amp;quot;&amp;REPLOCID=&amp;quot;+param.replocid+&amp;quot;&amp;REPID=&amp;quot;+param.repid+&amp;quot;&amp;YYMM=&amp;quot;+param.yymm);
+	var row = 3;
+	for (var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+		var seqno = _this.XMLDS_GetString(i,&amp;quot;SEQNO&amp;quot;);
+		var name = _this.XMLDS_GetString(i,&amp;quot;NAME&amp;quot;);
+		var val = _this.XMLDS_GetString(i,&amp;quot;VAL&amp;quot;);
+		_this.SetCellText(0,row,2,seqno+&amp;quot;.&amp;quot;+name+&amp;quot;：&amp;quot;);
+		_this.SetCellText(0,row,4,val);
+		row ++;
+	}
+	
+	for (var r=3;r&amp;lt;13;r++) {
+		if (_this.GetCellText(0,r,2) == &amp;quot;&amp;quot;) {
+			_this.SetRowVisible(0,r,-1);
+		}
+	}
+}
+
+function getAppendixs()
+{
+	var arr = new Array();
+	for (var r=3;r&amp;lt;13;r++) {
+		if (_this.GetCellText(0,r,2) != &amp;quot;&amp;quot; &amp;&amp; _this.GetRowVisible(0,r) == 1) {
+			arr.push(_this.GetCellText(0,r,4));
+		}
+	}
+	return arr;
+}
+
+//确定
+function queding()
+{
+	var sheet = 0;
+	//var obj = new Object();
+	param.appendixs = getAppendixs();
+
+	//保存附件数据
+	var ret = invokeOSFuncExt(&amp;quot;SaveAppendix&amp;quot;,param);
+	if (ret == 1) {
+		window.returnValue = param;
+		window.close();
+	}
+	else  {
+		alert(&amp;quot;保存报表附件数据出错:&amp;quot;+ret);
+	}
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (!isNumber(newvalue)) {
+		_this.SetCellText(sheet,row,col,oldvalue);
+	}
+	else {
+		_this.SetCellText(sheet,row,col,1.0 * newvalue);
+	}
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if (id == &amp;quot;确定&amp;quot;) {
+		queding();
+	}
+	else if (id == &amp;quot;取消&amp;quot;) {
+		window.returnValue = null;
+		window.close();
+	}
+}
+
+function isNumber(n) {  
+    return !isNaN(parseFloat(n)) &amp;&amp; isFinite(n);  
+}  
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function SaveAppendix()
+{
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var sql = &amp;quot;delete from fin_appendix_value where acc=&amp;apos;%s&amp;apos; and repid=&amp;apos;%s&amp;apos; and replocid=&amp;apos;%s&amp;apos; and yymm=&amp;apos;%s&amp;apos;&amp;quot;.format([thisaccid,repid,replocid,yymm]);
+		db.ExcecutSQL(sql);
+		var arr = (appendixs+&amp;quot;,&amp;quot;).split(&amp;quot;,&amp;quot;);
+		for (var i=0;i&amp;lt;arr.length();i++) {
+			var seqno = &amp;quot;&amp;quot;+ (i+1);
+			var val = arr[i];
+			sql = &amp;quot;insert into fin_appendix_value(org,acc,syt,replocid,yymm,repid,seqno,val)values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;.format([thisorgid,thisaccid,&amp;quot;SBCW&amp;quot;,replocid,yymm,repid,seqno,val]);
+			db.ExcecutSQL(sql);
+		}
+		db.Commit();
+		
+		return &amp;quot;1&amp;quot;;
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >APPENDIXVAL</ID><NAME ></NAME><DATDSC >select a.repid,a.seqno,a.name,a.formula,b.val 
+from fin_appendix_formula a,fin_appendix_value b
+where a.repid=b.repid(+) and a.seqno=b.seqno(+)
+  and b.acc(+)=&amp;apos;[%ACCID]&amp;apos;
+  and b.replocid(+)=&amp;apos;[%REPLOCID]&amp;apos;
+  and b.repid(+)=&amp;apos;[%REPID]&amp;apos;
+  and b.yymm(+)=&amp;apos;[%YYMM]&amp;apos;
+order by seqno</DATDSC></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

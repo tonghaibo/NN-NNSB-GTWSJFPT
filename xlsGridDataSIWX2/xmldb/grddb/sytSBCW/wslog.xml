@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >Q</MWTYP><MWID >wslog</MWID><NAME >ws调用消息查询</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >wslog.zxg</FILE><SCENE ></SCENE><FIXED >1,0</FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >TaskLog</ID><NAME >查询后台日志</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >BUSCD</ID><NAME >业务功能号</NAME><NOTNULL ></NOTNULL><KEYVAL >V_SHUNIU_BUSICD</KEYVAL><INPCTL >idlist</INPCTL><DISPORD >4</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 >BUSCD</C14><C15 >BUSCD</C15><C16 >BUSCD</C16><C17 >BUSCD</C17><C18 >BUSCD</C18><C19 >BUSCD</C19><C20 ></C20></ROW>
+<ROW num="1" ><ID >TRADESRC</ID><NAME >交易发起方</NAME><NOTNULL >0</NOTNULL><KEYVAL >V_JYFQF</KEYVAL><INPCTL >idlist</INPCTL><DISPORD >5</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 >TRADESRC</C14><C15 >TRADESRC</C15><C16 >TRADESRC</C16><C17 >TRADESRC</C17><C18 >TRADESRC</C18><C19 >TRADESRC</C19><C20 >TRADESRC</C20></ROW>
+<ROW num="2" ><ID >SENDER</ID><NAME >发送机构</NAME><NOTNULL ></NOTNULL><KEYVAL >V_FSJG</KEYVAL><INPCTL >idlist</INPCTL><DISPORD >3</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 >SENDER</C15><C16 >SENDER</C16><C17 >SENDER</C17><C18 >SENDER</C18><C19 >SENDER</C19><C20 >SENDER</C20></ROW>
+<ROW num="3" ><ID >DAT1</ID><NAME >开始日期</NAME><NOTNULL ></NOTNULL><KEYVAL >DAT</KEYVAL><INPCTL ></INPCTL><DISPORD >1</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 >DAT1</C13><C14 ></C14><C15 >DAT1</C15><C16 >DAT1</C16><C17 >DAT1</C17><C18 >DAT1</C18><C19 >DAT1</C19><C20 ></C20></ROW>
+<ROW num="4" ><ID >DAT2</ID><NAME >截止日期</NAME><NOTNULL ></NOTNULL><KEYVAL >DAT</KEYVAL><INPCTL ></INPCTL><DISPORD >10</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 >DAT2</C15><C16 ></C16><C17 ></C17><C18 >DAT2</C18><C19 >DAT2</C19><C20 ></C20></ROW>
+<ROW num="5" ><ID >Ref</ID><NAME >报文标识</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD >7</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 >Ref</C15><C16 ></C16><C17 ></C17><C18 >Ref</C18><C19 >Ref</C19><C20 ></C20></ROW>
+<ROW num="6" ><ID >sblsh</ID><NAME >社保流水号</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD >8</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >0</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 >sblsh</C15><C16 ></C16><C17 ></C17><C18 >sblsh</C18><C19 >sblsh</C19><C20 ></C20></ROW>
+<ROW num="7" ><ID >yhlsh</ID><NAME >银行流水号</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD >9</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 >yhlsh</C15><C16 ></C16><C17 ></C17><C18 >yhlsh</C18><C19 >yhlsh</C19><C20 ></C20></ROW>
+<ROW num="8" ><ID >recvinstid</ID><NAME >落地机构</NAME><NOTNULL ></NOTNULL><KEYVAL >V_FSJG</KEYVAL><INPCTL ></INPCTL><DISPORD >6</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 >recvinstid</C15><C16 ></C16><C17 ></C17><C18 >recvinstid</C18><C19 >recvinstid</C19><C20 ></C20></ROW>
+<ROW num="9" ><ID >filename</ID><NAME >文件名</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD >2</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 >filename</C18><C19 >filename</C19><C20 ></C20></ROW>
+<ROW num="10" ><ID >filetypecode</ID><NAME >文件类型</NAME><NOTNULL ></NOTNULL><KEYVAL >V_WJLX</KEYVAL><INPCTL >idlist</INPCTL><DISPORD >11</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 >filetypecode</C18><C19 >filetypecode</C19><C20 ></C20></ROW>
+<ROW num="11" ><ID >transtype</ID><NAME >结算业务类型</NAME><NOTNULL ></NOTNULL><KEYVAL >V_JSYWLX</KEYVAL><INPCTL >idlist</INPCTL><DISPORD >12</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 >transtype</C18><C19 >transtype</C19><C20 >transtype</C20></ROW>
+<ROW num="12" ><ID >GRBH</ID><NAME >参保编号</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD >13</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 >GRBH</C20></ROW>
+<ROW num="13" ><ID >GRXM</ID><NAME >个人姓名</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD >15</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20></ROW>
+</ROWSET>
+</grdpamds><grdshwds>
+<ROWSET>
+<ROW num="0" ><ID >0,1,0</ID><NAME ></NAME><DBNAME ></DBNAME><DSKEY >DSC:MAIN</DSKEY><NROW >14</NROW><NCOL >21</NCOL><PAGES ></PAGES><PAGESIZE ></PAGESIZE><URL ></URL><CTLTYP ></CTLTYP><DYNCTL ></DYNCTL><LISTID ></LISTID><ISCROSS ></ISCROSS><HROW ></HROW><HCOLS ></HCOLS><ROWORDER ></ROWORDER><VCOLS ></VCOLS><VCOLSQL ></VCOLSQL><VALUECOL ></VALUECOL><C20 >0,1,0</C20><C21 >0,1,0</C21><C22 >0,1,0</C22><C23 >0,1,0</C23><C24 >0,1,0</C24></ROW>
+</ROWSET>
+</grdshwds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.AutoFixScreenWidth();
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+	for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;=_this.GetMainCellRangeRow2(sheet);r++) {
+		_this.SetCellShowText(sheet,r,_this.GetMainCellRangeCol2(sheet),&amp;quot;双击查看&amp;quot;);
+	}
+	
+	_this.AutoFixColWidth(sheet,600);
+}
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+	var txtCol = _this.GetMainCellRangeCol2(0);
+	if (row &amp;gt;= _this.GetMainCellRangeRow1(sheet) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(sheet)) {
+		if(col == txtCol ){
+			var guid = _this.GetCellText(sheet,row,txtCol);
+			window.showModalDialog(&amp;quot;show.sp?grdid=ShowWSLog&amp;guid=&amp;quot;+guid,null,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+		}
+		else {
+			TaskLog();
+		}	
+	}
+}
+
+//查询后台日志
+function TaskLog()
+{
+	var curr_row = _this.GetCurrentRow(0);
+	var ref = &amp;quot;&amp;quot;;
+	if(curr_row != -1) {
+		ref = _this.GetCellText(0,curr_row,2);
+	}
+	window.showModalDialog(&amp;quot;show.sp?grdid=YSZL_TASKLOG&amp;in_ref=&amp;quot;+ref,null,&amp;quot;dialogWidth=1010px;dialogHeight=300px&amp;quot;);
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select crtdat,version,reference,grbh,grxm,businesscode,tradesource,senderinstid,recverinstid,
+       transactiondate,transactiontime,resend,digest,rstcode,rstinfo,
+       filename,
+       (select max(aaa103) from aa10 where aaa100 = &amp;apos;FILETYPECODE&amp;apos; and aaa102 = a.filetypecode) filetypecode,
+       (select max(aaa103) from aa10 where aaa100 = &amp;apos;TRANSTYPE&amp;apos; and aaa102 = a.TRANSTYPE) transtype,
+       siseq,bkseq,guid msgtext
+from si_msgtextlog a  
+where nvl(businesscode,&amp;apos;%&amp;apos;) like &amp;apos;[%BUSCD]%&amp;apos;
+  and nvl(tradesource,&amp;apos;%&amp;apos;) like DECODE(&amp;apos;[%TRADESRC]&amp;apos;,0,&amp;apos;%&amp;apos;, &amp;apos;[%TRADESRC]%&amp;apos;)
+  and nvl(senderinstid,&amp;apos;%&amp;apos;) like DECODE(&amp;apos;[%SENDER]&amp;apos;,0,&amp;apos;%&amp;apos;, &amp;apos;[%SENDER]%&amp;apos;)
+  and nvl(siseq,&amp;apos;%&amp;apos;) like &amp;apos;[%sblsh]%&amp;apos;
+  and nvl(bkseq,&amp;apos;%&amp;apos;) like &amp;apos;[%yhlsh]%&amp;apos;
+  and to_char(crtdat,&amp;apos;yyyy-mm-dd&amp;apos;)&amp;gt;=&amp;apos;[%DAT1]&amp;apos;
+  and to_char(crtdat,&amp;apos;yyyy-mm-dd&amp;apos;)&amp;lt;=&amp;apos;[%DAT2]&amp;apos;
+  and reference like &amp;apos;%[%Ref]%&amp;apos;
+  and nvl(filename,&amp;apos;%&amp;apos;) like &amp;apos;[%filename]%&amp;apos;
+  and nvl(recverinstid,&amp;apos;%&amp;apos;) like decode(&amp;apos;[%recvinstid]&amp;apos;,0,&amp;apos;%&amp;apos;,&amp;apos;[%recvinstid]%&amp;apos;)
+  and nvl(filetypecode,&amp;apos;%&amp;apos;) like decode(&amp;apos;[%filetypecode]&amp;apos;,0,&amp;apos;%&amp;apos;,&amp;apos;[%filetypecode]%&amp;apos;)
+  and nvl(transtype,&amp;apos;%&amp;apos;) like decode(&amp;apos;[%transtype]&amp;apos;,0,&amp;apos;%&amp;apos;,&amp;apos;[%transtype]%&amp;apos;)
+  and nvl(GRXM,&amp;apos;%&amp;apos;) like decode(&amp;apos;[%GRXM]&amp;apos;,0,&amp;apos;%&amp;apos;,&amp;apos;[%GRXM]%&amp;apos;)
+  and nvl(GRBH,&amp;apos;%&amp;apos;) like decode(&amp;apos;[%GRBH]&amp;apos;,0,&amp;apos;%&amp;apos;,&amp;apos;[%GRBH]%&amp;apos;)
+order by crtdat desc,reference,to_number(SEQ) desc</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 >MAIN</C6><C7 >MAIN</C7><C8 >MAIN</C8><C9 >MAIN</C9><C10 >MAIN</C10><C11 >MAIN</C11><C12 >MAIN</C12><C13 >MAIN</C13><C14 >MAIN</C14><C15 >MAIN</C15><C16 >MAIN</C16><C17 >MAIN</C17><C18 >MAIN</C18><C19 >MAIN</C19><C20 >MAIN</C20><C21 >MAIN</C21><C22 >MAIN</C22></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

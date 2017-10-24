@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >F</MWTYP><MWID >MSG</MWID><NAME >消息</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >MSG.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE >TRKHDR</BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST >id &amp;quot;编号&amp;quot;,title &amp;quot;标题&amp;quot;,prousr &amp;quot;发送人&amp;quot;,to_char(crtdat,&amp;apos;yyyy-mm-dd hh24:mi:ss&amp;apos;) &amp;quot;发送时间&amp;quot;</COLLIST><WHERE >1=1</WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdcelds>
+<ROWSET>
+<ROW num="0" ><ID >0,3,2</ID><CELLID ></CELLID><NAME >事务编号</NAME><VALFLD >ID</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY >1</IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 >0,3,2</C17></ROW>
+<ROW num="1" ><ID >0,5,2</ID><CELLID ></CELLID><NAME >事务主题</NAME><VALFLD >TITLE</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY >1</IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 >0,5,2</C17></ROW>
+<ROW num="2" ><ID >0,7,2</ID><CELLID ></CELLID><NAME >事务内容</NAME><VALFLD >NOTE</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="3" ><ID >0,10,2</ID><CELLID ></CELLID><NAME >事务提出人</NAME><VALFLD >PROUSR</VALFLD><DEFVAL >[%SYS_USRID]</DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP >COMBOBOX</CTLTYP><LISTID >V_USR</LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+<ROW num="4" ><ID >0,10,4</ID><CELLID ></CELLID><NAME >创建修改时间</NAME><VALFLD >CRTDAT</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID >DAT</LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY >1</IFQUERY><IFQUERYSCOPE >1</IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 >0,10,4</C17></ROW>
+<ROW num="5" ><ID >0,3,4</ID><CELLID ></CELLID><NAME >事务接受人的组织号</NAME><VALFLD >AIMORG</VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP >MSELECTBOX</CTLTYP><LISTID >V_ORG</LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 ></C17></ROW>
+</ROWSET>
+</grdcelds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	if (G_GUID == &amp;quot;&amp;quot;) {
+		_sql.querytods(&amp;quot;GETTRKID&amp;quot;);
+		var id = _this.XMLDS_GetString(0,&amp;quot;TRKID&amp;quot;);
+		_this.SetCellText(sheet,3,2,id);
+	}
+	
+	var acmorg = _this.GetCellText(sheet,3,4);
+	if (acmorg == &amp;quot;&amp;quot;) {
+		_this.SetCellText(sheet,3,4,&amp;quot;ALL&amp;quot;);
+		_this.SetCellShowText(sheet,3,4,&amp;quot;全部&amp;quot;);
+	}
+	else if (acmorg == &amp;quot;ALL&amp;quot;) {
+		_this.SetCellShowText(sheet,3,4,&amp;quot;全部&amp;quot;);
+	}
+	
+	var note = _this.GetCellText(sheet,7,2);
+	_this.SetToCodeEditor(&amp;quot;&amp;quot;,sheet,7,2,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetCellText(sheet,7,2,note);
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >
+//单据保存后
+function fos_aftersave(eaContext)
+//var eaContext=new pub.EAContext();
+{
+	var db = eaContext.getEADatabase();
+	var guid = eaContext.getGuid();
+	var sql = &amp;quot;select * from trkhdr where guid=&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;&amp;quot;;
+	var ds = db.QuerySQL(sql);
+	var revorg = ds.getStringAt(0,&amp;quot;AIMORG&amp;quot;);
+	var msgid = ds.getStringAt(0,&amp;quot;ID&amp;quot;);
+
+	sql = &amp;quot;delete from trkdtl where trkguid=&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;&amp;quot;;
+	db.ExcecutSQL(sql);
+			
+	if (revorg == &amp;quot;ALL&amp;quot;) {
+		var orgds = db.QuerySQL(&amp;quot;select * from v_org order by id&amp;quot;);
+		for (var i=0;i&amp;lt;orgds.getRowCount();i++) {
+			var orgid = orgds.getStringAt(i,&amp;quot;ID&amp;quot;);
+			sql = &amp;quot;insert into trkdtl(TRKGUID,TOUSR,TOUSRORG,ID,RESULT)
+				select &amp;apos;%s&amp;apos;,id tousr,org tousrorg,&amp;apos;%s&amp;apos; msgid,&amp;apos;0&amp;apos; result from usr where org=&amp;apos;%s&amp;apos;&amp;quot;
+				.format([guid,msgid,orgid]);
+			db.ExcecutSQL(sql);
+		}
+	}
+	else {
+		sql = &amp;quot;insert into trkdtl(TRKGUID,TOUSR,TOUSRORG,ID,RESULT)
+				select &amp;apos;%s&amp;apos;,id tousr,org tousrorg,&amp;apos;%s&amp;apos; msgid,&amp;apos;0&amp;apos; result from usr where org=&amp;apos;%s&amp;apos;&amp;quot;
+				.format([guid,msgid,revorg]);
+			db.ExcecutSQL(sql);
+	}
+	
+	
+}
+
+
+//单据删除前
+function fos_beforedelete(eaContext)
+//var eaContext=new pub.EAContext();
+{
+	var db = eaContext.getEADatabase();
+	var guid = eaContext.getGuid();
+
+	var sql = &amp;quot;delete from trkdtl where trkguid=&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;&amp;quot;;
+	db.ExcecutSQL(sql);
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >GETTRKID</ID><NAME ></NAME><DATDSC >SELECT seq.nextval trkid FROM DUAL</DATDSC><C4 >GRDDSCDS_0</C4></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

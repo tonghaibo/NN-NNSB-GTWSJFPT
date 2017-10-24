@@ -1,0 +1,873 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >JJSYB_NDHZ</MWID><NAME >基金收入表年度汇总</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >JJSYB_NDHZ.zxg</FILE><SCENE ></SCENE><FIXED >4,1</FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0;
+var ZXGFILE1;
+var ZXGFILE2;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+      initLayout();
+      initWidget();
+      initQueryValue();      
+      ZXGFILE0 = _this.SaveTempZXGFile(0);
+      ZXGFILE1 = _this.SaveTempZXGFile(1);
+      ZXGFILE2 = _this.SaveTempZXGFile(2);
+}
+
+function initLayout() {
+      _this.ShowToolBar(0);
+      _this.ShowTabBar(1);
+      _this.SplitSheet(3,&amp;quot;V&amp;quot;,40);
+      _this.SplitSheet(0,&amp;quot;V&amp;quot;,&amp;quot;35%&amp;quot;);
+      _this.SplitSheet(4,&amp;quot;V&amp;quot;,40);
+      _this.SplitSheet(&amp;quot;1,2&amp;quot;,&amp;quot;V&amp;quot;,&amp;quot;80%&amp;quot;);
+}
+
+function initQueryValue(){
+      _this.SetCellText(3,1,5,&amp;quot;%25全部&amp;quot;);
+      _this.SetCellText(3,1,8,&amp;quot;%25全部&amp;quot;);
+      _this.SetCellText(3,1,11,&amp;quot;%25&amp;quot;);
+      _this.SetCellText(3,1,2,G_LOGDAT.substr(0,4));
+}
+ 
+function initWidget() {
+      var yyList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_YYYY&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+      var ztList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_ZT&amp;where=sbh=&amp;apos;&amp;quot;+G_ORGID+&amp;quot;&amp;apos;&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+      var lxList = &amp;quot;&amp;quot;;
+      var pzList = &amp;quot;&amp;quot;;
+      lxList = _this.CreateListValue();
+      pzList = _this.CreateListValue();
+      _this.SetListValue(lxList,&amp;quot;A当年到帐当年出帐&amp;quot;,&amp;quot;A当年到帐当年出帐&amp;quot;);
+      _this.SetListValue(lxList,&amp;quot;B上年到帐当年出帐1月1-15日&amp;quot;,&amp;quot;A上年到帐当年出帐1月1-15日&amp;quot;);
+      _this.SetListValue(lxList,&amp;quot;C上年到帐当年出帐1月16日以后&amp;quot;,&amp;quot;C上年到帐当年出帐1月16日以后&amp;quot;);
+      _this.SetListValue(lxList,&amp;quot;D今年到帐次年出帐&amp;quot;,&amp;quot;D今年到帐次年出帐&amp;quot;);
+      _this.SetListValue(lxList,&amp;quot;E今年到帐未出帐(未分款表)&amp;quot;,&amp;quot;E今年到帐未出帐(未分款表)&amp;quot;);
+      _this.SetListValue(lxList,&amp;quot;F数错:今年到帐未出帐(未分款和日记账并存)&amp;quot;,&amp;quot;F数错:今年到帐未出帐(未分款和日记账并存)&amp;quot;);
+      _this.SetListValue(lxList,&amp;quot;G特殊:今年到账未出账被退(未分款表)&amp;quot;,&amp;quot;G特殊:今年到账未出账被退(未分款表)&amp;quot;);
+      _this.SetListValue(lxList,&amp;quot;%25全部&amp;quot;,&amp;quot;%全部&amp;quot;);
+      
+      _this.SetListValue(pzList,&amp;quot;未出凭证&amp;quot;,&amp;quot;未出凭证&amp;quot;);
+      _this.SetListValue(pzList,&amp;quot;已出凭证&amp;quot;,&amp;quot;已出凭证&amp;quot;);
+      _this.SetListValue(pzList,&amp;quot;%25全部&amp;quot;,&amp;quot;%全部&amp;quot;);
+      _this.SetListValue(ztList,&amp;quot;%25&amp;quot;,&amp;quot;%-全部&amp;quot;);
+      _this.SetToComboBox(&amp;quot;&amp;quot;,3,1,2,yyList );
+      _this.SetToComboBox(&amp;quot;&amp;quot;,3,1,5,lxList );
+      _this.SetToComboBox(&amp;quot;&amp;quot;,3,1,8,pzList );
+      _this.SetToComboBox(&amp;quot;&amp;quot;,3,1,11,ztList );
+      
+}
+
+//加载汇总数据
+function loadData()
+{ 
+      var yy = _this.GetCellText(3,1,2);
+      var lx = _this.GetCellText(3,1,5);
+      var pzbz = _this.GetCellText(3,1,8);
+      var zth = _this.GetCellText(3,1,11);
+      _this.LoadZXGFile(ZXGFILE0,-1,0);
+      _this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+      _this.SetMainCellRange(0,4,1,6,18);
+      var xml = _sql.query(&amp;quot;main&amp;quot;,&amp;quot;yy=&amp;quot;+yy+&amp;quot;&amp;lx=&amp;quot;+lx+&amp;quot;&amp;pzbz=&amp;quot;+pzbz+&amp;quot;&amp;zth=&amp;quot;+zth);
+      _this.SetXmlDS(0,4,1,6,18,xml);
+      var ret = _this.invokeOSFunc(&amp;quot;getCount&amp;quot;,&amp;quot;xml=&amp;quot;+xml);  
+      //合计笔数
+      _this.SetCellText(0,_this.GetMainCellRangeRow2(0)+1,1,&amp;quot;合计：&amp;quot;+ret+&amp;quot;笔&amp;quot;);  
+      _this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHOW_ZERO,1);
+      loadDWMX();
+
+}
+
+//加载单位明细
+function loadDWMX()
+{
+      var yy = _this.GetCellText(3,1,2);
+      var lx = _this.GetCellText(3,1,5);
+      var pzbz = _this.GetCellText(3,1,8);
+      var zth = _this.GetCellText(3,1,11); 
+      _this.LoadZXGFile(ZXGFILE1,-1,1);
+      _this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+      _this.SetMainCellRange(1,4,1,6,20);        
+      var xml1 = _sql.query(&amp;quot;dwmx&amp;quot;,&amp;quot;yy=&amp;quot;+yy+&amp;quot;&amp;lx=&amp;quot;+lx+&amp;quot;&amp;pzbz=&amp;quot;+pzbz+&amp;quot;&amp;zth=&amp;quot;+zth);
+      _this.SetXmlDS(1,4,1,6,20,xml1);
+      var ret = _this.invokeOSFunc(&amp;quot;getCount&amp;quot;,&amp;quot;xml=&amp;quot;+xml1);  
+      //合计笔数
+      _this.SetCellText(1,_this.GetMainCellRangeRow2(1)+1,1,&amp;quot;合计：&amp;quot;+ret+&amp;quot;笔&amp;quot;);        
+      var dwbh = _this.GetCellText(1,4,4);
+      //加载单位明细行后，默认加载第一个单位编号的流水明细  
+      loadLSMX(yy,lx,pzbz,zth,dwbh); 
+      _this.SetFixedRow(1,4);
+      _this.SetFixedCol(1,1);
+      _this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHOW_ZERO,1);  
+      _this.RefreshFormula();
+}
+
+//加载流水明细
+function loadLSMX(yy,lx,pzbz,zth,dwbh)
+{     
+      _this.LoadZXGFile(ZXGFILE2,-1,2);
+      _this.SetAttribe(&amp;quot;SHEET_2&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+      _this.SetMainCellRange(2,4,1,6,29);    
+      var xml2 = _sql.query(&amp;quot;lsmx&amp;quot;,&amp;quot;yy=&amp;quot;+yy+&amp;quot;&amp;lx=&amp;quot;+lx+&amp;quot;&amp;pzbz=&amp;quot;+pzbz+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;dwbh=&amp;quot;+dwbh);    
+      _this.SetXmlDS(2,4,1,6,29,xml2);
+      var ret = _this.invokeOSFunc(&amp;quot;getCount&amp;quot;,&amp;quot;xml=&amp;quot;+xml2);  
+      //合计笔数
+      _this.SetCellText(2,_this.GetMainCellRangeRow2(2)+1,1,&amp;quot;合计：&amp;quot;+ret+&amp;quot;笔&amp;quot;);         
+      _this.SetFixedRow(2,4);
+      _this.SetFixedCol(2,1);
+      if(dwbh != &amp;quot;&amp;quot;) {
+          _this.SetCellText(2,1,1,dwbh+&amp;quot;单位年度基金收入情况表（流水明细）&amp;quot;)//设置标题
+      }    
+      _this.SetAttribe(&amp;quot;SHEET_2&amp;quot;,_this.ATTR_SHOW_ZERO,1);
+      //_this.RefreshFormula();
+}
+
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+     if(id == &amp;quot;查询&amp;quot;) {
+          _this.SetCellText(3,1,14,&amp;quot;数据加载中.....&amp;quot;); 
+          loadData();  
+          _this.SetCellText(3,1,14,&amp;quot;&amp;quot;);         
+     }
+     else if(id == &amp;quot;查找&amp;quot;) {
+          var dwbh = _this.GetCellText(4,1,2);
+          searchDW(dwbh);
+     }
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+      if(sheet == 1) {
+         if(row&amp;gt;=4) {
+              var dwbh = _this.GetCellText(sheet,row,4);
+	      var yy = _this.GetCellText(3,1,2);
+	      var lx = _this.GetCellText(3,1,5);
+	      var pzbz = _this.GetCellText(3,1,8);
+	      var zth = _this.GetCellText(3,1,11);               
+              loadLSMX(yy,lx,pzbz,zth,dwbh); 
+         }
+      }
+}
+
+function searchDW(keyval)
+{       
+        var num = 0;
+        var pos = 0;
+	for (var r=_this.GetMainCellRangeRow1(1);r&amp;lt;=_this.GetMainCellRangeRow2(1);r++) {
+		var dwbh = _this.GetCellText(1,r,4);
+		pos += 1*_this.GetRowHeight(1,r);
+		if (dwbh == keyval) {
+			_this.ScrollToPos(1,pos-30,200);
+			_this.SetCellFocus(1,r,4);
+			num++;
+			break;
+		}
+	}
+	if (num == 0) {
+		alert(&amp;quot;没有该单位编号！&amp;quot;);
+	}
+}
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub= new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function getCount()
+{
+     var ds  = new pub.EAXmlDS(xml);
+     return ds.getRowCount();
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >main</ID><NAME ></NAME><DATDSC >SELECT
+  lx
+  ,pzbz 
+  ,zth
+  ,je 
+  ,jehj 
+  ,je_yl
+  ,je_sy
+  ,je_yiliao
+  ,je_yiliao2
+  ,je_gs 
+  ,je_syu
+  ,je_zck 
+  ,je_lxsr
+  ,je_czbzsr 
+  ,je_zysr 
+  ,je_sjbzsr
+  ,je_xjsjsr
+  ,je_qtsr
+FROM
+(
+  select
+     (lx        ) lx        
+    ,(pzbz      ) pzbz       
+    ,(zth       ) zth        
+    ,sum(je        ) je         
+    ,sum(jehj      ) jehj       
+    ,sum(je_yl     ) je_yl      
+    ,sum(je_sy     ) je_sy      
+    ,sum(je_yiliao ) je_yiliao 
+    ,sum(je_yiliao2) je_yiliao2 
+    ,sum(je_gs     ) je_gs     
+    ,sum(je_syu    ) je_syu    
+    ,sum(je_zck    ) je_zck     
+    ,sum(je_lxsr   ) je_lxsr   
+    ,sum(je_czbzsr ) je_czbzsr  
+    ,sum(je_zysr   ) je_zysr   
+    ,sum(je_sjbzsr ) je_sjbzsr  
+    ,sum(je_xjsjsr ) je_xjsjsr
+    ,sum(je_qtsr   ) je_qtsr   
+  from 
+  (
+    SELECT &amp;apos;A当年到帐当年出帐&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+      ,a.zth,a.dwbh,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)) je
+      ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+      ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl
+      ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+      ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+      ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+      ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+      ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+      ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+      ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+      ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+      ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+      ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+    FROM cw_rjzb a, cw_rjzmxb b, cw_ztb d
+    WHERE a.sbh = b.sbh AND a.zth = b.zth AND a.lsh = b.lsh 
+      AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+      AND b.lxbh IN (&amp;apos;11&amp;apos;,&amp;apos;21&amp;apos;,&amp;apos;31&amp;apos;,&amp;apos;33&amp;apos;,&amp;apos;34&amp;apos;,&amp;apos;37&amp;apos;,&amp;apos;38&amp;apos;,&amp;apos;39&amp;apos;,&amp;apos;41&amp;apos;,&amp;apos;51&amp;apos;,&amp;apos;87&amp;apos;,&amp;apos;81&amp;apos;,&amp;apos;82&amp;apos;,&amp;apos;83&amp;apos;,&amp;apos;84&amp;apos;,&amp;apos;85&amp;apos;,&amp;apos;86&amp;apos;)
+      AND a.yy = &amp;apos;[%yy]&amp;apos;
+      AND NOT EXISTS (SELECT 1 FROM cw_rjzb_wfk x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh AND x.yy &amp;lt;&amp;gt; &amp;apos;[%yy]&amp;apos;)
+    group by a.zth,a.dwbh,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)),decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;)  
+    UNION ALL
+    SELECT &amp;apos;B上年到帐当年出帐1月1-15日&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+      ,a.zth,a.dwbh,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)) je 
+      ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+      ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+      ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+      ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+      ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+      ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+      ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+      ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+      ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+      ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+      ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+      ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+    FROM cw_rjzb a, cw_rjzmxb b, cw_ztb d
+    WHERE a.sbh = b.sbh AND a.zth = b.zth AND a.lsh = b.lsh 
+      AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+      AND b.lxbh IN (&amp;apos;11&amp;apos;,&amp;apos;21&amp;apos;,&amp;apos;31&amp;apos;,&amp;apos;33&amp;apos;,&amp;apos;34&amp;apos;,&amp;apos;37&amp;apos;,&amp;apos;38&amp;apos;,&amp;apos;39&amp;apos;,&amp;apos;41&amp;apos;,&amp;apos;51&amp;apos;,&amp;apos;87&amp;apos;,&amp;apos;81&amp;apos;,&amp;apos;82&amp;apos;,&amp;apos;83&amp;apos;,&amp;apos;84&amp;apos;,&amp;apos;85&amp;apos;,&amp;apos;86&amp;apos;)
+      AND a.yy = &amp;apos;[%yy]&amp;apos; AND a.mm = 1 AND a.dd &amp;gt;= 1 AND a.dd &amp;lt;= 15
+      AND EXISTS (SELECT 1 FROM cw_rjzb_wfk x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh AND x.yy = (&amp;apos;[%yy]&amp;apos;-1))
+    group by a.zth,a.dwbh,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)),decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;)  
+    UNION ALL
+    SELECT &amp;apos;C上年到帐当年出帐1月16日以后&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+      ,a.zth,a.dwbh,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)) je 
+      ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+      ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+      ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+      ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+      ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+      ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+      ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+      ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+      ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+      ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+      ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+      ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+    FROM cw_rjzb a, cw_rjzmxb b, cw_ztb d
+    WHERE a.sbh = b.sbh AND a.zth = b.zth AND a.lsh = b.lsh 
+      AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+      AND b.lxbh IN (&amp;apos;11&amp;apos;,&amp;apos;21&amp;apos;,&amp;apos;31&amp;apos;,&amp;apos;33&amp;apos;,&amp;apos;34&amp;apos;,&amp;apos;37&amp;apos;,&amp;apos;38&amp;apos;,&amp;apos;39&amp;apos;,&amp;apos;41&amp;apos;,&amp;apos;51&amp;apos;,&amp;apos;87&amp;apos;,&amp;apos;81&amp;apos;,&amp;apos;82&amp;apos;,&amp;apos;83&amp;apos;,&amp;apos;84&amp;apos;,&amp;apos;85&amp;apos;,&amp;apos;86&amp;apos;)
+      AND a.yy = &amp;apos;[%yy]&amp;apos; AND ((a.mm = 1 AND a.dd &amp;gt; 16) OR a.mm &amp;gt; 1)
+      AND EXISTS (SELECT 1 FROM cw_rjzb_wfk x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh AND x.yy = (&amp;apos;[%yy]&amp;apos;-1))
+    group by a.zth,a.dwbh,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)),decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;)  
+    UNION ALL
+    SELECT &amp;apos;D今年到帐次年出帐&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+      ,a.zth,a.dwbh,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)) je 
+      ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+      ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+      ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+      ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+      ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+      ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+      ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+      ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+      ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+      ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+      ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+      ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+    FROM cw_rjzb a, cw_rjzmxb b, cw_ztb d
+    WHERE a.sbh = b.sbh AND a.zth = b.zth AND a.lsh = b.lsh 
+      AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+      AND b.lxbh IN (&amp;apos;11&amp;apos;,&amp;apos;21&amp;apos;,&amp;apos;31&amp;apos;,&amp;apos;33&amp;apos;,&amp;apos;34&amp;apos;,&amp;apos;37&amp;apos;,&amp;apos;38&amp;apos;,&amp;apos;39&amp;apos;,&amp;apos;41&amp;apos;,&amp;apos;51&amp;apos;,&amp;apos;87&amp;apos;,&amp;apos;81&amp;apos;,&amp;apos;82&amp;apos;,&amp;apos;83&amp;apos;,&amp;apos;84&amp;apos;,&amp;apos;85&amp;apos;,&amp;apos;86&amp;apos;)
+      AND a.yy &amp;gt; &amp;apos;[%yy]&amp;apos;
+      AND EXISTS (SELECT 1 FROM cw_rjzb_wfk x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh AND x.yy = &amp;apos;[%yy]&amp;apos;)
+    group by a.zth,a.dwbh,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)),decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;)  
+    UNION ALL
+    SELECT &amp;apos;E今年到帐未出帐(未分款表)&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+      ,a.zth,a.dwbh,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)) je 
+      ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+      ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+      ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+      ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+      ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+      ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+      ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+      ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+      ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr
+      ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+      ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+      ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+    FROM cw_rjzb_wfk a, cw_rjzmxb_wfk b, cw_ztb d
+    WHERE a.sbh = b.sbh(+) AND a.zth = b.zth(+) AND a.lsh = b.lsh(+) 
+      AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+      AND a.yy = &amp;apos;[%yy]&amp;apos;
+      AND a.fkbz IN (&amp;apos;0&amp;apos;,&amp;apos;1&amp;apos;)
+      AND NOT EXISTS (SELECT 1 FROM cw_rjzb x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh)
+    group by a.zth,a.dwbh,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)),decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;)  
+    UNION ALL
+    SELECT &amp;apos;F数错:今年到帐未出帐(未分款和日记账并存)&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+      ,a.zth,a.dwbh,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)) je 
+      ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+      ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+      ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+      ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+      ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+      ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+      ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+      ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+      ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+      ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+      ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+      ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+    FROM cw_rjzb_wfk a, cw_rjzmxb_wfk b, cw_ztb d
+    WHERE a.sbh = b.sbh(+) AND a.zth = b.zth(+) AND a.lsh = b.lsh(+) 
+      AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+      AND a.yy = &amp;apos;[%yy]&amp;apos;
+      AND a.fkbz IN (&amp;apos;0&amp;apos;,&amp;apos;1&amp;apos;)
+      AND  EXISTS (SELECT 1 FROM cw_rjzb x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh)
+    group by a.zth,a.dwbh,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)),decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;)  
+    UNION ALL
+    SELECT &amp;apos;G特殊:今年到账未出账被退(未分款表)&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+      ,a.zth,a.dwbh,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)) je 
+      ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+      ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+      ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+      ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+      ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+      ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+      ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+      ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+      ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+      ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+      ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+      ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+    FROM cw_rjzb_wfk a, cw_rjzmxb_wfk b, cw_ztb d
+    WHERE a.sbh = b.sbh(+) AND a.zth = b.zth(+) AND a.lsh = b.lsh(+) 
+      AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+      AND a.yy = &amp;apos;[%yy]&amp;apos;
+      AND a.fkbz NOT IN (&amp;apos;0&amp;apos;,&amp;apos;1&amp;apos;,&amp;apos;3&amp;apos;)
+      AND NOT EXISTS (SELECT 1 FROM cw_rjzb x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh)
+    group by a.zth,a.dwbh,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)),decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;)  
+  )
+  where 
+     ((lx like substrb(&amp;apos;[%lx]&amp;apos;,1,1)||&amp;apos;%&amp;apos;) or (lx = &amp;apos;[%lx]&amp;apos;))
+     and ((pzbz like substrb(&amp;apos;[%pzbz]&amp;apos;,1,1)||&amp;apos;%&amp;apos;) or (pzbz = &amp;apos;[%pzbz]&amp;apos;))
+     and (zth like &amp;apos;[%zth]&amp;apos;)
+  group by
+     (lx        ) 
+    ,(pzbz      ) 
+    ,(zth       ) 
+)
+ORDER BY lx,zth</DATDSC><C4 ></C4><C5 >main</C5><C6 ></C6></ROW>
+<ROW num="1" ><ID >dwmx</ID><NAME >单位明细</NAME><DATDSC >SELECT
+  lx 
+  ,pzbz 
+  ,zth 
+  ,dwbh
+  ,dwmc 
+  ,je         
+  ,jehj 
+  ,je_yl 
+  ,je_sy 
+  ,je_yiliao 
+  ,je_yiliao2 
+  ,je_gs 
+  ,je_syu 
+  ,je_zck 
+  ,je_lxsr 
+  ,je_czbzsr 
+  ,je_zysr 
+  ,je_sjbzsr 
+  ,je_xjsjsr 
+  ,je_qtsr 
+FROM 
+(
+  select
+     (lx        ) lx         
+    ,(pzbz      ) pzbz       
+    ,(zth       ) zth        
+    ,dwbh
+    ,dwmc 
+    ,sum(je        ) je         
+    ,sum(jehj      ) jehj       
+    ,sum(je_yl     ) je_yl      
+    ,sum(je_sy     ) je_sy      
+    ,sum(je_yiliao ) je_yiliao  
+    ,sum(je_yiliao2) je_yiliao2 
+    ,sum(je_gs     ) je_gs      
+    ,sum(je_syu    ) je_syu     
+    ,sum(je_zck    ) je_zck     
+    ,sum(je_lxsr   ) je_lxsr    
+    ,sum(je_czbzsr ) je_czbzsr  
+    ,sum(je_zysr   ) je_zysr    
+    ,sum(je_sjbzsr ) je_sjbzsr  
+    ,sum(je_xjsjsr ) je_xjsjsr  
+    ,sum(je_qtsr   ) je_qtsr    
+  from 
+  (
+    SELECT &amp;apos;A当年到帐当年出帐&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+      ,a.zth,a.dwbh,e.dwmc,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)) je 
+      ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+      ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+      ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+      ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+      ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+      ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+      ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+      ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+      ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+      ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+      ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+      ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+    FROM cw_rjzb a, cw_rjzmxb b, cw_ztb d, si_dwb e
+    WHERE a.sbh = b.sbh AND a.zth = b.zth AND a.lsh = b.lsh 
+      AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+      AND b.lxbh IN (&amp;apos;11&amp;apos;,&amp;apos;21&amp;apos;,&amp;apos;31&amp;apos;,&amp;apos;33&amp;apos;,&amp;apos;34&amp;apos;,&amp;apos;37&amp;apos;,&amp;apos;38&amp;apos;,&amp;apos;39&amp;apos;,&amp;apos;41&amp;apos;,&amp;apos;51&amp;apos;,&amp;apos;87&amp;apos;,&amp;apos;81&amp;apos;,&amp;apos;82&amp;apos;,&amp;apos;83&amp;apos;,&amp;apos;84&amp;apos;,&amp;apos;85&amp;apos;,&amp;apos;86&amp;apos;)
+      AND a.yy = &amp;apos;[%yy]&amp;apos;
+      AND NOT EXISTS (SELECT 1 FROM cw_rjzb_wfk x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh AND x.yy &amp;lt;&amp;gt; &amp;apos;[%yy]&amp;apos;)
+      and a.dwbh = e.dwbh(+) and a.sbh = e.sbh(+) and a.zth = e.zth(+)
+    group by a.zth,a.dwbh,e.dwmc,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;),a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0))
+    UNION ALL
+    SELECT &amp;apos;B上年到帐当年出帐1月1-15日&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+      ,a.zth,a.dwbh,e.dwmc,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)) je 
+      ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+      ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+      ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+      ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+      ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+      ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+      ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+      ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+      ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+      ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+      ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+      ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+    FROM cw_rjzb a, cw_rjzmxb b, cw_ztb d, si_dwb e
+    WHERE a.sbh = b.sbh AND a.zth = b.zth AND a.lsh = b.lsh 
+      AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+      AND b.lxbh IN (&amp;apos;11&amp;apos;,&amp;apos;21&amp;apos;,&amp;apos;31&amp;apos;,&amp;apos;33&amp;apos;,&amp;apos;34&amp;apos;,&amp;apos;37&amp;apos;,&amp;apos;38&amp;apos;,&amp;apos;39&amp;apos;,&amp;apos;41&amp;apos;,&amp;apos;51&amp;apos;,&amp;apos;87&amp;apos;,&amp;apos;81&amp;apos;,&amp;apos;82&amp;apos;,&amp;apos;83&amp;apos;,&amp;apos;84&amp;apos;,&amp;apos;85&amp;apos;,&amp;apos;86&amp;apos;)
+      AND a.yy = &amp;apos;[%yy]&amp;apos; AND a.mm = 1 AND a.dd &amp;gt;= 1 AND a.dd &amp;lt;= 15
+      AND EXISTS (SELECT 1 FROM cw_rjzb_wfk x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh AND x.yy = (&amp;apos;[%yy]&amp;apos;-1))
+      and a.dwbh = e.dwbh(+) and a.sbh = e.sbh(+) and a.zth = e.zth(+)
+    group by a.zth,a.dwbh,e.dwmc,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;),a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0))
+    UNION ALL
+    SELECT &amp;apos;C上年到帐当年出帐1月16日以后&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+      ,a.zth,a.dwbh,e.dwmc,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)) je 
+      ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+      ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+      ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+      ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+      ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+      ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+      ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+      ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+      ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+      ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+      ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+      ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+    FROM cw_rjzb a, cw_rjzmxb b, cw_ztb d, si_dwb e
+    WHERE a.sbh = b.sbh AND a.zth = b.zth AND a.lsh = b.lsh 
+      AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+      AND b.lxbh IN (&amp;apos;11&amp;apos;,&amp;apos;21&amp;apos;,&amp;apos;31&amp;apos;,&amp;apos;33&amp;apos;,&amp;apos;34&amp;apos;,&amp;apos;37&amp;apos;,&amp;apos;38&amp;apos;,&amp;apos;39&amp;apos;,&amp;apos;41&amp;apos;,&amp;apos;51&amp;apos;,&amp;apos;87&amp;apos;,&amp;apos;81&amp;apos;,&amp;apos;82&amp;apos;,&amp;apos;83&amp;apos;,&amp;apos;84&amp;apos;,&amp;apos;85&amp;apos;,&amp;apos;86&amp;apos;)
+      AND a.yy = &amp;apos;[%yy]&amp;apos; AND ((a.mm = 1 AND a.dd &amp;gt; 16) OR a.mm &amp;gt; 1)
+      AND EXISTS (SELECT 1 FROM cw_rjzb_wfk x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh AND x.yy = (&amp;apos;[%yy]&amp;apos;-1))
+      and a.dwbh = e.dwbh(+) and a.sbh = e.sbh(+) and a.zth = e.zth(+)
+    group by a.zth,a.dwbh,e.dwmc,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;),a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0))
+    UNION ALL
+    SELECT &amp;apos;D今年到帐次年出帐&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+      ,a.zth,a.dwbh,e.dwmc,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)) je 
+      ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+      ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+      ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+      ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+      ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+      ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+      ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+      ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+      ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+      ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+      ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+      ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+    FROM cw_rjzb a, cw_rjzmxb b, cw_ztb d, si_dwb e
+    WHERE a.sbh = b.sbh AND a.zth = b.zth AND a.lsh = b.lsh 
+      AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+      AND b.lxbh IN (&amp;apos;11&amp;apos;,&amp;apos;21&amp;apos;,&amp;apos;31&amp;apos;,&amp;apos;33&amp;apos;,&amp;apos;34&amp;apos;,&amp;apos;37&amp;apos;,&amp;apos;38&amp;apos;,&amp;apos;39&amp;apos;,&amp;apos;41&amp;apos;,&amp;apos;51&amp;apos;,&amp;apos;87&amp;apos;,&amp;apos;81&amp;apos;,&amp;apos;82&amp;apos;,&amp;apos;83&amp;apos;,&amp;apos;84&amp;apos;,&amp;apos;85&amp;apos;,&amp;apos;86&amp;apos;)
+      AND a.yy &amp;gt; &amp;apos;[%yy]&amp;apos;
+      AND EXISTS (SELECT 1 FROM cw_rjzb_wfk x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh AND x.yy = &amp;apos;[%yy]&amp;apos;)
+      and a.dwbh = e.dwbh(+) and a.sbh = e.sbh(+) and a.zth = e.zth(+)
+    group by a.zth,a.dwbh,e.dwmc,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;),a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0))
+    UNION ALL
+    SELECT &amp;apos;E今年到帐未出帐(未分款表)&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+      ,a.zth,a.dwbh,e.dwmc,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)) je 
+      ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+      ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+      ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+      ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+      ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+      ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+      ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+      ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+      ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+      ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+      ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+      ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+    FROM cw_rjzb_wfk a, cw_rjzmxb_wfk b, cw_ztb d, si_dwb e
+    WHERE a.sbh = b.sbh(+) AND a.zth = b.zth(+) AND a.lsh = b.lsh(+) 
+      AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+      AND a.yy = &amp;apos;[%yy]&amp;apos;
+      AND a.fkbz IN (&amp;apos;0&amp;apos;,&amp;apos;1&amp;apos;)
+      AND NOT EXISTS (SELECT 1 FROM cw_rjzb x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh)
+      and a.dwbh = e.dwbh(+) and a.sbh = e.sbh(+) and a.zth = e.zth(+)
+    group by a.zth,a.dwbh,e.dwmc,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;),a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0))
+    UNION ALL
+    SELECT &amp;apos;F数错:今年到帐未出帐(未分款和日记账并存)&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+      ,a.zth,a.dwbh,e.dwmc,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)) je 
+      ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+      ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+      ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+      ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+      ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+      ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+      ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+      ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+      ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+      ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+      ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+      ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+    FROM cw_rjzb_wfk a, cw_rjzmxb_wfk b, cw_ztb d, si_dwb e
+    WHERE a.sbh = b.sbh(+) AND a.zth = b.zth(+) AND a.lsh = b.lsh(+) 
+      AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+      AND a.yy = &amp;apos;[%yy]&amp;apos;
+      AND a.fkbz IN (&amp;apos;0&amp;apos;,&amp;apos;1&amp;apos;)
+      AND  EXISTS (SELECT 1 FROM cw_rjzb x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh)
+      and a.dwbh = e.dwbh(+) and a.sbh = e.sbh(+) and a.zth = e.zth(+)
+    group by a.zth,a.dwbh,e.dwmc,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;),a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0))
+    UNION ALL
+    SELECT &amp;apos;G特殊:今年到账未出账被退(未分款表)&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+      ,a.zth,a.dwbh,e.dwmc,a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0)) je 
+      ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+      ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+      ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+      ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+      ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+      ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+      ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+      ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+      ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+      ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+      ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+      ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+      ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+    FROM cw_rjzb_wfk a, cw_rjzmxb_wfk b, cw_ztb d, si_dwb e
+    WHERE a.sbh = b.sbh(+) AND a.zth = b.zth(+) AND a.lsh = b.lsh(+) 
+      AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+      AND a.yy = &amp;apos;[%yy]&amp;apos;
+      AND a.fkbz NOT IN (&amp;apos;0&amp;apos;,&amp;apos;1&amp;apos;,&amp;apos;3&amp;apos;)
+      AND NOT EXISTS (SELECT 1 FROM cw_rjzb x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh)
+      and a.dwbh = e.dwbh(+) and a.sbh = e.sbh(+) and a.zth = e.zth(+)
+    group by a.zth,a.dwbh,e.dwmc,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;),a.yy,a.mm,a.dd,a.lsh,(decode(a.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(a.je,0))
+  )
+  where 
+     ((lx like substrb(&amp;apos;[%lx]&amp;apos;,1,1)||&amp;apos;%&amp;apos;) or (lx = &amp;apos;[%lx]&amp;apos;))
+     and ((pzbz like substrb(&amp;apos;[%pzbz]&amp;apos;,1,1)||&amp;apos;%&amp;apos;) or (pzbz = &amp;apos;[%pzbz]&amp;apos;))
+     and (zth like &amp;apos;[%zth]&amp;apos;)
+  group by
+     (lx        ) 
+    ,(pzbz      ) 
+    ,(zth       ) 
+    ,dwbh
+    ,dwmc 
+)
+ORDER BY lx,zth,dwbh</DATDSC><C4 >dwmx</C4><C5 >dwmx</C5><C6 >dwmx</C6></ROW>
+<ROW num="2" ><ID >lsmx</ID><NAME >流水明细</NAME><DATDSC >SELECT 
+  lx 
+  ,pzbz 
+  ,zth 
+  ,dwbh
+  /*,dwmc*/
+  ,yy
+  ,mm
+  ,dd
+  ,lsh
+  ,pzh
+  ,zy
+  ,fkbz
+  ,fkrxm
+  ,fkrq
+  ,jefx
+  ,je 
+  ,jehj 
+  ,je_yl 
+  ,je_sy 
+  ,je_yiliao 
+  ,je_yiliao2 
+  ,je_gs 
+  ,je_syu 
+  ,je_zck 
+  ,je_lxsr 
+  ,je_czbzsr 
+  ,je_zysr 
+  ,je_sjbzsr 
+  ,je_xjsjsr 
+  ,je_qtsr 
+FROM 
+(
+  SELECT &amp;apos;A当年到帐当年出帐&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+    ,a.zth,a.dwbh,e.dwmc,a.yy,a.mm,a.dd,a.lsh,a.pzh,a.zy,a.fkbz,a.fkrxm,a.fkrq,a.jefx,a.je     
+    ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+    ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+    ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+    ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+    ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+    ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+    ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+    ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+    ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+    ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+    ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+    ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+    ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+    ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+  FROM cw_rjzb a, cw_rjzmxb b, cw_ztb d, si_dwb e
+  WHERE a.sbh = b.sbh AND a.zth = b.zth AND a.lsh = b.lsh 
+    AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+    AND b.lxbh IN (&amp;apos;11&amp;apos;,&amp;apos;21&amp;apos;,&amp;apos;31&amp;apos;,&amp;apos;33&amp;apos;,&amp;apos;34&amp;apos;,&amp;apos;37&amp;apos;,&amp;apos;38&amp;apos;,&amp;apos;39&amp;apos;,&amp;apos;41&amp;apos;,&amp;apos;51&amp;apos;,&amp;apos;87&amp;apos;,&amp;apos;81&amp;apos;,&amp;apos;82&amp;apos;,&amp;apos;83&amp;apos;,&amp;apos;84&amp;apos;,&amp;apos;85&amp;apos;,&amp;apos;86&amp;apos;)
+    AND a.yy = &amp;apos;[%yy]&amp;apos;
+    AND NOT EXISTS (SELECT 1 FROM cw_rjzb_wfk x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh AND x.yy &amp;lt;&amp;gt; &amp;apos;[%yy]&amp;apos;)
+    and a.dwbh = e.dwbh(+) and a.sbh = e.sbh(+) and a.zth = e.zth(+)
+    and (a.dwbh = &amp;apos;[%dwbh]&amp;apos; or nvl(a.dwbh,&amp;apos;null&amp;apos;) = nvl(&amp;apos;[%dwbh]&amp;apos;,&amp;apos;null&amp;apos;))
+  group by a.zth,a.dwbh,e.dwmc,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;),a.yy,a.mm,a.dd,a.lsh,a.pzh,a.zy,a.fkbz,a.fkrxm,a.fkrq,a.jefx,a.je
+  UNION ALL
+  SELECT &amp;apos;B上年到帐当年出帐1月1-15日&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+    ,a.zth,a.dwbh,e.dwmc,a.yy,a.mm,a.dd,a.lsh,a.pzh,a.zy,a.fkbz,a.fkrxm,a.fkrq,a.jefx,a.je
+    ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+    ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+    ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+    ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+    ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+    ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+    ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+    ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+    ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+    ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+    ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+    ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+    ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+    ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+  FROM cw_rjzb a, cw_rjzmxb b, cw_ztb d, si_dwb e
+  WHERE a.sbh = b.sbh AND a.zth = b.zth AND a.lsh = b.lsh 
+    AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+    AND b.lxbh IN (&amp;apos;11&amp;apos;,&amp;apos;21&amp;apos;,&amp;apos;31&amp;apos;,&amp;apos;33&amp;apos;,&amp;apos;34&amp;apos;,&amp;apos;37&amp;apos;,&amp;apos;38&amp;apos;,&amp;apos;39&amp;apos;,&amp;apos;41&amp;apos;,&amp;apos;51&amp;apos;,&amp;apos;87&amp;apos;,&amp;apos;81&amp;apos;,&amp;apos;82&amp;apos;,&amp;apos;83&amp;apos;,&amp;apos;84&amp;apos;,&amp;apos;85&amp;apos;,&amp;apos;86&amp;apos;)
+    AND a.yy = &amp;apos;[%yy]&amp;apos; AND a.mm = 1 AND a.dd &amp;gt;= 1 AND a.dd &amp;lt;= 15
+    AND EXISTS (SELECT 1 FROM cw_rjzb_wfk x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh AND x.yy = (&amp;apos;[%yy]&amp;apos;-1))
+    and a.dwbh = e.dwbh(+) and a.sbh = e.sbh(+) and a.zth = e.zth(+)
+    and (a.dwbh = &amp;apos;[%dwbh]&amp;apos; or nvl(a.dwbh,&amp;apos;null&amp;apos;) = nvl(&amp;apos;[%dwbh]&amp;apos;,&amp;apos;null&amp;apos;))
+  group by a.zth,a.dwbh,e.dwmc,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) ,a.yy,a.mm,a.dd,a.lsh,a.pzh,a.zy,a.fkbz,a.fkrxm,a.fkrq,a.jefx,a.je   
+  UNION ALL
+  SELECT &amp;apos;C上年到帐当年出帐1月16日以后&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+    ,a.zth,a.dwbh,e.dwmc,a.yy,a.mm,a.dd,a.lsh,a.pzh,a.zy,a.fkbz,a.fkrxm,a.fkrq,a.jefx,a.je
+    ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+    ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+    ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+    ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+    ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+    ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+    ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+    ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+    ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+    ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+    ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+    ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+    ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+    ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+  FROM cw_rjzb a, cw_rjzmxb b, cw_ztb d, si_dwb e
+  WHERE a.sbh = b.sbh AND a.zth = b.zth AND a.lsh = b.lsh 
+    AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+    AND b.lxbh IN (&amp;apos;11&amp;apos;,&amp;apos;21&amp;apos;,&amp;apos;31&amp;apos;,&amp;apos;33&amp;apos;,&amp;apos;34&amp;apos;,&amp;apos;37&amp;apos;,&amp;apos;38&amp;apos;,&amp;apos;39&amp;apos;,&amp;apos;41&amp;apos;,&amp;apos;51&amp;apos;,&amp;apos;87&amp;apos;,&amp;apos;81&amp;apos;,&amp;apos;82&amp;apos;,&amp;apos;83&amp;apos;,&amp;apos;84&amp;apos;,&amp;apos;85&amp;apos;,&amp;apos;86&amp;apos;)
+    AND a.yy = &amp;apos;[%yy]&amp;apos; AND ((a.mm = 1 AND a.dd &amp;gt; 16) OR a.mm &amp;gt; 1)
+    AND EXISTS (SELECT 1 FROM cw_rjzb_wfk x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh AND x.yy = (&amp;apos;[%yy]&amp;apos;-1))
+    and a.dwbh = e.dwbh(+) and a.sbh = e.sbh(+) and a.zth = e.zth(+)
+    and (a.dwbh = &amp;apos;[%dwbh]&amp;apos; or nvl(a.dwbh,&amp;apos;null&amp;apos;) = nvl(&amp;apos;[%dwbh]&amp;apos;,&amp;apos;null&amp;apos;))
+  group by a.zth,a.dwbh,e.dwmc,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;),a.yy,a.mm,a.dd,a.lsh,a.pzh,a.zy,a.fkbz,a.fkrxm,a.fkrq,a.jefx,a.je    
+  UNION ALL
+  SELECT &amp;apos;D今年到帐次年出帐&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+    ,a.zth,a.dwbh,e.dwmc,a.yy,a.mm,a.dd,a.lsh,a.pzh,a.zy,a.fkbz,a.fkrxm,a.fkrq,a.jefx,a.je
+    ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+    ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+    ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+    ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+    ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+    ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+    ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+    ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+    ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+    ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+    ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+    ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+    ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+    ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+  FROM cw_rjzb a, cw_rjzmxb b, cw_ztb d, si_dwb e
+  WHERE a.sbh = b.sbh AND a.zth = b.zth AND a.lsh = b.lsh 
+    AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+    AND b.lxbh IN (&amp;apos;11&amp;apos;,&amp;apos;21&amp;apos;,&amp;apos;31&amp;apos;,&amp;apos;33&amp;apos;,&amp;apos;34&amp;apos;,&amp;apos;37&amp;apos;,&amp;apos;38&amp;apos;,&amp;apos;39&amp;apos;,&amp;apos;41&amp;apos;,&amp;apos;51&amp;apos;,&amp;apos;87&amp;apos;,&amp;apos;81&amp;apos;,&amp;apos;82&amp;apos;,&amp;apos;83&amp;apos;,&amp;apos;84&amp;apos;,&amp;apos;85&amp;apos;,&amp;apos;86&amp;apos;)
+    AND a.yy &amp;gt; &amp;apos;[%yy]&amp;apos;
+    AND EXISTS (SELECT 1 FROM cw_rjzb_wfk x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh AND x.yy = &amp;apos;[%yy]&amp;apos;)
+    and a.dwbh = e.dwbh(+) and a.sbh = e.sbh(+) and a.zth = e.zth(+)
+    and (a.dwbh = &amp;apos;[%dwbh]&amp;apos; or nvl(a.dwbh,&amp;apos;null&amp;apos;) = nvl(&amp;apos;[%dwbh]&amp;apos;,&amp;apos;null&amp;apos;))
+  group by a.zth,a.dwbh,e.dwmc,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;),a.yy,a.mm,a.dd,a.lsh,a.pzh,a.zy,a.fkbz,a.fkrxm,a.fkrq,a.jefx,a.je    
+  UNION ALL
+  SELECT &amp;apos;E今年到帐未出帐(未分款表)&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+    ,a.zth,a.dwbh,e.dwmc,a.yy,a.mm,a.dd,a.lsh,a.pzh,a.zy,a.fkbz,a.fkrxm,a.fkrq,a.jefx,a.je
+    ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+    ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+    ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+    ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+    ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+    ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+    ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+    ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+    ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+    ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+    ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+    ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+    ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+    ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+  FROM cw_rjzb_wfk a, cw_rjzmxb_wfk b, cw_ztb d, si_dwb e
+  WHERE a.sbh = b.sbh(+) AND a.zth = b.zth(+) AND a.lsh = b.lsh(+) 
+    AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+    AND a.yy = &amp;apos;[%yy]&amp;apos;
+    AND a.fkbz IN (&amp;apos;0&amp;apos;,&amp;apos;1&amp;apos;)
+    AND NOT EXISTS (SELECT 1 FROM cw_rjzb x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh)
+    and a.dwbh = e.dwbh(+) and a.sbh = e.sbh(+) and a.zth = e.zth(+)
+    and (a.dwbh = &amp;apos;[%dwbh]&amp;apos; or nvl(a.dwbh,&amp;apos;null&amp;apos;) = nvl(&amp;apos;[%dwbh]&amp;apos;,&amp;apos;null&amp;apos;))
+  group by a.zth,a.dwbh,e.dwmc,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;),a.yy,a.mm,a.dd,a.lsh,a.pzh,a.zy,a.fkbz,a.fkrxm,a.fkrq,a.jefx,a.je  
+  UNION ALL
+  SELECT &amp;apos;F数错:今年到帐未出帐(未分款和日记账并存)&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+    ,a.zth,a.dwbh,e.dwmc,a.yy,a.mm,a.dd,a.lsh,a.pzh,a.zy,a.fkbz,a.fkrxm,a.fkrq,a.jefx,a.je
+    ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+    ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+    ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+    ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+    ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+    ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+    ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+    ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+    ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+    ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+    ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+    ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+    ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+    ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+  FROM cw_rjzb_wfk a, cw_rjzmxb_wfk b, cw_ztb d, si_dwb e
+  WHERE a.sbh = b.sbh(+) AND a.zth = b.zth(+) AND a.lsh = b.lsh(+) 
+    AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+    AND a.yy = &amp;apos;[%yy]&amp;apos;
+    AND a.fkbz IN (&amp;apos;0&amp;apos;,&amp;apos;1&amp;apos;)
+    AND  EXISTS (SELECT 1 FROM cw_rjzb x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh)
+    and a.dwbh = e.dwbh(+) and a.sbh = e.sbh(+) and a.zth = e.zth(+)
+    and (a.dwbh = &amp;apos;[%dwbh]&amp;apos; or nvl(a.dwbh,&amp;apos;null&amp;apos;) = nvl(&amp;apos;[%dwbh]&amp;apos;,&amp;apos;null&amp;apos;))
+  group by a.zth,a.dwbh,e.dwmc,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;),a.yy,a.mm,a.dd,a.lsh,a.pzh,a.zy,a.fkbz,a.fkrxm,a.fkrq,a.jefx,a.je 
+  UNION ALL
+  SELECT &amp;apos;G特殊:今年到账未出账被退(未分款表)&amp;apos; lx,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;) pzbz
+    ,a.zth,a.dwbh,e.dwmc,a.yy,a.mm,a.dd,a.lsh,a.pzh,a.zy,a.fkbz,a.fkrxm,a.fkrq,a.jefx,a.je
+    ,sum(decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) jehj 
+    ,sum(decode(b.lxbh,&amp;apos;11&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yl 
+    ,sum(decode(b.lxbh,&amp;apos;21&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sy 
+    ,sum(decode(b.lxbh,&amp;apos;31&amp;apos;,1,&amp;apos;33&amp;apos;,1,&amp;apos;34&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao 
+    ,sum(decode(b.lxbh,&amp;apos;37&amp;apos;,1,&amp;apos;38&amp;apos;,1,&amp;apos;39&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_yiliao2 
+    ,sum(decode(b.lxbh,&amp;apos;41&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_gs 
+    ,sum(decode(b.lxbh,&amp;apos;51&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_syu 
+    ,sum(decode(b.lxbh,&amp;apos;87&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zck 
+    ,sum(decode(b.lxbh,&amp;apos;81&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_lxsr 
+    ,sum(decode(b.lxbh,&amp;apos;82&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_czbzsr 
+    ,sum(decode(b.lxbh,&amp;apos;83&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_zysr 
+    ,sum(decode(b.lxbh,&amp;apos;84&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_sjbzsr 
+    ,sum(decode(b.lxbh,&amp;apos;85&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_xjsjsr 
+    ,sum(decode(b.lxbh,&amp;apos;86&amp;apos;,1,0) * decode(b.jefx,&amp;apos;贷&amp;apos;,-1,1) * nvl(b.je,0)) je_qtsr 
+  FROM cw_rjzb_wfk a, cw_rjzmxb_wfk b, cw_ztb d, si_dwb e
+  WHERE a.sbh = b.sbh(+) AND a.zth = b.zth(+) AND a.lsh = b.lsh(+) 
+    AND a.sbh = d.sbh AND a.zth = d.zth AND d.yszth = &amp;apos;2&amp;apos;
+    AND a.yy = &amp;apos;[%yy]&amp;apos;
+    AND a.fkbz NOT IN (&amp;apos;0&amp;apos;,&amp;apos;1&amp;apos;,&amp;apos;3&amp;apos;)
+    AND NOT EXISTS (SELECT 1 FROM cw_rjzb x WHERE a.sbh = x.sbh AND a.zth = x.zth AND a.lsh = x.lsh)
+    and a.dwbh = e.dwbh(+) and a.sbh = e.sbh(+) and a.zth = e.zth(+)
+    and (a.dwbh = &amp;apos;[%dwbh]&amp;apos; or nvl(a.dwbh,&amp;apos;null&amp;apos;) = nvl(&amp;apos;[%dwbh]&amp;apos;,&amp;apos;null&amp;apos;))
+  group by a.zth,a.dwbh,e.dwmc,decode(a.pzh,NULL,&amp;apos;未出凭证&amp;apos;,&amp;apos;已出凭证&amp;apos;),a.yy,a.mm,a.dd,a.lsh,a.pzh,a.zy,a.fkbz,a.fkrxm,a.fkrq,a.jefx,a.je  
+)
+where 
+     ((lx like substrb(&amp;apos;[%lx]&amp;apos;,1,1)||&amp;apos;%&amp;apos;) or (lx = &amp;apos;[%lx]&amp;apos;))
+     and ((pzbz like substrb(&amp;apos;[%pzbz]&amp;apos;,1,1)||&amp;apos;%&amp;apos;) or (pzbz = &amp;apos;[%pzbz]&amp;apos;))
+     and (zth like &amp;apos;[%zth]&amp;apos;)
+ORDER BY lx,zth,dwbh,yy,mm,dd,lsh</DATDSC><C4 >lsmx</C4><C5 >lsmx</C5><C6 ></C6></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

@@ -1,0 +1,180 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >CW_PUBLIC</MWID><NAME >财务公共函数</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CW_PUBLIC.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE ></GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >
+//判断是否登录年月是否已经结账
+function Pub_check_jz(sbh,zth,yy,mm){
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	var yy_next = 0;
+	var mm_next = 0;
+	//20170110 lyh modify 是否结账判断不对，重新修改
+	var yy1 = 0;
+	var mm1 = 0;
+	
+	try{
+		db = new pub.EADatabase();
+		sql = &amp;quot;select dqym from cw_ztb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+		var dqym = db.GetSQL(sql);
+		
+		sql = &amp;quot;select trim(to_char(&amp;quot;+yy+&amp;quot;,&amp;apos;0000&amp;apos;)) || trim(to_char(&amp;quot;+mm+&amp;quot;,&amp;apos;00&amp;apos;)) from dual&amp;quot;;
+		var dlym = db.GetSQL(sql);		
+		if(dqym &amp;gt; dlym){
+			return -1+&amp;quot;@&amp;quot;+&amp;quot;本月已结过帐，不能再记本月的帐！\n当前年月:&amp;quot;+dqym+&amp;quot; 登录年月:&amp;quot;+dlym;
+		}
+//		else if(dqym != dlym){
+//			return -1+&amp;quot;@&amp;quot;+&amp;quot;上月没有结帐，本月不能记帐！\n当前年月:&amp;quot;+dqym+&amp;quot; 登录年月:&amp;quot;+dlym;
+//		}
+		
+		//求下一个月
+		if(mm == 12){
+			yy_next = 1*yy + 1;
+			mm_next = 1;
+		}else{
+			yy_next = 1*yy;
+			mm_next = 1*mm + 1;
+		}
+		
+		//求上月
+		if (mm == 1){
+			yy1 = yy - 1;
+			mm1 = 12;
+		}else{
+			yy1 = yy;
+			mm1 = mm - 1;
+		}
+		
+//		//判断凭证汇总表
+//		sql = &amp;quot;select count(*) into :my_count from cw_pzhzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy1+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm1+&amp;quot;&amp;apos; and zt != &amp;apos;已记帐&amp;apos;&amp;quot;;
+//		var cou1 = db.GetSQL(sql);
+//		if(cou1 &amp;gt; 0){
+//			return -1+&amp;quot;@&amp;quot;+&amp;quot;上月没有结帐，本月不能记帐!(上月凭证汇总表有数据但没有记总帐)\n登录年月:&amp;quot;+dlym+&amp;quot;;上月个月&amp;quot;+yy1+&amp;quot;&amp;quot;+mm1;
+//		}
+//
+//		//判断凭证表
+//		sql = &amp;quot;select count(*) into :my_count from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy1+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm1+&amp;quot;&amp;apos; and zt != &amp;apos;记总帐&amp;apos;&amp;quot;;
+//		var cou2 = db.GetSQL(sql);
+//		if(cou2 &amp;gt; 0){
+//			return -1+&amp;quot;@&amp;quot;+&amp;quot;上月没有结帐，本月不能记帐!(上月凭证表有数据但没有记总帐)\n登录年月:&amp;quot;+dlym+&amp;quot;;上月个月&amp;quot;+yy1+&amp;quot;&amp;quot;+mm1;
+//		}		
+		
+//		sql = &amp;quot;select count(*) from cw_qcyeb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy_next+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm_next+&amp;quot;&amp;apos;&amp;quot;;
+//		var cou = db.GetSQL(sql);
+//		if(cou &amp;gt; 0){
+//			return -1+&amp;quot;@&amp;quot;+&amp;quot;本月已结过帐，不能再记本月的帐,(下月期初余额表有期初余额)\n登录年月:&amp;quot;+dlym+&amp;quot;;下个月&amp;quot;+yy_next+&amp;quot;&amp;quot;+mm_next;
+//		}
+		
+		return 1+&amp;quot;@&amp;quot;+&amp;quot;可以继续操作&amp;quot;;
+		
+	}catch(e){
+		if (db != null) db.Rollback();
+		return -2+&amp;quot;@&amp;quot;+e.toString();
+	}finally{
+		if (db != null) db.Close();
+	}
+}
+
+//20170117 lyh add
+//判断是否登录年月是否已经结账  用于凭证记账，限制上月没有结账不允许记账
+function Pub_check_jz2(sbh,zth,yy,mm){
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	var yy_next = 0;
+	var mm_next = 0;
+	//20170110 lyh modify 是否结账判断不对，重新修改
+	var yy1 = 0;
+	var mm1 = 0;
+	
+	try{
+		db = new pub.EADatabase();
+		sql = &amp;quot;select dqym from cw_ztb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+		var dqym = db.GetSQL(sql);
+		
+		sql = &amp;quot;select trim(to_char(&amp;quot;+yy+&amp;quot;,&amp;apos;0000&amp;apos;)) || trim(to_char(&amp;quot;+mm+&amp;quot;,&amp;apos;00&amp;apos;)) from dual&amp;quot;;
+		var dlym = db.GetSQL(sql);		
+		if(dqym &amp;gt; dlym){
+			return -1+&amp;quot;@&amp;quot;+&amp;quot;本月已结过帐，不能再记本月的帐！\n未记账年月:&amp;quot;+dqym+&amp;quot; 登录年月:&amp;quot;+dlym;
+		}
+		else if(dqym != dlym){
+			return -1+&amp;quot;@&amp;quot;+&amp;quot;上月没有结帐，本月不能记帐！\n未记账年月:&amp;quot;+dqym+&amp;quot; 登录年月:&amp;quot;+dlym;
+		}
+		
+		//求下一个月
+		if(mm == 12){
+			yy_next = 1*yy + 1;
+			mm_next = 1;
+		}else{
+			yy_next = 1*yy;
+			mm_next = 1*mm + 1;
+		}
+		
+		//求上月
+		if (mm == 1){
+			yy1 = yy - 1;
+			mm1 = 12;
+		}else{
+			yy1 = yy;
+			mm1 = mm - 1;
+		}
+		
+		//判断凭证汇总表
+		sql = &amp;quot;select count(*) into :my_count from cw_pzhzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy1+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm1+&amp;quot;&amp;apos; and zt != &amp;apos;已记帐&amp;apos;&amp;quot;;
+		var cou1 = db.GetSQL(sql);
+		if(cou1 &amp;gt; 0){
+			return -1+&amp;quot;@&amp;quot;+&amp;quot;上月没有结帐，本月不能记帐!(上月凭证汇总表有数据但没有记总帐)\n登录年月:&amp;quot;+dlym+&amp;quot;;上月个月&amp;quot;+yy1+&amp;quot;&amp;quot;+mm1;
+		}
+
+		//判断凭证表
+		sql = &amp;quot;select count(*) into :my_count from cw_pzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy1+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm1+&amp;quot;&amp;apos; and zt != &amp;apos;记总帐&amp;apos;&amp;quot;;
+		var cou2 = db.GetSQL(sql);
+		if(cou2 &amp;gt; 0){
+			return -1+&amp;quot;@&amp;quot;+&amp;quot;上月没有结帐，本月不能记帐!(上月凭证表有数据但没有记总帐)\n登录年月:&amp;quot;+dlym+&amp;quot;;上月个月&amp;quot;+yy1+&amp;quot;&amp;quot;+mm1;
+		}		
+//		
+		sql = &amp;quot;select count(*) from cw_qcyeb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy_next+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm_next+&amp;quot;&amp;apos;&amp;quot;;
+		var cou = db.GetSQL(sql);
+		if(cou &amp;gt; 0){
+			return -1+&amp;quot;@&amp;quot;+&amp;quot;本月已结过帐，不能再记本月的帐,(下月期初余额表有期初余额)\n登录年月:&amp;quot;+dlym+&amp;quot;;下个月&amp;quot;+yy_next+&amp;quot;&amp;quot;+mm_next;
+		}
+		
+		return 1+&amp;quot;@&amp;quot;+&amp;quot;可以继续操作&amp;quot;;
+		
+	}catch(e){
+		if (db != null) db.Rollback();
+		return -2+&amp;quot;@&amp;quot;+e.toString();
+	}finally{
+		if (db != null) db.Close();
+	}
+}
+
+//分页功能函数
+//sql : 查询SQL语句
+//pageno : 查询第几页数据
+//pagerows : 每页总行数
+function getDataByPage(db,sql,pageno,pagerows)
+{
+	var rn1 = (pageno - 1) * pagerows;
+	var rn2 = pageno * pagerows;
+	var mysql = &amp;quot;select * from (select t.*,rownum rn from (&amp;quot;+sql+&amp;quot;) t ) where rn&amp;gt;=(&amp;quot;+rn1+&amp;quot; and rn&amp;lt;=&amp;quot;+rn2;
+	return mysql;
+}
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

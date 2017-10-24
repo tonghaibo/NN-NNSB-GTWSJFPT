@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >QMCL_JZZ</MWID><NAME >记总帐</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >QMCL_JZZ.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD >0</HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0;
+var sbh = &amp;quot;&amp;quot;;
+var zth= &amp;quot;&amp;quot;;
+var G_YY = &amp;quot;&amp;quot;;
+var G_MM = &amp;quot;&amp;quot;;
+var minzzh = &amp;quot;&amp;quot;;
+var maxzzh = &amp;quot;&amp;quot;;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.ShowToolBar(0);
+	sbh = G_ORGID;
+	zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+	G_YY = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	G_MM = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+       ZXGFILE0 = _this.SaveTempZXGFile(0);
+	initLayout();
+	minzzh = getZZH().split(&amp;quot;~&amp;quot;)[0];
+	maxzzh = getZZH().split(&amp;quot;~&amp;quot;)[1];
+	_this.SetCellText(1,1,5,minzzh);
+	_this.SetCellText(1,1,7,maxzzh);	
+	loadMainData();
+	_this.AutoFixScreenWidth();
+}
+
+//布局初始化
+function initLayout()
+{
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,50);
+	_this.SplitSheet(0,&amp;quot;H&amp;quot;,&amp;quot;60%&amp;quot;);
+	_this.SetToCodeEditor(&amp;quot;&amp;quot;,2,-1,-1,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetCellText(2,-1,-1,&amp;quot;记帐报告\n&amp;quot;);
+}
+
+//加载数据
+function loadMainData()
+{
+	//未记帐汇总字列表
+	_this.LoadZXGFile(ZXGFILE0,-1,0);
+	if(minzzh != &amp;quot;&amp;quot; &amp;&amp; maxzzh != &amp;quot;&amp;quot;) {
+		var xml = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;yy=&amp;quot;+G_YY+&amp;quot;&amp;mm=&amp;quot;+G_MM+&amp;quot;&amp;minzzh=&amp;quot;+minzzh+&amp;quot;&amp;maxzzh=&amp;quot;+maxzzh+&amp;quot;&amp;pzlx=记&amp;quot;);
+		_this.SetXmlDS(0,3,1,15,5,xml);	
+	}
+	_this.AutoFixScreenWidth();
+}
+
+//获取最小和最大汇总字
+function getZZH()
+{
+	var curr_min_zzh = &amp;quot;&amp;quot;;
+	var curr_max_zzh = &amp;quot;&amp;quot;;
+	var pzlx = &amp;quot;记&amp;quot;;
+	_sql.querytods(&amp;quot;getZZH&amp;quot;,&amp;quot;yy=&amp;quot;+G_YY+&amp;quot;&amp;mm=&amp;quot;+G_MM+&amp;quot;&amp;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;pzlx=&amp;quot;+pzlx);
+	try{
+		curr_min_zzh = _this.XMLDS_GetStringAt(0,0);
+	 	curr_max_zzh = _this.XMLDS_GetStringAt(0,1);	
+	}catch(e){}
+	return 	curr_min_zzh+&amp;quot;~&amp;quot;+curr_max_zzh;
+}
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if(id == &amp;quot;记帐&amp;quot;) {
+		JZZ();
+	}
+}
+
+//记帐
+function JZZ()
+{
+	//检查是否已经结账
+	var jz_yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	var jz_mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+	var jz_sbh = G_ORGID;
+	var jz_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	var param = new Object();
+	param.yy = jz_yy;
+	param.mm = jz_mm;
+	param.sbh = jz_sbh;
+	param.zth = jz_zth;
+	var jz_retVal = invokeOSFuncExt(&amp;quot;check_jz&amp;quot;,param);
+	var jz_ret = jz_retVal.split(&amp;quot;@&amp;quot;)[0];
+	var jz_msg = jz_retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(jz_ret != 1 ){
+		alert(jz_retVal);
+		return false;
+	}
+	
+	if(minzzh == &amp;quot;&amp;quot;){
+		alert(&amp;quot;没有可记总账的汇总字！！！&amp;quot;)
+		return false;
+	}
+	
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=QMCL_JZZ_JZBG&amp;zzh1=&amp;quot;+minzzh+&amp;quot;&amp;zzh2=&amp;quot;+maxzzh,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=1000px;dialogHeight=500px;&amp;quot;);
+	loadMainData();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >//检查结账
+function check_jz(){
+	var Pub = new SBCW_CW_PUBLIC();
+	var retVal = Pub.Pub_check_jz(sbh,zth,yy,mm);
+	return retVal;
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >  select mm,zzh,pzlx,zdrxm,jzrxm
+  from
+  (
+  SELECT  cw_pzhzb.yy ,           
+          cw_pzhzb.mm ,           
+          cw_pzhzb.zzh ,           
+          cw_pzhzb.pzlx ,           
+          cw_pzhzb.zt ,          
+          cw_pzhzb.zdrxm ,           
+          cw_pzhzb.jzrxm     
+        FROM cw_pzhzb      
+        WHERE ( CW_PZHZB.SBH = &amp;apos;[%sbh]&amp;apos; ) and          
+        ( CW_PZHZB.ZTH = &amp;apos;[%zth]&amp;apos; ) and          
+        ( CW_PZHZB.YY = [%yy] ) and          
+        ( CW_PZHZB.MM = [%mm]) and          
+        ( CW_PZHZB.PZLX = &amp;apos;[%pzlx]&amp;apos; ) and          
+        ( CW_PZHZB.ZZH &amp;gt;= [%minzzh]) and          
+        ( CW_PZHZB.ZZH &amp;lt;= [%maxzzh]) and
+        zt != &amp;apos;已记帐&amp;apos; 
+        ORDER BY cw_pzhzb.zzh ASC  
+    )    </DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 >MAIN</C6><C7 >MAIN</C7><C8 >MAIN</C8></ROW>
+<ROW num="1" ><ID >getZZH</ID><NAME ></NAME><DATDSC >select min(zzh),max(zzh)
+       from cw_pzhzb 
+       where sbh= &amp;apos;[%sbh]&amp;apos; and zth = &amp;apos;[%zth]&amp;apos; and yy = &amp;apos;[%yy]&amp;apos; 
+             and mm = &amp;apos;[%mm]&amp;apos; and pzlx = &amp;apos;[%pzlx]&amp;apos; 
+             and zt != &amp;apos;已记帐&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 >getZZH</C7><C8 >getZZH</C8></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

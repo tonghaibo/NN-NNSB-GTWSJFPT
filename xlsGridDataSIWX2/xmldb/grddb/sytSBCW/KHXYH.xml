@@ -1,0 +1,400 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >KHXYH</MWID><NAME >跨行协议号</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >KHXYH.zxg</FILE><SCENE ></SCENE><FIXED >0,0</FIXED><CATTYP >日记账管理</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD >1</HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >GRDPAMDS_0</ID><NAME ></NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG ></VISFLG><KEYFLG ></KEYFLG><C13 >GRDPAMDS_0</C13><C14 >GRDPAMDS_0</C14></ROW>
+</ROWSET>
+</grdpamds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+
+
+			
+		
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{	
+	
+	  
+	
+	//设置第1列为选中控件
+//	for (var sh=0;sh&amp;lt;3;sh++) {
+//		for (var r=0;r&amp;lt;_this.GetRowCount(sh);r++) {
+//			_this.SetToBoolBox(sh,r,0);
+//			_this.SetCellText(0,r,0,0);
+//		}
+//	}
+	_this.SetCellLock(0,1,1,1);
+	_this.SetCellLock(0,1,2,1);
+	_this.SetCellLock(0,1,3,1);
+	_this.SetCellLock(0,1,4,1);
+	_this.SetCellLock(0,1,5,1);
+	_this.SetCellLock(0,1,6,1);
+	var cur_sbh = G_ORGID;
+	var cur_zth = G_ACCID.replace(cur_sbh,&amp;quot;&amp;quot;);
+	var curr_row = _this.GetCurrentRow(0);
+	_this.SetMainCellRange(0,1,0,1,6);
+	var count_col=_this.GetColCount(0);
+	//传入显示的数据源语句
+	var xml= _sql.query(&amp;quot;list&amp;quot;,&amp;quot;sbh=&amp;quot;+cur_sbh+&amp;quot;&amp;zth=&amp;quot;+cur_zth);
+	//执行
+	 _this.SetXmlDS(sheet,1,0,1,6,xml);
+	 //新增一个按钮
+	_this.AddToolbarButton(&amp;quot;udf_add&amp;quot;,&amp;quot;新增&amp;quot;,&amp;quot;新增&amp;quot;,&amp;quot;&amp;quot;,1,4,4,40);
+	_this.AddToolbarButton(&amp;quot;udf_save&amp;quot;,&amp;quot;保存&amp;quot;,&amp;quot;保存&amp;quot;,&amp;quot;&amp;quot;,1,5,5,40);
+	_this.AddToolbarButton(&amp;quot;udf_update&amp;quot;,&amp;quot;一键更新&amp;quot;,&amp;quot;一键更新&amp;quot;,&amp;quot;&amp;quot;,1,3,3,40);
+
+	var xmlmenu = &amp;quot;&amp;lt;item id=\&amp;quot;print_selected\&amp;quot; name=\&amp;quot;只打印选中行\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;print_fromcurrow\&amp;quot; name=\&amp;quot;从当前行开始打印\&amp;quot;/&amp;gt;&amp;quot;;    	 
+	
+	
+	//隐藏多余行
+	for(var i = 0;i&amp;lt;=_this.GetRowCount(sheet);i++){  
+	 if(_this.GetCellShowText(sheet,i,0) == &amp;quot;&amp;quot;){
+	 
+	 	_this.SetRowVisible(sheet,i,-1)
+	 }
+	}
+	_this.SetCellFont(0,curr_row,3,0,2,0);
+				
+}
+
+
+
+
+//新增
+function add(){
+	
+//	var i=0;
+//	for( i = 0;i&amp;lt;=_this.GetRowCount(0);i++){  
+//	
+//	 if(_this.GetCellShowText(0,i,0) == &amp;quot;&amp;quot;){
+//	  if(i==0) continue;
+//	    if(i==1)
+//	    {
+//	    alert(&amp;quot;是否作废当前协议号，创建新的协议号？&amp;quot;);
+//	    
+//	    _this.AppendRow(0,0);
+//	    }
+//	  }
+//	 }	
+	_this.SetCellFocus(0,0,0);
+	var sbh = G_ORGID;
+	var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	var count_row=_this.GetRowCount(0);
+	var curr_row = _this.GetCurrentRow(0);
+	if(curr_row == &amp;quot;-1&amp;quot;)
+	{
+	 return &amp;quot;&amp;quot;;
+	}
+
+	   for(var i=0;i&amp;lt;count_row;i++)
+	    {
+	    	var col4=_this.GetCellText(0,i,4);
+	    	var col5=_this.GetCellText(0,i,5);
+	    	var col6=_this.GetCellText(0,i,6);
+	    	var s_sbh=_this.GetCellText(0,i,0);
+	    	if(s_sbh != &amp;quot;&amp;quot; &amp;&amp; (col4 == &amp;quot;&amp;quot; || col5 == &amp;quot;&amp;quot; || col6 == &amp;quot;&amp;quot;))
+	    	{
+	    	alert(&amp;quot;不能为空！&amp;quot;);
+	    	return &amp;quot;&amp;quot;;
+	    	}
+	    }	
+	
+	_this.AppendRow(0,curr_row);
+
+	_this.SetCellText(0,curr_row+1,1,zth);
+	_this.SetCellText(0,curr_row+1,0,sbh);
+	_this.SetCellText(0,curr_row+1,3,&amp;quot;&amp;gt;&amp;gt;&amp;quot;);
+	_this.SetCellColor(0,curr_row+1,3,0,0,149);
+	//_this.SetCellFont(0,curr_row+1,3,0,0,0);
+	_this.SetCellLock(0,0,2,1);
+	_this.SetCellLock(0,0,4,1);
+	_this.SetCellLock(0,0,5,1);
+	_this.SetCellLock(0,0,6,1);
+	
+}
+
+
+//保存
+function save()
+{
+
+   	var cur_sbh = G_ORGID;
+	var cur_zth = G_ACCID.replace(cur_sbh,&amp;quot;&amp;quot;);
+
+	   
+	  var xml = _this.GetXml(0,1,0,
+		1,6);
+	   var param = new Object();
+	   
+		  param.xmlstr1 = xml;
+		  param.sbh=cur_sbh;
+		  param.zth=cur_zth;
+
+		try {
+		var ret = invokeOSFuncExt(&amp;quot;s_save&amp;quot;,param);
+		alert(ret);
+		_this.SetCellLock(0,0,1,1);
+		_this.SetCellLock(0,0,2,1);
+		_this.SetCellLock(0,0,3,1);
+		_this.SetCellLock(0,0,4,1);
+		_this.SetCellLock(0,0,5,1);
+		_this.SetCellLock(0,0,6,1);
+		}
+		catch (e) {
+			alert(&amp;quot;保存失败:&amp;quot;+e.toString());
+		}
+	
+	  
+}
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+
+   if(col == -1 || (col== 3 &amp;&amp; row==0))
+   { 
+   return &amp;quot;&amp;quot;;
+   }
+	if ( col == 3)  //选择统筹区编号
+	{	
+	var obj = new Object();
+        obj.filter = &amp;quot;&amp;quot;;
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=TCQBH&amp;quot;,obj,&amp;quot;dialogWidth=350px;dialogHeight=450px&amp;quot;);
+		if (retVal != &amp;quot;&amp;quot; &amp;&amp; retVal != &amp;quot;undefined&amp;quot; &amp;&amp; retVal != undefined) {
+			var tcbh = retVal.split(&amp;quot;~&amp;quot;)[0];
+			_this.SetCellText(sheet,row,2,tcbh);
+		}
+	}
+   
+}
+
+//一键更新
+function update()
+{
+	
+   	var cur_sbh = G_ORGID;
+	var cur_zth = G_ACCID.replace(cur_sbh,&amp;quot;&amp;quot;);
+		
+  	 var param = new Object();
+	  param.sbh=cur_sbh;
+	  param.zth=cur_zth;
+
+	try {
+	var ret = invokeOSFuncExt(&amp;quot;u_update&amp;quot;,param);
+	alert(ret);
+	}
+	catch (e) {
+		alert(&amp;quot;更新失败:&amp;quot;+e.toString());
+	}
+	
+
+}
+
+//
+//修改单元格内容
+//function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+//{
+//全选
+//	if ( sheet==0&amp;&amp; row==0&amp;&amp;col==0){
+//		var checkid=_this.GetCellText(0,0,0);
+//		for( var r=0;r&amp;lt;_this.GetRowCount(0);r++){
+//		if( _this.GetCellText(0,r,0)!=&amp;quot;&amp;quot;) 
+//			_this.SetCellText(0,r,0,checkid);		
+//		}
+//	}  
+//
+//}
+//
+//}
+
+
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pubpack = new JavaPackage ( &amp;quot;com.xlsgrid.net.pub&amp;quot; );
+
+// 客户端param传入的参数可以直接使用
+function s_save()
+{
+	var db = null;
+	var msg= &amp;quot;&amp;quot;;
+	var sql=&amp;quot;&amp;quot;; 
+	var ds=&amp;quot;&amp;quot;;
+	var no_null=&amp;quot;&amp;quot;;
+	var len_xyh=&amp;quot;&amp;quot;;
+	var cou=&amp;quot;&amp;quot;;
+
+      	try {
+		db = new pubpack.EADatabase();	// 如果连接到其他数据库, new pubpack.EADatabase(“dbname”)
+		 ds = new pub.EAXmlDS(xmlstr1);
+		for(var i=0;i&amp;lt;ds.getRowCount();i++){
+			var sbh = ds.getStringAt(i,&amp;quot;col0&amp;quot;);
+			var zth = ds.getStringAt(i,&amp;quot;col1&amp;quot;);
+			var tcqdm= ds.getStringAt(i,&amp;quot;col2&amp;quot;);
+			var yhrx = ds.getStringAt(i,&amp;quot;col4&amp;quot;);
+			var ywzldm = ds.getStringAt(i,&amp;quot;col5&amp;quot;);
+			var sbm = ds.getStringAt(i,&amp;quot;col6&amp;quot;);
+			
+		   	if(sbh != &amp;quot;&amp;quot; &amp;&amp; (tcqdm == &amp;quot;&amp;quot; || yhrx == &amp;quot;&amp;quot; || ywzldm == &amp;quot;&amp;quot; || sbm==&amp;quot;&amp;quot;)){
+		    		no_null=&amp;quot;不能为空！&amp;quot;;
+		    	 	return no_null;
+	    	    	}
+	    	    	//sql = &amp;quot;select length(tcqdm||yhrx||ywzldm||sbm)  from cw_khxyh where  sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+	    	    	len_xyh = tcqdm+yhrx+ywzldm+sbm;
+	    	    	
+	    	    	if(len_xyh.length()&amp;gt;16)
+	    	    	{
+	    	    	return msg=&amp;quot;协议号不能大于16位       len_xyh:&amp;quot; +len_xyh;
+	    	    	}
+		 	sql = &amp;quot;insert into cw_khxyh(sbh,zth,tcqdm,yhrx,ywzldm,sbm)values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;.format([sbh,zth,tcqdm,yhrx,ywzldm,sbm]);
+	   		db.ExcecutSQL(sql);
+	   	
+		}
+		
+		db.Commit();
+
+		msg=&amp;quot;保存成功&amp;quot;;	
+	}
+	catch ( e) {
+		db.Rollback();
+		throw new pubpack.EAException ( e.toString() );
+	}
+	finally {
+		if (db!=null) db.Close();
+	}
+	return msg;
+
+}
+
+//一键更新
+function u_update()
+{
+		var db = &amp;quot;&amp;quot;;
+		var msg= &amp;quot;&amp;quot;;
+		var sql=&amp;quot;&amp;quot;; 
+		var dwb_dwbh=&amp;quot;&amp;quot;;
+		var cou_dwb=&amp;quot;&amp;quot;;
+		var sum_up=0;
+		var xyh=&amp;quot;&amp;quot;;
+		var xlh=&amp;quot;&amp;quot;;
+		var len_xyh=&amp;quot;&amp;quot;;
+		var khxyh=&amp;quot;&amp;quot;;
+		var i_dwbh=&amp;quot;&amp;quot;;
+		var cw_xyh=&amp;quot;&amp;quot;;
+		
+	try 
+	{
+		db = new pubpack.EADatabase();	// 如果连接到其他数据库, new pubpack.EADatabase(“dbname”)
+		
+		sql = &amp;quot;select sbh,zth,tcqdm,yhrx,ywzldm,sbh from cw_khxyh where  sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+		
+		cw_xyh = db.GetSQL(sql);
+		//判断当前社保是否有协议号
+		if(cw_xyh==&amp;quot;&amp;quot;)
+		{
+			return &amp;quot;没有可用协议号,请添加一个协议号！&amp;quot;;
+		}
+		
+				
+		//判断协议号长度是否小于14位，小于的话后面用0补够14位
+		sql = &amp;quot;select length(tcqdm||yhrx||ywzldm||sbm)  from cw_khxyh where  sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+		
+		len_xyh=db.GetSQL(sql);
+		
+		if(len_xyh &amp;lt; 14 )
+		{
+			sql = &amp;quot;select rpad(tcqdm||yhrx||ywzldm||sbm,14,0) from cw_khxyh where  sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;		
+			xyh = db.GetSQL(sql);
+		}else{	
+			sql = &amp;quot;select tcqdm||yhrx||ywzldm||sbm from cw_khxyh where  sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;	
+			xyh = db.GetSQL(sql);
+			
+		}
+			
+		//取出循环的次数（有多少个单位）
+		sql = &amp;quot;select dwbh from si_dwb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and khxyh is null&amp;quot;;
+		dwb_dwbh =db.QuerySQL(sql);	
+		cou_dwb=dwb_dwbh.getRowCount();
+		if(cou_dwb == 0){
+			return &amp;quot;查询单位表无记录，跨行协议号都不为空&amp;quot;;
+		}
+		
+		for(var a=0;a&amp;lt;cou_dwb;a++)
+		{			
+			//判断序列号是否小于14位，如果小于用0在前面补够14位
+			sql = &amp;quot;select cw_khxyh_id.nextval from dual&amp;quot;;			
+			xlh = db.GetSQL(sql);
+			if(xlh.length()&amp;lt;14)
+			{
+				  sql = &amp;quot;select lpad(cw_khxyh_id.nextval,14,0) from dual&amp;quot;;
+		
+				  xlh =db.GetSQL(sql);
+				
+			}
+		
+			//如果协议号和序列号大于28位，就减掉序列号前面的零，让协议号继续延伸
+			if(len_xyh==15)
+			{
+				 xlh=xlh.substring(1);
+				
+				 
+			}
+			if(len_xyh==16)
+			{
+			return &amp;quot;2&amp;quot;;
+				xlh=xlh.substring(2);
+			}
+			
+			khxyh=xyh+xlh;
+			
+			if(khxyh.length()&amp;lt;28)
+			{
+				return &amp;quot;协议号不合法！    khxyh：&amp;quot;+khxyh;
+			}
+			if(khxyh.length()&amp;gt;28)
+			{
+				return &amp;quot;协议号不合法！    khxyh：&amp;quot;+khxyh;
+			}
+			else
+			{				
+				i_dwbh=dwb_dwbh.getStringAt(a,&amp;quot;dwbh&amp;quot;);
+				sql = &amp;quot;update si_dwb set khxyh=&amp;apos;&amp;quot;+khxyh+&amp;quot;&amp;apos; where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and dwbh=&amp;apos;&amp;quot;+i_dwbh+&amp;quot;&amp;apos;&amp;quot;;
+	   			db.ExcecutSQL(sql);	
+	   			sum_up++;	
+			}
+			
+		}
+		db.Commit();
+		msg=&amp;quot;更新成功,共更新了&amp;quot;+sum_up+&amp;quot;条数据&amp;quot;;	
+	}
+	catch ( e) {
+		db.Rollback();
+		throw new pubpack.EAException ( e.toString() );
+	}
+	finally {
+		if (db!=null) db.Close();
+	}
+	return msg;
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >list</ID><NAME ></NAME><DATDSC >select sbh,zth,tcqdm,&amp;apos;选择&amp;apos;,yhrx,ywzldm,sbm from cw_khxyh where sbh=&amp;apos;[%sbh]&amp;apos; and zth=&amp;apos;[%zth]&amp;apos;</DATDSC><C4 >list</C4><C5 >list</C5><C6 >list</C6><C7 >list</C7><C8 >list</C8><C9 >list</C9><C10 >list</C10><C11 >list</C11><C12 >list</C12></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

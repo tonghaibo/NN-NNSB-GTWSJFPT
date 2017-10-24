@@ -1,0 +1,390 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >sbcwService</MWID><NAME >WebService服主入口</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >sbcwService.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >WebService</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >mytest</ID><NAME >测试</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >//测试
+function mytest()
+{
+	var param = new Object();
+	param.filename1 = &amp;quot;/u/nxj/RS45990081ToBK10400000_0122001_20170117006.txt&amp;quot;;
+	param.filename2 = &amp;quot;/u/nxj/RS45990081ToBK10400000_0122001_20170117006.txt.gz&amp;quot;;
+	var ret = invokeOSFuncExt(&amp;quot;mytest&amp;quot;,param);
+	alert(ret);
+}
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var dom = new JavaPackage(&amp;quot;org.w3c.dom&amp;quot;);
+var sax = new JavaPackage(&amp;quot;org.xml.sax&amp;quot;);
+var parsers = new JavaPackage(&amp;quot;javax.xml.parsers&amp;quot;);
+var soap = new JavaPackage(&amp;quot;javax.xml.soap&amp;quot;);
+var io = new JavaPackage(&amp;quot;java.io&amp;quot;);
+var util = new JavaPackage(&amp;quot;java.util&amp;quot;);
+
+//枢纽平台WebService调用URL地址
+//var shuNiuUrl = &amp;quot;http://172.16.12.210:8000/services/SimpleService/SimpleInOutMessageReceiver&amp;quot;;
+var shuNiuUrl = pub.EADbTool.GetSQL(&amp;quot;select AAA103 from aa10 where aaa100=&amp;apos;YSZLURL&amp;apos;&amp;quot;);
+var serverIpAddress = &amp;quot;&amp;quot;; //服务器IP地址
+
+//获取枢纽平台服务地址
+function getShuNiuUrl()
+{
+	var sql = &amp;quot;select AAA103 from aa10 where aaa100=&amp;apos;YSZLURL&amp;apos;&amp;quot;;
+	var ds = pub.EADbTool.QuerySQL(sql);
+	if (ds.getRowCount() &amp;lt;= 0) return &amp;quot;&amp;quot;;
+	return ds.getStringAt(0,&amp;quot;AAA103&amp;quot;);
+}
+
+//
+// 银行或枢纽平台调用webservice的各种类型业务总入口
+// 传入工行平台规范的报文格式 requestXml参数
+//
+function doWsAction()
+{
+	try { serverIpAddress = request.getLocalAddr(); } catch (e) {}
+	
+	//return requestXml;
+	//解释requestXml报文描述，根据业务ID再去调用相关的处理中间件方法
+	var msgMap = new java.util.HashMap();
+	try {	
+		msgMap = parseMsgText(requestXml,true);
+//		return msgMap ;
+		var Version = msgMap.get(&amp;quot;Version&amp;quot;);
+		var Ref = msgMap.get(&amp;quot;Ref&amp;quot;);
+		var BusCd = msgMap.get(&amp;quot;BusCd&amp;quot;);
+		var TradSrc = msgMap.get(&amp;quot;TradSrc&amp;quot;);
+		var SenderId = msgMap.get(&amp;quot;SenderId&amp;quot;);
+		var RecverId = msgMap.get(&amp;quot;RecverId&amp;quot;);
+		var Date = msgMap.get(&amp;quot;Date&amp;quot;);
+		var Time = msgMap.get(&amp;quot;Time&amp;quot;);
+		var Resend = msgMap.get(&amp;quot;Resend&amp;quot;);
+		var ReservedZone = msgMap.get(&amp;quot;ReservedZone&amp;quot;);
+		var Dgst = msgMap.get(&amp;quot;Dgst&amp;quot;);
+		var RstCode = msgMap.get(&amp;quot;RstCode&amp;quot;);
+		var RstInfo = msgMap.get(&amp;quot;RstInfo&amp;quot;);
+		//return &amp;quot;BusCd=&amp;quot;+BusCd+&amp;quot;,SenderId=&amp;quot;+SenderId+&amp;quot;,RecverId=&amp;quot;+RecverId+&amp;quot;,Dgst=&amp;quot;+Dgst+&amp;quot;,RstCode=&amp;quot;+RstCode+&amp;quot;,RstInfo=&amp;quot;+RstInfo;		
+		//根据业务ID对照表调用对应的中间件及业务处理代码
+		var sql = &amp;quot;select * from SI_WSCONFIG where funcid=&amp;apos;&amp;quot;+BusCd+&amp;quot;&amp;apos;&amp;quot;;
+		var ds = pub.EADbTool.QuerySQL(sql);
+		if (ds.getRowCount() &amp;lt;= 0) {
+			return getErrReturnMsgText(BusCd,SenderId,RecverId);
+		}
+		var sytid = ds.getStringAt(0,&amp;quot;SYTID&amp;quot;);
+		var mwid = ds.getStringAt(0,&amp;quot;GRDID&amp;quot;);
+		var osname = ds.getStringAt(0,&amp;quot;OSNAME&amp;quot;);		
+		var os = new pub.EAScript(null);
+		var scriptArgs = new Array();
+		scriptArgs[0] = requestXml;
+		//return sytid+&amp;quot;_&amp;quot;+mwid+&amp;quot;_&amp;quot;+osname;
+		var retos = os.CallClassFunc(sytid+&amp;quot;_&amp;quot;+mwid,osname,scriptArgs);
+		return retos.castToString();
+	}
+	catch(e) {
+		return getErrReturnMsgText(msgMap.get(&amp;quot;BusCd&amp;quot;),msgMap.get(&amp;quot;SenderId&amp;quot;), msgMap.get(&amp;quot;RecverId&amp;quot;));
+		//return &amp;quot;webservice调用出错：&amp;quot;+e.toString();
+		//return msgMap;
+	}
+		
+}
+
+// 解释报文取得报文头信息
+// msgText - 报文信息XML
+// logFlag - 是否记录消息调用写入si_msgtextlog表
+function parseMsgText(msgText,logFlag)
+{
+	var map = new java.util.HashMap();
+	var db = null;
+	try {	
+		if (logFlag == true) {
+			db = new pub.EADatabase();
+		}
+		
+		var dbf = parsers.DocumentBuilderFactory.newInstance();
+		var documentbuilder = dbf.newDocumentBuilder();
+		var document = documentbuilder.parse(new sax.InputSource(new io.StringReader(msgText))); 
+		var nodelist = document.getElementsByTagName(&amp;quot;MsgText&amp;quot;);                  
+		var node = nodelist.item(0);		
+		var Version = &amp;quot;&amp;quot;;
+		try{Version = node.getElementsByTagName(&amp;quot;Version&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		var Ref = node.getElementsByTagName(&amp;quot;Ref&amp;quot;).item(0).getFirstChild().getNodeValue();
+		var BusCd = node.getElementsByTagName(&amp;quot;BusCd&amp;quot;).item(0).getFirstChild().getNodeValue();
+		var TradSrc = node.getElementsByTagName(&amp;quot;TradSrc&amp;quot;).item(0).getFirstChild().getNodeValue();
+		var SenderId = node.getElementsByTagName(&amp;quot;Sender&amp;quot;).item(0).getElementsByTagName(&amp;quot;InstId&amp;quot;).item(0).getFirstChild().getNodeValue();
+		var RecverId = node.getElementsByTagName(&amp;quot;Recver&amp;quot;).item(0).getElementsByTagName(&amp;quot;InstId&amp;quot;).item(0).getFirstChild().getNodeValue();
+		var Date = &amp;quot;&amp;quot;;
+		try{Date = node.getElementsByTagName(&amp;quot;Date&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		var Time = &amp;quot;&amp;quot;;
+		try{Time = node.getElementsByTagName(&amp;quot;Time&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		var Dgst = &amp;quot;&amp;quot;;
+		try{Dgst = node.getElementsByTagName(&amp;quot;Dgst&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		var Resend = node.getElementsByTagName(&amp;quot;Resend&amp;quot;).item(0).getFirstChild().getNodeValue();
+		var RstCode = &amp;quot;&amp;quot;;
+		try{RstCode = node.getElementsByTagName(&amp;quot;Rst&amp;quot;).item(0).getElementsByTagName(&amp;quot;Code&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		var RstInfo = &amp;quot;&amp;quot;;
+		try{RstInfo = node.getElementsByTagName(&amp;quot;Rst&amp;quot;).item(0).getElementsByTagName(&amp;quot;Info&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		var ReservedZone = &amp;quot;&amp;quot;;
+		try { ReservedZone = node.getElementsByTagName(&amp;quot;ReservedZone&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch (e) {}
+		var BkSeq = &amp;quot;&amp;quot;;
+		var SiSeq = &amp;quot;&amp;quot;;
+		try{ BkSeq = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;BkSeq&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		try{ SiSeq = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;SiSeq&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		var FileName = &amp;quot;&amp;quot;;//文件名（批量文件时不为空）
+		var TransType = &amp;quot;&amp;quot;;//结算业务类型(单笔交易时不为空)
+		try{FileName = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;FileName&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		try{TransType = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;TransType&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		var FileTypeCode = &amp;quot;&amp;quot;;//文件类型代码
+		try{FileTypeCode = FileName.split(&amp;quot;_&amp;quot;)[1];}catch(e){}
+		//个人编号
+		var GRBH = &amp;quot;&amp;quot;;
+		try{GRBH = node.getElementsByTagName(&amp;quot;SiAcct&amp;quot;).item(0).getElementsByTagName(&amp;quot;SiId&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		//个人姓名
+		var GRXM = &amp;quot;&amp;quot;;
+		try{GRXM = node.getElementsByTagName(&amp;quot;Cust&amp;quot;).item(0).getElementsByTagName(&amp;quot;Name&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		map.put(&amp;quot;Version&amp;quot;,Version);
+		map.put(&amp;quot;Ref&amp;quot;,Ref);
+		map.put(&amp;quot;BusCd&amp;quot;,BusCd);
+		map.put(&amp;quot;TradSrc&amp;quot;,TradSrc);
+		map.put(&amp;quot;SenderId&amp;quot;,SenderId);
+		map.put(&amp;quot;RecverId&amp;quot;,RecverId);
+		map.put(&amp;quot;Date&amp;quot;,Date);
+		map.put(&amp;quot;Time&amp;quot;,Time);
+		map.put(&amp;quot;Dgst&amp;quot;,Dgst);
+		map.put(&amp;quot;Resend&amp;quot;,Resend);
+		map.put(&amp;quot;RstCode&amp;quot;,RstCode);
+		map.put(&amp;quot;RstInfo&amp;quot;,RstInfo);
+		map.put(&amp;quot;ReservedZone&amp;quot;,ReservedZone);
+		map.put(&amp;quot;BkSeq&amp;quot;,BkSeq);
+		map.put(&amp;quot;SiSeq&amp;quot;,SiSeq);
+
+		//写入消息记录表 si_msgtextlog
+		if (logFlag == true) {
+			var sql = &amp;quot;select sys_guid() from dual&amp;quot;;
+			var guid = pub.EADbTool.GetSQL(sql);
+			sql = &amp;quot;insert into si_msgtextlog(GUID,CRTDAT,VERSION,REFERENCE,BUSINESSCODE,TRADESOURCE,SENDERINSTID,RECVERINSTID,TRANSACTIONDATE,TRANSACTIONTIME,RESEND,RESERVEDZONE,DIGEST,RSTCODE,
+								RSTINFO,BkSeq,SiSeq,MSGTEXT,FileName,FileTypeCode,TransType,serverip,grbh,grxm)
+				values(&amp;apos;%s&amp;apos;,sysdate,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,empty_blob(),&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;
+				.format([guid,Version,Ref,BusCd,TradSrc,SenderId,RecverId,Date,Time,Resend,ReservedZone,Dgst,RstCode,RstInfo,BkSeq,SiSeq,FileName,FileTypeCode,TransType,serverIpAddress,GRBH,GRXM]);
+			db.ExcecutSQL(sql);
+			sql = &amp;quot;select msgtext from si_msgtextlog where guid=&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos; for update&amp;quot;;
+			db.UpdateBlobWithStr(sql,&amp;quot;msgtext&amp;quot;,msgText);
+			db.Commit();
+		}
+	}
+	catch(e) {
+		var sql = &amp;quot;select sys_guid() from dual&amp;quot;;
+		var guid = pub.EADbTool.GetSQL(sql);
+		var sql = &amp;quot;insert into si_msgtextlog(guid,crtdat,RSTINFO,MSGTEXT,serverip) values (&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;,sysdate,&amp;apos;系统异常&amp;apos;,empty_blob(),&amp;apos;&amp;quot;+serverIpAddress+&amp;quot;&amp;apos;)&amp;quot;;
+		db.ExcecutSQL(sql);
+		sql = &amp;quot;select msgtext from si_msgtextlog where guid=&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos; for update&amp;quot;;
+		db.UpdateBlobWithStr(sql,&amp;quot;msgtext&amp;quot;,msgText+&amp;quot;\n ErrorInfo:&amp;quot;+e.toString());
+		db.Commit();
+		//return e.toString();
+		throw new Exception(e);
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+			
+	return map;
+
+}
+
+//系统异常信息返回报文
+function getErrReturnMsgText(BusCd,SenderId,RecverId)
+{
+	var errxml = &amp;quot;&amp;lt;MsgText&amp;gt;
+				         &amp;lt;GrpHdr&amp;gt;
+				            &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+				            &amp;lt;Ref&amp;gt;[%ref]&amp;lt;/Ref&amp;gt;
+				            &amp;lt;BusCd&amp;gt;[%BusCd]&amp;lt;/BusCd&amp;gt;
+				            &amp;lt;TradSrc&amp;gt;B&amp;lt;/TradSrc&amp;gt;
+				            &amp;lt;Sender&amp;gt;
+				               &amp;lt;InstId&amp;gt;[%sid]&amp;lt;/InstId&amp;gt;
+				            &amp;lt;/Sender&amp;gt;
+				            &amp;lt;Recver&amp;gt;
+				               &amp;lt;InstId&amp;gt;[%rid]&amp;lt;/InstId&amp;gt;
+				            &amp;lt;/Recver&amp;gt;
+				            &amp;lt;Resend&amp;gt;N&amp;lt;/Resend&amp;gt;
+				            &amp;lt;Date&amp;gt;[%yymmdd]&amp;lt;/Date&amp;gt;
+				            &amp;lt;Time&amp;gt;[%hhmmss]&amp;lt;/Time&amp;gt;
+				            &amp;lt;Dgst/&amp;gt;
+				            &amp;lt;Rst&amp;gt;
+				               &amp;lt;Code&amp;gt;2001&amp;lt;/Code&amp;gt;
+				               &amp;lt;Info&amp;gt;系统异常&amp;lt;/Info&amp;gt;
+				            &amp;lt;/Rst&amp;gt;
+				         &amp;lt;/GrpHdr&amp;gt;
+				         &amp;lt;BusiText/&amp;gt;
+				      &amp;lt;/MsgText&amp;gt;&amp;quot;;
+	if (RecverId == &amp;quot;null&amp;quot; || RecverId == null) RecverId = &amp;quot;45900000&amp;quot;;
+	var Ref = genSiSeq(RecverId);	
+	errxml = pub.EAFunc.Replace(errxml,&amp;quot;[%yymmdd]&amp;quot;,getDate());
+	errxml = pub.EAFunc.Replace(errxml,&amp;quot;[%hhmmss]&amp;quot;,getTime());
+	errxml = pub.EAFunc.Replace(errxml,&amp;quot;[%ref]&amp;quot;,Ref);
+	errxml = pub.EAFunc.Replace(errxml,&amp;quot;[%BusCd]&amp;quot;,BusCd);
+	errxml = pub.EAFunc.Replace(errxml,&amp;quot;[%sid]&amp;quot;,SenderId);
+	errxml = pub.EAFunc.Replace(errxml,&amp;quot;[%rid]&amp;quot;,RecverId);
+			
+	return errxml;
+}
+
+
+//生成报文标识
+//规则：银社直连社保机构号+日期+14位序列 (序列的后面14位)
+function genRef(sbInstId)
+{
+//	var date = new java.util.Date();
+//	var sdf = new java.text.SimpleDateFormat(&amp;quot;yyyyMMddHHmmssSSS&amp;quot;); 
+//	var time = sdf.format(date);
+	var dat = getDate();
+	var sql = &amp;quot;select substr(SEQ_YSZL_BWBSH.Nextval,-14) from dual&amp;quot;;
+	var xh = pub.EADbTool.GetSQL(sql); //11位序列号
+	return sbInstId+dat+xh;
+}
+
+//生成社保流水号
+//规则：社保机构号+时间到毫秒 459900+20160329204206828039
+function genSiSeq(sbInstId)
+{
+//	var date = new java.util.Date();
+//	var sdf = new java.text.SimpleDateFormat(&amp;quot;yyyyMMddHHmmssSSS&amp;quot;); 
+//	var time = sdf.format(date);
+//	return sbInstId+time;
+	var sql = &amp;quot;select fn_get_YSZL_SBJYLSH(&amp;apos;&amp;quot;+sbInstId+&amp;quot;&amp;apos;) from dual&amp;quot;;
+       var siseq = pub.EADbTool.GetSQL(sql);
+       return siseq;
+}
+
+//获取时间到毫秒
+function getTimeStamp()
+{
+	var date = new java.util.Date();
+	var sdf = new java.text.SimpleDateFormat(&amp;quot;yyyyMMddHHmmssSSS&amp;quot;); 
+	var timestamp = sdf.format(date);
+	return timestamp;
+}
+
+//获取日期
+function getDate()
+{
+	var date = new java.util.Date();
+	var sdf = new java.text.SimpleDateFormat(&amp;quot;yyyyMMdd&amp;quot;); 
+	var dat = sdf.format(date);
+	return dat;
+}
+
+//获取时间
+function getTime()
+{
+	var date = new java.util.Date();
+	var sdf = new java.text.SimpleDateFormat(&amp;quot;HHmmss&amp;quot;); 
+	var time = sdf.format(date);
+	return time;
+
+}
+
+//将文件进行gzip压缩
+function Gzip(filename1,filename2) 
+{
+	pub.EAFunc.CompressToGzip(filename1,filename2,&amp;quot;GBK&amp;quot;);
+}
+
+//发送消息系统通知
+function sendMsg(title,msg,toOrg,toUsr)
+{
+	var db = null;
+	var ret = 0;
+	try {
+		db = new pub.EADatabase();
+		var guid = db.GetSQL(&amp;quot;select sys_guid() from dual&amp;quot;);
+		var id = db.GetSQL(&amp;quot;SELECT seq.nextval trkid FROM DUAL&amp;quot;);
+		var sql = &amp;quot;insert into trkhdr(guid,id,title,aimorg,note,prousr,crtdat) values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,sysdate)&amp;quot;
+			.format([guid,id,title,toOrg,msg,toUsr]);
+		db.ExcecutSQL(sql);
+		
+		//给指定的组织所有人员发送通知
+		if (toOrg != &amp;quot;&amp;quot; &amp;&amp; toUsr == &amp;quot;ALL&amp;quot;) {
+			sql = &amp;quot;insert into trkdtl(TRKGUID,TOUSR,TOUSRORG,ID,RESULT)
+				select &amp;apos;%s&amp;apos;,id tousr,org tousrorg,&amp;apos;%s&amp;apos; msgid,&amp;apos;0&amp;apos; result from usr where org=&amp;apos;%s&amp;apos;&amp;quot;
+				.format([guid,id,toOrg]);
+			ret += db.ExcecutSQL(sql);
+		}
+		//给指定人员发送通知
+		else if (toOrg != &amp;quot;&amp;quot; &amp;&amp; toUsr != &amp;quot;&amp;quot; &amp;&amp; toUsr != &amp;quot;ALL&amp;quot;) {
+			sql = &amp;quot;insert into trkdtl(TRKGUID,TOUSR,TOUSRORG,ID,RESULT)
+				select &amp;apos;%s&amp;apos;,id tousr,org tousrorg,&amp;apos;%s&amp;apos; msgid,&amp;apos;0&amp;apos; result from usr where org=&amp;apos;%s&amp;apos; and id=&amp;apos;%s&amp;apos;&amp;quot;
+				.format([guid,id,toOrg,toUsr]);
+			ret += db.ExcecutSQL(sql);
+		}
+		else if (toOrg == &amp;quot;ALL&amp;quot;) {
+			var orgds = db.QuerySQL(&amp;quot;select * from v_org order by id&amp;quot;);
+			for (var i=0;i&amp;lt;orgds.getRowCount();i++) {
+				var orgid = orgds.getStringAt(i,&amp;quot;ID&amp;quot;);
+				sql = &amp;quot;insert into trkdtl(TRKGUID,TOUSR,TOUSRORG,ID,RESULT)
+					select &amp;apos;%s&amp;apos;,id tousr,org tousrorg,&amp;apos;%s&amp;apos; msgid,&amp;apos;0&amp;apos; result from usr where org=&amp;apos;%s&amp;apos;&amp;quot;
+					.format([guid,id,orgid]);
+				db.ExcecutSQL(sql);
+			}
+
+		}
+		
+		db.Commit();
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+	return ret;
+}
+
+function mytest()
+{
+//	var title = &amp;quot;测试&amp;quot;;
+//	var msg = &amp;quot;测试信息&amp;quot;;
+//	var toOrg = &amp;quot;1&amp;quot;;
+//	var toUsr = &amp;quot;xlsgrid&amp;quot;;
+	//var ret = sendMsg(title,msg,toOrg,toUsr);
+//	var ret = genRef(&amp;quot;45990081&amp;quot;);
+//	return ret;
+//       Gzip(filename1,filename2);
+	var serverIpAddress = request.getLocalAddr(); 
+	return serverIpAddress ;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

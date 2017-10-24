@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >WSSBCW</MWID><NAME >接口服务</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >WSSBCW.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >WebService</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >callService</ID><NAME >调用webservice</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//调用webservice
+function callService()
+{
+	var ret = invokeOSFunc(&amp;quot;callTest&amp;quot;,&amp;quot;&amp;quot;);
+	alert(&amp;quot;return=&amp;quot;+ret);
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var ws = new JavaPackage(&amp;quot;com.xlsgrid.net.ws&amp;quot;);
+
+//
+// param: xml return:xml
+//
+function callTest()
+{
+	var devid = &amp;quot;E60715K01002723&amp;quot;;//e60814c01000053&amp;quot;;
+	var xml = &amp;quot;&amp;lt;soapenv:Envelope xmlns:soapenv=\&amp;quot;http://schemas.xmlsoap.org/soap/envelope/\&amp;quot;&amp;gt;
+			   &amp;lt;soapenv:Header/&amp;gt;
+			   &amp;lt;soapenv:Body&amp;gt;
+			&amp;lt;MsgText&amp;gt;
+			  &amp;lt;GrpHdr&amp;gt;
+			    &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+			    &amp;lt;Ref&amp;gt;1021000000002012090600000000000000000001&amp;lt;/Ref&amp;gt;
+			    &amp;lt;BusCd&amp;gt;0112001&amp;lt;/BusCd&amp;gt;
+			    &amp;lt;TradSrc&amp;gt;S&amp;lt;/TradSrc&amp;gt;
+			    &amp;lt;Sender&amp;gt;
+			      &amp;lt;InstId&amp;gt;10200000&amp;lt;/InstId&amp;gt;
+			    &amp;lt;/Sender&amp;gt;
+			    &amp;lt;Recver&amp;gt;
+			      &amp;lt;InstId&amp;gt;00000001&amp;lt;/InstId&amp;gt;
+			    &amp;lt;/Recver&amp;gt;
+			    &amp;lt;Resend&amp;gt;N&amp;lt;/Resend&amp;gt;
+			    &amp;lt;Date&amp;gt;20130916&amp;lt;/Date&amp;gt;
+			    &amp;lt;Time&amp;gt;100900&amp;lt;/Time&amp;gt;
+			    &amp;lt;Dgst&amp;gt;社保发起零星支付&amp;lt;/Dgst&amp;gt;
+			    &amp;lt;Rst&amp;gt;
+				&amp;lt;Code&amp;gt;0001&amp;lt;/Code&amp;gt;
+				&amp;lt;Info&amp;gt;待处理&amp;lt;/Info&amp;gt;
+			    &amp;lt;/Rst&amp;gt;
+			  &amp;lt;/GrpHdr&amp;gt;
+			  &amp;lt;BusiText&amp;gt;
+				  &amp;lt;SiSeq&amp;gt;20120814100000008443&amp;lt;/SiSeq&amp;gt;
+			      &amp;lt;TransType&amp;gt;002&amp;lt;/TransType&amp;gt;
+			      &amp;lt;TransMode&amp;gt;2&amp;lt;/TransMode&amp;gt;
+			      &amp;lt;CrBkAcct&amp;gt;
+				    &amp;lt;Id&amp;gt;0200026019018411044&amp;lt;/Id&amp;gt;
+				  &amp;lt;/CrBkAcct&amp;gt;
+			      &amp;lt;DrBkAcct&amp;gt;
+				    &amp;lt;Id&amp;gt;1234567889945&amp;lt;/Id&amp;gt;
+				  &amp;lt;/DrBkAcct&amp;gt;
+				  &amp;lt;SiAcct&amp;gt;
+				    &amp;lt;SiId&amp;gt;1234567890&amp;lt;/SiId&amp;gt;
+				  &amp;lt;/SiAcct&amp;gt;
+			      &amp;lt;Amt Ccy=\&amp;quot;CNY\&amp;quot;&amp;gt;88800&amp;lt;/Amt&amp;gt;
+			      &amp;lt;ContriNoticeId/&amp;gt;
+			  &amp;lt;/BusiText&amp;gt;
+			&amp;lt;/MsgText&amp;gt;
+			   &amp;lt;/soapenv:Body&amp;gt;
+			&amp;lt;/soapenv:Envelope&amp;gt;&amp;quot;;
+	//var ret = &amp;quot;fajkfljsd&amp;quot;;
+	var headid = new Array();
+	//headid.push(&amp;quot;SOAPAction&amp;quot;);
+	var headval = new Array();
+	//headval.push(&amp;quot;http://tempuri.org/GetGlucoseData&amp;quot;);
+	var wscall = new x_EAWebServiceCall();
+	//var ret = wscall.SendWeblogic(&amp;quot;http://124.248.34.89:8008/glucosewebservice.asmx&amp;quot;, xml, &amp;quot;UTF-8&amp;quot;,headid,headval);
+	var ret = wscall.SendWeblogic(&amp;quot;http://172.16.12.210:8000/services/SimpleService/SimpleInOutMessageReceiver&amp;quot;, xml, &amp;quot;UTF-8&amp;quot;,headid ,headval);
+	
+	return ret ;
+	
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

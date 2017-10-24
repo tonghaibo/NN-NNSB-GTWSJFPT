@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >CFG_WLZ</MWID><NAME >往来帐设置</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CFG_WLZ.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS >xlsgrid/js/dbhelper.js</EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var vendorid = &amp;quot;&amp;quot;;
+var vendornam = &amp;quot;&amp;quot;;
+var updflg = 0;
+
+//================================================================// 
+// 函数：thisOnpost_loaddata
+// 说明：调用dbhelper的初始化动作
+// 参数：
+// 返回：
+// 样例：
+// 作者：
+// 创建日期：11/17/05 17:31:52
+// 修改日志：
+//================================================================// 
+order = &amp;quot; order by WLBH&amp;quot;;
+var sheet = 0 ;
+
+function _thisOnpost_loaddata(sheet)
+{     
+       
+       var thisorgid =&amp;quot;&amp;quot;;
+       setButton();
+       var  fields = &amp;quot;GUID,GUID,sys_guid();&amp;quot;+
+            &amp;quot;SBH,所编号,,.+,;&amp;quot;+  
+            &amp;quot;ZTH,账套号,,.+,;&amp;quot;+
+            &amp;quot;ORG,ORG,,.+,;&amp;quot;+
+            &amp;quot;ACC,ACC,,.+,;&amp;quot;+                                 	
+            &amp;quot;WLBH,往来编号,,.+,1;&amp;quot;+            
+            &amp;quot;WLMC,往来名称,,.+,1;&amp;quot;+            // 第5个字段是否列入查询条件 .+ 非空 \\d 数字
+            &amp;quot;ZJM,助记码,,.+,1;&amp;quot;+
+            &amp;quot;KHYH, 开户银行,,,1;&amp;quot;+
+            &amp;quot;YHZH, 银行账号,,,1;&amp;quot;+
+            &amp;quot;DH, 电话,,,1;&amp;quot;+
+            &amp;quot;DZ, 地址,,,1;&amp;quot;+
+            &amp;quot;ZGYXM, 专管员,,,1;&amp;quot;+
+            &amp;quot;BZ, 标志,,,;&amp;quot;+
+            &amp;quot;HIDE, 隐藏,,,;&amp;quot;;
+        // &amp;quot;from CORP where (org =&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos; or org is null) and (CORPTYP=&amp;apos;1&amp;apos; or CORPTYP=&amp;apos;2&amp;apos;)   &amp;quot;;
+     
+      try{iORGID=thisorgid;
+      }catch( e ) {iORGID=orgid; }
+      
+      var where = &amp;quot;  (org =&amp;apos;&amp;quot;+G_ORGID+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+G_ACCID+&amp;quot;&amp;apos;)  &amp;quot;;
+      var orderby = &amp;quot;&amp;quot;;      // 字段的列表
+      // 参数1：基表的名称
+      // 参数2：字段列表 格式是通过;分隔不同的字段，每个分隔中使用,来分隔不同的字段属性
+      //            字段属性： ID,NAME,默认值,正则表达式,是否列入查询的字段(=1是)
+      // 参数3：主键
+      // 参数4：显示空行标志 =true表示如果结果集为空，隐藏开头的两个空行,强制用户点击“新增”，以保证填入默认值
+      // 参数5：查询的表名称，在某些情况下，查询的表名称和基表名称不一样，默认=&amp;quot;&amp;quot;表示查询表名称采用基表名称
+      // 参数6：where条件，是不带where的子句如&amp;quot;ID like &amp;apos;01%&amp;apos;&amp;quot;
+      // 参数7：orederby，是不带order by的子句如&amp;quot;ID,REFID&amp;quot;, 
+
+      _dbhelper.InitSQL(&amp;quot;CW_WLZLB&amp;quot;,fields,&amp;quot;GUID&amp;quot;,false,&amp;quot;CW_WLZLB&amp;quot;,where,orderby);
+      _dbhelper.InitColumnList(fields );
+      _dbhelper.Load(1,1,2,2);                     
+     
+       // 自定义的特殊处理
+       // 如：
+       //       1、设置列的邦定属性
+       //       2、设置默认值
+       //       3、设置可修改或隐藏属性
+       
+       _this.SetColWidth(0,5,80);
+       _this.SetColWidth(0,6,100);
+       _this.SetColWidth(0,7,80);
+       
+       
+       
+
+}
+
+// 基础数据维护界面：设置列的属性
+function f_dbeditpostloaddata(){
+//       var listid0 =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_LOCTYP&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+
+	var bzList = _this.CreateListValue();
+       _this.SetListValue(bzList,&amp;quot;1&amp;quot;,&amp;quot;单位&amp;quot;);
+       _this.SetListValue(bzList,&amp;quot;2&amp;quot;,&amp;quot;个人&amp;quot;);
+       for(var row=_this.GetMainCellRangeRow1(sheet);row&amp;lt;=_this.GetMainCellRangeRow2(sheet);row++)
+       {                
+               _this.SetToBoolBox(sheet,row,_this.GetColCount(0)-1);		// 设置为打勾
+               _this.SetToComboBox(&amp;quot;&amp;quot;,sheet,row,15,bzList);
+       }
+
+       _this.SetColVisible(0,3,0);
+       _this.SetColVisible(0,4,0);
+       _this.SetColVisible(0,5,0);
+       _this.SetColVisible(0,6,0);
+
+      
+}
+//屏蔽新增功能
+function f_dbeditafternewrow(sheet,row)
+{      
+	_this.SetCellText(0,row,3,G_ORGID);
+        var orglh = G_ORGID.length;
+        var zth = G_ACCID.substring(orglh);
+        _sql.querytods(&amp;quot;getdwbh&amp;quot;,&amp;quot;&amp;quot;);    
+        var dwbh = _this.XMLDS_GetStringAt(0,0);               
+        _this.SetCellText(0,row,4,zth);	
+        _this.SetCellText(0,row,5,G_ORGID);
+        _this.SetCellText(0,row,6,G_ACCID);
+        
+
+}
+//屏蔽删除功能
+function f_dbeditbeforedeleterow(sheet,row)
+{     
+//      if(!window.confirm(&amp;quot;确定要删除吗？&amp;quot;)) return 0;
+//      for(var i=1 ; i&amp;lt;_this.GetRowCount(0); i++ ){
+//	  if( &amp;quot;1&amp;quot;==_this.GetRowSelected(sheet,i) &amp;&amp; &amp;quot;0&amp;quot; == _this.GetCellText(sheet,row,16)){
+//		var dwbh = _this.GetCellText(sheet,i,7);
+//		_sql.querytods(&amp;quot;getCount&amp;quot;,&amp;quot;DWBH=&amp;quot;+dwbh);
+//		var flag = _this.XMLDS_GetStringAt(0,0);		
+//		if(flag &amp;gt; 0) {
+//		    alert(&amp;quot;单位编号&amp;quot;+dwbh+&amp;quot;已有日记账，不能删除！&amp;quot;);
+//		    return 0;
+//		}
+//	    }
+//	    _this.SetCellText(sheet,i,16,&amp;quot;1&amp;quot;);	    
+//	}		      
+//      return 1;
+}
+//删除完成
+function  f_dbeditafterdeleterow(sheet,nowrow) {
+      if(_this.GetCurrentRow(0) != -1) {
+      	  if (_this.GetRowSelected(0,_this.GetCurrentRow(0)) == 1) {
+      	     alert(&amp;quot;删除成功，请点击保存！&amp;quot;);
+      	  }
+      }      
+      return 1;
+}
+
+//屏蔽保存功能
+function f_dbeditbeforesave()
+{
+	_thisOnRunCellFocusChange(sheet,-1,-1,0,0);
+       for(var i=1;i&amp;lt;_this.GetRowCount(0);i++) {
+       	       if (_this.GetRowVisible(0,i) == -1) continue;
+               var dwmc = _this.GetCellText(0,i,8);
+               var zgyxm = _this.GetCellText(0,i,14);
+               var lxbh = _this.GetCellText(0,i,10);
+               var delflg = _this.GetCellText(0,i,16);
+               var guid = _this.GetCellText(0,i,1);
+               if(delflg != &amp;quot;1&amp;quot;) {//标记不为1的再做检查
+                  if(dwmc == &amp;quot;&amp;quot;) {
+                       alert(&amp;quot;往来名称不能为空！&amp;quot;);
+                       return -1;
+                  }
+                  if(zgyxm== &amp;quot;&amp;quot;) {
+                       alert(&amp;quot;专管员不能为空！&amp;quot;);
+                      return -1;
+                  }
+//                  if(lxbh == &amp;quot;&amp;quot;) {
+//                       alert(&amp;quot;单位类型不能为空&amp;quot;);
+//                       return -1;
+//                 }
+                  if(dwmc != &amp;quot;&amp;quot; &amp;&amp; (delflg == &amp;quot;3&amp;quot; || delflg == &amp;quot;2&amp;quot;)) {                  
+                       var num=0;
+		       for(var row =1;row&amp;lt;_this.GetRowCount(0);row++) {
+		             var olddwmc = _this.GetCellText(0,row,8);
+		             if(dwmc == olddwmc){num++;}  		                      
+		       }
+		       if(num &amp;gt; 1) {		       
+		             alert(&amp;quot;单位【&amp;quot;+dwmc+&amp;quot;】重复，不能保存&amp;quot;);
+		             return -1;
+		       } 		       
+                       _sql.querytods(&amp;quot;getDWMC&amp;quot;,&amp;quot;DWMC=&amp;quot;+dwmc);
+                       if(_this.XMLDS_GetRowCount() &amp;gt;= 1 ){
+			     alert(&amp;quot;单位【&amp;quot;+dwmc+&amp;quot;】重复，不能保存&amp;quot;);
+		             return -1;                       
+                       }		                             
+                  }
+                               
+               }                                                                     
+       }
+        return 1;
+}
+//修改单元格内容
+function f_dbeditcellmodify(sheet,row,col,oldvalue,newvalue)
+{     
+//      if(sheet == 0 &amp;&amp; row &amp;gt;= 1) {
+//            if(col == 7) {
+//            	alert(&amp;quot;单位编号不能修改!!&amp;quot;);
+//            	_this.SetCellText(0,row,col,oldvalue);
+//            	return false;
+//            } 
+//            if(col == 8) {
+//                 var ret = checkDWMC(newvalue,row);
+//                 if(ret == 1) {
+//                      alert(&amp;quot;单位名称【&amp;quot;+newvalue+&amp;quot;】已存在&amp;quot;);                      
+//                 }
+//                
+//            } 
+//            _this.SetCellText(0,row,16,&amp;quot;3&amp;quot;);                                                   
+//      }
+}
+
+//按键
+function _thisOnKeyin(nChar,nFlags,sheet,row,col)
+{
+	//alert(nChar);
+	if (nChar == 9) {
+		_this.SetCellFocus(sheet,row,col);
+		
+	}
+}
+
+function checkDWMC(dwmc,curr_row) {
+       for(var row =1;row&amp;lt;_this.GetRowCount(0);row++) {
+             var olddwmc = _this.GetCellText(0,row,8);
+             if((dwmc == olddwmc)&amp;&amp;(row !=curr_row)) {return 1;}            
+       }
+       _sql.querytods(&amp;quot;getDWMC&amp;quot;,&amp;quot;DWMC=&amp;quot;+dwmc);
+       if(_this.XMLDS_GetRowCount() &amp;gt;= 1 ){return 1;}
+       return 0;
+}
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >QDWLX</ID><NAME ></NAME><DATDSC >select dwlxbh id,dwlx name
+from SI_DWLXB</DATDSC><C4 >QDWLX</C4><C5 ></C5><C6 ></C6></ROW>
+<ROW num="1" ><ID >getCount</ID><NAME ></NAME><DATDSC >select count(*) flag 
+from cw_rjzb
+where upper(dwbh) = &amp;apos;[%DWBH]&amp;apos; and org = &amp;apos;[%SYS_ORGID]&amp;apos; and acc = &amp;apos;[%SYS_ACCID]&amp;apos;</DATDSC><C4 ></C4><C5 >getCount</C5><C6 >getCount</C6></ROW>
+<ROW num="2" ><ID >getdwbh</ID><NAME ></NAME><DATDSC >select &amp;apos;J&amp;apos;||seq_dwbh_lsh.nextval from dual</DATDSC><C4 ></C4><C5 >getdwbh</C5><C6 ></C6></ROW>
+<ROW num="3" ><ID >getDWMC</ID><NAME ></NAME><DATDSC >select dwmc
+from si_dwb
+where org = &amp;apos;[%SYS_ORGID]&amp;apos;
+and   acc = &amp;apos;[%SYS_ACCID]&amp;apos;
+and   dwmc = &amp;apos;[%DWMC]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

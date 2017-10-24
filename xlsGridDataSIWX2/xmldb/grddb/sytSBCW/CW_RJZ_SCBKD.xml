@@ -1,0 +1,560 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >CW_RJZ_SCBKD</MWID><NAME >生成拨款单</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CW_RJZ_SCBKD.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS >xlsgrid/js/main.js</EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE1 = &amp;quot;&amp;quot;;
+//本中间件再银社直连生成支付审核单，还有日记帐拨款单界面用到，typ ： yszl表示从银社直连模块的入口来而
+var G_TYPE = &amp;quot;&amp;quot;;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SplitSheet(0,&amp;quot;V&amp;quot;,&amp;quot;15%&amp;quot;);
+	try{G_TYPE = type}catch(e){}
+    	setValue();
+    	setWidget();
+    	ZXGFILE1 = _this.SaveTempZXGFile(1); 
+    	loadData();         	
+}
+
+//设置默认值
+function setValue()
+{
+     //年月
+     var yymm = G_LOGDAT.substr(0,7);
+     _this.SetCellText(0,1,2,yymm);
+}
+//设置控件
+function setWidget()
+{
+    var xzList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_XZ&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+    var kxList = _this.CreateListValue();
+    var sbh = G_ORGID;
+    var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;); 
+    var yhzlList = &amp;quot;&amp;quot;;
+    if(G_TYPE == &amp;quot;yszl&amp;quot;) {
+    	_this.AddToolbarButton(&amp;quot;udf_scyl&amp;quot;,&amp;quot;支付审核单预览&amp;quot;,&amp;quot;支付审核单预览&amp;quot;,&amp;quot;&amp;quot; ,1,6,4,80);
+    	//银行种类
+	 yhzlList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_YHZL_ZF&amp;where=id in (select yhbm from cw_dfdsb_yszl where yszl_yhjgdm is not null)&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);    	
+        _this.SetToComboBox(&amp;quot;&amp;quot;,0,1,6,yhzlList);
+    	_this.SetCellText(0,1,6,&amp;quot;3&amp;quot;);
+    }   
+    else {
+    	_this.AddToolbarButton(&amp;quot;udf_scbkd&amp;quot;,&amp;quot;确认生成拨款单&amp;quot;,&amp;quot;确认生成拨款单&amp;quot;,&amp;quot;&amp;quot; ,1,6,4,80);
+    	yhzlList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_YHZL_ZF&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+        _this.SetToComboBox(&amp;quot;&amp;quot;,0,1,6,yhzlList);
+    	_this.SetCellText(0,1,6,&amp;quot;%&amp;quot;);    	
+    }    
+     
+    //险种类型
+     var xzList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_XZLX&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+     _this.SetToComboBox(&amp;quot;&amp;quot;,0,1,4,xzList);
+   //  _this.SetCellText(0,1,4,&amp;quot;%&amp;quot;);   
+    
+    //业务类型
+    var ywlxList = _this.CreateListValue();
+    _this.SetListValue(ywlxList ,&amp;quot;E110&amp;quot;,&amp;quot;社会化发放&amp;quot;);
+    _this.SetListValue(ywlxList ,&amp;quot;E120&amp;quot;,&amp;quot;拨至单位（开具拨款单)&amp;quot;);
+    _this.SetListValue(ywlxList ,&amp;quot;E121&amp;quot;,&amp;quot;拨至个人（开具拨款单)&amp;quot;);
+    _this.SetToComboBox(&amp;quot;&amp;quot;,0,1,4,ywlxList);
+    _this.SetToSelectBox(&amp;quot;&amp;quot;,0,1,2,&amp;quot;V_CW_YYYY_MM&amp;quot;,&amp;quot;&amp;quot;); 
+    _this.SetCellText(0,1,4,&amp;quot;E110&amp;quot;);   
+        
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+      if(sheet == 0) {
+         if(row==2&amp;&amp;col==7) {
+//             var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_YHSEL&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=1200px;dialogHeight=600px;&amp;quot;);
+//             if(retVal != &amp;quot;&amp;quot; &amp;&amp; retVal != &amp;quot;undefined&amp;quot; &amp;&amp; retVal != null) {
+//     		 var aab001 = retVal.split(&amp;quot;~&amp;quot;)[0];
+//     		 var aae009 = retVal.split(&amp;quot;~&amp;quot;)[1];
+//     		 var aab340 = retVal.split(&amp;quot;~&amp;quot;)[2];
+//     		 var aab341 = retVal.split(&amp;quot;~&amp;quot;)[3];
+//     		 var aae339 = retVal.split(&amp;quot;~&amp;quot;)[4];
+//     		 var aab010 = retVal.split(&amp;quot;~&amp;quot;)[5];
+//     		 var bae101 = retVal.split(&amp;quot;~&amp;quot;)[6];
+//     		 var bae102 = retVal.split(&amp;quot;~&amp;quot;)[7];
+//     		 _this.SetCellText(0,2,2,aab341);
+//     		 _this.SetCellText(0,2,4,aae339);
+//     		 _this.SetCellText(0,2,6,aab010);          
+//             } 
+          }   
+         else if(row==3&amp;&amp;col==11) {
+             var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CFG_BKDYHB&amp;flag=scbkd&amp;action=sel&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=1200px;dialogHeight=600px;&amp;quot;);
+             if(retVal != &amp;quot;&amp;quot; &amp;&amp; retVal != &amp;quot;undefined&amp;quot; &amp;&amp; retVal != null) {
+     		 var yhhm = retVal.split(&amp;quot;~&amp;quot;)[2];
+     		 var yhzh = retVal.split(&amp;quot;~&amp;quot;)[3];
+     		 var skyh = retVal.split(&amp;quot;~&amp;quot;)[1];
+     		 _this.SetCellText(0,3,2,yhhm);
+     		 _this.SetCellText(0,3,6,yhzh);   
+     		 _this.SetCellText(0,3,9,skyh);  
+             }                        
+         }
+        }     
+}
+
+//检查款项是否重复
+//function check() {
+//      
+//}
+
+
+//生成拨款单
+function scbkd()
+{
+     var ret = &amp;quot;&amp;quot;;
+     var param = new Object();
+     var sbh = G_ORGID;
+     var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+     param.yymm = _this.GetCellText(0,1,2).replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;);
+     param.ywlx =_this.GetCellText(0,1,4);
+     param.djhin =_this.GetCellText(0,1,10);
+     param.yhzl = _this.GetCellText(0,1,6);
+//     param.xz = _this.GetCellText(0,1,4);
+     param.ffpch = _this.GetCellText(0,1,8);
+     param.xtbh2 = getXtbh2();
+     param.czy = G_USRNAM;
+     param.yymmdd = G_LOGDAT.replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;).replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;);
+     param.sbh = sbh;
+     param.zth = zth;
+     param.thisorgid = G_ORGID;
+     param.thisaccid = G_ACCID;
+     param.skyhhm = _this.GetCellText(0,3,2);
+     param.skyhzh =_this.GetCellText(0,3,6);
+     param.skyh =_this.GetCellText(0,3,9);
+     ret = _this.invokeOSFuncExt(&amp;quot;scbkd&amp;quot;,param);
+     alert(ret);
+    // _this.SetCellText(0,1,1,ret);
+    window.close();
+}
+
+function getXtbh2()
+{
+	var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	if (1 * G_ORGID &amp;gt;= 100) return G_ORGID + zth;
+	else if (1 * G_ORGID &amp;gt;= 10) return &amp;quot;0&amp;quot; + G_ORGID + zth;
+	else return &amp;quot;00&amp;quot; + G_ORGID + zth;
+}
+
+function loadData()
+{
+     	var sbh = G_ORGID;
+     	var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+     	var ywlx = _this.GetCellText(0,1,4);
+     	var sfny = _this.GetCellText(0,1,2).replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;);
+     	var yhzl = _this.GetCellText(0,1,6);
+     	var ffpch = _this.GetCellText(0,1,8);
+     	var djh = _this.GetCellText(0,1,10);
+     	var xtbh2 = getXtbh2();
+     	_this.LoadZXGFile(ZXGFILE1,-1,1);
+//     	20161208 LYH MODIFY 设置数据不完全，主数据区不对
+     	_this.SetMainCellRange(1,2,1,_this.GetRowCount(1)-2,_this.GetColCount(1)-1);
+//	_this.SetMainCellRange(1,2,1,_this.GetRowCount(1)-1,_this.GetColCount(1)-1);
+	
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );  
+	_this.SetFixedCol(1,1); 
+	_this.SetFixedRow(1,2);
+	
+     	var xml = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;ywlx=&amp;quot;+ywlx+&amp;quot;&amp;sfny=&amp;quot;+sfny+&amp;quot;&amp;yhzl=&amp;quot;+yhzl+&amp;quot;&amp;ffpch=&amp;quot;+ffpch+&amp;quot;&amp;xtbh2=&amp;quot;+xtbh2+&amp;quot;&amp;djh=&amp;quot;+djh);
+//     	20161208 LYH MODIFY 设置数据不完全，主数据区不对
+//     	_this.SetXmlDS(1,2,1,_this.GetMainCellRangeRow2(1),_this.GetMainCellRangeCol2(1),xml);
+	_this.SetXmlDS(1,2,1,_this.GetRowCount(1)-2,_this.GetColCount(1)-1,xml)
+     	     	
+     	_this.RefreshFormula();
+     	_this.XMLDS_Reset(); 
+     	_this.XMLDS_Parse(xml);
+//     	alert(_this.XMLDS_GetRowCount());
+     	if(_this.XMLDS_GetRowCount() == 0) {
+     		alert(&amp;quot;没有找到已审核的可生成的数据&amp;quot;);
+     	}
+     	
+     	_this.AutoFixScreenWidth();
+     	
+}
+
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if(sheet == 0) {
+		if(col != 2){
+			loadData();
+		}
+	}
+}
+
+
+//SelectBox控件修改单元格内容
+function _thisOnSelectBoxCellModify(sheet,row,col,oldvalue,newvalue,key,where)
+{
+	if(sheet == 0) {
+		loadData();
+	}
+}
+
+//支付审核生成预览
+function scyl()
+{
+	var param = new Object();
+	window.showModalDialog(&amp;quot;show.sp?grdid=YSZFHS&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=1200px;dialogHeight=600px;&amp;quot;);   
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function scbkd()
+{
+   var db = null;
+   var ret = &amp;quot;&amp;quot;;
+   var cnt = 0;
+   
+   try {
+               db = new pub.EADatabase();           
+               
+               //是否启用银社直连判断 //2016-12-26 add by flm
+               var sipub = new SBCW_PUBFUNC();
+               if (yhzl != &amp;quot;&amp;quot;) {
+               		var chkret = sipub.checkYSZLStatusByYH(db,sbh,zth,yhzl);
+			if (chkret != &amp;quot;0&amp;quot;) { //已启用
+				if (chkret != &amp;quot;&amp;quot;) {
+					var rst = 1*db.GetSQL(&amp;quot;select trunc(sysdate) - to_date(&amp;apos;&amp;quot;+chkret+&amp;quot;&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;) from dual&amp;quot;);
+					if (rst &amp;gt;= 0) {
+						var yhmc = db.GetSQL(&amp;quot;select yhbm||&amp;apos;-&amp;apos;||yhmc fullname from cw_dfdsb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yhbm=&amp;apos;&amp;quot;+yhzl+&amp;quot;&amp;apos;&amp;quot;);
+						return &amp;quot;【&amp;quot;+yhmc+&amp;quot;】社银直连已启用，请到社银直连模块操作！&amp;quot;;	
+					}			
+				}
+			}
+               }
+               
+	       var sql = &amp;quot;select 
+			       a.AAE208 sfny,
+			       a.BAE074 djh,
+			       a.aae140 xzlx,
+			       a.aae008,
+			       a.bae419,
+			       nvl(a.AAE024,c.yhmc) dfyhmc,
+			       count(distinct a.aac001) rs,
+			       round(sum(nvl(a.BAZ501,0)),2) je1,round(sum(nvl(a.BAZ502,0)),2) je2,round(sum(nvl(a.BAZ503,0)),2) je3,
+			       round(sum(nvl(a.BAZ504,0)),2) je4,round(sum(nvl(a.BAZ505,0)),2) je5,round(sum(nvl(a.BAZ506,0)),2) je6,
+			       round(sum(nvl(a.BAZ507,0)),2) je7,round(sum(nvl(a.BAZ508,0)),2) je8,round(sum(nvl(a.BAZ509,0)),2) je9,
+			       round(sum(nvl(a.BAZ510,0)),2) je10,round(sum(nvl(a.BAZ511,0)),2) je11,round(sum(nvl(a.BAZ512,0)),2) je12,
+			       round(sum(nvl(a.BAZ513,0)),2) je13,round(sum(nvl(a.BAZ514,0)),2) je14,round(sum(nvl(a.BAZ515,0)),2) je15,			       
+			       round(sum(nvl(a.AIC263,0)),2) je,
+			       a.BAE415 ffpch,
+			       a.bie086 kxlx,
+			       min(substr(a.AAE002,0,6)) AAE002,
+			       max(substr(a.AAE002,8)) AAE002_max,
+			       a.bac005 /*20170119 lyh add 业务类型 */
+			       from ac95 a,CW_DFDSB c
+			       where c.szbz(+) = &amp;apos;2&amp;apos; 
+				  and c.sbh(+) = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and c.zth(+) = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;
+				  and a.aaa027 = (select tcqbm from cw_sbsb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;)
+				  and a.zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;
+				  and a.AAE208 = &amp;quot;+yymm+&amp;quot;
+				  and c.yhbm(+) = a.BAE419
+				  and a.bae116 = &amp;apos;1&amp;apos;
+				  and a.aae400 is null
+				  --and a.aae008 like &amp;apos;%&amp;quot;+yhzl+&amp;quot;%&amp;apos;
+				  and a.aae008 = decode(&amp;apos;&amp;quot;+yhzl+&amp;quot;&amp;apos;,&amp;apos;%&amp;apos;,a.aae008,&amp;apos;&amp;apos;,a.aae008,&amp;apos;&amp;quot;+yhzl+&amp;quot;&amp;apos;)
+                                  and a.bac005 like &amp;apos;%&amp;quot;+ywlx+&amp;quot;%&amp;apos;
+				  and a.bae415 like &amp;apos;%&amp;quot;+ffpch+&amp;quot;%&amp;apos;
+				  and a.bae074 like &amp;apos;%&amp;quot;+djhin+&amp;quot;%&amp;apos;
+				group by 
+				  a.BAE419 ,
+				  nvl(a.AAE024,c.yhmc),
+				  c.yhzl ,
+				  a.AAE208,
+				  a.BAE074,
+				  a.aae140,
+				  a.BAE415,
+				  a.aae008,				  
+                                  a.bie086,a.bac005
+                                  order by c.yhzl,a.aae208,a.BAE074,a.BAE419&amp;quot;; 
+//              return sql;                                                                    
+	       var ds = db.QuerySQL(sql);    
+	       var zrs = 0;
+	       var zje = 0.0;
+	       var arr = new Array();
+	       var arr2 = [&amp;quot;BAZ501&amp;quot;,&amp;quot;BAZ502&amp;quot;,&amp;quot;BAZ503&amp;quot;,&amp;quot;BAZ504&amp;quot;,&amp;quot;BAZ505&amp;quot;,&amp;quot;BAZ506&amp;quot;,&amp;quot;BAZ507&amp;quot;,&amp;quot;BAZ508&amp;quot;,&amp;quot;BAZ509&amp;quot;,&amp;quot;BAZ510&amp;quot;,&amp;quot;BAZ511&amp;quot;,&amp;quot;BAZ512&amp;quot;,&amp;quot;BAZ513&amp;quot;,&amp;quot;BAZ514&amp;quot;,&amp;quot;BAZ515&amp;quot;];
+	       for(var i=0;i&amp;lt;ds.getRowCount();i++) {
+	               sql = &amp;quot;SELECT SEQ_AEF3_AAE400.nextval aae400 FROM DUAL&amp;quot;;
+	               var aae400 = db.GetSQL(sql); 
+		       var aae338 = -1;
+		       var bae552 = 0;
+		       var bae554 = 0;
+		       var bae553 = 0;
+		       var bae031 = 0;
+		       var bae101 = &amp;quot;广西&amp;quot;;
+		       var bae102 = &amp;quot;南宁&amp;quot;;
+		       var bae201 = -1;
+		       var bae202 = -1;
+		       var aab340 = &amp;quot;&amp;quot;;
+		       var aab025 = &amp;quot;&amp;quot;;
+		       var aab026 = &amp;quot;&amp;quot;;
+		       var aae403 = czy;
+		       var aae401 = yymmdd;
+		       var bae007 = xtbh2;	       
+		       var aae140 = ds.getStringAt(i,&amp;quot;xzlx&amp;quot;); 
+		       var aae002 = ds.getStringAt(i,&amp;quot;sfny&amp;quot;);
+		       var bie086 = ds.getStringAt(i,&amp;quot;kxlx&amp;quot;);
+		       var dfyhmc = ds.getStringAt(i,&amp;quot;dfyhmc&amp;quot;);
+//		       var aab001 = ds.getStringAt(i,&amp;quot;aab001&amp;quot;);   //单位编号
+//		       var aab004 = ds.getStringAt(i,&amp;quot;aab004&amp;quot;);   //单位名称
+                       var aab001 = &amp;quot;&amp;quot;;
+                       var aab004 = &amp;quot;&amp;quot;;
+		       var je = ds.getStringAt(i,&amp;quot;je&amp;quot;);
+		       zje = pub.EAFunc.Round(zje + 1.0*je,2);
+		       var rs = ds.getStringAt(i,&amp;quot;rs&amp;quot;);
+		       zrs += 1.0*rs;
+		       var aae008 = ds.getStringAt(i,&amp;quot;aae008&amp;quot;);
+		       var bae419 = ds.getStringAt(i,&amp;quot;bae419&amp;quot;);
+		       var ffpch = ds.getStringAt(i,&amp;quot;ffpch&amp;quot;);
+		       var djh = ds.getStringAt(i,&amp;quot;djh&amp;quot;);    //单据号
+		       var ywlx = ds.getStringAt(i,&amp;quot;BAC005&amp;quot;); /*20170119 lyh add 业务类型 */
+		       
+		       for(var j=0;j&amp;lt;15;j++) {
+		            arr[j] = ds.getStringAt(i,&amp;quot;je&amp;quot;+(j+1));
+		       }
+	               //社保支出基本银行	       
+	               try {
+		               sql = &amp;quot;select jgbh,jgmc,khyh,yhzh,yhhm,bae101,bae102 from cw_bkdyhb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and bz = &amp;apos;10&amp;apos; and xzlx = &amp;apos;&amp;quot;+aae140+&amp;quot;&amp;apos; and yhzl = &amp;apos;&amp;quot;+bae419+&amp;quot;&amp;apos;&amp;quot;;	
+		               var tmpds = db.QuerySQL(sql);
+		               aab340  = tmpds.getStringAt(0,&amp;quot;khyh&amp;quot;);
+		               aab025 = tmpds.getStringAt(0,&amp;quot;yhhm&amp;quot;);
+		               aab026 = tmpds.getStringAt(0,&amp;quot;yhzh&amp;quot;);
+		               aab001 = tmpds.getStringAt(0,&amp;quot;jgbh&amp;quot;);
+		               aab004 = tmpds.getStringAt(0,&amp;quot;jgmc&amp;quot;);		               
+		               bae101 = tmpds.getStringAt(0,&amp;quot;bae101&amp;quot;);
+		               bae102 = tmpds.getStringAt(0,&amp;quot;bae102&amp;quot;);
+	               }catch(e) {
+	                  if(db != null) db.Rollback();
+	                  return &amp;quot;1.查询&amp;quot;+dfyhmc+&amp;quot;社保支出基本户出错,生成拨款单需要代发银行有社保支出基本户和社保支出过渡户,请到【帐务管理-》帐务维护-》银行帐号设置】进行设置！&amp;quot;;
+	              }    
+            	      //社保支出过渡银行
+              	      var aae010 = &amp;quot;&amp;quot;; //收款单位账号(单位)
+                      var aab341 = &amp;quot;&amp;quot;; //收款单位银行代码(单位)(代发机构)
+                      var aae339 = &amp;quot;&amp;quot;; //文件名称
+	              if(skyhhm != &amp;quot;&amp;quot; &amp;&amp; skyhzh != &amp;quot;&amp;quot; &amp;&amp; skyh != &amp;quot;&amp;quot;) {
+		        aae010 = skyhzh;
+		        aab341 = skyh;
+		        aae339 = skyhhm;	   
+		        bae201 = bae101; 
+		        bae202 = bae102;   		
+	              }  
+	              else {
+	              	//20170228 LYH MODIFY 拨至单位不需要查询过渡户
+	              	if(ywlx != &amp;quot;E120&amp;quot;){
+		                  try { 
+			               sql = &amp;quot;select khyh,yhzh,yhhm,bae101,bae102 from cw_bkdyhb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and bz = &amp;apos;11&amp;apos; and xzlx = &amp;apos;&amp;quot;+aae140+&amp;quot;&amp;apos; and yhzl = &amp;apos;&amp;quot;+bae419+&amp;quot;&amp;apos;&amp;quot;;     
+				       var tmpds = db.QuerySQL(sql);	       
+			//	       var aae010 = &amp;quot;123456&amp;quot;;
+			//	       var aab341 = &amp;quot;测试收款单位开户银行&amp;quot;;
+			//	       var aae339 = &amp;quot;测试收款单位开户银行户名&amp;quot;;
+				        aae010 = tmpds.getStringAt(0,&amp;quot;yhzh&amp;quot;);
+				        aab341 = tmpds.getStringAt(0,&amp;quot;khyh&amp;quot;);
+				        aae339 = tmpds.getStringAt(0,&amp;quot;yhhm&amp;quot;);
+			                bae201 = tmpds.getStringAt(0,&amp;quot;bae101&amp;quot;);
+			                bae202 = tmpds.getStringAt(0,&amp;quot;bae102&amp;quot;);		        
+				  }catch(e) {
+				         if(db != null) db.Rollback();
+				         return &amp;quot;2.查询&amp;quot;+dfyhmc+&amp;quot;社保支出过渡户出错,生成拨款单需要代发银行有社保支出基本户和社保支出过渡户,请到【帐务管理-》帐务维护-》银行帐号设置】进行设置！&amp;quot;;
+				  }   
+	       	        }       
+	            }            
+	            //插入aef3
+	            try {
+	            	//20170119 lyh modify 增加拨至单位生成拨款单 拨到单位从基金户出，收入为单位
+	            	if(ywlx == &amp;quot;E110&amp;quot;){
+			        sql = &amp;quot;insert into aef3(aae002,aab001,aae009,bae511,bae541,aab341,aae339,aae010,aab340,aab025,aab026,aae400,aae403,aae401,aae140,
+			                                   aae338,bae552,bae554,bae553,bae031,bae101,bae102,bae201,bae202,bae007,aae600,org,acc) 
+			               values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;
+			               .format([aae002,aab001,aab004,je,rs,aab341,aae339,aae010,aab340,aab025,aab026,aae400,aae403,aae401,aae140,
+			               		&amp;quot;&amp;quot;+aae338,&amp;quot;&amp;quot;+bae552,&amp;quot;&amp;quot;+bae554,&amp;quot;&amp;quot;+bae553,&amp;quot;&amp;quot;+bae031,bae101,bae102,&amp;quot;&amp;quot;+bae201,&amp;quot;&amp;quot;+bae202,bae007,djh,thisorgid,thisaccid]);
+			         cnt += db.ExcecutSQL(sql);
+			}else if(ywlx == &amp;quot;E120&amp;quot;){
+				//查询单位的银行信息
+			        /*AAE009	银行户名（参保对象） AAE010 银行帐号（参保对象） AAE024开户银行名称（参保对象）*/
+				sql = &amp;quot;select distinct aab001,aab004,aae009,aae010,aae024 from ac95 where bae074 = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and aaa027 in (select tcqbm from cw_sbsb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;)&amp;quot;;
+				var dw_ds = db.QuerySQL(sql);
+				aab001 = dw_ds.getStringAt(0,&amp;quot;AAB001&amp;quot;);
+				aab004 = dw_ds.getStringAt(0,&amp;quot;AAB004&amp;quot;);
+				aae339 = dw_ds.getStringAt(0,&amp;quot;AAE009&amp;quot;);
+				aae010 = dw_ds.getStringAt(0,&amp;quot;AAE010&amp;quot;);
+				aab341 = dw_ds.getStringAt(0,&amp;quot;AAE024&amp;quot;);
+								
+				sql = &amp;quot;insert into aef3(aae002,aab001,aae009,bae511,bae541,aab341,aae339,aae010,aab340,aab025,aab026,aae400,aae403,aae401,aae140,
+			                                   aae338,bae552,bae554,bae553,bae031,bae101,bae102,bae201,bae202,bae007,aae600,org,acc) 
+			               values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;
+			               .format([aae002,
+			               aab001,aab004
+			               ,je,rs,
+			               aab341,aae339,aae010,aab340,aab025,aab026,
+			               aae400,aae403,aae401,aae140,&amp;quot;&amp;quot;+aae338,&amp;quot;&amp;quot;+bae552,&amp;quot;&amp;quot;+bae554,&amp;quot;&amp;quot;+bae553,&amp;quot;&amp;quot;+bae031,bae101,bae102,&amp;quot;&amp;quot;+bae201,&amp;quot;&amp;quot;+bae202,bae007,djh,thisorgid,thisaccid]);
+			         cnt += db.ExcecutSQL(sql);
+			}
+	            }catch(ee) {
+	               if(db != null) db.Rollback();
+	               return &amp;quot;插入aef3表出错\r\n&amp;quot;+ee.toString();
+	            }	 
+	             
+	             var mycnt = 0;        
+	             try {        
+		       //插入aef4
+		       var mxxh = 0; //明细序号
+		       for(var j=0;j&amp;lt;arr.length();j++) {
+		       	mycnt ++;
+		             if(arr[j] != 0 &amp;&amp; arr[j]!= &amp;quot;&amp;quot;) {
+		                  mxxh++;
+		                  var jemc = arr2[j];
+		                  sql = &amp;quot;select a.kxmc kxmc,count(distinct(aac001)) rs,round(sum(nvl(a.&amp;quot;+arr2[j]+&amp;quot;,0)),2) je,min(a.AAE002) aae405,max(a.AAE002_max) aae406
+					 from
+					 (
+						select a.aac001,&amp;quot;+arr2[j]+&amp;quot;, b.kxmc,(substr(a.AAE002,0,6)) AAE002,(substr(a.AAE002,8)) AAE002_max
+						from ac95 a,v_jkkx b
+						where b.sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; 
+						and b.zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; 
+						and a.bae074 = &amp;quot;+djh+&amp;quot;
+						and a.bae415 = &amp;quot;+ffpch+&amp;quot;
+				                and a.bae116 = &amp;apos;1&amp;apos;
+				                and a.aae400 is null
+				                and a.bac005 like &amp;apos;%&amp;quot;+ywlx+&amp;quot;%&amp;apos;
+				                and a.bae415 like &amp;apos;%&amp;quot;+ffpch+&amp;quot;%&amp;apos;	
+				                and a.AAE208 = &amp;quot;+yymm+&amp;quot;
+				                and a.bae419 = &amp;apos;&amp;quot;+bae419+&amp;quot;&amp;apos;
+				                and a.aae008 = &amp;apos;&amp;quot;+aae008+&amp;quot;&amp;apos;
+				                and a.aae140 = &amp;apos;&amp;quot;+aae140+&amp;quot;&amp;apos;
+				                and a.bie086 = &amp;apos;&amp;quot;+bie086+&amp;quot;&amp;apos;					                				
+						and a.bie086 = b.lxbh and  nvl(&amp;quot;+arr2[j]+&amp;quot;,0) != 0 and b.mxxh = &amp;quot;+(j+1)+&amp;quot;
+					 )a group by kxmc&amp;quot;;		 
+				  var tmpds = db.QuerySQL(sql);
+				 // throw new Exception(tmpds.GetXml());
+				  var kxmc = tmpds.getStringAt(0,&amp;quot;KXMC&amp;quot;);
+				  var dyrs = tmpds.getStringAt(0,&amp;quot;RS&amp;quot;);
+				  var dyje = tmpds.getStringAt(0,&amp;quot;JE&amp;quot;);
+				  var aae405 = tmpds.getStringAt(0,&amp;quot;aae405&amp;quot;);
+				  var aae406 = tmpds.getStringAt(0,&amp;quot;aae406&amp;quot;);
+				  var bae002 = &amp;quot;1&amp;quot;;
+				  var aae401 = mxxh;
+				  var aae501 = kxmc;
+			          sql = &amp;quot;insert into aef4(aae140,aae405,aae406,aae501,bae002,aae407,aae408,aae409,aae400,aae401,org,acc) values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;
+			          	 .format([aae140,aae405,aae406,aae501,bae002,dyrs,dyje,&amp;quot;&amp;quot;,aae400,&amp;quot;&amp;quot;+aae401,thisorgid,thisaccid]);
+			          db.ExcecutSQL(sql);	
+			          //throw new Exception(&amp;quot;kxmc=&amp;quot;+kxmc);
+				  			  	 
+		             }
+		       }                       
+	            }catch(e) {
+			       if(db != null) db.Rollback();
+			       throw new Exception(&amp;quot;mycnt=&amp;quot;+mycnt+&amp;quot;----&amp;quot;+e.toString());
+			       return &amp;quot;插入aef4表出错\r\n&amp;quot;+e.toString()+&amp;quot;\r\n&amp;quot;+sql;
+	            }
+	            try{	        		
+				//ac95,si_djb_tmp 回写拨款单号
+				sql = &amp;quot;update ac95 a set aae400=&amp;apos;&amp;quot;+aae400+&amp;quot; &amp;apos;
+				                  where a.aae008 = &amp;apos;&amp;quot;+aae008+&amp;quot;&amp;apos;
+						  and a.AAE208 = &amp;quot;+yymm+&amp;quot;
+						  and a.bae116 = &amp;apos;1&amp;apos; 
+						  and a.bae074 = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;
+						  and a.zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;
+						  and a.aae400 is null&amp;quot;;
+				db.ExcecutSQL(sql);
+				sql = &amp;quot;update si_djb_tmp a set aae400=&amp;apos;&amp;quot;+aae400+&amp;quot;&amp;apos;
+				                    where a.scny = &amp;quot;+yymm+&amp;quot;
+				                    and a.zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;
+				                    and a.aae008 = &amp;apos;&amp;quot;+aae008+&amp;quot;&amp;apos;
+				                    and (nvl(je1,0)+nvl(je2,0)+nvl(je3,0)+nvl(je4,0)+nvl(je5,0)+nvl(je6,0)+nvl(je7,0)+nvl(je8,0)+nvl(je9,0)+nvl(je10,0)
+				                          +nvl(je11,0)+nvl(je12,0)+nvl(je13,0)+nvl(je14,0)+nvl(je15,0)) &amp;gt; 0
+				                    and a.djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;
+				                    and a.aae400 is null&amp;quot;;
+				db.ExcecutSQL(sql); 
+		    }catch(e) {
+		        if(db != null) db.Rollback();
+		        return &amp;quot;回写拨款单号出错\r\n&amp;quot;+e.toString();
+		    }		    	                   		  	          	                      	                              
+       }
+       // ret = zje;
+       zje = db.GetSQL(&amp;quot;select to_number(&amp;apos;&amp;quot;+zje+&amp;quot;&amp;apos;) from dual&amp;quot;);
+       ret = &amp;quot;生成拨款单&amp;quot;+cnt+&amp;quot;笔\r\n单位数&amp;quot;+cnt+&amp;quot;\r\n总人数&amp;quot;+zrs+&amp;quot;\r\n总金额&amp;quot;+zje;	       
+       db.Commit();		                      
+			  
+   }catch(e) {
+       if(db != null) db.Rollback();
+       return e.toString();
+   }finally {
+       if(db != null) db.Close();
+   }
+   return ret;
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >getKX</ID><NAME ></NAME><DATDSC >select xh id,zy name
+from cw_cyzyb
+where zth = &amp;apos;[%zth]&amp;apos; and sbh = &amp;apos;[%sbh]&amp;apos;</DATDSC><C4 >getKX</C4><C5 >getKX</C5><C6 >getKX</C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14></ROW>
+<ROW num="1" ><ID >getDate</ID><NAME ></NAME><DATDSC >select to_char(sysdate,&amp;apos;yyyy-mm-dd&amp;apos;) dqrq from dual</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14></ROW>
+<ROW num="2" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select a.AAE208 sfny,
+       a.BAE415 ffpch, 
+       a.bae074 djh,
+       DECODE(A.BAC005,&amp;apos;E110&amp;apos;,&amp;apos;社会化发放&amp;apos;,&amp;apos;E120&amp;apos;,&amp;apos;拨至单位&amp;apos;,&amp;apos;E121&amp;apos;,&amp;apos;拨至个人&amp;apos;) YWLX,      
+       nvl(a.AAE024, c.yhmc) dfyhmc,
+       count(distinct a.aac001) rs,
+       round(sum(nvl(a.AIC263, 0)), 2) je
+  from ac95 a, CW_DFDSB c
+ where c.szbz(+) = &amp;apos;2&amp;apos;
+   and c.sbh(+) = &amp;apos;[%sbh]&amp;apos;
+   and c.zth(+) = &amp;apos;[%zth]&amp;apos;
+   and a.zth = &amp;apos;[%zth]&amp;apos;
+   and a.aaa027 = (select tcqbm from cw_sbsb where sbh = &amp;apos;[%sbh]&amp;apos;)
+   and a.AAE208 = &amp;apos;[%sfny]&amp;apos;
+   and c.yhbm(+) = a.BAE419
+   and a.bae116 = &amp;apos;1&amp;apos;
+   and a.aae400 is null
+   --and a.aae008 &amp;apos;%[%yhzl]%&amp;apos;
+   and a.aae008 = decode(&amp;apos;[%yhzl]&amp;apos;,&amp;apos;%&amp;apos;,a.aae008,&amp;apos;&amp;apos;,a.aae008,&amp;apos;[%yhzl]&amp;apos;)
+   and a.bac005 like &amp;apos;%[%ywlx]%&amp;apos;
+   and a.bae415 like &amp;apos;%[%ffpch]%&amp;apos;
+   and a.bae074 like &amp;apos;%[%djh]%&amp;apos;
+ group by a.BAE419,
+          nvl(a.AAE024, c.yhmc),
+          c.yhzl,
+          a.AAE208,
+          a.BAE074,
+          a.aae140,
+          a.BAE415,
+          a.aae008,
+          a.bie086,
+          A.BAC005,
+          a.bae074
+ order by c.yhzl, a.aae208, a.BAE074, a.BAE419</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 >MAIN</C7><C8 >MAIN</C8><C9 >MAIN</C9><C10 >MAIN</C10><C11 >MAIN</C11><C12 >MAIN</C12><C13 >MAIN</C13><C14 >MAIN</C14></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

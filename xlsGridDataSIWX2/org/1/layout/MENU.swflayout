@@ -1,0 +1,20 @@
+<?xml version = '1.0' ?>
+<ROWSET height="90" width="136">
+<ROW>
+ <C0  height="90" width="136" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_106.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=YSZL_CHECK','对帐','对帐');" bkcolor="#00A9EC" title="对帐">对帐</C0>
+ <C1  height="90" width="272" COLSPAN="1" ROWSPAN="2" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_111.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=YSZL_GRPLDK','个体批量代扣','个体批量代扣');" bkcolor="#36729E" title="个体批量代扣">个体批量代扣</C1>
+ <C3  height="90" width="136" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_116.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=YSZL_YECX','账户余额查询','账户余额查询');" bkcolor="#00AEEF" title="账户余额查询">账户余额查询</C3>
+</ROW>
+<ROW>
+ <C0  height="90" width="136" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_89.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=wslog2','通讯日志查询','通讯日志查询');" bkcolor="#3C90B2" title="通讯日志查询" >通讯日志查询</C0>
+ <C1  height="90" width="136" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_71.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=RJZDY','打印发票','打印发票');" bkcolor="#27AAE1" title="打印发票">打印发票</C1>
+ <C2  height="90" width="136" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_133.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=orgusrrol&sytid=SBCW','组织权限','组织权限');" bkcolor="#04AEDA" title="组织权限">组织权限</C2>
+ <C3  height="90" width="136" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_254.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=YSZL_SN_ORG_LIST','枢纽机构管理','枢纽机构管理');" bkcolor="#2BBAFF" title="枢纽机构管理">枢纽机构管理</C3>
+</ROW>
+<ROW>
+ <C0  height="90" width="136" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_53.png" url="javascript:j_openWindow(-1,-1,-1,-1,'xlsgrid/jsp/pages/dbEdit.jsp?grdid=WSCONFIG&flag=SI_WSCONFIG','WS配置','WS配置');" bkcolor="#525592" title="WS配置">WS配置</C0>
+ <C1  height="90" width="136" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_231.png" url="javascript:j_openWindow(-1,-1,-1,-1,'xlsgrid/jsp/pages/dbEdit.jsp?grdid=CFG_ACC&flag=','帐套设置','帐套设置');" bkcolor="#68217A" title="帐套设置">帐套设置</C1>
+ <C2  height="90" width="136" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_2.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=CFG_BKDYHB&action=edit','银行帐号设置','银行帐号设置');" bkcolor="#276388" title="银行帐号设置">银行帐号设置</C2>
+ <C3  height="90" width="136" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_31.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=CFG_YHFTP','银行前置参数设置','银行前置参数设置');" bkcolor="#00ACDC" title="银行前置参数设置">银行前置参数设置</C3>
+</ROW>
+</ROWSET>

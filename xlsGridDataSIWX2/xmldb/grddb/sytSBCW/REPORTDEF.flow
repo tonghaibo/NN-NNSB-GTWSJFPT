@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<svg title="SVGform" fill="#FFFFFF" fill-type="1" background="">
+ <rect id="rect_554810" x="10" y="10" round="1" stroke="#000000" fill="#E8E8E8" fillto="#FFFFFF" 属性="">
+ </rect>
+ <connector id="connector_108_255013" from="rect_53512" to="rect_84114" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_255017" from="rect_132514" to="rect_132514" fromcp="32" tocp="32" type="108">
+ </connector>
+ <connector id="connector_108_255029" from="rect_53513" to="rect_53513" fromcp="21" tocp="21" type="108">
+ </connector>
+ <connector id="connector_108_311215" from="rect_311210" to="rect_255019" fromcp="23" tocp="21" type="108">
+ </connector>
+ <connector id="connector_108_583213" from="rect_255019" to="rect_255019" fromcp="21" tocp="21" type="108">
+ </connector>
+ <connector id="connector_208_154020" from="rect_203320" to="rect_150616" fromcp="32" tocp="12" type="208" stroke-dash="3">
+ </connector>
+ <rect id="rect_231311" x="13" y="15" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <connector id="connector_208_224115" from="rect_334327" to="rect_334324" fromcp="32" tocp="12" type="208" stroke="#2A579A" stroke-width="2">
+ </connector>
+ <connector id="connector_208_85412" from="rect_334311" to="rect_85411" fromcp="23" tocp="21" type="208" 属性="" stroke="#2A579A" stroke-width="2">
+ </connector>
+ <line id="linearrow_373415" x1="549" y1="458" x2="549" y2="458" endcap="9">
+ </line>
+ <line id="linearrow_373416" x1="546" y1="452" x2="546" y2="452" endcap="9">
+ </line>
+ <line id="linearrow_373423" x1="188" y1="308" x2="188" y2="308" endcap="9">
+ </line>
+ <line id="line_320315" x1="649" y1="43" x2="649" y2="43">
+ </line>
+ <line id="line_320320" x1="344" y1="177" x2="344" y2="177">
+ </line>
+ <line id="line_320321" x1="647" y1="222" x2="647" y2="222">
+ </line>
+ <line id="line_320322" x1="339" y1="236" x2="339" y2="236">
+ </line>
+ <line id="line_320323" x1="345" y1="236" x2="345" y2="236">
+ </line>
+ <line id="line_320324" x1="519" y1="106" x2="519" y2="106">
+ </line>
+ <line id="line_320325" x1="346" y1="94" x2="346" y2="94">
+ </line>
+ <line id="line_320326" x1="503" y1="147" x2="503" y2="147">
+ </line>
+ <line id="line_320327" x1="507" y1="229" x2="507" y2="229" 属性="">
+ </line>
+ <line id="line_320328" x1="349" y1="161" x2="349" y2="161">
+ </line>
+ <line id="line_320329" x1="646" y1="208" x2="646" y2="208">
+ </line>
+ <line id="line_320330" x1="344" y1="173" x2="344" y2="173" 属性="">
+ </line>
+ <line id="line_320331" x1="652" y1="213" x2="652" y2="213">
+ </line>
+ <line id="line_320332" x1="697" y1="307" x2="697" y2="307">
+ </line>
+ <line id="line_320333" x1="647" y1="291" x2="647" y2="291">
+ </line>
+ <line id="line_320334" x1="737" y1="259" x2="737" y2="259">
+ </line>
+ <line id="line_320335" x1="650" y1="251" x2="650" y2="251">
+ </line>
+ <line id="line_320336" x1="650" y1="250" x2="650" y2="250" 属性="">
+ </line>
+ <connector id="connector_208_142914" from="rect_334326" to="rect_255021" fromcp="32" tocp="12" type="208" stroke="#2A579A" stroke-width="2">
+ </connector>
+ <connector id="connector_208_142917" from="rect_373443" to="rect_373444" fromcp="32" tocp="12" type="208" stroke="#2A579A" stroke-width="2">
+ </connector>
+ <connector id="connector_208_142924" from="rect_85411" to="rect_334326" fromcp="23" tocp="12" type="208" stroke="#2A579A" stroke-width="2">
+ </connector>
+ <connector id="connector_208_142925" from="rect_334326" to="rect_334311" fromcp="21" tocp="32" type="208" stroke="#2A579A" stroke-width="2">
+ </connector>
+ <connector id="connector_208_142937" from="rect_231312" to="rect_231312" fromcp="11" tocp="11" type="208">
+ </connector>
+ <connector id="connector_208_142940" from="rect_255021" to="rect_334311" fromcp="21" tocp="32" type="208" stroke="#2A579A" stroke-width="2">
+ </connector>
+ <connector id="connector_208_142942" from="rect_334311" to="rect_334311" fromcp="32" tocp="32" type="208">
+ </connector>
+ <connector id="connector_208_142947" from="rect_373443" to="rect_334311" fromcp="21" tocp="32" type="208" stroke="#2A579A" stroke-width="2">
+ </connector>
+ <connector id="connector_208_142948" from="rect_373444" to="rect_334311" fromcp="21" tocp="32" type="208" stroke="#2A579A" stroke-width="2">
+ </connector>
+ <connector id="connector_208_142950" from="rect_373445" to="rect_334311" fromcp="21" tocp="32" type="208" stroke="#2A579A" stroke-width="2">
+ </connector>
+ <line id="linearrow_142968" x1="417" y1="140" x2="417" y2="140" endcap="9">
+ </line>
+ <line id="linearrow_142969" x1="418" y1="140" x2="418" y2="140" endcap="9">
+ </line>
+ <line id="linearrow_142970" x1="416" y1="140" x2="416" y2="140" endcap="9">
+ </line>
+ <line id="linearrow_142971" x1="420" y1="141" x2="420" y2="141" endcap="9">
+ </line>
+ <line id="linearrow_142972" x1="569" y1="249" x2="569" y2="249" endcap="9">
+ </line>
+ <rect id="roundrect_22916" x="89" y="92" width="93" height="43" round="15" stroke="#000000" fill="#E1E1E1" fillto="" opacity="1" stroke-dash="1" url="xlsgrid/jsp/pages/dbEdit.jsp?grdid=FIN_REPMODEL&flag=FIN_REPMODEL">报表定义</rect>
+ <rect id="roundrect_22917" x="300" y="23" width="92" height="25" round="15" stroke="#000000" fill="#B5FFDA" fillto="" opacity="1" stroke-dash="1" url="xlsgrid/jsp/pages/dbEdit.jsp?grdid=FIN_IDXTYPE&flag=">指标类型定义</rect>
+ <rect id="rect_22918" x="300" y="179" width="92" height="25" round="15" stroke="#000000" fill="#B5FFDA" fillto="" opacity="1" stroke-dash="1" url="xlsgrid/jsp/pages/dbEdit.jsp?grdid=FIN_BDS&flag=FIN_FORMULA">平衡公式定义</rect>
+ <rect id="rect_22919" x="300" y="115" width="92" height="25" round="15" stroke="#000000" fill="#B5FFDA" fillto="" opacity="1" stroke-dash="1" 属性="" url="xlsgrid/jsp/pages/dbEdit.jsp?grdid=idxFormula&flag=V_FINREP">取数公式定义</rect>
+ <rect id="rect_22920" x="300" y="84" width="92" height="25" round="15" stroke="#000000" fill="#B5FFDA" fillto="" opacity="1" stroke-dash="1" url="xlsgrid/jsp/pages/dbEdit.jsp?grdid=FIN_INDEXITEM&flag=" 属性="">指标项定义</rect>
+ <rect id="rect_22921" x="300" y="53" width="92" height="25" round="15" stroke="#000000" fill="#B5FFDA" fillto="" opacity="1" stroke-dash="1" url="xlsgrid/jsp/pages/dbEdit.jsp?grdid=FIN_INDEX&flag=FIN_INDEX">指标定义</rect>
+ <rect id="rect_22922" x="445" y="210" width="82" height="25" round="15" stroke="#000000" fill="#B5FFDA" fillto="" opacity="1" stroke-dash="1" url="xlsgrid/jsp/pages/dbEdit.jsp?grdid=FIN_REPBDS&flag=V_FINREP">平衡公式分配</rect>
+ <rect id="rect_22923" x="155" y="195" width="82" height="35" round="15" stroke="#000000" fill="#CCCCFF" fillto="" opacity="1" stroke-dash="1" url="show.sp?grdid=RepDis">报表分配</rect>
+ <rect id="rect_22924" x="26" y="195" width="112" height="35" round="15" stroke="#000000" fill="#CCCCFF" fillto="" opacity="1" stroke-dash="1" url="show.sp?grdid=RepLoc">报表存放位置定义</rect>
+ <connector id="connector_108_22925" from="roundrect_22916" to="roundrect_22917" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_22926" from="roundrect_22916" to="rect_22921" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_22927" from="roundrect_22916" to="rect_22920" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_22928" from="roundrect_22916" to="rect_22919" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_22929" from="roundrect_22916" to="rect_22918" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_22930" from="roundrect_22916" to="rect_22924" fromcp="23" tocp="21" type="108">
+ </connector>
+ <connector id="connector_108_22931" from="roundrect_22916" to="rect_22923" fromcp="23" tocp="21" type="108">
+ </connector>
+ <connector id="connector_108_22932" from="rect_22918" to="rect_22922" fromcp="32" tocp="12" type="108">
+ </connector>
+ <text id="text_22933" x="398" y="19" width="200" height="20" font-size="12">给指标定义进行分类管理</text>
+ <line id="line_22934" x1="393" y1="39" x2="536" y2="39">
+ </line>
+ <line id="line_22935" x1="393" y1="70" x2="636" y2="70">
+ </line>
+ <text id="text_22936" x="398" y="49" width="290" height="20" font-size="12">为报表的每一个栏目的行编制相对应的指标</text>
+ <text id="text_22937" x="398" y="80" width="310" height="20" font-size="12">为报表的每一个栏目的列编制相对应的指标项</text>
+ <line id="line_22938" x1="393" y1="100" x2="646" y2="100">
+ </line>
+ <line id="line_22939" x1="393" y1="132" x2="794" y2="132">
+ </line>
+ <text id="text_22940" x="398" y="110" width="410" height="20" font-size="12">为报表的每一个数据单元格（指标+指标项对应的）编制相应的取数公式</text>
+ <text id="text_22941" x="398" y="172" width="470" height="20" font-size="12">编制报表指标的平衡公式，并把平衡公式分配到使用的对应报表中</text>
+ <line id="line_22942" x1="393" y1="191" x2="756" y2="191">
+ </line>
+ <rect id="rect_185730" x="27" y="279" width="809" height="199" round="" stroke="#000000" fill="#FFFFFF" fillto="" opacity="1" stroke-dash="1" 属性="">
+ </rect>
+ <rect id="roundrect_185715" x="60" y="338" width="65" height="31" round="15" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">凭证</rect>
+ <rect id="roundrect_185716" x="231" y="330" width="86" height="47" round="15" stroke="#000000" fill="#EAFFEA" fillto="" opacity="1" stroke-dash="1">报表指标库</rect>
+ <polygon id="page_185718" points="480,321 472,321 471,326 480,321 480,293 395,293 395,326 471,326 480,321 480,321" changeto="page" stroke="#000000" fill="#FFFFFF" fillto="" opacity="1" stroke-dash="1">861报表</polygon>
+ <polygon id="polygon_185719" points="480,361 472,361 471,366 480,361 480,333 395,333 395,366 471,366 480,361 480,361 480,361" changeto="page" stroke="#000000" fill="#FFFFFF" fillto="" opacity="1" stroke-dash="1">862报表</polygon>
+ <polygon id="polygon_185720" points="480,401 472,401 471,406 480,401 480,373 395,373 395,406 471,406 480,401 480,401 480,401 480,401" changeto="page" stroke="#000000" fill="#FFFFFF" fillto="" opacity="1" stroke-dash="1">863报表</polygon>
+ <polygon id="polygon_185721" points="480,451 472,451 471,456 480,451 480,423 395,423 395,456 471,456 480,451 480,451 480,451 480,451 480,451" changeto="page" stroke="#000000" fill="#FFFFFF" fillto="" opacity="1" stroke-dash="1">其它报表...</polygon>
+ <connector id="connector_208_185722" from="roundrect_185715" to="roundrect_185716" fromcp="32" tocp="12" type="208">
+ </connector>
+ <connector id="connector_108_185724" from="roundrect_185716" to="page_185718" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_185725" from="roundrect_185716" to="polygon_185719" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_185726" from="roundrect_185716" to="polygon_185720" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_185727" from="roundrect_185716" to="polygon_185721" fromcp="32" tocp="12" type="108">
+ </connector>
+ <text id="text_185728" x="134" y="338" width="100" height="20" font-size="10">凭证制单后写入</text>
+ <text id="text_185731" x="40" y="282" width="180" height="40" font-size="12">报表数据取数来源说明</text>
+ <text id="text_185733" x="534" y="312" width="290" height="40" font-size="14" 属性="">报表取数公式：F('指标编号','指标项编号')
+</text>
+ <text id="text_431316" x="39" y="8" width="180" height="40" font-size="16">报表定义相关的项目</text>
+ <text id="text_431317" x="434" y="392" width="20" height="40" font-size="9">.
+.
+.</text>
+ <text id="text_431319" x="533" y="347" width="280" height="100" fill="#000000" stroke="" stroke-width="0" font-family="" font-size="14" textLength="50" lengthAdjust="0" rotate="0">指标项公式：[this,SNTQ]  
+this-本指标; SNTQ-上年同期; QM-期末; QC-期初; SY-上月</text>
+ <circle id="point_52316" cx="34" cy="20" r="2" stroke="#000000" fill="#333333" fillto="" opacity="1" stroke-dash="1" resizable="0">
+ </circle>
+ <rect id="rect_374613" x="300" y="146" width="92" height="25" round="15" stroke="#000000" fill="#B5FFDA" fillto="" opacity="1" stroke-dash="1" 属性="" url="xlsgrid/jsp/pages/dbEdit.jsp?grdid=appendixFormula&flag=FIN_INDEX_FORMULA">附件定义</rect>
+ <line id="line_374614" x1="393" y1="162" x2="636" y2="162">
+ </line>
+ <text id="text_374615" x="398" y="141" width="470" height="20" font-size="12">定义报表附件输入数据项和对应的取数公式</text>
+ <connector id="connector_108_374616" from="roundrect_22916" to="rect_374613" fromcp="32" tocp="12" type="108">
+ </connector>
+ <rect id="rect_290718" x="300" y="208" width="112" height="25" round="15" stroke="#000000" fill="#B5FFDA" fillto="" opacity="1" stroke-dash="1" url="show.sp?grdid=FIN_FORMULADEF">平衡公式快速定义</rect>
+</svg>

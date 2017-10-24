@@ -1,0 +1,225 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RJZ_LRQCYE</MWID><NAME >录入期初余额</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RJZ_LRQCYE.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS >xlsgrid/js/main.js</EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >save</ID><NAME >保存</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >5</IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	var fxList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_CSB&amp;where=lxdm in &amp;apos;FX&amp;apos;&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);	
+	var kxList = _this.CreateListValue();
+        _sql.querytods(&amp;quot;getKX&amp;quot;,&amp;quot;&amp;quot;);
+        for(var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+                var id = _this.XMLDS_GetStringAt(i,0);
+                var name = _this.XMLDS_GetStringAt(i,1);
+                _this.SetListValue(kxList,id,name);              
+            }
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,2,2,fxList );//方向
+        _this.SetToComboBox(&amp;quot;&amp;quot;,0,2,7,kxList );//款项
+        if(YY == &amp;quot;&amp;quot;){
+//           _sql.querytods(&amp;quot;getDate&amp;quot;,&amp;quot;&amp;quot;);
+//           var dqrq = _this.XMLDS_GetStringAt(0,0); 
+//           _this.SetCellText(0,1,2,dqrq.split(&amp;quot;-&amp;quot;)[0]);
+             _this.SetCellText(0,1,2,G_LOGDAT.split(&amp;quot;-&amp;quot;)[0]);             
+        }
+        else{ _this.SetCellText(0,1,2,YY);}
+        _this.SetCellText(0,1,4,DWBH); 
+        _this.SetCellText(0,1,7,DWMC);
+        _this.SetCellText(0,2,2,YEFX);                 	
+}
+
+function save()
+{
+       var yy = _this.GetCellText(0,1,2);
+       var dwbh = _this.GetCellText(0,1,4);
+       var dwmc = _this.GetCellText(0,1,7);
+       var yefx = _this.GetCellText(0,2,2);
+       var ye = _this.GetCellText(0,2,4);
+       var kxlx = _this.GetCellText(0,2,7);
+       if (dwbh == &amp;quot;&amp;quot;) {
+           alert(&amp;quot;请选择单位！&amp;quot;);
+           return;
+       }
+       if (yefx == &amp;quot;&amp;quot;) {
+           alert(&amp;quot;请选择余额方向！&amp;quot;);
+           return;
+       }
+       if (ye == &amp;quot;&amp;quot; || ye == 0) {
+       	    alert(&amp;quot;请输入期初余额！&amp;quot;); return;
+       }
+       if(!IsNumber(ye,null)) {
+            alert(&amp;quot;输入期初余额格式不正确！&amp;quot;);
+            return;
+       }
+       if (kxlx == &amp;quot;&amp;quot;) {
+       	    alert(&amp;quot;请选择款项！&amp;quot;); return;
+       }
+       var ret = checkKX();
+       if(ret == 1) {
+             alert(&amp;quot;款项重复，保存失败&amp;quot;);
+             return;
+       }
+       else if(ret == &amp;quot;error&amp;quot;) {
+             alert(&amp;quot;检查款项出错，保存失败&amp;quot;);
+             return;
+       }
+       var param = new Object();
+       param.yy = yy;
+       param.dwbh =dwbh;
+       param.dwmc = dwmc;
+       param.yefx = yefx;
+       param.ye = ye;
+       param.kxlx = kxlx;
+       param.sbh = G_ORGID;
+       param.zth = G_ACCID.substr(G_ORGID.length);
+       param.org = G_ORGID;
+       param.acc = G_ACCID;
+       var ret = _this.invokeOSFuncExt(&amp;quot;save&amp;quot;,param);
+       alert(ret);
+       if(ret == &amp;quot;添加成功&amp;quot;) {
+          window.close();
+       }
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+      if(sheet == 0) {
+         if(row==1&amp;&amp;col==5) {
+             var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_DWSEL&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=600px;dialogHeight=450px;&amp;quot;);
+             if(retVal != &amp;quot;&amp;quot; &amp;&amp; retVal != &amp;quot;undefined&amp;quot; &amp;&amp; retVal != null) {
+                _this.SetCellText(0,1,4,retVal.split(&amp;quot;~&amp;quot;)[0]);//单位名称
+                _this.SetCellText(0,1,7,retVal.split(&amp;quot;~&amp;quot;)[1]);//单位简称                
+             }           
+         }     
+      }
+}
+
+//检查款项是否重复
+function checkKX() {
+     var yy = _this.GetCellText(0,1,2);
+     var kx = _this.GetCellText(0,2,7);
+     var dwbh = _this.GetCellText(0,1,4);
+     var sbh = G_ORGID;
+     var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+     var param = new Object();
+     param.kxlx = kx;
+     param.dwbh = dwbh;
+     param.sbh = sbh;
+     param.zth = zth;
+     param.yy = yy;
+     var ret = _this.invokeOSFuncExt(&amp;quot;checkKX&amp;quot;,param); //返回1表示重复
+     return  ret;
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (row == 2 &amp;&amp; col == 4) {
+		if(!IsNumber(newvalue,null)) {
+	            alert(&amp;quot;输入期初余额格式不正确！&amp;quot;);
+	            _this.SetCellText(sheet,row,col,oldvalue);
+	       }
+	}
+	else if (row == 1 &amp;&amp; col == 4) {
+		var ret = invokeOSFunc(&amp;quot;getDwmc&amp;quot;,&amp;quot;thisorgid=&amp;quot;+G_ORGID+&amp;quot;&amp;thisaccid=&amp;quot;+G_ACCID+&amp;quot;&amp;dwbh=&amp;quot;+newvalue);
+		if(ret == &amp;quot;0&amp;quot; &amp;&amp; newvalue != &amp;quot;&amp;quot;){
+			alert(&amp;quot;单位编号【&amp;quot;+newvalue+&amp;quot;】查询无此单位!!!&amp;quot;);
+			_this.SetCellText(sheet,row,col,oldvalue);
+			return false;
+		}else if (ret != &amp;quot;0&amp;quot;) {
+			_this.SetCellText(0,1,7,ret);
+		}
+
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+function save() {
+     var db = null;
+     var ret = &amp;quot;&amp;quot;;
+     try{
+         db = new pub.EADatabase();
+         var sql = &amp;quot;insert into cw_dwqcyeb (SBH,ZTH,YY,DWBH,YE,YEFX,KXLX,ORG,ACC)
+		    values (&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+dwbh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+ye+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+yefx+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+kxlx+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+org+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+acc+&amp;quot;&amp;apos;)&amp;quot;;
+	 db.ExcecutSQL(sql);
+	 db.Commit();
+	 ret = &amp;quot;添加成功&amp;quot;;	    
+     }catch(e) {
+         if(db != null) db.Rollback();
+         return e.toString();
+     }finally {
+         if(db != null) db.Close();
+     }
+       return ret;
+}
+
+function checkKX() {
+     var db = null;
+     var ret = &amp;quot;&amp;quot;;
+     try{
+         db = new pub.EADatabase();
+         var sql = &amp;quot;select count(1) cnt from cw_dwqcyeb 
+                     where yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and sbh =&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and kxlx=&amp;apos;&amp;quot;+kxlx+&amp;quot;&amp;apos; and dwbh=&amp;apos;&amp;quot;+dwbh+&amp;quot;&amp;apos;&amp;quot;;
+	 var ds =db.QuerySQL(sql);
+	 var cnt = ds.getStringAt(0,&amp;quot;cnt&amp;quot;);
+	 if(cnt &amp;gt;=1) {
+	    ret = 1;
+	 } else {
+	    return 0;
+	 }	    
+     }catch(e) {
+         if(db != null) db.Rollback();
+         return &amp;quot;error&amp;quot;;
+     }finally {
+         if(db != null) db.Close();
+     }
+       return ret;
+}
+
+function getDwmc()
+{
+	var sql = &amp;quot;select dwmc from si_dwb where ORG = &amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; AND ACC = &amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos; AND UPPER(DWBH) = UPPER(&amp;apos;&amp;quot;+dwbh+&amp;quot;&amp;apos;)&amp;quot;;
+	var ds = pub.EADbTool.QuerySQL(sql);
+	if (ds.getRowCount() &amp;gt; 0) {
+		return ds.getStringAt(0,&amp;quot;DWMC&amp;quot;);
+	}
+	return &amp;quot;0&amp;quot;;
+}
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >getKX</ID><NAME ></NAME><DATDSC >  SELECT 
+		&amp;quot;CW_RJLXB&amp;quot;.&amp;quot;LXBH&amp;quot;||&amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;MXXH&amp;quot; id,
+		&amp;quot;CW_RJLXB&amp;quot;.&amp;quot;LXBH&amp;quot;||&amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;MXXH&amp;quot;||&amp;apos;: &amp;apos;||&amp;quot;CW_RJLXB&amp;quot;.&amp;quot;RJLX&amp;quot;||&amp;apos;-&amp;apos;||&amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;KXMC&amp;quot; name
+    FROM &amp;quot;CW_RJLXB&amp;quot;,   
+         &amp;quot;CW_RJLXMXB&amp;quot;  
+   WHERE ( &amp;quot;CW_RJLXB&amp;quot;.&amp;quot;ORG&amp;quot; = &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;ORG&amp;quot; ) and  
+         ( &amp;quot;CW_RJLXB&amp;quot;.&amp;quot;ACC&amp;quot; = &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;ACC&amp;quot; ) and 
+         ( &amp;quot;CW_RJLXB&amp;quot;.&amp;quot;LXBH&amp;quot; = &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;LXBH&amp;quot; ) and 
+         (( &amp;quot;CW_RJLXB&amp;quot;.&amp;quot;ORG&amp;quot; = &amp;apos;[%SYS_ORGID]&amp;apos; )  AND  
+         (  &amp;quot;CW_RJLXB&amp;quot;.&amp;quot;ACC&amp;quot; = &amp;apos;[%SYS_ACCID]&amp;apos; ) )
+	ORDER BY   &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;LXBH&amp;quot;, 
+					&amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;MXXH&amp;quot;</DATDSC><C4 >getKX</C4><C5 >getKX</C5><C6 ></C6></ROW>
+<ROW num="1" ><ID >getDate</ID><NAME ></NAME><DATDSC >select to_char(sysdate,&amp;apos;yyyy-mm-dd&amp;apos;) dqrq from dual</DATDSC><C4 ></C4><C5 ></C5><C6 >getDate</C6></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

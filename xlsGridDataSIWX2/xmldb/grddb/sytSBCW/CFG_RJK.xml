@@ -1,0 +1,658 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >CFG_RJK</MWID><NAME >日记款类设置</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CFG_RJK.zxg</FILE><SCENE ></SCENE><FIXED >2,0</FIXED><CATTYP >系统维护</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >1</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var sheet0 = 0;
+var sheet1 = 1;
+var sheet2 = 2;
+var curSheet = -1;
+var dwlxList;
+var fxList;
+var xzlxList;
+var currow0 = -1;
+var currow1 = -1;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{	
+	//页面分割
+	_this.SplitSheet(sheet0,&amp;quot;H&amp;quot;,&amp;quot;30%&amp;quot;);
+	_this.SplitSheet(sheet1,&amp;quot;V&amp;quot;,&amp;quot;50%&amp;quot;);
+	
+	try { currow0 = selcurrow0; currow1 = selcurrow1; } catch (e) { }
+	
+	_this.SetFixedRow(sheet1,2);
+	_this.SetFixedCol(sheet1,0);
+	_this.SetFixedRow(sheet2,2);
+	_this.SetFixedCol(sheet2,0);
+	_this.SetColWidth(sheet0,0,25);
+	_this.SetColWidth(sheet1,0,25);
+	_this.SetColWidth(sheet2,0,25);
+	
+	_this.SetColVisible(sheet1,1,-1);
+	_this.SetColVisible(sheet0,_this.GetColCount(sheet0)-1,-1);
+	_this.SetColVisible(sheet1,_this.GetColCount(sheet1)-1,-1);
+	_this.SetColVisible(sheet2,_this.GetColCount(sheet2)-1,-1);
+	_this.SetColVisible(sheet2,_this.GetColCount(sheet2)-2,-1);
+	_this.SetColVisible(sheet2,_this.GetColCount(sheet2)-3,-1);
+	
+	//设置主数据区域
+//	_this.SetMainCellRange(sheet0,2,1,22,_this.GetColCount(sheet0)-1);
+//	_this.SetMainCellRange(sheet1,2,1,11,_this.GetColCount(sheet1)-1);
+	_this.SetMainCellRange(sheet0,2,0,22,_this.GetColCount(sheet0)-1);
+	_this.SetMainCellRange(sheet1,2,0,11,_this.GetColCount(sheet1)-1);
+	_this.SetMainCellRange(sheet2,2,1,11,_this.GetColCount(sheet2)-1);
+	//设置单行选择模式
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetAttribe(&amp;quot;SHEET_2&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+	//dwlxList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=SI_DWLXB&amp;quot;),&amp;quot;DWLXBH&amp;quot;,&amp;quot;DWLX&amp;quot;);
+	dwlxList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_SI_DWLXB&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	xzlxList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_XZLX&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	
+	//设置第1列为选中控件
+	for (var sh=0;sh&amp;lt;3;sh++) {
+		for (var r=1;r&amp;lt;_this.GetRowCount(sh);r++) {
+			_this.SetToBoolBox(sh,r,0);
+		}
+	}
+	
+	loadSheetData();	
+	
+	var xmlmenu = &amp;quot;&amp;lt;item id=\&amp;quot;btn_kxlx\&amp;quot; name=\&amp;quot;款项类型\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;btn_kxmx\&amp;quot; name=\&amp;quot;款项明细\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;btn_kxkm\&amp;quot; name=\&amp;quot;款项科目\&amp;quot;/&amp;gt;&amp;quot;;
+       _this.AddToolbarButton(&amp;quot;&amp;quot;,&amp;quot;新增&amp;quot;,&amp;quot;&amp;quot;,xmlmenu,0,4,4,60);
+       _this.AddToolbarButton(&amp;quot;udf_deleteRow&amp;quot;,&amp;quot;删除&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,0,2,2,60);
+       _this.AddToolbarButton(&amp;quot;udf_save&amp;quot;,&amp;quot;保存&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,0,5,5,60);
+
+	fxList = _this.CreateListValue();
+	_this.SetListValue(fxList,&amp;quot;借&amp;quot;,&amp;quot;借&amp;quot;);
+	_this.SetListValue(fxList,&amp;quot;贷&amp;quot;,&amp;quot;贷&amp;quot;);			
+}
+
+//加载页面数据
+function loadSheetData()
+{	
+	var xml = _sql.query(&amp;quot;SHEET0DS&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetXmlDS(sheet0,2,1,22,_this.GetColCount(sheet0)-1,xml);
+	for (var r=_this.GetMainCellRangeRow1(sheet0);r&amp;lt;=_this.GetMainCellRangeRow2(sheet0);r++) {
+		if (_this.GetCellText(sheet0,r,1) != &amp;quot;&amp;quot;) {
+			_this.SetRowVisible(sheet0,r,1);
+		}
+		else {
+			_this.SetRowVisible(sheet0,r,-1);
+		}
+	}	
+	
+	xml = _sql.query(&amp;quot;SHEET1DS&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetXmlDS(sheet1,2,1,11,_this.GetColCount(sheet1)-1,xml);
+	
+	xml = _sql.query(&amp;quot;SHEET2DS&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetXmlDS(sheet2,2,1,11,_this.GetColCount(sheet2)-1,xml);
+
+	filterSheetData();
+	
+	_this.AutoFixColWidth(sheet0,600);
+	_this.AutoFixColWidth(sheet1,600);
+	_this.AutoFixColWidth(sheet2,600);
+	
+	_this.Redraw();
+}
+
+//页面数据过滤显示
+function filterSheetData()
+{
+	//var currow0 = _this.GetCurrentRow(sheet0);
+	if (currow0 == -1) currow0 = 2;
+	//var currow1 = _this.GetCurrentRow(sheet1);
+	if (currow1 == -1) currow1 = 2;
+	
+	var lxbh = _this.GetCellText(sheet0,currow0,1);
+	//if (lxbh == &amp;quot;&amp;quot;) return;
+	var mxxh = _this.GetCellText(sheet1,currow1,2);
+	for (var r=_this.GetMainCellRangeRow1(sheet1);r&amp;lt;=_this.GetMainCellRangeRow2(sheet1);r++) {
+		if (_this.GetCellText(sheet1,r,1) == lxbh &amp;&amp; _this.GetCellText(sheet1,r,_this.GetColCount(sheet1)-1) != &amp;quot;-&amp;quot; ){
+			_this.SetRowVisible(sheet1,r,1);
+			if(r == 1){
+				_this.SetCellText(sheet1,r,0,0);
+			}
+		}
+		else if (_this.GetCellText(sheet1,r,1) != &amp;quot;&amp;quot;) {
+			_this.SetRowVisible(sheet1,r,-1);
+		}
+		_this.SetToComboBox(&amp;quot;&amp;quot;,sheet1,r,4,fxList);
+		_this.SetToComboBox(&amp;quot;&amp;quot;,sheet1,r,7,xzlxList);
+		
+	}
+	for (var r=_this.GetMainCellRangeRow1(sheet2);r&amp;lt;=_this.GetMainCellRangeRow2(sheet2);r++) {
+		if (_this.GetCellText(sheet2,r,1) == lxbh &amp;&amp; _this.GetCellText(sheet2,r,2) == mxxh &amp;&amp; _this.GetCellText(sheet2,r,_this.GetColCount(sheet2)-1) != &amp;quot;-&amp;quot;) {
+			_this.SetRowVisible(sheet2,r,1);
+			_this.SetToComboBox(&amp;quot;&amp;quot;,sheet2,r,3,dwlxList);
+		}
+		else if (_this.GetCellText(sheet2,r,1) != &amp;quot;&amp;quot;){
+			_this.SetRowVisible(sheet2,r,-1);
+			_this.SetToComboBox(&amp;quot;&amp;quot;,sheet2,r,3,dwlxList);
+		}
+	}
+
+}
+
+function showKM(sheet,row,col)
+{
+	var obj = new Object();
+        obj.filter = &amp;quot;&amp;quot;;//&amp;quot;xjyhbz &amp;lt;&amp;gt; 0&amp;quot;;
+        obj.mjbz = &amp;quot;1&amp;quot;;
+        obj.bz = &amp;quot;&amp;quot;;
+        obj.jb = 0;
+        obj.kmbh = &amp;quot;&amp;quot;;
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_KMSEL&amp;quot;,obj,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+	cur_kmbh = retVal;
+	if (cur_kmbh != &amp;quot;&amp;quot; &amp;&amp; cur_kmbh != &amp;quot;undefined&amp;quot; &amp;&amp; cur_kmbh != undefined) {
+		_this.SetCellText(sheet,row,col,cur_kmbh);
+		_sql.querytods(&amp;quot;KMINFO&amp;quot;,&amp;quot;KMBH=&amp;quot;+cur_kmbh);
+		_this.SetCellText(sheet,row,col+1,_this.XMLDS_GetString(0,&amp;quot;NAME&amp;quot;));
+		
+		if(_this.GetCellText(sheet1,row,_this.GetColCount(sheet1)-1) == &amp;quot;&amp;quot; &amp;&amp; sheet == sheet1){
+			_this.SetCellText(sheet,row,_this.GetColCount(sheet)-1,&amp;quot;*&amp;quot;);
+		}
+		if(_this.GetCellText(sheet2,row,_this.GetColCount(sheet2)-1) == &amp;quot;&amp;quot; &amp;&amp; sheet == sheet2){
+			_this.SetCellText(sheet,row,_this.GetColCount(sheet)-1,&amp;quot;*&amp;quot;);
+		}
+
+	}
+}
+
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	var row1 = _this.GetMainCellRangeRow1(sheet);
+	var row2 = _this.GetMainCellRangeRow2(sheet);
+
+	if (row &amp;gt;= row1 &amp;&amp; row &amp;lt;= row2) {
+		var flag = _this.GetCellText(sheet,row,_this.GetColCount(sheet)-1);		
+		if (flag != &amp;quot;+&amp;quot; ) {
+			_this.SetCellText(sheet,row,_this.GetColCount(sheet)-1,&amp;quot;*&amp;quot;);
+		}
+		if ((sheet == sheet1 &amp;&amp; col == 5) || (sheet == sheet2 &amp;&amp; col == 4)) {
+			_sql.querytods(&amp;quot;KMINFO&amp;quot;,&amp;quot;KMBH=&amp;quot;+newvalue);
+			_this.SetCellText(sheet,row,col+1,_this.XMLDS_GetString(0,&amp;quot;NAME&amp;quot;));
+		}
+	}
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	curSheet = sheet;
+	if (sheet == 0) currow0 = row;
+	if (sheet == 1) currow1 = row;
+	if (currow0 == -1) return;
+	
+	var row1 = _this.GetMainCellRangeRow1(sheet);
+	var col1 = _this.GetMainCellRangeCol1(sheet);
+	if (row &amp;gt;= row1 &amp;&amp; col &amp;gt;= col1) {
+		for (var r=row1;r&amp;lt;=_this.GetMainCellRangeRow2(sheet);r++) {
+			_this.SetCellText(sheet,r,0,&amp;quot;0&amp;quot;);
+		}
+		_this.SetCellText(sheet,row,0,&amp;quot;1&amp;quot;);
+		filterSheetData();
+	}
+}
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+	curSheet = sheet;
+
+	if ((sheet == sheet1 &amp;&amp; col == 5) || (sheet == sheet2 &amp;&amp; col == 4)) {
+		showKM(sheet,row,col);
+	}
+
+}
+
+//修改
+function editRowData()
+{
+	var currow = _this.GetCurrentRow(curSheet);
+	for (var c=_this.GetMainCellRangeCol1(curSheet);c&amp;lt;=_this.GetMainCellRangeCol2(curSheet);c++) {
+		_this.SetCellLock(curSheet,currow,c,0);
+	}
+}
+
+//保存
+function save()
+{
+	if (!confirm(&amp;quot;保存修改，是否继续？&amp;quot;)) return;
+	var param = new Object();
+	param.thisorgid = G_ORGID;
+	param.thisaccid = G_ACCID;
+	param.zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	var xml = &amp;quot;&amp;lt;?xml version = &amp;apos;1.0&amp;apos;?&amp;gt;&amp;lt;ROWSET&amp;gt;\n&amp;quot;;
+	var num = 0;
+	for (var r=_this.GetMainCellRangeRow1(sheet0);r&amp;lt;=_this.GetMainCellRangeRow2(sheet0);r++) {
+		var flag = _this.GetCellText(sheet0,r,_this.GetColCount(sheet0)-1);
+		if (flag != &amp;quot;&amp;quot;) {
+			num ++;
+			xml += &amp;quot;&amp;lt;ROW num=\&amp;quot;&amp;quot;+num+&amp;quot;\&amp;quot;&amp;gt;\n&amp;quot;;
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet0,1)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet0,r,1) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet0,1)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet0,2)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet0,r,2) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet0,2)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项类型名称
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet0,3)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet0,r,3) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet0,3)+&amp;quot;&amp;gt;\n&amp;quot;;	//收支类型
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet0,4)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet0,r,4) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet0,4)+&amp;quot;&amp;gt;\n&amp;quot;;	//FLAG
+			xml += &amp;quot;&amp;lt;/ROW&amp;gt;\n&amp;quot;;
+		}
+	}
+	xml += &amp;quot;&amp;lt;/ROWSET&amp;gt;&amp;quot;;
+	param.xml1 = xml;
+	
+	xml = &amp;quot;&amp;lt;?xml version = &amp;apos;1.0&amp;apos;?&amp;gt;&amp;lt;ROWSET&amp;gt;\n&amp;quot;;
+	num = 0;
+	for (var r=_this.GetMainCellRangeRow1(sheet1);r&amp;lt;=_this.GetMainCellRangeRow2(sheet1);r++) {
+		var flag = _this.GetCellText(sheet1,r,_this.GetColCount(sheet1)-1);
+		if (flag != &amp;quot;&amp;quot;) {
+			num ++;
+			xml += &amp;quot;&amp;lt;ROW num=\&amp;quot;&amp;quot;+num+&amp;quot;\&amp;quot;&amp;gt;\n&amp;quot;;
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet1,1)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet1,r,1) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet1,1)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet1,2)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet1,r,2) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet1,2)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet1,3)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet1,r,3) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet1,3)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet1,4)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet1,r,4) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet1,4)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet1,5)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet1,r,5) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet1,5)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet1,6)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet1,r,6) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet1,6)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet1,7)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet1,r,7) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet1,7)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet1,8)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet1,r,8) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet1,8)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet1,9)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet1,r,9) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet1,9)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet1,10)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet1,r,10) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet1,10)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet1,11)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet1,r,11) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet1,11)+&amp;quot;&amp;gt;\n&amp;quot;;	//FALG
+			xml += &amp;quot;&amp;lt;/ROW&amp;gt;\n&amp;quot;;
+		}
+	}
+	xml += &amp;quot;&amp;lt;/ROWSET&amp;gt;&amp;quot;;
+	param.xml2 = xml;
+
+	xml = &amp;quot;&amp;lt;?xml version = &amp;apos;1.0&amp;apos;?&amp;gt;&amp;lt;ROWSET&amp;gt;\n&amp;quot;;
+	num = 0;
+	for (var r=_this.GetMainCellRangeRow1(sheet2);r&amp;lt;=_this.GetMainCellRangeRow2(sheet2);r++) {
+		var flag = _this.GetCellText(sheet2,r,_this.GetColCount(sheet2)-1);
+		if (flag != &amp;quot;&amp;quot;) {
+			num ++;
+			xml += &amp;quot;&amp;lt;ROW num=\&amp;quot;&amp;quot;+num+&amp;quot;\&amp;quot;&amp;gt;\n&amp;quot;;
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet2,1)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet2,r,1) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet2,1)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet2,2)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet2,r,2) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet2,2)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet2,3)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet2,r,3) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet2,3)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet2,4)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet2,r,4) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet2,4)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet2,5)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet2,r,5) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet2,5)+&amp;quot;&amp;gt;\n&amp;quot;;	//款项编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet2,6)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet2,r,6) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet2,6)+&amp;quot;&amp;gt;\n&amp;quot;;	//dwlxbh_old
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet2,7)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet2,r,7) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet2,7)+&amp;quot;&amp;gt;\n&amp;quot;;	//kmbh_old
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet2,8)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet2,r,8) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet2,8)+&amp;quot;&amp;gt;\n&amp;quot;;	//flag
+			xml += &amp;quot;&amp;lt;/ROW&amp;gt;\n&amp;quot;;
+		}
+	}
+	xml += &amp;quot;&amp;lt;/ROWSET&amp;gt;&amp;quot;;
+	param.xml3 = xml;
+
+	try {
+		var ret = invokeOSFuncExt(&amp;quot;Save&amp;quot;,param);
+		if (ret == 1) {
+			alert(&amp;quot;保存成功！&amp;quot;);
+			//window.location.reload();
+			window.location.href = &amp;quot;show.sp?grdid=CFG_RJK&amp;selcurrow0=&amp;quot;+currow0+&amp;quot;&amp;selcurrow1=&amp;quot;+currow1;
+		}
+		else {
+			alert(ret);
+		}
+	}
+	catch (e) {
+		alert(&amp;quot;保存失败:&amp;quot;+e.toString());
+	}
+}
+
+
+//点击菜单项
+function _thisOnMenuItemSelect(sheet,row,col,menuitemid)
+{
+	//新增款项类型
+	if (menuitemid == &amp;quot;btn_kxlx&amp;quot;) {
+		var rw = getNullRow(sheet0);
+		_this.SetCellText(sheet0,rw,_this.GetColCount(sheet0)-1,&amp;quot;+&amp;quot;);
+		
+		var row1 = _this.GetMainCellRangeRow1(sheet0);
+		var col1 = _this.GetMainCellRangeCol1(sheet0);
+		for (var r=row1;r&amp;lt;=_this.GetMainCellRangeRow2(sheet0);r++) {
+			_this.SetCellText(sheet0,r,0,&amp;quot;0&amp;quot;);
+		}
+		_this.SetCellText(sheet0,rw,0,&amp;quot;1&amp;quot;);
+		filterSheetData();
+
+	}
+	//新增款项明细
+	else if (menuitemid == &amp;quot;btn_kxmx&amp;quot;) {
+		var kxcurrow = _this.GetCurrentRow(sheet0);
+		if (kxcurrow &amp;lt;= 1) { alert(&amp;quot;请先选择款项类型！&amp;quot;); return; }
+		var lxbh = _this.GetCellText(sheet0,kxcurrow,1);
+		if(lxbh == &amp;quot;&amp;quot; ) return false;
+
+		var rw = getNullRow(sheet1);
+		_this.SetCellText(sheet1,rw,1,lxbh);
+		_sql.querytods(&amp;quot;GETKXMXXH&amp;quot;,&amp;quot;LXBH=&amp;quot;+lxbh);
+//		_this.SetCellText(sheet1,rw,2,_this.XMLDS_GetString(0,&amp;quot;MXXH&amp;quot;));
+
+		_this.SetCellText(sheet1,rw,4,_this.XMLDS_GetString(0,&amp;quot;FX&amp;quot;));
+		_this.SetCellText(sheet1,rw,_this.GetColCount(sheet1)-1,&amp;quot;+&amp;quot;);
+		
+		var rown = 0;
+		for (var r=_this.GetMainCellRangeRow1(sheet1);r&amp;lt;=_this.GetMainCellRangeRow2(sheet1);r++) {
+			if (_this.GetCellText(sheet1,r,1) == lxbh &amp;&amp; _this.GetCellText(sheet1,r,_this.GetColCount(sheet1)-1) != &amp;quot;-&amp;quot; ) {
+				rown ++;
+			}
+		}
+		
+		_this.SetCellText(sheet1,rw,2,rown);
+		_this.SetCellText(sheet1,rw,0,&amp;quot;1&amp;quot;);
+		filterSheetData();
+	}
+	//新增款项科目
+	else if (menuitemid == &amp;quot;btn_kxkm&amp;quot;) {			
+		var kxcurrow = _this.GetCurrentRow(sheet1);		
+		if(_this.GetCellText(sheet1,kxcurrow ,_this.GetColCount(sheet1)-1) == &amp;quot;-&amp;quot;) return false;
+		if (kxcurrow &amp;lt;= 1) { alert(&amp;quot;请先选择款项明细！&amp;quot;); return; }		
+		
+		var lxbh = _this.GetCellText(sheet1,kxcurrow,1);
+		var lxxh = _this.GetCellText(sheet1,kxcurrow,2);
+		if(lxbh == &amp;quot;&amp;quot; ) return false;
+
+		var rw = getNullRow(sheet2);
+		_this.SetToComboBox(&amp;quot;&amp;quot;,sheet2,rw,3,dwlxList);
+		_this.SetCellText(sheet2,rw,1,lxbh);
+		_this.SetCellText(sheet2,rw,2,lxxh);
+		_this.SetCellText(sheet2,rw,_this.GetColCount(sheet2)-1,&amp;quot;+&amp;quot;);			
+		_this.SetCellText(sheet2,rw,0,&amp;quot;1&amp;quot;);
+		filterSheetData();
+
+	}
+}
+//获取sheet新增行的行号
+function getNullRow(sheet)
+{
+	for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;_this.GetRowCount(sheet);r++) {
+		var id = _this.GetCellText(sheet,r,1);
+		if (id == &amp;quot;&amp;quot;) {
+			_this.SetRowVisible(sheet,r,1);
+			for (var c=_this.GetMainCellRangeCol1(sheet);c&amp;lt;=_this.GetMainCellRangeCol2(sheet);c++) {
+				_this.SetCellLock(sheet,r,c,0);
+			}
+			_this.SetCellFocus(sheet,r,1);
+			return r;
+		}
+	}
+	var rw = _this.GetRowCount(sheet) - 1;
+	_this.AppendRow(sheet,rw);
+	
+	_this.SetMainCellRange(sheet0,2,0,_this.GetRowCount(sheet0)-1,_this.GetColCount(sheet0)-1);
+	_this.SetMainCellRange(sheet1,2,0,_this.GetRowCount(sheet1)-1,_this.GetColCount(sheet1)-1);
+	_this.SetMainCellRange(sheet2,2,1,_this.GetRowCount(sheet2)-1,_this.GetColCount(sheet2)-1);
+	
+	for (var c=_this.GetMainCellRangeCol1(sheet);c&amp;lt;=_this.GetMainCellRangeCol2(sheet);c++) {
+		_this.SetCellLock(sheet,rw+1,c,0);
+		if(sheet != sheet0){
+			_this.SetCellLock(sheet,rw+1,1,1);
+		}else if(sheet == sheet2){
+			_this.SetCellLock(sheet,rw+1,1,1);
+			_this.SetCellLock(sheet,rw+1,2,1);
+		}
+	}
+	_this.SetCellFocus(sheet,rw+1,1);
+	return rw+1;
+}
+//删除记录
+function deleteRow()
+{
+	var sheet_title=&amp;quot;&amp;quot;;
+	var sheet = _this.GetCurrentSheet();
+	var currow = _this.GetCurrentRow(sheet);
+	if(sheet == sheet0){
+		sheet_title = &amp;quot;款项类型表&amp;quot;;
+	}else if(sheet == sheet1){
+		sheet_title = &amp;quot;款项明细表&amp;quot;;
+	}else if(sheet == sheet2){
+		sheet_title = &amp;quot;款项明细科目表&amp;quot;;
+	}
+	
+	if (currow &amp;gt; -1) {
+		if (!confirm(&amp;quot;删除【&amp;quot;+sheet_title+&amp;quot;】当前选中记录，是否继续？&amp;quot;)) return;
+	}
+	else return;
+	
+	if (sheet == sheet0) {
+		var lxbh = _this.GetCellText(sheet0,currow,1);
+		//判断sheet1存在数据不允许删除（lxbh相同）
+		var rown = 0;
+		for (var r=_this.GetMainCellRangeRow1(sheet1);r&amp;lt;=_this.GetMainCellRangeRow2(sheet1);r++) {
+			if (_this.GetCellText(sheet1,r,1) == lxbh &amp;&amp; _this.GetCellText(sheet1,r,_this.GetColCount(sheet1)-1) != &amp;quot;-&amp;quot; ) {
+				rown ++;
+				break;
+			}
+		}
+		if( rown &amp;gt; 0){
+			alert(&amp;quot;款项明细表存在数据不允许删除&amp;quot;);
+			return false;
+		}		
+//		for (var r=_this.GetMainCellRangeRow1(sheet1);r&amp;lt;=_this.GetMainCellRangeRow2(sheet1);r++) {
+//			if (_this.GetCellText(sheet1,r,1) == lxbh) {
+//				_this.SetCellText(sheet1,r,_this.GetColCount(sheet1)-1,&amp;quot;-&amp;quot;);
+//				_this.SetRowVisible(sheet1,r,-1);
+//			}
+//		}
+
+	}
+	else if (sheet == sheet1) {
+		var lxbh = _this.GetCellText(sheet1,currow,1);
+		var lxxh = _this.GetCellText(sheet1,currow,2);
+		//判断sheet2存在数据不允许删除（lxbh，lxxh相同）
+		var rown = 0;
+		for(var i=_this.GetMainCellRangeRow1(sheet2);i&amp;lt;=_this.GetMainCellRangeRow2(sheet2);i++){
+			var check_bz = _this.GetCellText(sheet2,i,0);
+			if(lxbh == _this.GetCellText(sheet2,i,1) &amp;&amp; lxxh == _this.GetCellText(sheet2,i,2)  &amp;&amp; _this.GetCellText(sheet2,i,_this.GetColCount(sheet2)-1) != &amp;quot;-&amp;quot;){
+				rown ++;
+				break;
+			}
+		}
+		
+		if( rown &amp;gt; 0){
+			alert(&amp;quot;款项明细科目表存在数据不允许删除&amp;quot;);
+			return false;
+		}
+		
+		for (var r=_this.GetMainCellRangeRow1(sheet1);r&amp;lt;=_this.GetMainCellRangeRow2(sheet1);r++) {
+			var check_bz = _this.GetCellText(sheet1,r,0);
+			if (_this.GetCellText(sheet1,r,1) == lxbh &amp;&amp; check_bz == &amp;apos;1&amp;apos;) {
+				_this.SetCellText(sheet1,r,_this.GetColCount(sheet1)-1,&amp;quot;-&amp;quot;);
+				_this.SetRowVisible(sheet1,r,-1);
+			}
+		}
+	}
+	else {
+		var lxbh = _this.GetCellText(sheet2,currow,1);
+		var lxxh = _this.GetCellText(sheet2,currow,2);
+		for(var i=_this.GetMainCellRangeRow1(sheet2);i&amp;lt;=_this.GetMainCellRangeRow2(sheet2);i++){
+			var check_bz = _this.GetCellText(sheet2,i,0);
+			if(check_bz == 1 &amp;&amp; lxbh == _this.GetCellText(sheet2,i,1) &amp;&amp; lxxh == _this.GetCellText(sheet2,i,2) ){
+				_this.SetCellText(sheet,i,_this.GetColCount(sheet)-1,&amp;quot;-&amp;quot;);
+				_this.SetRowVisible(sheet,i,-1);
+			}
+		}
+	}
+
+	_this.SetCellText(sheet,currow,_this.GetColCount(sheet)-1,&amp;quot;-&amp;quot;);
+	_this.SetRowVisible(sheet,currow,-1);		
+}
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function Save()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	//return xml3;
+	try {
+		db = new pub.EADatabase();
+		var kxds = new pub.EAXmlDS(xml1);
+		var kxmxds = new pub.EAXmlDS(xml2);
+		var kxkmds = new pub.EAXmlDS(xml3);
+		
+		//CW_RJLXB表
+		for (var i=0;i&amp;lt;kxds.getRowCount();i++) {
+			var lxbh = kxds.getStringAt(i,&amp;quot;LXBH&amp;quot;);
+			var rjlx = kxds.getStringAt(i,&amp;quot;RJLX&amp;quot;);
+			var szlx = kxds.getStringAt(i,&amp;quot;SZLX&amp;quot;);
+			var flag = kxds.getStringAt(i,&amp;quot;FLAG&amp;quot;);
+			if (lxbh != &amp;quot;&amp;quot;) {
+				if (flag == &amp;quot;*&amp;quot;) {
+					sql = &amp;quot;update CW_RJLXB set rjlx=&amp;apos;%s&amp;apos;,szlx=&amp;apos;%s&amp;apos; where org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and lxbh=&amp;apos;%s&amp;apos;&amp;quot;.format([rjlx,szlx,thisorgid,thisaccid,lxbh]);
+					db.ExcecutSQL(sql);
+				}
+				else if (flag == &amp;quot;+&amp;quot;) {
+					sql = &amp;quot;insert into CW_RJLXB(sbh,zth,org,acc,lxbh,rjlx,szlx)values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;.format([thisorgid,zth,thisorgid,thisaccid,lxbh,rjlx,szlx]);
+					db.ExcecutSQL(sql);
+				}
+				else if (flag == &amp;quot;-&amp;quot;) {
+					sql = &amp;quot;delete from CW_RJLXB where org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and lxbh=&amp;apos;%s&amp;apos;&amp;quot;.format([thisorgid,thisaccid,lxbh]);
+					db.ExcecutSQL(sql);
+				}
+			}
+		}
+		//CW_RJLXMXB表
+		for (var i=0;i&amp;lt;kxmxds.getRowCount();i++) {
+			var lxbh = kxmxds.getStringAt(i,&amp;quot;LXBH&amp;quot;);
+			var mxxh = kxmxds.getStringAt(i,&amp;quot;MXXH&amp;quot;);
+			var kxmc = kxmxds.getStringAt(i,&amp;quot;KXMC&amp;quot;);
+			var fx = kxmxds.getStringAt(i,&amp;quot;FX&amp;quot;);
+			var dfkmbh = kxmxds.getStringAt(i,&amp;quot;DFKMBH&amp;quot;);
+			//var czkmbh = kxmxds.getStringAt(i,&amp;quot;CZKMBH&amp;quot;);
+			var xzlx = kxmxds.getStringAt(i,&amp;quot;XZLX&amp;quot;);
+			var szztlx = kxmxds.getStringAt(i,&amp;quot;SZZTLX&amp;quot;);
+			var bjlxznj = kxmxds.getStringAt(i,&amp;quot;BJLXZNJ&amp;quot;);
+			var dymc = kxmxds.getStringAt(i,&amp;quot;DYMC&amp;quot;);
+			var flag = kxmxds.getStringAt(i,&amp;quot;FLAG&amp;quot;);
+			if (lxbh != &amp;quot;&amp;quot;) {
+				if (flag == &amp;quot;*&amp;quot;) {
+					sql = &amp;quot;update CW_RJLXMXB set kxmc=&amp;apos;%s&amp;apos;,fx=&amp;apos;%s&amp;apos;,dfkmbh=&amp;apos;%s&amp;apos;,xzlx=&amp;apos;%s&amp;apos;,szztlx=&amp;apos;%s&amp;apos;,bjlxznj=&amp;apos;%s&amp;apos;,dymc=&amp;apos;%s&amp;apos; where org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and lxbh=&amp;apos;%s&amp;apos; and mxxh=&amp;apos;%s&amp;apos;&amp;quot;
+						.format([kxmc,fx,dfkmbh,xzlx,szztlx,bjlxznj,dymc,thisorgid,thisaccid,lxbh,mxxh]);
+					db.ExcecutSQL(sql);
+				}
+				else if (flag == &amp;quot;+&amp;quot;) {
+					sql = &amp;quot;insert into CW_RJLXMXB(sbh,zth,org,acc,lxbh,mxxh,kxmc,fx,dfkmbh,xzlx,szztlx,bjlxznj,dymc)values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;
+						.format([thisorgid,zth,thisorgid,thisaccid,lxbh,mxxh,kxmc,fx,dfkmbh,xzlx,szztlx,bjlxznj,dymc]);
+					db.ExcecutSQL(sql);
+				}
+				else if (flag == &amp;quot;-&amp;quot;) {
+					sql = &amp;quot;delete from CW_RJLXMXB where org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and lxbh=&amp;apos;%s&amp;apos; and mxxh=&amp;apos;%s&amp;apos;&amp;quot;.format([thisorgid,thisaccid,lxbh,mxxh]);
+					db.ExcecutSQL(sql);
+				}
+			}
+		}
+		//CW_KXKMB表
+		for (var i=0;i&amp;lt;kxkmds.getRowCount();i++) {
+			var lxbh = kxkmds.getStringAt(i,&amp;quot;LXBH&amp;quot;);
+			var mxxh = kxkmds.getStringAt(i,&amp;quot;MXXH&amp;quot;);
+			var dwlxbh = kxkmds.getStringAt(i,&amp;quot;DWLXBH&amp;quot;);
+			var kmbh = kxkmds.getStringAt(i,&amp;quot;KMBH&amp;quot;);
+			var flag = kxkmds.getStringAt(i,&amp;quot;FLAG&amp;quot;);
+			var kmbh_old = kxkmds.getStringAt(i,&amp;quot;KMBH_OLD&amp;quot;);
+			var dwlxbh_old = kxkmds.getStringAt(i,&amp;quot;DWLXBH_OLD&amp;quot;);
+
+			if (lxbh != &amp;quot;&amp;quot;) {
+				if (flag == &amp;quot;*&amp;quot;) {
+//					20160627 lyh modify 按旧单位类型，旧科目类型更新
+//					sql = &amp;quot;update CW_KXKMB set dwlxbh=&amp;apos;%s&amp;apos;,kmbh=&amp;apos;%s&amp;apos; where org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and lxbh=&amp;apos;%s&amp;apos; and mxxh=&amp;apos;%s&amp;apos;&amp;quot;.format([dwlxbh,kmbh,thisorgid,thisaccid,lxbh,mxxh]);
+					sql = &amp;quot;update CW_KXKMB set dwlxbh=&amp;apos;%s&amp;apos;,kmbh=&amp;apos;%s&amp;apos; where dwlxbh = &amp;apos;%s&amp;apos; and kmbh = &amp;apos;%s&amp;apos; and org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and lxbh=&amp;apos;%s&amp;apos; and mxxh=&amp;apos;%s&amp;apos;&amp;quot;.format([dwlxbh,kmbh,dwlxbh_old,kmbh_old,thisorgid,thisaccid,lxbh,mxxh]);
+					db.ExcecutSQL(sql);
+				}
+				else if (flag == &amp;quot;+&amp;quot;) {
+					sql = &amp;quot;insert into CW_KXKMB(sbh,zth,org,acc,lxbh,mxxh,dwlxbh,kmbh)values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;.format([thisorgid,zth,thisorgid,thisaccid,lxbh,mxxh,dwlxbh,kmbh]);
+					db.ExcecutSQL(sql);
+				}
+				else if (flag == &amp;quot;-&amp;quot;) {
+					sql = &amp;quot;delete from CW_KXKMB where org=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and lxbh=&amp;apos;%s&amp;apos; and mxxh=&amp;apos;%s&amp;apos;&amp;quot;.format([thisorgid,thisaccid,lxbh,mxxh]);
+					db.ExcecutSQL(sql);
+				}
+			}
+		}
+		db.Commit();
+
+		return 1;
+
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >SHEET0DS</ID><NAME ></NAME><DATDSC >SELECT 
+	&amp;quot;CW_RJLXB&amp;quot;.&amp;quot;LXBH&amp;quot;,   
+	&amp;quot;CW_RJLXB&amp;quot;.&amp;quot;RJLX&amp;quot; ,
+	&amp;quot;CW_RJLXB&amp;quot;.&amp;quot;SZLX&amp;quot;, 
+	&amp;apos;&amp;apos; FLAG
+FROM &amp;quot;CW_RJLXB&amp;quot;  
+WHERE ( &amp;quot;CW_RJLXB&amp;quot;.&amp;quot;ORG&amp;quot; = &amp;apos;[%SYS_ORGID]&amp;apos; ) AND  
+	   ( &amp;quot;CW_RJLXB&amp;quot;.&amp;quot;ACC&amp;quot; = &amp;apos;[%SYS_ACCID]&amp;apos; )    
+order by lxbh</DATDSC><C4 >SHEET0DS</C4><C5 >SHEET0DS</C5><C6 >SHEET0DS</C6><C7 >SHEET0DS</C7><C8 >SHEET0DS</C8><C9 >SHEET0DS</C9><C10 >SHEET0DS</C10><C11 >SHEET0DS</C11><C12 >SHEET0DS</C12><C13 >SHEET0DS</C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="1" ><ID >SHEET1DS</ID><NAME ></NAME><DATDSC >  SELECT &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;LXBH&amp;quot;,    
+         &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;MXXH&amp;quot;,   
+         &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;KXMC&amp;quot;,   
+         &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;FX&amp;quot; ,
+         &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;DFKMBH&amp;quot; ,/*20120918 qfj 对方日记科目编号(一笔对应多笔财政专户帐)*/    
+  	  cw_pack4.kmmc(sbh,zth,&amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;DFKMBH&amp;quot; ) KMMC,
+ 	 &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;XZLX&amp;quot;,     
+         &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;SZZTLX&amp;quot;,     
+         &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;BJLXZNJ&amp;quot;,     
+         &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;DYMC&amp;quot;,  
+ 	 &amp;apos;&amp;apos; FLAG
+    FROM &amp;quot;CW_RJLXMXB&amp;quot;  
+   WHERE ( &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;ORG&amp;quot; = &amp;apos;[%SYS_ORGID]&amp;apos; ) AND  
+         ( &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;ACC&amp;quot; = &amp;apos;[%SYS_ACCID]&amp;apos; ) order by lxbh,mxxh</DATDSC><C4 >SHEET1DS</C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 >SHEET1DS</C9><C10 ></C10><C11 >SHEET1DS</C11><C12 >SHEET1DS</C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="2" ><ID >SHEET2DS</ID><NAME ></NAME><DATDSC > SELECT 
+         &amp;quot;CW_KXKMB&amp;quot;.&amp;quot;LXBH&amp;quot;,   
+         &amp;quot;CW_KXKMB&amp;quot;.&amp;quot;MXXH&amp;quot;,   
+         &amp;quot;CW_KXKMB&amp;quot;.&amp;quot;DWLXBH&amp;quot;,   
+         &amp;quot;CW_KXKMB&amp;quot;.&amp;quot;KMBH&amp;quot;, 
+         cw_pack4.kmmc( &amp;quot;CW_KMB&amp;quot;.sbh, &amp;quot;CW_KMB&amp;quot;.zth,&amp;quot;CW_KXKMB&amp;quot;.&amp;quot;KMBH&amp;quot; ) KMMC,         
+	 &amp;quot;CW_KXKMB&amp;quot;.&amp;quot;DWLXBH&amp;quot; dwlxbh_old,
+	 &amp;quot;CW_KXKMB&amp;quot;.&amp;quot;KMBH&amp;quot; kmbh_old,
+	 &amp;apos;&amp;apos; FLAG
+    FROM &amp;quot;CW_KMB&amp;quot;,   
+         &amp;quot;CW_KXKMB&amp;quot;,   
+         &amp;quot;SI_DWLXB&amp;quot;  
+   WHERE ( &amp;quot;CW_KXKMB&amp;quot;.&amp;quot;SBH&amp;quot; = &amp;quot;CW_KMB&amp;quot;.&amp;quot;SBH&amp;quot;(+) ) and  
+         ( &amp;quot;CW_KXKMB&amp;quot;.&amp;quot;ZTH&amp;quot; = &amp;quot;CW_KMB&amp;quot;.&amp;quot;ZTH&amp;quot;(+) ) and  
+         ( &amp;quot;CW_KXKMB&amp;quot;.&amp;quot;KMBH&amp;quot; = &amp;quot;CW_KMB&amp;quot;.&amp;quot;KMBH&amp;quot;(+) ) and  
+         ( &amp;quot;SI_DWLXB&amp;quot;.&amp;quot;DWLXBH&amp;quot; = &amp;quot;CW_KXKMB&amp;quot;.&amp;quot;DWLXBH&amp;quot;(+) ) and  
+         ( ( &amp;quot;CW_KXKMB&amp;quot;.&amp;quot;ORG&amp;quot; = &amp;apos;[%SYS_ORGID]&amp;apos;) AND  
+         ( &amp;quot;CW_KXKMB&amp;quot;.&amp;quot;ACC&amp;quot; = &amp;apos;[%SYS_ACCID]&amp;apos; ) )
+ order by  &amp;quot;CW_KXKMB&amp;quot;.&amp;quot;LXBH&amp;quot;,   
+           &amp;quot;CW_KXKMB&amp;quot;.&amp;quot;MXXH&amp;quot;
+  </DATDSC><C4 >SHEET2DS</C4><C5 ></C5><C6 >SHEET2DS</C6><C7 >SHEET2DS</C7><C8 ></C8><C9 >SHEET2DS</C9><C10 >SHEET2DS</C10><C11 >SHEET2DS</C11><C12 >SHEET2DS</C12><C13 ></C13><C14 >SHEET2DS</C14><C15 >SHEET2DS</C15><C16 >SHEET2DS</C16></ROW>
+<ROW num="3" ><ID >GETKXMXXH</ID><NAME ></NAME><DATDSC >select nvl(max(mxxh),0)+1 mxxh,max(fx) fx from CW_RJLXMXB where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and lxbh=&amp;apos;[%LXBH]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="4" ><ID >KMINFO</ID><NAME >科目信息</NAME><DATDSC >select name from v_accitem where id=&amp;apos;[%KMBH]&amp;apos; and org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

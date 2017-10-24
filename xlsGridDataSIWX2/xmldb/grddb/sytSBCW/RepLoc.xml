@@ -1,0 +1,386 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RepLoc</MWID><NAME >报表存放位置定义</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RepLoc.zxg</FILE><SCENE ></SCENE><FIXED >1,1</FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdshwds>
+<ROWSET>
+<ROW num="0" ><ID >0,1,2</ID><NAME ></NAME><DBNAME ></DBNAME><DSKEY >DSC:MAIN</DSKEY><NROW >10</NROW><NCOL >9</NCOL><PAGES ></PAGES><PAGESIZE ></PAGESIZE><URL ></URL><CTLTYP ></CTLTYP><DYNCTL ></DYNCTL><LISTID ></LISTID><ISCROSS ></ISCROSS><HROW ></HROW><HCOLS ></HCOLS><ROWORDER ></ROWORDER><VCOLS ></VCOLS><VCOLSQL ></VCOLSQL><VALUECOL ></VALUECOL></ROW>
+</ROWSET>
+</grdshwds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+var ZXGFILE1; 
+var curSheet = 0;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SplitSheet(sheet,&amp;quot;H&amp;quot;,&amp;quot;70%&amp;quot;);
+	ZXGFILE1 = _this.SaveTempZXGFile(1);
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetColVisible(sheet,1,-1);
+	_this.SetColVisible(1,1,-1);
+	_this.SetColVisible(1,5,-1);
+	
+	var hzzqList = _this.CreateListValue();
+	_this.SetListValue(hzzqList,&amp;quot;月&amp;quot;,&amp;quot;月&amp;quot;);
+	_this.SetListValue(hzzqList,&amp;quot;季&amp;quot;,&amp;quot;季&amp;quot;);
+	_this.SetListValue(hzzqList,&amp;quot;年&amp;quot;,&amp;quot;年&amp;quot;);
+	
+	var jedwList = _this.CreateListValue();
+	_this.SetListValue(jedwList,&amp;quot;1&amp;quot;,&amp;quot;元&amp;quot;);
+	_this.SetListValue(jedwList,&amp;quot;1000&amp;quot;,&amp;quot;千元&amp;quot;);
+	_this.SetListValue(jedwList,&amp;quot;10000&amp;quot;,&amp;quot;万元&amp;quot;);
+	
+	var hzbzList = _this.CreateListValue();
+	_this.SetListValue(hzbzList,&amp;quot;0&amp;quot;,&amp;quot;分类&amp;quot;);
+	_this.SetListValue(hzbzList,&amp;quot;1&amp;quot;,&amp;quot;合并&amp;quot;);
+	_this.SetListValue(hzbzList,&amp;quot;2&amp;quot;,&amp;quot;基本&amp;quot;);
+	
+	//_this.SetToBoolBox(0,0,0);
+	for (var r=_this.GetMainCellRangeRow1(0);r&amp;lt;=_this.GetMainCellRangeRow2(0);r++) {
+		_this.SetToBoolBox(0,r,0);
+		_this.SetToComboBox(&amp;quot;&amp;quot;,0,r,6,jedwList);
+		_this.SetToComboBox(&amp;quot;&amp;quot;,0,r,7,hzzqList);
+		_this.SetToComboBox(&amp;quot;&amp;quot;,0,r,10,hzbzList);
+	}
+	
+	if (G_ORGID == &amp;quot;1&amp;quot;) { //区所才显示操作按钮
+		var xmlmenu = &amp;quot;&amp;lt;item id=\&amp;quot;btn_reploc\&amp;quot; name=\&amp;quot;报表位置\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;btn_repmxloc\&amp;quot; name=\&amp;quot;被合并报表位置\&amp;quot;/&amp;gt;&amp;quot;;
+		_this.AddToolbarButton(&amp;quot;&amp;quot;,&amp;quot;新增&amp;quot;,&amp;quot;&amp;quot;,xmlmenu,0,4,4,60);
+	        _this.AddToolbarButton(&amp;quot;udf_deleteRow&amp;quot;,&amp;quot;删除&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,0,2,2,60);
+	        _this.AddToolbarButton(&amp;quot;udf_SaveRepLoc&amp;quot;,&amp;quot;保存&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,0,5,5,60);
+	}	
+	
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	curSheet = sheet;
+	var row1 = _this.GetMainCellRangeRow1(sheet);
+	var row2 = _this.GetMainCellRangeRow2(sheet);
+	if (sheet == 0 &amp;&amp; row&amp;gt;=row1 &amp;&amp; row&amp;lt;=row2) {
+		var bmbh = _this.GetCellText(sheet,row,2);
+		loadDTL(bmbh);
+	}
+	
+	if (sheet == 0 &amp;&amp; row&amp;gt;=row1 &amp;&amp; row&amp;lt;=row2) {
+		for (var r=row1;r&amp;lt;=row2;r++) {
+			_this.SetCellText(sheet,r,0,&amp;quot;0&amp;quot;);
+		}
+		_this.SetCellText(sheet,row,0,&amp;quot;1&amp;quot;);
+	}
+	
+}
+
+function loadDTL(bmbh)
+{
+	_this.LoadZXGFile(ZXGFILE1,-1,1);
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetColVisible(1,1,-1);
+	_this.SetColVisible(1,5,-1);
+	
+	_this.SetMainCellRange(1,2,2,10,5);
+	var xml = _sql.query(&amp;quot;MAINDTL&amp;quot;,&amp;quot;BMBH=&amp;quot;+bmbh);
+	_this.SetXmlDS(1,2,2,10,5,xml);
+	_this.SetColName(1,2,&amp;quot;XH&amp;quot;);
+	_this.SetColName(1,3,&amp;quot;BMBHMX&amp;quot;);
+	_this.SetColName(1,4,&amp;quot;BMMC&amp;quot;);
+	_this.SetColName(1,5,&amp;quot;BMBH&amp;quot;);
+		
+	//_this.SetToBoolBox(1,1,0);
+	for (var r=_this.GetMainCellRangeRow1(1);r&amp;lt;=_this.GetMainCellRangeRow2(1);r++) {
+		_this.SetToBoolBox(1,r,0);
+		if (_this.GetCellText(1,r,2) == &amp;quot;&amp;quot;) {
+			_this.SetRowVisible(1,r,-1);
+		}
+	}
+	_this.AutoFixScreenWidth();
+
+}
+
+function deleteRow()
+{
+	var b = false;
+	if (curSheet == 0) {
+		if (_this.GetCellText(1,2,3) != &amp;quot;&amp;quot;) {
+			alert(&amp;quot;被合并报表的位置信息不为空，不允许删除该位置信息！&amp;quot;);
+			return;
+		}
+		
+		b = confirm(&amp;quot;删除报表位置，是否确认？&amp;quot;);
+	}
+	else if (curSheet == 1) {
+		b = confirm(&amp;quot;删除被合并报表位置，是否确认？&amp;quot;);
+	}
+	if (b) {
+		var selRow = getSelectedRow(curSheet);
+		_this.SetCellText(curSheet,selRow,1,&amp;quot;-&amp;quot;);
+		_this.SetRowVisible(curSheet,selRow,-1);
+	}
+}
+
+function getSelectedRow(sheet)
+{
+	for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;_this.GetRowCount(sheet);r++) {
+		var sel = _this.GetCellText(sheet,r,0);
+		if (sel == &amp;quot;1&amp;quot;) {
+			return r;
+		}
+	}
+	return -1;
+}
+
+function getNullRow(sheet)
+{
+	var currow = _this.GetCurrentRow(sheet);
+	if (currow &amp;lt;= -1) {
+		for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;_this.GetRowCount(sheet);r++) {
+			var id = _this.GetCellText(sheet,r,2);
+			if (id == &amp;quot;&amp;quot;) {
+				_this.SetRowVisible(sheet,r,2);
+				for (var c=_this.GetMainCellRangeCol1(sheet);c&amp;lt;=_this.GetMainCellRangeCol2(sheet);c++) {
+					_this.SetCellLock(sheet,r,c,0);
+				}
+				_this.SetCellFocus(sheet,r,2);
+				_this.SetCellText(sheet,r,1,&amp;quot;+&amp;quot;);
+				return r;
+			}
+		}
+	}
+	else {
+		//var rw = _this.GetRowCount(sheet) - 1;
+		var rw = currow;
+		_this.AppendRow(sheet,rw);
+		for (var c=_this.GetMainCellRangeCol1(sheet);c&amp;lt;=_this.GetMainCellRangeCol2(sheet);c++) {
+			_this.SetCellLock(sheet,rw+1,c,0);
+		}
+		_this.SetCellFocus(sheet,rw+1,2);
+		_this.SetCellText(sheet,rw+1,1,&amp;quot;+&amp;quot;);
+		return rw+1;
+	}
+	return -1;
+}
+
+//点击菜单项
+function _thisOnMenuItemSelect(sheet,row,col,menuitemid)
+{
+	var newrow=0;
+	if (menuitemid == &amp;quot;btn_reploc&amp;quot;) {
+		newrow = getNullRow(0);
+		ScrollToFindRow(0,newrow);
+		_this.SetCellFocus(0,newrow,2);
+		
+	}
+	else if (menuitemid == &amp;quot;btn_repmxloc&amp;quot;) {
+		newrow = getNullRow(1);
+		//ScrollToFindRow(1,newrow);
+		_this.SetCellFocus(1,newrow,3);
+		setXH();
+	}
+}
+
+function SaveRepLoc()
+{
+	if (!confirm(&amp;quot;保存修改确认，是否继续？&amp;quot;)) return;
+	
+	var xml1 = _this.GetXml(0,_this.GetMainCellRangeRow1(0),1,_this.GetMainCellRangeRow2(0),_this.GetMainCellRangeCol2(0));
+	var xml2 = _this.GetXml(1,_this.GetMainCellRangeRow1(1),1,_this.GetMainCellRangeRow2(1),_this.GetMainCellRangeCol2(1));
+	var param = new Object();
+	param.xml1 = xml1;
+	param.xml2 = xml2;
+				
+	try {
+		var ret = invokeOSFuncExt(&amp;quot;Save&amp;quot;,param);
+		alert(ret);
+	}
+	catch (e) {
+		alert(&amp;quot;保存失败!&amp;quot;+e);
+	}
+
+}
+
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	var flag = _this.GetCellText(sheet,row,1);
+	if (flag == &amp;quot;&amp;quot;) {
+		_this.SetCellText(sheet,row,1,&amp;quot;*&amp;quot;);
+	}
+	
+	if (sheet == 1) {
+		var selRow = getSelectedRow(0);
+		_this.SetCellText(sheet,row,5,_this.GetCellText(0,selRow,2)); //设置上级编号
+		if (col == 3) {
+			_sql.querytods(&amp;quot;REPLOCINFO&amp;quot;,&amp;quot;BMBH=&amp;quot;+newvalue);
+			if (_this.XMLDS_GetRowCount() &amp;gt; 0) {
+				var bmmc = _this.XMLDS_GetString(0,&amp;quot;BMMC&amp;quot;);
+				_this.SetCellText(sheet,row,4,bmmc);
+			}
+			else {
+				alert(&amp;quot;报表位置编号不存在！&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+			}
+		}
+//		if (row == 1 &amp;&amp; col == 0) {
+//			for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;_this.GetRowCount(sheet);r++) {
+//				_this.SetCellText(sheet,r,0,newvalue);
+//			}
+//		}
+	}
+//	else if (sheet == 0) {
+//		if (row == 0 &amp;&amp; col == 0) {
+//			for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;_this.GetRowCount(sheet);r++) {
+//				_this.SetCellText(sheet,r,0,newvalue);
+//			}
+//		}
+//	}
+}
+
+function setXH()
+{
+	var sheet = 1;
+	var xh = 0;
+	for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;_this.GetRowCount(sheet);r++) {
+		if (_this.GetRowVisible(sheet,r) == 1) {
+			xh ++;
+			_this.SetCellText(sheet,r,2,xh);
+		}
+	}
+}
+
+//滚动到行
+function ScrollToFindRow(sheet,scroll_row)
+{
+	_this.SetRedraw(0);
+	var scroll_height = -30;
+	for (var r=0;r&amp;lt;scroll_row;r++) {
+		scroll_height += _this.GetRowHeight(sheet,r);
+	}
+	_this.ScrollToPos(sheet,scroll_height,0);
+	//_this.SetCellColor(sheet,scroll_row,2,255,0,0);
+	_this.SetCellFocus(sheet,scroll_row,6);
+	_this.SetRedraw(1);
+}
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function Save()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	//return xml1;
+	try {
+		db = new pub.EADatabase();
+
+		var xml1ds = new pub.EAXmlDS(xml1);
+		var xml2ds = new pub.EAXmlDS(xml2);
+		
+		//保存oa_reploc
+		for (var i=0;i&amp;lt;xml1ds.getRowCount();i++) {
+			var flag = xml1ds.getStringAt(i,&amp;quot;COL1&amp;quot;);
+			var bmbh = xml1ds.getStringAt(i,&amp;quot;BMBH&amp;quot;);
+			var bmmc = xml1ds.getStringAt(i,&amp;quot;BMMC&amp;quot;);
+			var bmmc0 = xml1ds.getStringAt(i,&amp;quot;BMMC0&amp;quot;);
+			var sjbmbh = xml1ds.getStringAt(i,&amp;quot;SJBMBH&amp;quot;);
+			var jsdw = xml1ds.getStringAt(i,&amp;quot;JSDW&amp;quot;);
+			var hzzq = xml1ds.getStringAt(i,&amp;quot;HZZQ&amp;quot;);
+			var sbh = xml1ds.getStringAt(i,&amp;quot;SBH&amp;quot;);
+			var zth = xml1ds.getStringAt(i,&amp;quot;ZTH&amp;quot;);
+			var hzbz = xml1ds.getStringAt(i,&amp;quot;HZBZ&amp;quot;);
+			
+			if (bmbh != &amp;quot;&amp;quot;) {
+				if (flag == &amp;quot;+&amp;quot;) {
+					sql = &amp;quot;insert into oa_reploc(bmbh,bmmc,bmmc0,sjbmbh,jsdw,hzzq,sbh,zth,hzbz,org,acc) 
+						values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;
+						.format([bmbh,bmmc,bmmc0,sjbmbh,jsdw,hzzq,sbh,zth,hzbz,sbh,sbh+zth]);
+					db.ExcecutSQL(sql);
+				}
+				else if (flag == &amp;quot;-&amp;quot;) {
+					sql = &amp;quot;delete from oa_reploc where bmbh=&amp;apos;%s&amp;apos;&amp;quot;.format([bmbh]);
+					db.ExcecutSQL(sql);
+				}
+				else {
+					sql = &amp;quot;update oa_reploc set bmmc=&amp;apos;%s&amp;apos;,bmmc0=&amp;apos;%s&amp;apos;,sjbmbh=&amp;apos;%s&amp;apos;,jsdw=&amp;apos;%s&amp;apos;,hzzq=&amp;apos;%s&amp;apos;,sbh=&amp;apos;%s&amp;apos;,zth=&amp;apos;%s&amp;apos;,hzbz=&amp;apos;%s&amp;apos;,org=&amp;apos;%s&amp;apos;,acc=&amp;apos;%s&amp;apos; where bmbh=&amp;apos;%s&amp;apos;&amp;quot;
+						.format([bmmc,bmmc0,sjbmbh,jsdw,hzzq,sbh,zth,hzbz,sbh,sbh+zth,bmbh]);
+					var cnt = db.ExcecutSQL(sql);
+					if (cnt == 0) {
+						sql = &amp;quot;insert into oa_reploc(bmbh,bmmc,bmmc0,sjbmbh,jsdw,hzzq,sbh,zth,hzbz,org,acc) 
+							values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;
+							.format([bmbh,bmmc,bmmc0,sjbmbh,jsdw,hzzq,sbh,zth,hzbz,sbh,sbh+zth]);
+						db.ExcecutSQL(sql);
+					}
+				}
+			}
+		}
+		
+		//保存明细
+		for (var i=0;i&amp;lt;xml2ds.getRowCount();i++) {
+			var flag = xml2ds.getStringAt(i,&amp;quot;COL1&amp;quot;);
+			var xh = xml2ds.getStringAt(i,&amp;quot;XH&amp;quot;);
+			var bmbhmx = xml2ds.getStringAt(i,&amp;quot;BMBHMX&amp;quot;);
+			var bmbh = xml2ds.getStringAt(i,&amp;quot;BMBH&amp;quot;);
+			
+			if (bmbh != &amp;quot;&amp;quot;) {
+				if (flag == &amp;quot;+&amp;quot;) {
+					sql = &amp;quot;insert into oa_replocmx(xh,bmbh,bmbhmx) values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;.format([xh,bmbh,bmbhmx]);
+					db.ExcecutSQL(sql);
+				}
+				else if (flag == &amp;quot;-&amp;quot;) {
+					sql = &amp;quot;delete from oa_replocmx where xh=&amp;apos;%s&amp;apos; and bmbh=&amp;apos;%s&amp;apos;&amp;quot;.format([xh,bmbh]);
+					db.ExcecutSQL(sql);
+				}
+				else {
+					sql = &amp;quot;update oa_replocmx set bmbhmx=&amp;apos;%s&amp;apos; where bmbh=&amp;apos;%s&amp;apos; and xh=&amp;apos;%s&amp;apos;&amp;quot;.format([bmbhmx,bmbh,xh]);
+					var cnt = db.ExcecutSQL(sql);
+					if (cnt == 0) {
+						sql = &amp;quot;insert into oa_replocmx(xh,bmbh,bmbhmx) values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;.format([xh,bmbh,bmbhmx]);
+						db.ExcecutSQL(sql);
+					}
+				}
+			}
+		}
+		
+		
+		return &amp;quot;保存成功！&amp;quot;;
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();	
+	}
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select bmbh,bmmc,bmmc0,sjbmbh,jsdw,hzzq,sbh,zth,hzbz 
+from oa_reploc
+where org=&amp;apos;[%SYS_ORGID]&amp;apos; 
+ or org in (select id from org start with id=&amp;apos;[%SYS_ORGID]&amp;apos; connect by prior id=refid)
+ or bmbh in (select bmbh from oa_reploc start with org=&amp;apos;[%SYS_ORGID]&amp;apos; connect by  prior bmbh=sjbmbh)
+order by bmbh</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 >MAIN</C6></ROW>
+<ROW num="1" ><ID >MAINDTL</ID><NAME ></NAME><DATDSC >SELECT a.xh,a.BMBHMX,b.BMMC,a.bmbh   
+FROM OA_REPLOCMX a, OA_REPLOC b
+WHERE a.BMBHMX=b.BMBH 
+  and a.bmbh=&amp;apos;[%BMBH]&amp;apos;
+ORDER BY a.BMBH,a.XH</DATDSC><C4 >MAINDTL</C4><C5 >MAINDTL</C5><C6 ></C6></ROW>
+<ROW num="2" ><ID >REPLOCINFO</ID><NAME ></NAME><DATDSC >select * from oa_reploc where bmbh=&amp;apos;[%BMBH]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

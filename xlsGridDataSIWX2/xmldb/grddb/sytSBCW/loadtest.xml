@@ -1,0 +1,428 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >loadtest</MWID><NAME ></NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >loadtest.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var c = &amp;quot;&amp;quot;;
+var ZXGFILE0;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet) {
+	_this.SplitSheet(0, &amp;quot;H&amp;quot;, &amp;quot;50%&amp;quot;);
+
+	ZXGFILE0 = _this.SaveTempZXGFile(1);
+	_this.AddToolbarButton(&amp;quot;aa_NewKM&amp;quot;,&amp;quot;新增科目&amp;quot;,&amp;quot;新增科目&amp;quot;,&amp;quot;&amp;quot;,1,12,12,80);
+	ZXGFILE1 = _this.SaveTempZXGFile(1);
+
+}
+//function NewKM()
+//{
+//	alert(&amp;quot;a&amp;quot;);
+//}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id, sheet, row, col) {
+	if(id == &amp;quot;aa_NewKM&amp;quot;)
+	{
+		
+    	var activefile=&amp;quot;/u/filestoreu/download/&amp;quot;+&amp;quot;return_JB_ZGDS151130&amp;quot;;
+	location = grdid+&amp;quot;.sp?action=zipdown&amp;file=&amp;quot;+activefile;
+
+
+			
+	}
+
+		
+		
+
+}
+var filecontent = &amp;quot;&amp;quot;;
+var count = 0;
+
+function readFile(path1) {
+	var fso = new ActiveXObject(&amp;quot;Scripting.FileSystemObject&amp;quot;);
+	// var path=_this.GetCellText(2,1,2);
+	var fldr = fso.GetFolder(path1);
+
+	// var ff = new Enumerator(fldr.Files); 
+	var ff = new Enumerator(fldr.SubFolders);
+
+	var fileArray = new Array();
+	for (var i = 0; !ff.atEnd(); ff.moveNext()) {
+		//取文件对象
+		s = ff.item();
+
+
+		//输出文件的类型和名称;
+		var fsize = (s.size / 1024).toFixed(2) + &amp;quot; KB&amp;quot;;
+
+		var cal = new Date(s.DateLastModified);
+		var year = cal.getFullYear();
+		var month = cal.getMonth() + 1;;
+		var day = cal.getDate();
+		var hour = cal.getHours();
+		var min = cal.getMinutes();
+		var sec = cal.getSeconds();
+		var ftime = formatDateTime(year, month, day, hour, min, sec);
+
+
+		filecontent = s.type + &amp;quot;,&amp;quot; + s.name + &amp;quot;,&amp;quot; + fsize + &amp;quot;,&amp;quot; + ftime;
+
+		fileArray[i] = filecontent;
+
+		i++;
+
+	}
+	count = fileArray.length;
+	//alert(count);
+	var fso1 = new ActiveXObject(&amp;quot;Scripting.FileSystemObject&amp;quot;);
+	var path1 = _this.GetCellText(2, 1, 2);
+	var fldr1 = fso1.GetFolder(path1);
+
+	var dd = new Enumerator(fldr1.Files);
+
+
+	for (var f = count; !dd.atEnd(); dd.moveNext()) {
+		//取文件对象
+		d = dd.item();
+
+
+		//输出文件的类型和名称;
+		var fsize = (d.size / 1024).toFixed(2) + &amp;quot; KB&amp;quot;;
+
+		var cal = new Date(d.DateLastModified);
+		var year = cal.getFullYear();
+		var month = cal.getMonth() + 1;;
+		var day = cal.getDate();
+		var hour = cal.getHours();
+		var min = cal.getMinutes();
+		var sec = cal.getSeconds();
+		var ftime = formatDateTime(year, month, day, hour, min, sec);
+
+
+		filecontent = d.type + &amp;quot;,&amp;quot; + d.name + &amp;quot;,&amp;quot; + fsize + &amp;quot;,&amp;quot; + ftime;
+
+		fileArray[f] = filecontent;
+
+		f++;
+
+	}
+
+	return fileArray;
+
+
+}
+
+
+function listFiles(path) {
+	var result = false;
+
+	_this.LoadZXGFile(ZXGFILE1, -1, 1);
+	_this.SetMainCellRange(1, 4, 1, 15, 7);
+
+	var param = new Object();
+	param.path = path;
+	var ret = invokeOSFuncExt(&amp;quot;downLoadFile&amp;quot;, param);
+
+	if (ret != &amp;quot;&amp;quot; &amp;&amp; ret.substring(0, 1) == &amp;quot;[&amp;quot;) {
+
+		ret = ret.substring(1, ret.length - 1) ;
+		var files = ret.split(&amp;quot;,&amp;quot;);
+		files.sort();
+		var r = 4;
+		//_this.SetCellText(1,18,2,c);
+		for (var i = 0; i &amp;lt; files.length; i++) {
+			if (r &amp;gt;= 15) _this.AppendRow(0, r);
+			var file = files[i].split(&amp;quot;`&amp;quot;);
+			var fname = file[0]; //file[0].replace(/(^\s*)|(\s*$)/g, &amp;quot;&amp;quot;); //去除前后空格
+			var ftime = file[1];
+			var ftype = file[2];
+			var fsize = (file[3] / 1024).toFixed(2) + &amp;quot; KB&amp;quot;;
+			if (ftype == 1) {
+				_this.SetCellShowText(1, r, 6, &amp;quot;目录&amp;quot;);
+				_this.SetCellColor(1, r, 6, 0, 0, 255);
+			} else ftype = &amp;quot;文件&amp;quot;;
+
+			_this.SetCellText(1, r, 1, (i + 1));
+			_this.SetToBoolBox(1, r, 2);
+			_this.SetCellText(1, r, 3, fname);
+			_this.SetCellText(1, r, 5, ftime);
+			_this.SetCellText(1, r, 6, ftype);
+			_this.SetCellText(1, r, 7, fsize);
+			r++;
+		}
+		result = true;
+	} else {
+		alert(ret);
+	}
+
+	return result;
+}
+
+function selectOneRow(sheet, row) {
+	for (var r = 4; r &amp;lt; _this.GetRowCount(sheet) - 1; r++) {
+		if (_this.GetCellText(sheet, r, 1) != &amp;quot;&amp;quot;) {
+			_this.SetCellText(sheet, r, 2, &amp;quot;0&amp;quot;);
+		}
+	}
+	_this.SetCellText(sheet, row, 2, &amp;quot;1&amp;quot;);
+}
+
+//鼠标双击
+function _thisOnMouseDClick(sheet, row, col) {
+	if (sheet == 1) {
+
+		var dir = _this.GetCellText(sheet, row, 3);
+		var isdir = _this.GetCellText(sheet, row, 6);
+		if (isdir == &amp;quot;1&amp;quot;) {
+			var curpath = _this.GetCellText(0, 8, 5);
+			var path1;
+							if(curpath ==&amp;quot;/&amp;quot;)
+							{
+							 path1 = curpath +  dir;
+							}
+							else
+							{
+							 path1 = curpath + &amp;quot;/&amp;quot; + dir;
+			
+							}
+			
+			var rst = listFiles(path1);
+
+			if (rst == true) {
+				_this.SetCellText(0, 8, 5, path1);
+			} else {
+				alert(&amp;quot;当前目录不正确!\n&amp;quot; + path1);
+			}
+		} else if (dir.indexOf(&amp;quot;.TXT&amp;quot;) &amp;gt; -1 || dir.indexOf(&amp;quot;.txt&amp;quot;) &amp;gt; -1) {
+			selectOneRow(sheet, row);
+		}
+	}
+}
+function formatDateTime(y, m, d, h, f, s) {
+	var mm = m &amp;lt; 10 ? (&amp;quot;0&amp;quot; + m) : m;
+	var dd = d &amp;lt; 10 ? (&amp;quot;0&amp;quot; + d) : d;
+	var hh = h &amp;lt; 10 ? (&amp;quot;0&amp;quot; + h) : h;
+	var ff = f &amp;lt; 10 ? (&amp;quot;0&amp;quot; + f) : f;
+	var ss = s &amp;lt; 10 ? (&amp;quot;0&amp;quot; + s) : s;
+
+	return y + &amp;quot;-&amp;quot; + mm + &amp;quot;-&amp;quot; + dd + &amp;quot; &amp;quot; + hh + &amp;quot;:&amp;quot; + ff + &amp;quot;:&amp;quot; + ss;
+
+}
+function   getFolder(path)
+{	
+var   fso   =   new   ActiveXObject( &amp;quot;Scripting.FileSystemObject &amp;quot;);
+
+var   files   =   new   Array();
+var   global=   1;
+      var   f   =   fso.GetFolder(path);
+      var   fc   =   new   Enumerator(f.SubFolders);     //所有的子目录集合
+      var   s   =   &amp;quot; &amp;quot;;
+      for   (;   !fc.atEnd();   fc.moveNext())
+      {
+            s   +=   fc.item();
+          //  s   +=   &amp;quot; &amp;lt;br&amp;gt; \r\n &amp;quot;;
+      }
+      var   ff   =   new   Enumerator(f.Files);     //该目录下所有的文件集合
+      for   (;   !ff.atEnd();   ff.moveNext())
+      {  
+            files[files.length]   =   ff.item();   //把该目录下的所有文件路径都放在一个数组里.
+            s   +=   ff.item();
+         //   s   +=   &amp;quot; &amp;lt;br&amp;gt; \r\n &amp;quot;;
+      }
+    //  setValu e();
+      return s;
+}
+
+
+function listFile(fileArray) {
+	try{
+	var result = false;
+	_this.LoadZXGFile(ZXGFILE1, -1, 1);
+	_this.SetMainCellRange(1, 4, 1, 15, 7);
+	_this.SetFixedRow(1,4);
+	
+	
+	var r = 6;
+	for (var i = 0; i &amp;lt; fileArray.length; i++) {
+		var file = fileArray[i].split(&amp;quot;,&amp;quot;);
+		var ftype = file[0];
+		var fname = file[1];
+		var fsize = file[2];
+		var ftime = file[3];
+		if (ftype == &amp;quot;文件夹&amp;quot;) {
+			_this.SetCellShowText(1, r, 6, &amp;quot;目录&amp;quot;);
+			_this.SetCellColor(1, r, 6, 0, 0, 255);
+		}
+
+		_this.SetCellText(1, r, 1, (i + 1));
+		_this.SetToBoolBox(1, r, 2);
+		_this.SetCellText(1, r, 3, fname);
+		_this.SetCellText(1, r, 5, ftime);
+		_this.SetCellText(1, r, 6, ftype);
+		_this.SetCellText(1, r, 7, fsize);
+		r++;
+		if (r &amp;gt;= 15) _this.AppendRow(1, r);
+		
+		result = true;
+	}
+		_this.SetCellColor(1, 4, 1, 255, 0, 255);
+		_this.SetCellColor(1, 5, 1, 255, 0, 255);
+
+		return true;
+		
+		}
+		catch(e)
+		{
+			return;
+		
+		}
+
+
+
+}</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >
+var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var ftppack = new JavaPackage(&amp;quot;org.apache.commons.net.ftp&amp;quot;);
+
+function getaddress() {
+var c=&amp;quot;&amp;quot;;
+var ftpip1 = &amp;quot;172.16.12.207&amp;quot;;
+	var ftpuser1 = &amp;quot;gxsi_r&amp;quot;;
+	var ftppasswd1 = &amp;quot;gxsi_r&amp;quot;;
+
+			var eaftp1 = new pub.EAFtpClient2();
+			
+			eaftp1.ftpClient=new ftppack.FTPClient();
+			eaftp1.ftpClient.setControlEncoding(&amp;quot;UTF-8&amp;quot;);
+			eaftp1.ftpClient.connect(ftpip1);
+			eaftp1.ftpClient.login(ftpuser1, ftppasswd1);
+			c=eaftp1.ftpClient.printWorkingDirectory();
+			
+			return  c;
+			eaftp.closeConnect();
+
+}
+//下载拷盘文件保存到应用服务器
+function downLoadFile() {
+	//var c = &amp;quot;&amp;quot;;
+//	var txt = null;
+//	var sr = null;
+//
+//	var destFile = &amp;quot;/u/dsdd/&amp;quot; + genmulu; //下载保存
+//	var b = eaftp.download(mulu + &amp;quot;/&amp;quot; + genmulu, destFile);
+//	eaftp.closeConnect();
+//	if (b == true) {
+//		txt = pub.EAFunc.readFile(destFile);
+//	var ftpip = &amp;quot;172.16.100.80&amp;quot;;
+//	var ftpuser = &amp;quot;gxsi&amp;quot;;
+//	var ftppasswd = &amp;quot;gxsi5879003&amp;quot;;
+//	var c=ftpClient.printWorkingDirectory();
+//	eaftp.closeConnect();
+//	}
+	var ftpip = &amp;quot;172.16.12.207&amp;quot;;
+	var ftpuser = &amp;quot;gxsi_r&amp;quot;;
+	var ftppasswd = &amp;quot;gxsi_r&amp;quot;;
+
+			var eaftp = new pub.EAFtpClient2();
+			
+			eaftp.ftpClient=new ftppack.FTPClient();
+			eaftp.ftpClient.setControlEncoding(&amp;quot;UTF-8&amp;quot;);
+			eaftp.ftpClient.connect(ftpip);
+			eaftp.ftpClient.login(ftpuser, ftppasswd);
+			//
+			//c=eaftp.ftpClient.printWorkingDirectory();
+			eaftp.ftpClient.changeWorkingDirectory(path);
+			
+			//var b =eaftp.download(&amp;quot;/dsdf/gsyh/gsyh_ftpup/jgyltest/classes12.jar&amp;quot;,&amp;quot;/u/dsdd/classes12.jar&amp;quot;);
+			var files = &amp;quot;[&amp;quot;;
+		eaftp.ftpClient.enterLocalPassiveMode();//20160418添加,处理listFiles()方法返回空问题
+		var ftpFiles = eaftp.ftpClient.listFiles();
+		//return ftpFiles ;
+	//	return ftpFiles.length();
+		for (var i=0;i&amp;lt;ftpFiles.length();i++) {
+			if(ftpFiles[i] != null) {
+				var fname = ftpFiles[i].getName();
+				var ftype = ftpFiles[i].getType();
+				var fsize = ftpFiles[i].getSize();
+				var cal = ftpFiles[i].getTimestamp();
+				var year = cal.get(java.util.Calendar.YEAR); 
+				var month = cal.get(java.util.Calendar.MONTH) + 1; 
+				var day = cal.get(java.util.Calendar.DAY_OF_MONTH);
+				var hour = cal.get(java.util.Calendar.HOUR_OF_DAY);
+				var min = cal.get(java.util.Calendar.MINUTE);
+				var sec = cal.get(java.util.Calendar.SECOND);
+				//var ftime = year + &amp;quot;-&amp;quot; + month + &amp;quot;-&amp;quot; + day + &amp;quot; &amp;quot; + hour + &amp;quot;:&amp;quot; + min + &amp;quot;:&amp;quot; + sec;
+				var ftime = formatDateTime(year,month,day,hour,min,sec);
+				if (files == &amp;quot;[&amp;quot;) {
+					files += fname+&amp;quot;`&amp;quot;+ftime+&amp;quot;`&amp;quot;+ftype+&amp;quot;`&amp;quot;+fsize;
+				}
+				else {
+					files += &amp;quot;,&amp;quot;+fname+&amp;quot;`&amp;quot;+ftime+&amp;quot;`&amp;quot;+ftype+&amp;quot;`&amp;quot;+fsize;
+				}			
+			}
+		}
+		files += &amp;quot;]&amp;quot;;
+			eaftp.closeConnect();
+		//return files+&amp;quot;!&amp;quot;+c;
+		return files;
+
+			
+
+	
+}
+
+//作为.sp服务时的入口
+//预定义变量：request,response
+function Response()
+{
+  var action = request.getParameter(&amp;quot;action&amp;quot;);
+ 
+   var filematch= request.getParameter(&amp;quot;filematch&amp;quot;);// 文件匹配 如262*.*
+  if ( filematch== null ) filematch = &amp;quot;&amp;quot;;
+
+    
+  var file = request.getParameter(&amp;quot;file&amp;quot;);
+    if(action==&amp;quot;zipdown&amp;quot;){
+//      var f = new java.io.File(file );
+//     
+//     //pub.EAJarResource.ExtractZipFiles(&amp;quot;&amp;quot;,f.getName()+&amp;quot;.zip&amp;quot;,f.getName(),true);
+     pub.EAFunc.zip2Response(response,f.getName()+&amp;quot;.zip&amp;quot;,file ,&amp;quot;&amp;quot;,&amp;quot;*.os&amp;quot;,true);
+  var f = new java.io.File(file);
+      if(f.isFile()){
+        file = f.getParent();
+      pub.EAFunc.zip2Response(response,f.getName()+&amp;quot;.zip&amp;quot;,f.getPath(),filematch,&amp;quot;*.os&amp;quot;,true);}
+	
+
+
+  }
+ 
+}
+
+
+function formatDateTime(y,m,d,h,f,s)
+{
+	var mm = m &amp;lt; 10 ? (&amp;quot;0&amp;quot;+m) : m;
+	var dd = d &amp;lt; 10 ? (&amp;quot;0&amp;quot;+d) : d;
+	var hh = h &amp;lt; 10 ? (&amp;quot;0&amp;quot;+h) : h;
+	var ff = f &amp;lt; 10 ? (&amp;quot;0&amp;quot;+f) : f;
+	var ss = s &amp;lt; 10 ? (&amp;quot;0&amp;quot;+s) : s;
+	
+	return y+&amp;quot;-&amp;quot;+mm+&amp;quot;-&amp;quot;+dd+&amp;quot; &amp;quot;+hh+&amp;quot;:&amp;quot;+ff+&amp;quot;:&amp;quot;+ss;
+	
+}
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

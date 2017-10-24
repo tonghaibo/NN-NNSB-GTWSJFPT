@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >DJH_JE</MWID><NAME >校验票据金额</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >DJH_JE.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var cur_sbh = &amp;quot;&amp;quot;;
+var cur_zth = &amp;quot;&amp;quot;;
+var cur_rq  = &amp;quot;&amp;quot;;
+var cur_djh = &amp;quot;&amp;quot;;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.ShowToolBar(0);
+	
+	try{
+		cur_djh = djh; 
+		_this.SetCellText(0,3,3,cur_djh);
+	}catch(e){
+		cur_djh = &amp;quot;&amp;quot;;
+	}
+	cur_sbh = G_ORGID;
+	cur_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if(id == &amp;quot;确定&amp;quot;){
+		try{
+			var je = _this.GetCellText(0,5,3);
+			cur_djh = _this.GetCellText(0,3,3);
+
+			var param = new Object();
+			param.thisorgid = G_ORGID;
+			param.thisaccid = G_ACCID;
+			param.sbh = G_ORGID;
+			param.zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+			param.djh = cur_djh;
+			param.je = 1.0*je;
+						
+			var ret = invokeOSFuncExt(&amp;quot;getDwxx&amp;quot;,param);		
+			var orr = ret.split(&amp;quot;@&amp;quot;)[0];
+			var msg = ret.split(&amp;quot;@&amp;quot;)[1];
+			if(orr == 1){				
+				window.returnValue = orr ;
+				window.close();
+			}else if(orr == -1){				
+				alert(msg);
+				window.returnValue = orr ;
+				window.close();			
+			}
+		}catch(e){
+			alert(-1+&amp;quot;@&amp;quot;+e.toSting());
+			window.returnValue = -1 ;
+			window.close()
+		}
+	}else if(id == &amp;quot;取消&amp;quot;){
+		window.returnValue = -2 ;
+		window.close();	
+	}
+}</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >
+function getDwxx(){
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+//	var yy = rq.substring(0,4);
+//	var mm = rq.substring(5,7);
+//	var dd = rq.substring(8,10);
+	
+	try{	
+		db = new pub.EADatabase();
+		
+		//单据号金额与录入金额不等不允许保存			20170316		nxj	rzbz = 0 只校验未入账数据
+		sql = &amp;quot;select sum(je1+je2+je3+je4+je5+je6+je7+je8+je9+je10+je11+je12+je13+je14+je15) je,rzbz
+			from v_si_djb_tmp where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and zbbz = 0 and nvl(zfbz,0) = 0 and rzbz = 0 group by rzbz&amp;quot;;
+
+		var ds = db.QuerySQL(sql);
+		var rzbz = &amp;quot;&amp;quot;;
+		var djsum = &amp;quot;&amp;quot;;
+		var YWLX = &amp;quot;&amp;quot;;
+		if(ds.getRowCount()&amp;lt;= 0){			
+			return -1+&amp;quot;@&amp;quot;+&amp;quot;单据号&amp;quot;+djh+&amp;quot;查询无此数据!&amp;quot;;
+		}else{
+			rzbz = ds.getStringAt(0,&amp;quot;rzbz&amp;quot;);
+			djsum = ds.getStringAt(0,&amp;quot;je&amp;quot;);
+			
+			if(1.0*je != 1.0*djsum ){
+				db.Rollback();
+				return -1+&amp;quot;@&amp;quot;+&amp;quot;单据金额不等，不允许取数!!&amp;quot;;
+			}
+		}
+		return 1+&amp;quot;@&amp;quot;+&amp;quot;成功&amp;quot;;
+	}catch(e){
+		if (db != null) db.Rollback();
+		return -1+&amp;quot;@&amp;quot;+e.toString();
+	}finally{
+		if (db != null) db.Close();
+	}
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

@@ -1,0 +1,238 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RJZ_CZ_CXLR</MWID><NAME >冲账重新录单</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RJZ_CZ_CXLR.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >btnCxlr</ID><NAME >重新录入</NAME><ACTTYP >0</ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE></ROW>
+<ROW num="1" ><ID >btnBack</ID><NAME >返回</NAME><ACTTYP >0</ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var sheet_cxlr = 0;
+
+var cur_lsh = &amp;quot;&amp;quot;;
+var cur_kmbh = &amp;quot;&amp;quot;
+var cur_bz = &amp;quot;&amp;quot;;
+var cur_zy = &amp;quot;&amp;quot;;
+var cur_dwbh = &amp;quot;&amp;quot;;
+var cur_dwmc = &amp;quot;&amp;quot;;
+
+//页面布局初始化
+function initLayout(){
+	_this.SplitSheet(sheet_cxlr ,&amp;quot;V&amp;quot;,&amp;quot;100%&amp;quot;);
+}
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	initLayout();
+	
+	_this.SetToDateBox(&amp;quot;&amp;quot;,sheet_cxlr ,5,2,G_LOGDAT);//设置时间
+	
+	try{
+		var objParam = window.dialogArguments;
+		cur_lsh = objParam.lsh;
+		cur_bz  = objParam.bz;
+		cur_kmbh = objParam.kmbh;
+		cur_zy   = objParam.zy;
+		cur_dwbh = objParam.dwbh;
+		cur_dwmc = objParam.dwmc;
+			
+		_this.SetCellText(sheet_cxlr ,1,2,cur_lsh);
+		_this.SetCellText(sheet_cxlr ,2,2,cur_kmbh);
+		_this.SetCellText(sheet_cxlr ,3,2,cur_dwbh);
+		_this.SetCellText(sheet_cxlr ,4,2,cur_dwmc);
+		
+	}catch(e){
+	
+	}
+}
+
+//返回
+function btnBack()
+{
+	window.returnValue = &amp;quot;-1&amp;quot;;
+	window.close();
+}
+
+//重新录入
+function btnCxlr(){
+	var dwbh = _this.GetCellText(sheet_cxlr,3,2);
+	var dwmc = _this.GetCellText(sheet_cxlr,4,2);
+	var rq   = _this.GetCellText(sheet_cxlr,5,2);
+	var je   = 1.0 * _this.GetCellText(sheet_cxlr,6,2);
+	
+	if(dwbh == &amp;quot;&amp;quot;)
+	{
+		alert(&amp;quot;单位编号不能为空!!&amp;quot;);
+		return false;
+	}
+	
+	if(dwmc == &amp;quot;&amp;quot;)
+	{
+		alert(&amp;quot;单位名称不能为空!!&amp;quot;);
+		return false;
+	}
+	
+	try{
+		var paramObj = new Object();
+		paramObj.lsh = cur_lsh;
+		paramObj.rq  = rq;
+		paramObj.bz  = cur_bz;
+		paramObj.kmbh = cur_kmbh;
+		paramObj.thisorgid = G_ORGID;
+		paramObj.thisaccid = G_ACCID;
+		paramObj.czyxm = G_USRNAM;
+		paramObj.sbh = G_ORGID;
+		paramObj.zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+		paramObj.dwbh = dwbh;
+		paramObj.dwmc = dwmc;
+		paramObj.je   = 1.0*je;
+		
+		var retProc = invokeOSFuncExt(&amp;quot;wfkCxlr&amp;quot;,paramObj);
+		
+		if(retProc == 1)
+		{
+			alert(&amp;quot;重新录入成功&amp;quot;);
+			return 1;
+		}else{
+			alert(&amp;quot;重新录入失败!!&amp;quot;+retProc);
+		}
+	}catch(e){
+		alert(&amp;quot;程序出错&amp;quot;+e.toString());
+	}
+}
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if(sheet == sheet_cxlr )
+	{
+		if(row == 3 &amp;&amp; col == 3)
+		{
+		      	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_DWSEL&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+		      	cur_dwbh = retVal.split(&amp;quot;~&amp;quot;)[0];
+		      	cur_dwmc = retVal.split(&amp;quot;~&amp;quot;)[1];
+		      	if(cur_dwbh != &amp;quot;&amp;quot; &amp;&amp; cur_dwbh != &amp;quot;undefined&amp;quot;)
+		      	{	      
+		       	 	_this.SetCellText(sheet_cxlr ,3,2,cur_dwbh);
+				_this.SetCellText(sheet_cxlr ,4,2,cur_dwmc);
+			}
+		}
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >function wfkCxlr(){
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	var invokeRet = &amp;quot;&amp;quot;;
+	var yy = rq.substring(0,4);
+	var mm = rq.substring(5,7);
+	var dd = rq.substring(8,10);
+	var czlx = &amp;quot;&amp;quot;;
+	var fkbz = &amp;quot;&amp;quot;;
+	var rzbz = &amp;quot;&amp;quot;;
+	var si_fkbz = &amp;quot;&amp;quot;;
+	var rjz_zy  = &amp;quot;&amp;quot;;
+	var new_lsh = &amp;quot;&amp;quot;;
+	var yslsh   = &amp;quot;&amp;quot;;
+	var sxh     = 0;
+
+	try{
+		//连接
+		db = new pub.EADatabase();
+		
+		sql = &amp;quot;select nvl(max(sxh),0)+1 from cw_rjzb where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos; and yy=&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm=&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and kmbh=&amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;&amp;quot;;
+		sxh = db.GetSQL(sql); //顺序号
+		sql = &amp;quot;select seq_rjz_lsh.nextval from dual&amp;quot;;
+		new_lsh = db.GetSQL(sql); //流水号
+		sql = &amp;quot;select distinct nvl(czyslsh,lsh) from cw_rjzb where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos; and lsh=&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos;&amp;quot;;
+		yslsh = db.GetSQL(sql); //原始流水号
+		
+		//更新原始记录标志
+		if( bz == 1)
+		{
+			fkbz = &amp;quot;3&amp;quot;;
+		}else if(bz == 2)
+		{
+			fkbz = &amp;quot;3&amp;quot;;
+		}
+		
+		//更新旧流水日记账表记录
+		sql = &amp;quot;update cw_rjzb set fkbz = &amp;apos;&amp;quot;+fkbz+&amp;quot;&amp;apos;,cxrz_rq = sysdate ,cxrz_czy= &amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,czlsh_next = &amp;apos;&amp;quot;+new_lsh+&amp;quot;&amp;apos; ,czyslsh = nvl(czyslsh,lsh),cxrz_lsh = &amp;apos;&amp;quot;+new_lsh+&amp;quot;&amp;apos; 
+			where org = &amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and acc = &amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos; and lsh = &amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos;&amp;quot;;
+		db.ExcecutSQL(sql);
+
+		//插入cw_rjzb标志
+		if(bz == &amp;quot;2&amp;quot;){
+			fkbz = &amp;quot;0&amp;quot;;
+		}
+		else if (bz == &amp;quot;1&amp;quot;) {
+			fkbz = &amp;quot;0&amp;quot;;
+		}
+		
+		//插入cw_rjzb
+		sql = &amp;quot;insert into cw_rjzb(SBH,ZTH,LSH,YY,MM,DD,SXH,CZYXM,ZY,KMBH,LXBH,DJH,DWBH,JE,JEFX,JSFS,OLD_PCH,QCBZ,DWMC,FKBZ,FKYK,FKRXM,FKRQ,
+						CZLSH,CZLX,CZYY,CZCZY,CZRQ,YSPZ_FJZS,YSPZ_FJPCH,YSPZ_LRRQ,czyslsh,org,acc,mkjmbz,cxrz_lsh,cxrz_rq,cxrz_czy)
+			select SBH,ZTH,&amp;apos;&amp;quot;+new_lsh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+dd+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+sxh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,zy,kmbh,lxbh,&amp;apos;&amp;quot;+new_lsh+&amp;quot;&amp;apos;,dwbh,&amp;quot;+1.0*je+&amp;quot;,jefx,jsfs,old_pch,qcbz,dwmc,&amp;apos;&amp;quot;+fkbz+&amp;quot;&amp;apos;,fkyk,fkrxm,fkrq,
+			       &amp;apos;&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;&amp;apos;,sysdate,YSPZ_FJZS,YSPZ_FJPCH,YSPZ_LRRQ,nvl(czyslsh,&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos;),org,acc,mkjmbz,&amp;apos;&amp;quot;+new_lsh+&amp;quot;&amp;apos;,sysdate,&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;
+			from cw_rjzb
+			where org = &amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and acc = &amp;apos;&amp;quot; + thisaccid +&amp;quot;&amp;apos; and lsh = &amp;apos;&amp;quot; +lsh+&amp;quot;&amp;apos;&amp;quot;;
+		db.ExcecutSQL(sql);
+
+		//更新si_djb_tmp
+		sql = &amp;quot;update si_djb_tmp set fzbz = &amp;apos;2&amp;apos; ,rzbz = &amp;apos;1&amp;apos;,zfbz=&amp;apos;1&amp;apos;
+			where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot; + zth +&amp;quot;&amp;apos; and lsh = &amp;apos;&amp;quot; + lsh +&amp;quot;&amp;apos; and zbbz = 0 &amp;quot;;
+		db.ExcecutSQL(sql);
+
+		czlog(sbh,zth,yslsh,new_lsh,czyxm,db);
+		
+		db.Commit();
+		return 1;
+	}catch(e){
+		if(db!=null) db.Rollback();
+		return e.toString();
+	}finally{
+		if (db != null) db.Close();
+	}
+}
+
+//冲账日记账日志
+function czlog(sbh,zth,yslsh,new_lsh,czyxm,db){
+	var sql = &amp;quot;&amp;quot;;
+	var sxh = 0;
+		
+	try{
+		//获取冲账顺序号
+		sql = &amp;quot;select count(czsxh)+1 czsxh from cw_czrjzb_log where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and czyslsh= &amp;apos;&amp;quot;+yslsh+&amp;quot;&amp;apos;&amp;quot;;
+		sxh = db.GetSQL(sql);
+		
+		//插入日志表
+		sql = &amp;quot;insert into cw_czrjzb_log(org,acc,sbh,zth,lsh,czyslsh,czyy,czyxm,rq,czlx,czsxh)
+			select org,acc,sbh,zth,lsh,nvl(czyslsh,lsh),czyy,&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,to_char(sysdate,&amp;apos;yyyy-mm-dd&amp;apos;),czlx,&amp;apos;&amp;quot;+sxh+&amp;quot;&amp;apos; sxh   
+			  from cw_rjzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and lsh= &amp;apos;&amp;quot;+new_lsh+&amp;quot;&amp;apos;&amp;quot;;
+		db.ExcecutSQL(sql);
+		
+		return 1;
+				
+	}catch(e)
+	{
+		if (db != null) db.Rollback();
+		return e.toString();
+	}finally{
+		if (db != null) db.Close();
+	}
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

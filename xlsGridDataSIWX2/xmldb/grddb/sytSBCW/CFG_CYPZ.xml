@@ -1,0 +1,333 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >CFG_CYPZ</MWID><NAME >常用凭证设置</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CFG_CYPZ.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >系统维护</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var g_zth = &amp;quot;&amp;quot;;
+var g_sheet0_currow = 0;
+var g_sheet1_currow = 0;
+var kmList;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SplitSheet(sheet,&amp;quot;H&amp;quot;,&amp;quot;35%&amp;quot;);
+	
+	_this.AddToolbarButton(&amp;quot;udf_newcypzb&amp;quot;,&amp;quot;新增常用凭证&amp;quot;,&amp;quot;新增常用凭证&amp;quot;,&amp;quot;&amp;quot;,0,4,4,100);
+	_this.AddToolbarButton(&amp;quot;udf_newcypzmxb&amp;quot;,&amp;quot;新增凭证明细&amp;quot;,&amp;quot;新增凭证明细&amp;quot;,&amp;quot;&amp;quot;,0,3,3,100);
+        _this.AddToolbarButton(&amp;quot;udf_deletecypzb&amp;quot;,&amp;quot;删除凭证&amp;quot;,&amp;quot;删除凭证&amp;quot;,&amp;quot;&amp;quot;,0,2,2,100);
+        _this.AddToolbarButton(&amp;quot;udf_deletecypzmxb&amp;quot;,&amp;quot;删除明细&amp;quot;,&amp;quot;删除明细&amp;quot;,&amp;quot;&amp;quot;,0,3,3,100);
+        
+	_this.AddToolbarButton(&amp;quot;udf_savecypz&amp;quot;,&amp;quot;保存&amp;quot;,&amp;quot;保存&amp;quot;,&amp;quot;&amp;quot;,0,5,5,100);
+        
+        
+        //设置主数据区域
+	_this.SetMainCellRange(0,1,0,_this.GetRowCount(0)-1,_this.GetColCount(0)-1);
+	_this.SetMainCellRange(1,1,0,_this.GetRowCount(1)-1,_this.GetColCount(1)-1);
+
+	//设置单行选择模式
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+	kmList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_ACCITEM&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;SHTNAME&amp;quot;);
+		
+	g_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);	
+	loadCYPZB();
+	loadCYPZMXB();
+	_thisOnMouseLClick(0,1,1);	
+	_this.AutoFixScreenWidth();
+	
+}
+
+
+function loadCYPZB()
+{
+	g_sheet0_currow = 1;
+	var xml = _sql.query(&amp;quot;CYPZB&amp;quot;,&amp;quot;ZTH=&amp;quot;+g_zth);
+	_this.SetXmlDS(0,1,0,_this.GetRowCount(0)-1,_this.GetColCount(0)-1,xml);
+	_this.SetColName(0,0,&amp;quot;FLG&amp;quot;);
+	_this.SetColName(0,1,&amp;quot;SBH&amp;quot;);
+	_this.SetColName(0,2,&amp;quot;ZTH&amp;quot;);
+	_this.SetColName(0,3,&amp;quot;BH&amp;quot;);
+	_this.SetColName(0,4,&amp;quot;SM&amp;quot;);
+	
+	_this.SetColVisible(0,0,-1);
+	_this.SetColVisible(0,1,-1);
+	_this.SetColVisible(0,2,-1);
+	
+	initMainData(0);
+}
+
+function loadCYPZMXB()
+{
+	var xml = _sql.query(&amp;quot;CYPZMXB&amp;quot;,&amp;quot;ZTH=&amp;quot;+g_zth);
+	_this.SetXmlDS(1,1,0,_this.GetRowCount(1)-1,_this.GetColCount(1)-1,xml);
+	_this.SetColName(1,0,&amp;quot;FLG&amp;quot;);
+	_this.SetColName(1,1,&amp;quot;SBH&amp;quot;);
+	_this.SetColName(1,2,&amp;quot;ZTH&amp;quot;);
+	_this.SetColName(1,3,&amp;quot;BH&amp;quot;);
+	_this.SetColName(1,4,&amp;quot;MXXH&amp;quot;);
+	_this.SetColName(1,5,&amp;quot;ZY&amp;quot;);
+	_this.SetColName(1,6,&amp;quot;KMBH&amp;quot;);
+	
+	_this.SetColVisible(1,0,-1);
+	_this.SetColVisible(1,1,-1);
+	_this.SetColVisible(1,2,-1);
+	_this.SetColVisible(1,3,-1);
+
+	initMainData(1);
+}
+
+function initMainData(sheet)
+{
+	for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;=_this.GetMainCellRangeRow2(sheet);r++) {
+		if (_this.GetCellText(sheet,r,1) == &amp;quot;&amp;quot;) {
+			_this.SetRowVisible(sheet,r,-1);
+		}
+	}
+}
+
+function getNullRow(sheet)
+{
+	var endrow = _this.GetMainCellRangeRow2(sheet);
+	for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;=endrow;r++) {
+		if (_this.GetCellText(sheet,r,1) == &amp;quot;&amp;quot;) {
+			return r;
+		}
+	}
+	_this.AppendRow(sheet,endrow);
+	return endrow + 1;
+}
+
+function newcypzb()
+{
+	var mainrow1 = _this.GetMainCellRangeRow1(0);
+	var row = getNullRow(0);
+	_this.SetCellText(0,row,0,&amp;quot;+&amp;quot;);
+	_this.SetCellText(0,row,3,row - mainrow1 + 1);
+	_this.SetCellText(0,row,1,G_ORGID);
+	_this.SetCellText(0,row,2,g_zth);
+	_this.SetRowVisible(0,row,1);
+		
+}
+
+function newcypzmxb()
+{
+	var mainrow1 = _this.GetMainCellRangeRow1(1);
+	var row = getNullRow(1);
+	var bh = _this.GetCellText(0,g_sheet0_currow,3);
+	if (bh == &amp;quot;&amp;quot;) return;	
+	_this.SetCellText(1,row,0,&amp;quot;+&amp;quot;);
+	_this.SetCellText(1,row,3,bh);
+	_this.SetCellText(1,row,1,G_ORGID);
+	_this.SetCellText(1,row,2,g_zth);
+	_this.SetCellText(1,row,4,getMxxh(bh));
+	_this.SetRowVisible(1,row,1);
+}
+
+function getMxxh(bh)
+{
+	var xh = 0;
+	for (var r=_this.GetMainCellRangeRow1(1);r&amp;lt;=_this.GetMainCellRangeRow2(1);r++) {
+		var mybh = _this.GetCellText(1,r,3);
+		if (mybh == bh) {
+			xh ++;
+		}
+	}
+	return xh;
+}
+
+function deletecypzb()
+{
+	var delrow = _this.GetCurrentRow(0);
+	if (delrow &amp;lt; _this.GetMainCellRangeRow1(0)) return;
+	_this.SetCellText(0,delrow,0,&amp;quot;-&amp;quot;);
+	_this.SetRowVisible(0,delrow,-1);
+	var bh = _this.GetCellText(0,delrow,3);
+	for (var r=_this.GetMainCellRangeRow1(1);r&amp;lt;=_this.GetMainCellRangeRow2(1);r++) {
+		if (_this.GetCellText(1,r,3) == bh) {
+			_this.SetCellText(1,r,0,&amp;quot;-&amp;quot;);
+			_this.SetRowVisible(1,r,-1);
+		}
+	}
+}
+
+function deletecypzmxb()
+{
+	var delrow = _this.GetCurrentRow(1);
+	if (delrow &amp;lt; _this.GetMainCellRangeRow1(1)) return;
+	_this.SetCellText(1,delrow,0,&amp;quot;-&amp;quot;);
+	_this.SetRowVisible(1,delrow,-1);
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (_this.GetCellText(sheet,row,0) == &amp;quot;&amp;quot;) {
+		_this.SetCellText(sheet,row,0,&amp;quot;*&amp;quot;);
+	}
+}
+
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (sheet == 0 &amp;&amp; row &amp;gt;= _this.GetMainCellRangeRow1(0) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(0)) {
+		g_sheet0_currow = row;
+		var bh = _this.GetCellText(0,row,3);
+		for (var r=_this.GetMainCellRangeRow1(1);r&amp;lt;=_this.GetMainCellRangeRow2(1);r++) {
+			if (_this.GetCellText(1,r,3) == bh) {
+				_this.SetRowVisible(1,r,1);
+			}
+			else {
+				_this.SetRowVisible(1,r,-1);
+			}
+		}
+	}
+	if (sheet == 1 &amp;&amp; row &amp;gt;= _this.GetMainCellRangeRow1(1) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(1)) {
+		g_sheet0_currow = row;
+		if (col == 6) {
+			var obj = new Object();
+			obj.filter = &amp;quot;xjyhbz &amp;lt;&amp;gt; 0&amp;quot;;
+		        obj.mjbz = &amp;quot;1&amp;quot;;
+		        obj.bz = &amp;quot;&amp;quot;;
+		        obj.jb = 0;
+		        obj.kmbh = &amp;quot;&amp;quot;;     		
+	     		var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_KMSEL&amp;quot;,obj,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+	     		if(retVal  != &amp;quot;&amp;quot; &amp;&amp; retVal  != &amp;quot;undefined&amp;quot; &amp;&amp; retVal  != undefined) {
+	     			_this.SetCellText(sheet,row,6,retVal);
+				_this.SetToComboBox(&amp;quot;&amp;quot;,sheet,row,7,kmList);
+	     		        _this.SetCellText(sheet,row,7,retVal);					
+	     		}
+
+		}
+	}
+}
+
+//保存
+function savecypz()
+{
+	var xml = _this.GetXml(0,_this.GetMainCellRangeRow1(0),_this.GetMainCellRangeCol1(0),
+			_this.GetMainCellRangeRow2(0),_this.GetMainCellRangeCol2(0));
+	var param = new Object();
+	param.xmlstr1 = xml;
+	
+	xml = _this.GetXml(1,_this.GetMainCellRangeRow1(1),_this.GetMainCellRangeCol1(1),
+			_this.GetMainCellRangeRow2(1),_this.GetMainCellRangeCol2(1));
+
+
+	param.xmlstr2 = xml;
+	param.sbh = G_ORGID;
+	param.zth = g_zth;
+	
+	try {
+		var ret = invokeOSFuncExt(&amp;quot;Save&amp;quot;,param);
+		alert(ret);
+		window.location.href = window.location.href;
+	}
+	catch (e) {
+		alert(&amp;quot;保存失败:&amp;quot;+e.toString());
+	}
+}
+
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+
+function Save()
+{
+	var db = null;
+	var cnt = 0;
+	try {
+		db = new pub.EADatabase();
+		
+		var ds = new pub.EAXmlDS(xmlstr1);
+		var mxds = new pub.EAXmlDS(xmlstr2);
+		
+		var sql = &amp;quot;&amp;quot;;
+		for (var i=0;i&amp;lt;ds.getRowCount();i++) {
+			var flg = ds.getStringAt(i,&amp;quot;FLG&amp;quot;);
+			var sbh = ds.getStringAt(i,&amp;quot;SBH&amp;quot;);
+			var zth = ds.getStringAt(i,&amp;quot;ZTH&amp;quot;);
+			var bh = ds.getStringAt(i,&amp;quot;BH&amp;quot;);
+			var sm = ds.getStringAt(i,&amp;quot;SM&amp;quot;);
+
+			if (sbh != &amp;quot;&amp;quot; &amp;&amp; zth != &amp;quot;&amp;quot;) {
+				if (flg == &amp;quot;+&amp;quot;) {
+					sql = &amp;quot;insert into cw_cypzb(sbh,zth,bh,sm)values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;.format([sbh,zth,bh,sm]);
+					cnt += db.ExcecutSQL(sql);
+				}
+				else if (flg == &amp;quot;*&amp;quot;) {
+					sql = &amp;quot;update cw_cypzb set sm=&amp;apos;%s&amp;apos; where sbh=&amp;apos;%s&amp;apos; and zth=&amp;apos;%s&amp;apos; and bh=&amp;apos;%s&amp;apos;&amp;quot;.format([sm,sbh,zth,bh]);
+					db.ExcecutSQL(sql);
+				}
+				else if (flg == &amp;quot;-&amp;quot;) {
+					sql = &amp;quot;delete from cw_cypzmxb where sbh=&amp;apos;%s&amp;apos; and zth=&amp;apos;%s&amp;apos; and bh=&amp;apos;%s&amp;apos;&amp;quot;.format([sbh,zth,bh]);
+					db.ExcecutSQL(sql);
+					sql = &amp;quot;delete from cw_cypzb where sbh=&amp;apos;%s&amp;apos; and zth=&amp;apos;%s&amp;apos; and bh=&amp;apos;%s&amp;apos;&amp;quot;.format([sbh,zth,bh]);
+					db.ExcecutSQL(sql);
+				}
+			}
+		}
+		
+		for (var i=0;i&amp;lt;mxds.getRowCount();i++) {
+			var flg = mxds.getStringAt(i,&amp;quot;FLG&amp;quot;);
+			var sbh = mxds.getStringAt(i,&amp;quot;SBH&amp;quot;);
+			var zth = mxds.getStringAt(i,&amp;quot;ZTH&amp;quot;);
+			var bh = mxds.getStringAt(i,&amp;quot;BH&amp;quot;);
+			var mxxh = mxds.getStringAt(i,&amp;quot;MXXH&amp;quot;);
+			var zy = mxds.getStringAt(i,&amp;quot;ZY&amp;quot;);
+			var kmbh = mxds.getStringAt(i,&amp;quot;KMBH&amp;quot;);
+			
+			if (sbh != &amp;quot;&amp;quot; &amp;&amp; zth != &amp;quot;&amp;quot;) {
+				if (flg == &amp;quot;+&amp;quot;) {
+					sql = &amp;quot;insert into cw_cypzmxb(sbh,zth,bh,mxxh,zy,kmbh)values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;.format([sbh,zth,bh,mxxh,zy,kmbh]);
+					db.ExcecutSQL(sql);
+				}
+				else if (flg == &amp;quot;*&amp;quot;) {
+					sql = &amp;quot;update cw_cypzmxb set zy=&amp;apos;%s&amp;apos;,kmbh=&amp;apos;%s&amp;apos; where sbh=&amp;apos;%s&amp;apos; and zth=&amp;apos;%s&amp;apos; and bh=&amp;apos;%s&amp;apos; and mxxh=&amp;apos;%s&amp;apos;&amp;quot;.format([zy,kmbh,sbh,zth,bh,mxxh]);
+					db.ExcecutSQL(sql);
+				}
+				else if (flg == &amp;quot;-&amp;quot;) {
+					sql = &amp;quot;delete from cw_cypzmxb where sbh=&amp;apos;%s&amp;apos; and zth=&amp;apos;%s&amp;apos; and bh=&amp;apos;%s&amp;apos; and mxxh=&amp;apos;%s&amp;apos;&amp;quot;.format([sbh,zth,bh,mxxh]);
+					db.ExcecutSQL(sql);
+				}
+			}
+		}
+		
+		db.Commit();
+		
+		return &amp;quot;保存成功！&amp;quot;;
+		
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >CYPZB</ID><NAME ></NAME><DATDSC >select &amp;apos;&amp;apos; flg,sbh,zth,bh,sm from cw_cypzb where sbh=&amp;apos;[%SYS_ORGID]&amp;apos; and zth=&amp;apos;[%ZTH]&amp;apos; order by bh</DATDSC><C4 ></C4></ROW>
+<ROW num="1" ><ID >CYPZMXB</ID><NAME ></NAME><DATDSC >select &amp;apos;&amp;apos; flg,sbh,zth,bh,mxxh,zy,kmbh,cw_pack4.kmmc(sbh,zth,KMBH) kmmc from cw_cypzmxb where sbh=&amp;apos;[%SYS_ORGID]&amp;apos; and zth=&amp;apos;[%ZTH]&amp;apos; order by bh,mxxh</DATDSC><C4 >CYPZMXB</C4></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

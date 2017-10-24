@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RJZ_YSPZZS2</MWID><NAME >原始凭证张数录入</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RJZ_YSPZZS2.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >日记帐管理</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >queding</ID><NAME >确定</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >selOK</C10></ROW>
+<ROW num="1" ><ID >huifu</ID><NAME >恢复</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >huifu</C10></ROW>
+<ROW num="2" ><ID >quxiao</ID><NAME >取消</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >quxiao</C10></ROW>
+<ROW num="3" ><ID >test</ID><NAME >test</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE><C10 ></C10></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var _dat1 = &amp;quot;&amp;quot;;
+var _dat2 = &amp;quot;&amp;quot;;
+var _kmbh = &amp;quot;&amp;quot;;
+
+$(document).ready(function() {
+	//$(&amp;quot;select[name=orgid]&amp;quot;).bind(&amp;quot;change&amp;quot;,null,setUsrList);
+	document.getElementById(&amp;quot;pzzs&amp;quot;).focus();
+	
+	$(&amp;quot;#btnok&amp;quot;).bind(&amp;quot;click&amp;quot;,function(){
+                queding();
+        });
+        
+        $(&amp;quot;#btncancel&amp;quot;).bind(&amp;quot;click&amp;quot;,function(){
+                quxiao()
+        });
+        
+        $(document).keydown(function(e){
+		if(e.which == 13) {
+			queding();
+		}
+	});
+            
+});
+
+
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.ShowToolBar(0);	
+	setTimeout(&amp;quot;setFoucs()&amp;quot;,10);
+	//document.getElementById(&amp;quot;pzzs&amp;quot;).focus();
+}
+
+function setFoucs()
+{
+	document.getElementById(&amp;quot;pzzs&amp;quot;).focus();
+}
+
+//确定
+function queding()
+{
+	var zs = document.getElementById(&amp;quot;pzzs&amp;quot;).value;
+	if (!isNumber(zs)) {
+		alert(&amp;quot;输入不正确！&amp;quot;);
+		document.getElementById(&amp;quot;pzzs&amp;quot;).value = &amp;quot;&amp;quot;;
+		return;
+	}
+	if (zs == &amp;quot;&amp;quot; || zs == 0) {
+		alert(&amp;quot;请输入原始作证张数！&amp;quot;);
+		return;
+	}
+	window.returnValue = zs;
+	window.close();
+}
+
+//取消
+function quxiao()
+{
+	window.returnValue = &amp;quot;0&amp;quot;;
+	window.close();
+}
+
+
+function isNumber(n) {
+	return !isNaN(parseFloat(n)) &amp;&amp; isFinite(n);
+}
+
+//test
+function test()
+{
+	window.showModalDialog(&amp;quot;show.sp?grdid=RJZ_YSPZZS2&amp;fjzs=&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=350px;dialogHeight=200px&amp;quot;);
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage ( &amp;quot;com.xlsgrid.net.pub&amp;quot; );//加载类包 
+var grdpack = new JavaPackage ( &amp;quot;com.xlsgrid.net.grd&amp;quot; ); 
+
+//在Head区引用额外脚本
+function addHeaderHtml(mwobj,request,sb,usrinfo)
+//var sb = new java.lang.StringBuffer();var usrinfo = new web.EAUserinfo();
+{
+	var ret = &amp;quot;&amp;quot;;
+	sb.append(&amp;quot;&amp;lt;script type=&amp;apos;text/javascript&amp;apos; src=&amp;apos;xlsgrid/js/jquery-1.3.2.min.js&amp;apos;&amp;gt;&amp;lt;/script&amp;gt;\n&amp;quot;); //压缩版
+	sb.append(&amp;quot;&amp;lt;table border=\&amp;quot;0\&amp;quot; width=\&amp;quot;100%\&amp;quot; cellspacing=\&amp;quot;0\&amp;quot; cellpadding=\&amp;quot;0\&amp;quot; height=\&amp;quot;0\&amp;quot;&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td bgcolor=\&amp;quot;#EFEFEF\&amp;quot; align=center valign=middle&amp;gt;&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;table border=\&amp;quot;0\&amp;quot; width=\&amp;quot;100%\&amp;quot; height=\&amp;quot;100%\&amp;quot; cellspacing=\&amp;quot;0\&amp;quot; cellpadding=\&amp;quot;0\&amp;quot; &amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td  style=\&amp;quot;border: 1px solid #EEEEEE\&amp;quot;&amp;gt;	&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;table border=\&amp;quot;0\&amp;quot; width=\&amp;quot;100%\&amp;quot; height=\&amp;quot;100%\&amp;quot; cellspacing=\&amp;quot;0\&amp;quot; cellpadding=\&amp;quot;0\&amp;quot; &amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td width=100% height=0 style=\&amp;quot;border: 0px solid #DEDEDE;\&amp;quot;&amp;gt;&amp;quot;);
+
+
+}
+
+//添加额外html
+//afterBodyHtml事件后触发，已过时，建议用afterBodyHtml事件进行处理
+function addBottomHtml(mwobj,request,sb,usrinfo)
+//var mwobj=grd.EAMidWareBase();var request=javax.servlet.http.HttpServletRequest();var sb = new java.lang.StringBuffer();var usrinfo = new web.EAUserinfo();
+{
+	sb.append(&amp;quot;&amp;lt;/td&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td width=100% bgcolor=\&amp;quot;#FEFEFE\&amp;quot; style=\&amp;quot;border: 1px solid #DEDEDE\&amp;quot; align=left valign=top&amp;gt;&amp;quot;);
+	// 这里是HTML正文内容
+//	sb.append(&amp;quot;&amp;lt;table border=\&amp;quot;0\&amp;quot; width=\&amp;quot;100%\&amp;quot; height=\&amp;quot;50\&amp;quot; cellspacing=\&amp;quot;\&amp;quot; cellpadding=\&amp;quot;5\&amp;quot; &amp;gt;&amp;quot;);
+//	sb.append(&amp;quot;&amp;lt;tr&amp;gt;&amp;lt;td align=right width=\&amp;quot;50\&amp;quot;&amp;gt;凭证张数：&amp;lt;/td&amp;gt;&amp;lt;td align=left width=\&amp;quot;20\&amp;quot;&amp;gt;&amp;lt;input type=\&amp;quot;text\&amp;quot; width=20  name=\&amp;quot;title\&amp;quot; size=\&amp;quot;80\&amp;quot; style=\&amp;quot;border: 1px solid #CCCCCC; padding-left: 4px; padding-right: 4px; padding-top: 1px; padding-bottom: 1px;font-size:12pt\&amp;quot;&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;td align=left width=\&amp;quot;0\&amp;quot;&amp;gt;　&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;quot;);
+//	sb.append(&amp;quot;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;&amp;quot;);
+	//==================
+	sb.append(&amp;quot;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;&amp;quot;);	
+	sb.append(&amp;quot;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;&amp;quot;);
+
+	sb.append(&amp;quot;&amp;lt;table border=\&amp;quot;0\&amp;quot; cellspacing=\&amp;quot;\&amp;quot; align=\&amp;quot;center\&amp;quot; cellpadding=\&amp;quot;5\&amp;quot; &amp;gt;&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;tr&amp;gt;&amp;lt;td &amp;gt;凭证张数：&amp;lt;/td&amp;gt;&amp;lt;td&amp;gt;&amp;lt;input type=\&amp;quot;text\&amp;quot; name=\&amp;quot;pzzs\&amp;quot; id=\&amp;quot;pzzs\&amp;quot; size=\&amp;quot;10\&amp;quot; style=\&amp;quot;border: 1px solid #CCCCCC; padding-left: 4px; padding-right: 4px; padding-top: 1px; padding-bottom: 1px;font-size:12pt\&amp;quot;&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;tr&amp;gt;&amp;lt;td colspan=\&amp;quot;2\&amp;quot; align=\&amp;quot;center\&amp;quot;&amp;gt;&amp;lt;input type=\&amp;quot;button\&amp;quot; id=\&amp;quot;btnok\&amp;quot; value=\&amp;quot;确定\&amp;quot; /&amp;gt;&amp;nbsp;&amp;nbsp;&amp;lt;input type=\&amp;quot;button\&amp;quot; id=\&amp;quot;btncancel\&amp;quot; value=\&amp;quot;取消\&amp;quot; /&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;/table&amp;gt;&amp;quot;);
+	
+	 
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >KMINFO</ID><NAME ></NAME><DATDSC >select cw_pack4.kmmc(sbh,zth,kmbh) kmmc from cw_kmb where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and kmbh=&amp;apos;[%KMBH]&amp;apos;</DATDSC><C4 ></C4><C5 >KMINFO</C5></ROW>
+<ROW num="1" ><ID >DWINFO</ID><NAME ></NAME><DATDSC >select dwmc from si_dwb where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and dwbh=&amp;apos;[%DWBH]&amp;apos;</DATDSC><C4 >DWINFO</C4><C5 ></C5></ROW>
+<ROW num="2" ><ID >GETDAT</ID><NAME ></NAME><DATDSC >select to_char(trunc(add_months(last_day(to_date(&amp;apos;[%DAT]&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;)), -1) + 1), &amp;apos;yyyy-mm-dd&amp;apos;) dat1,
+to_char(last_day(to_date(&amp;apos;[%DAT]&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;)), &amp;apos;yyyy-mm-dd&amp;apos;) dat2  from dual
+ 
+ </DATDSC><C4 ></C4><C5 ></C5></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

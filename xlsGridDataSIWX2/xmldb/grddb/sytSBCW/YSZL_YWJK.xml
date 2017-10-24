@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >YSZL_YWJK</MWID><NAME >银社直连业务接口函数</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >YSZL_YWJK.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >接口</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >mytest</ID><NAME >测试</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >//测试
+function mytest()
+{
+	var param = new Object();
+	param.AAC001 = &amp;quot;1001288642&amp;quot;;
+//	param.AAE135 = &amp;quot;450103195602142518&amp;quot;;
+//	param.AAC001 = &amp;quot;1001237677&amp;quot;;
+//	param.AAE135 = &amp;quot;450105197002090525&amp;quot;;
+//	param.AAE140 = &amp;quot;11&amp;quot;;
+//	param.YLDC = &amp;quot;&amp;quot;;
+//	param.AAE041 = &amp;quot;201601&amp;quot;;
+//	param.AAE042 = &amp;quot;201607&amp;quot;;
+//	param.AAC001 = &amp;quot;4500100456&amp;quot;;
+	param.BAE074 = &amp;quot;500000638510&amp;quot;;
+	var ret = _this.invokeOSFuncExt(&amp;quot;test&amp;quot;,param);
+	alert(ret);
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var orajdbc = new JavaPackage(&amp;quot;oracle.jdbc&amp;quot;);
+
+//东软业务银社个体查询接口：
+//PKG_LAG_银社缴费.prc_a_queryAudit(
+//  PRM_AAC001     IN VARCHAR2,----个人编号(对外个人编号)
+//  PRM_AAE135     IN VARCHAR2,---身份证号
+//  PRM_AAE140     IN VARCHAR2,---险种(11-养老，21-失业，31-医疗，41-工伤，51-生育)
+//  PRM_YLDC       IN VARCHAR2,---缴费档次(0.6,0.7,0.8,0.9,1)
+//  PRM_AAE041     IN VARCHAR2,---开始年月(yyyymm)
+//  PRM_AAE042     IN VARCHAR2,---终止年月(yyyymm)
+//  PRM_APPCODE     OUT NUMBER,
+//  PRM_ERRORMSG    OUT VARCHAR2
+//)
+//   DEF_OK      CONSTANT NUMBER := 0; -- 成功
+//   DEF_ERR     CONSTANT NUMBER := -1; -- 系统错误(不能定义大于0的值)
+//   DEF_WARNING CONSTANT NUMBER := 100; -- 系统警告(但不影响业务处理)
+
+
+function prc_a_queryAudit(PRM_AAC001,PRM_AAE135,PRM_AAE140,PRM_YLDC,PRM_AAE041,PRM_AAE042,db)
+{
+//	return &amp;quot;PRM_AAC001=&amp;quot;+PRM_AAC001+&amp;quot;,PRM_AAE135=&amp;quot;+PRM_AAE135+&amp;quot;,PRM_AAE140=&amp;quot;+PRM_AAE140+&amp;quot;,PRM_YLDC=&amp;quot;+PRM_YLDC
+//		+&amp;quot;,PRM_AAE041=&amp;quot;+PRM_AAE041+&amp;quot;,PRM_AAE042=&amp;quot;+PRM_AAE042;
+	
+	var appcode = &amp;quot;&amp;quot;;
+	var errormsg = &amp;quot;&amp;quot;;
+	try{
+		var conn = db.GetConn(); 
+		var stmt = conn.prepareCall(&amp;quot;call PKG_LAG_银社缴费.prc_a_queryAudit(?,?,?,?,?,?,?,?)&amp;quot;);
+		stmt.setString(1,PRM_AAC001);
+		stmt.setString(2,PRM_AAE135);
+		stmt.setString(3,PRM_AAE140);
+		stmt.setString(4,PRM_YLDC);
+		stmt.setString(5,PRM_AAE041);
+		stmt.setString(6,PRM_AAE042);
+		stmt.registerOutParameter(7, java.sql.Types.INTEGER);
+		stmt.registerOutParameter(8, java.sql.Types.VARCHAR);	
+		stmt.executeUpdate(); 	
+		appcode = stmt.getInt(7);
+		errormsg = stmt.getString(8);
+		
+		stmt.close();
+		if(appcode != 0) {
+			return -1+&amp;quot;@&amp;quot;+errormsg;
+		}
+		else {
+			return 1+&amp;quot;@&amp;quot;+errormsg;
+		}
+	}catch(e){
+		return -1+&amp;quot;@&amp;quot;+e.toString();
+	}		
+}
+
+/*
+--东软业务银社个体缴费接口：
+PKG_LAG_银社缴费.prc_a_Auditing(  
+  PRM_AAC001     IN VARCHAR2,----个人编号(对外个人编号)
+  PRM_BAE074     IN VARCHAR2, --征缴批次号=DJH
+  PRM_APPCODE     OUT NUMBER,
+  PRM_ERRORMSG    OUT VARCHAR2
+)
+*/
+/*DEF_CODE_交易成功               CONSTANT VARCHAR2(3) := 002;
+  DEF_CODE_无符合条件记录         CONSTANT VARCHAR2(3) := 005;
+  DEF_CODE_系统出错               CONSTANT VARCHAR2(3) := 009;
+  DEF_CODE_非灵活就业人员         CONSTANT VARCHAR2(3) := 010;
+  DEF_CODE_被锁定不能缴费         CONSTANT VARCHAR2(3) := 011;
+  DEF_CODE_缴费时间段非法         CONSTANT VARCHAR2(3) := 012;
+  DEF_CODE_无此个人编号           CONSTANT VARCHAR2(3) := 101;
+  DEF_CODE_编号姓名身份证号不一致 CONSTANT VARCHAR2(3) := 102;
+  DEF_CODE_暂不需要缴费           CONSTANT VARCHAR2(3) := 107;
+  DEF_CODE_系统出错_调用交易处理  CONSTANT VARCHAR2(3) := 111;
+  DEF_CODE_身份证号码已被别人使用 CONSTANT VARCHAR2(3) := 224;
+  DEF_CODE_系统出错_写入数据库    CONSTANT VARCHAR2(3) := 108;
+  DEF_CODE_已死亡不能缴费         CONSTANT VARCHAR2(3) := 214;
+  DEF_CODE_已出国不能缴费         CONSTANT VARCHAR2(3) := 215;
+  DEF_CODE_已调出不能缴费         CONSTANT VARCHAR2(3) := 216;
+  DEF_CODE_已退保不能缴费         CONSTANT VARCHAR2(3) := 217;
+  DEF_CODE_已退休不能缴费         CONSTANT VARCHAR2(3) := 218;
+  DEF_CODE_其他原因停止缴费       CONSTANT VARCHAR2(3) := 219;
+  DEF_CODE_根据身份证号未找到人员 CONSTANT VARCHAR2(3) := 250;
+  DEF_CODE_改身份证号查询多个人员 CONSTANT VARCHAR2(3) := 360;*/
+function prc_a_Auditing(PRM_AAC001,PRM_BAE074,db)
+{
+	var appcode = &amp;quot;&amp;quot;;
+	var errormsg = &amp;quot;&amp;quot;;
+	try{
+		var conn = db.GetConn(); 
+		var stmt = conn.prepareCall(&amp;quot;call PKG_LAG_银社缴费.prc_a_Auditing(?,?,?,?)&amp;quot;);
+		stmt.setString(1,PRM_AAC001);
+		stmt.setString(2,PRM_BAE074);
+		stmt.registerOutParameter(3, java.sql.Types.INTEGER);
+		stmt.registerOutParameter(4, java.sql.Types.VARCHAR);
+		stmt.executeUpdate(); 	
+		appcode = stmt.getInt(3);
+		errormsg = stmt.getString(4);		
+		stmt.close();		
+		if(appcode != 2) {
+			return -1+&amp;quot;@&amp;quot;+errormsg;
+		}
+		else {
+			return 1+&amp;quot;@&amp;quot;+errormsg;
+		}
+	}catch(e){
+		return -1+&amp;quot;@&amp;quot;+e.toString();
+	}		
+}
+
+//银社直连查询应缴之前作废历史欠费数据
+//pkg_yszl.pp_yszl_cxyj_zf
+//  PROCEDURE pp_yszl_cxyj_zf(P_SBH       IN VARCHAR2, /* 所编号 */
+//                          P_ZTH       IN VARCHAR2,/* 账套号 */
+//                          p_ztlx      in varchar2,/* 主体类型:1-单位缴费，2-个人缴费(个体) */
+//                          p_ztbh      IN VARCHAR2,/* 主体编号=旧单位编号或旧个人编号 */
+//                          p_AppCode   IN OUT VARCHAR2,  -- 错误代码 成功：NOERROR ,  其他代表失败
+//                          p_ErrorMsg  IN OUT VARCHAR2)  -- 错误内容
+
+function pp_yszl_cxyj_zf(sbh,zth,ztlx,ztbh,db)
+{
+	var appcode = &amp;quot;&amp;quot;;
+	var errormsg = &amp;quot;&amp;quot;;
+	try{
+		var conn = db.GetConn(); 
+		var stmt = conn.prepareCall(&amp;quot;call pkg_yszl.pp_yszl_cxyj_zf(?,?,?,?,?,?)&amp;quot;);
+		stmt.setString(1,sbh);
+		stmt.setString(2,zth);
+		stmt.setString(3,ztlx);
+		stmt.setString(4,ztbh);		
+		stmt.registerOutParameter(5, java.sql.Types.VARCHAR);
+		stmt.registerOutParameter(6, java.sql.Types.VARCHAR);
+		stmt.executeUpdate(); 	
+		appcode = stmt.getString(5);
+		errormsg = stmt.getString(6);		
+		stmt.close();		
+		if(appcode != &amp;quot;NOERROR&amp;quot;) {
+			return -1+&amp;quot;@&amp;quot;+errormsg;
+		}
+		else {
+			return 1+&amp;quot;@&amp;quot;+errormsg;
+		}
+	}catch(e){
+		return -1+&amp;quot;@&amp;quot;+e.toString();
+	}		
+}
+
+function test()
+{
+	var db = new pub.EADatabase();
+	//var ret = prc_a_queryAudit(AAC001,AAE135,AAE140,YLDC,AAE041,AAE042,db);
+	var ret = prc_a_Auditing(AAC001,BAE074,db);
+	db.Rollback();
+	return ret;
+}
+
+
+
+
+
+
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

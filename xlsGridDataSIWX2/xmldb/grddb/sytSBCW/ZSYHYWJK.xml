@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >ZSYHYWJK</MWID><NAME >征收银海接口</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >ZSYHYWJK.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//test 银行征缴接口
+function test(){
+	var ret = invokeOSFunc(&amp;quot;pf_ywjk_yh&amp;quot;,&amp;quot;&amp;quot;);
+	alert(ret);
+}</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+//   -- 预缴社会保险费
+//   PROCEDURE prc_prepayCheck(
+//      prm_aaa028      IN     VARCHAR2    ,  -- 当事人类型  1 组织  2 人员  3 家庭
+//      prm_aaz010      IN     VARCHAR2    ,  -- 当事人ID
+//      prm_tab_prepay  IN     pkg_financialInterfaceType.tab_prepay  ,  -- 险种类型和预缴金额（可空）
+//      prm_ywlx        in     varchar2    ,  -- 20160329 业务类型（1-转账通知 2-转账通知回退 3-财务挂暂存） 
+//      --转账通知回退流程（按整单取消原则，原始财务流水对应金额）：财务先取消入账，检查中间表业务是否已经分账，如已分账人工通知业务取消分账，财务再检查业务未分账才能作废中间表通知到帐记录
+//      --转账分账流程：业务根据回写中间表,插入分账记录DJH=原始财务转账流水，业务单据号写入zjpch
+//      --财务挂暂存（理论上业务不能挂暂存）：金额为剩余未分账金额，调用业务此接口由业务回写中间表挂账记录ywlx=151,zjpch=业务挂账单据号
+//      --日后考虑调账接口
+//      prm_yad001      IN     NUMBER      ,  -- 金额
+//      prm_aab191      IN     VARCHAR2    ,  -- 20160329到帐日期yyyymmdd(1-转账通知)
+//      prm_aae011      IN     VARCHAR2    ,  -- 经办人
+//      prm_yab003      IN     VARCHAR2    ,  -- 经办所属机构
+//      prm_aaz288      IN     VARCHAR2    ,  -- 20160329 财务流水号(DJH=LSH)
+//      prm_zjpch       OUT    VARCHAR2    ,  -- 20160329 业务挂账单据号
+//      prm_AppCode     OUT    VARCHAR2    ,  -- 错误代码
+//      prm_ErrorMsg    OUT    VARCHAR2       -- 错误内容 
+//      )
+//   ;
+
+function yhjk_prepayCheck(db,ywjkbz,aaa028,aaz010,ywlx,zje,dzrq,czyxm,tcqbm,lsh,orgid,accid){
+	var conn = db.GetConn();
+	var statement = conn.createStatement();
+	var stmt = conn.prepareCall(&amp;quot;call pkg_financialInterface.prc_prepayCheck(?,?,?,?,?,?,?,?,?,?,?,?)&amp;quot;);
+	
+	stmt.setString(1, aaa028);
+	stmt.setString(2, aaz010);
+	stmt.setString(3, &amp;quot;&amp;quot;);
+	stmt.setString(4, ywlx);
+	stmt.setInt(5, zje);
+	stmt.setString(6, dzsj);
+	stmt.setString(7, czyxm);
+	stmt.setString(8, tcqbm);
+	stmt.setDate(9, lsh);
+	stmt.registerOutParameter(10, java.sql.Types.VARCHAR);	//返回参数
+	stmt.registerOutParameter(11, java.sql.Types.VARCHAR);	//返回参数
+	stmt.registerOutParameter(12, java.sql.Types.VARCHAR); 	//返回参数
+	
+	stmt.executeUpdate();
+	
+	var xh = stmt.getString(10);
+	var appcode = stmt.getString(11);
+	var errmsg = stmt.getString(12);
+	
+	stmt.close();
+	
+	return xh+&amp;quot;@&amp;quot;+appcode+&amp;quot;@&amp;quot;+errmsg;
+
+}
+
+//   -- 单据到账接口
+//   PROCEDURE prc_p_PayInterface(
+//      prm_aaz288      IN     VARCHAR2    ,  -- 征集通知ID（业务单据号=中间表DJH）
+//      prm_AAD016      IN     VARCHAR2    ,  -- 缴费方式  &amp;apos;1&amp;apos; 托收  &amp;apos;2&amp;apos; 银行缴费  &amp;apos;3&amp;apos; 转账  &amp;apos;4&amp;apos; 其他 
+//      prm_yad003      IN     NUMBER      ,  -- 缴费金额
+//      prm_AAD017      IN     DATE        ,  -- 缴费日期
+//      prm_BAZ901      IN     VARCHAR2    ,  -- 回盘结果   缴费方式为 1 时填写
+//      prm_BAZ902      IN     VARCHAR2    ,  -- 回盘失败原因  缴费方式为 1 时填写
+//      prm_aae011      IN     VARCHAR2    ,  -- 经办人
+//      prm_yab003      IN     VARCHAR2    ,  -- 经办所属机构
+//      prm_AppCode     OUT    VARCHAR2    ,  -- 错误代码
+//      prm_ErrorMsg    OUT    VARCHAR2       -- 错误内容
+//      );
+function yhjk_PayInterface(db,aaz288,aad016,zje,dzrq,hpjg,hpyy,czyxm,tcqbm,orgid,accid){
+	var conn = db.GetConn();
+	var statement = conn.createStatement();
+	var stmt = conn.prepareCall(&amp;quot;call pkg_financialInterface.prc_prepayCheck(?,?,?,?,?,?,?,?,?,?)&amp;quot;);
+	var format = new java.text.SimpleDateFormat(&amp;quot;yyyy-MM-dd&amp;quot;);
+	var jzdat = format.parse(dzrq);
+	
+	stmt.setString(1, aaz288);
+	stmt.setString(2, aad016);
+	stmt.setString(3, zje);
+	stmt.setString(4, jzdat );
+	stmt.setInt(5, hpjg);
+	stmt.setString(6, hpyy);
+	stmt.setString(7, czyxm);
+	stmt.setString(8, tcqbm);
+	stmt.registerOutParameter(9, java.sql.Types.VARCHAR);	//返回参数
+	stmt.registerOutParameter(10, java.sql.Types.VARCHAR);	//返回参数
+	
+	stmt.executeUpdate();
+	
+	var appcode = stmt.getString(9);
+	var errmsg = stmt.getString(10);
+	
+	stmt.close();
+	
+	return appcode+&amp;quot;@&amp;quot;+errmsg;
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

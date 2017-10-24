@@ -1,0 +1,318 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >WSSI2</MWID><NAME >WSSI2</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >WSSI2.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >WebService</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >testws</ID><NAME >测试</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//测试
+function testws()
+{
+	var ret = &amp;quot;&amp;quot;;
+	ret = _this.invokeOSFunc(&amp;quot;test&amp;quot;,&amp;quot;&amp;quot;);
+	alert(ret);
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var dom = new JavaPackage(&amp;quot;org.w3c.dom&amp;quot;);
+var sax = new JavaPackage(&amp;quot;org.xml.sax&amp;quot;);
+var parsers = new JavaPackage(&amp;quot;javax.xml.parsers&amp;quot;);
+var soap = new JavaPackage(&amp;quot;javax.xml.soap&amp;quot;);
+var io = new JavaPackage(&amp;quot;java.io&amp;quot;);
+var util = new JavaPackage(&amp;quot;java.util&amp;quot;);
+
+//
+// 单笔结算
+// 返回调用的结果代码~结果信息
+// SenderInstId：发送机构代码  RecverInstId：接收机构代码 SiSeq：社保流水号 
+// CrBkAcctId：收方银行账户 CrBkAcctName：收方银行名称
+// DrBkAcctId：付方银行账户 DrBkAcctName：付方银行名称
+// Amt：交易金额
+//function F0112001()
+function F0112001(SenderInstId,RecverInstId,SiSeq,CrBkAcctId,CrBkAcctName,DrBkAcctId,DrBkAcctName,SiAcctId,Amt,TransType,TransMode,BankCode)
+{	
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var service = new SBCW_sbcwService();
+		var ref = service.genRef(SenderInstId);
+		var yymmdd = service.getDate();
+		var hhmmss = service.getTime();
+		var zy = &amp;quot;&amp;quot;;
+		if(TransType == &amp;quot;002&amp;quot;) {
+			zy = &amp;quot;社保发起零星支付&amp;quot;;
+		}
+		else if(TransType == &amp;quot;003&amp;quot;) {
+			zy = &amp;quot;社保发起主动征缴&amp;quot;;
+		}
+		else if(TransType == &amp;quot;006&amp;quot;) {
+			zy = &amp;quot;社保发起账户资金调拨&amp;quot;;
+		}	
+		//查询单位名称、组织机构代码
+		var sql = &amp;quot;select nvl(max(aab004),&amp;apos;&amp;apos;) dwmc,nvl(max(aab003),&amp;apos;&amp;apos;) dwdm from ab01 
+				where aab301 = substr(&amp;apos;&amp;quot;+SenderInstId+&amp;quot;&amp;apos;,0,6) and xtlb = substr(&amp;apos;&amp;quot;+SenderInstId+&amp;quot;&amp;apos;,7,1) and (aab001 = &amp;apos;&amp;quot;+SiAcctId+&amp;quot;&amp;apos; or aab999 = &amp;apos;&amp;quot;+SiAcctId+&amp;quot;&amp;apos;)&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		var dwmc = ds.getStringAt(0,&amp;quot;dwmc&amp;quot;);	
+		var dwdm = ds.getStringAt(0,&amp;quot;dwdm&amp;quot;);	
+		var Enterprise = &amp;quot;&amp;quot;;
+		if(dwmc != &amp;quot;&amp;quot; &amp;&amp; dwdm != &amp;quot;&amp;quot;) {
+			Enterprise = &amp;quot;&amp;lt;Enterprise&amp;gt;
+					     &amp;lt;Name&amp;gt;&amp;quot;+dwmc+&amp;quot;&amp;lt;/Name&amp;gt;
+					        &amp;lt;CertId&amp;gt;&amp;quot;+dwdm+&amp;quot;&amp;lt;/CertId&amp;gt;
+				      &amp;lt;/Enterprise&amp;gt;&amp;quot;;
+		}
+		//组装报文
+		var xml = &amp;quot;&amp;lt;soapenv:Envelope xmlns:soapenv=\&amp;quot;http://schemas.xmlsoap.org/soap/envelope/\&amp;quot;&amp;gt;
+			           &amp;lt;soapenv:Header/&amp;gt;
+			            &amp;lt;soapenv:Body&amp;gt;
+					&amp;lt;MsgText&amp;gt;
+					  &amp;lt;GrpHdr&amp;gt;
+					    &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+					    &amp;lt;Ref&amp;gt;&amp;quot;+ref+&amp;quot;&amp;lt;/Ref&amp;gt;
+					    &amp;lt;BusCd&amp;gt;0112001&amp;lt;/BusCd&amp;gt;
+					    &amp;lt;TradSrc&amp;gt;S&amp;lt;/TradSrc&amp;gt;
+					    &amp;lt;Sender&amp;gt;
+					      &amp;lt;InstId&amp;gt;&amp;quot;+SenderInstId+&amp;quot;&amp;lt;/InstId&amp;gt;
+					    &amp;lt;/Sender&amp;gt;
+					    &amp;lt;Recver&amp;gt;
+					      &amp;lt;InstId&amp;gt;&amp;quot;+RecverInstId+&amp;quot;&amp;lt;/InstId&amp;gt;
+					    &amp;lt;/Recver&amp;gt;
+					    &amp;lt;Resend&amp;gt;N&amp;lt;/Resend&amp;gt;
+					    &amp;lt;Date&amp;gt;&amp;quot;+yymmdd+&amp;quot;&amp;lt;/Date&amp;gt;
+					    &amp;lt;Time&amp;gt;&amp;quot;+hhmmss+&amp;quot;&amp;lt;/Time&amp;gt;
+					    &amp;lt;Dgst&amp;gt;&amp;quot;+zy+&amp;quot;&amp;lt;/Dgst&amp;gt;
+					    &amp;lt;Rst&amp;gt;
+						    &amp;lt;Code&amp;gt;0001&amp;lt;/Code&amp;gt;
+						    &amp;lt;Info&amp;gt;待处理&amp;lt;/Info&amp;gt;
+					    &amp;lt;/Rst&amp;gt;
+					  &amp;lt;/GrpHdr&amp;gt;
+					  &amp;lt;BusiText&amp;gt;
+					      &amp;quot;+Enterprise+&amp;quot;
+					      &amp;lt;SiSeq&amp;gt;&amp;quot;+SiSeq+&amp;quot;&amp;lt;/SiSeq&amp;gt;
+					      &amp;lt;TransType&amp;gt;&amp;quot;+TransType+&amp;quot;&amp;lt;/TransType&amp;gt;
+					      &amp;lt;TransMode&amp;gt;&amp;quot;+TransMode+&amp;quot;&amp;lt;/TransMode&amp;gt;				      
+					      &amp;lt;CrBkAcct&amp;gt;
+					      	    &amp;lt;BankCode&amp;gt;&amp;quot;+BankCode+&amp;quot;&amp;lt;/BankCode&amp;gt;							      
+						    &amp;lt;Id&amp;gt;&amp;quot;+CrBkAcctId+&amp;quot;&amp;lt;/Id&amp;gt;
+						   &amp;lt;Name&amp;gt;&amp;quot;+CrBkAcctName+&amp;quot;&amp;lt;/Name&amp;gt;
+					      &amp;lt;/CrBkAcct&amp;gt;
+					      &amp;lt;DrBkAcct&amp;gt;
+						    &amp;lt;Id&amp;gt;&amp;quot;+DrBkAcctId+&amp;quot;&amp;lt;/Id&amp;gt;
+						    &amp;lt;Name&amp;gt;&amp;quot;+DrBkAcctName+&amp;quot;&amp;lt;/Name&amp;gt;
+					      &amp;lt;/DrBkAcct&amp;gt;
+						  &amp;lt;SiAcct&amp;gt;
+						    &amp;lt;SiId&amp;gt;&amp;quot;+SiAcctId+&amp;quot;&amp;lt;/SiId&amp;gt;
+						  &amp;lt;/SiAcct&amp;gt;
+					      &amp;lt;Amt Ccy =\&amp;quot;CNY\&amp;quot;&amp;gt;&amp;quot;+Amt+&amp;quot;&amp;lt;/Amt&amp;gt;
+					  &amp;lt;/BusiText&amp;gt;
+					&amp;lt;/MsgText&amp;gt;
+			           &amp;lt;/soapenv:Body&amp;gt;
+			      &amp;lt;/soapenv:Envelope&amp;gt;&amp;quot;;  	                      
+		var map = new java.util.HashMap();
+		map = service.parseMsgText(xml,true); //记录发送消息日志
+		var wscall = new x_EAWebServiceCall();
+		var ret = wscall.SendWeblogic(service.shuNiuUrl, xml, &amp;quot;UTF-8&amp;quot;,null,null);
+		map = service.parseMsgText(ret,true); //记录接收消息日志
+		//接收响应报文并处理
+		map = parseMsgText_0112001(ret,map);
+//		var code = map.get(&amp;quot;RstCode&amp;quot;);
+//		var info = map.get(&amp;quot;RstInfo&amp;quot;);
+//		return code+&amp;quot;~&amp;quot;+info;
+//		return ret;
+		return map;
+	}catch(e) {
+		if(db != null) db.Rollback();
+		return e.toString();
+		//throw new Exception(e);
+	}finally {
+		if(db != null) db.Close();
+	}
+
+}
+
+// 解释单笔结算报文
+// msgText - 单笔结算报文信息XML
+function parseMsgText_0112001(msgText,hdrmap)
+{		
+	//var map = new java.util.HashMap();
+	try {													
+		var dbf = parsers.DocumentBuilderFactory.newInstance();
+		var documentbuilder = dbf.newDocumentBuilder();
+		var document = documentbuilder.parse(new sax.InputSource(new io.StringReader(msgText))); 
+		var nodelist = document.getElementsByTagName(&amp;quot;MsgText&amp;quot;);                  
+		var node = nodelist.item(0);		
+		var RstCode = &amp;quot;&amp;quot;;
+		try{RstCode = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Rst&amp;quot;).item(0).getElementsByTagName(&amp;quot;Code&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		var RstInfo = &amp;quot;&amp;quot;;
+		try{RstInfo = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Rst&amp;quot;).item(0).getElementsByTagName(&amp;quot;Info&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		var BkSeq = &amp;quot;&amp;quot;;
+		var BusiDate = &amp;quot;&amp;quot;;
+		var BusiTime = &amp;quot;&amp;quot;;
+		try{BkSeq = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;BkSeq&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		try{BusiDate = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;BusiDate&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		try{BusiTime = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;BusiTime&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		if(RstInfo == &amp;quot;&amp;quot;) {
+			try{RstInfo = node.getElementsByTagName(&amp;quot;Rst&amp;quot;).item(0).getElementsByTagName(&amp;quot;Info&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		}
+		hdrmap.put(&amp;quot;RstCode&amp;quot;,RstCode);
+		hdrmap.put(&amp;quot;RstInfo&amp;quot;,RstInfo);
+		hdrmap.put(&amp;quot;BkSeq&amp;quot;,BkSeq );
+		hdrmap.put(&amp;quot;BusiDate&amp;quot;,BusiDate );
+		hdrmap.put(&amp;quot;BusiTime&amp;quot;,BusiTime );
+	}
+	catch(e) {
+		throw new Exception(e);
+	}
+								
+	return hdrmap;
+	
+}
+
+//
+// 单笔结算冲正
+// 返回调用的结果代码~结果信息
+// SenderInstId：发送机构代码  RecverInstId：接收机构代码 SiSeq：社保流水号 
+// CrBkAcctId：收方银行账户  DrBkAcctId：付方银行账户 
+// Amt：交易金额
+//function F0112002()
+function F0112002(SenderInstId,RecverInstId,OSiSeq,SiSeq,CrBkAcctId,CrBkAcctName,DrBkAcctId,DrBkAcctName,SiAcctId,Amt,TransType,TransMode)
+{
+	try {
+		var service = new SBCW_sbcwService();
+		var ref = service.genRef(SenderInstId);
+		var yymmdd = service.getDate();
+		var hhmmss = service.getTime();
+		//组装报文
+		var xml = &amp;quot;&amp;lt;soapenv:Envelope xmlns:soapenv=\&amp;quot;http://schemas.xmlsoap.org/soap/envelope/\&amp;quot;&amp;gt;
+			           &amp;lt;soapenv:Header/&amp;gt;
+			            &amp;lt;soapenv:Body&amp;gt;
+					&amp;lt;MsgText&amp;gt;
+					  &amp;lt;GrpHdr&amp;gt;
+					    &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+					    &amp;lt;Ref&amp;gt;&amp;quot;+ref+&amp;quot;&amp;lt;/Ref&amp;gt;
+					    &amp;lt;BusCd&amp;gt;0112002&amp;lt;/BusCd&amp;gt;
+					    &amp;lt;TradSrc&amp;gt;S&amp;lt;/TradSrc&amp;gt;
+					    &amp;lt;Sender&amp;gt;
+					      &amp;lt;InstId&amp;gt;&amp;quot;+SenderInstId+&amp;quot;&amp;lt;/InstId&amp;gt;
+					    &amp;lt;/Sender&amp;gt;
+					    &amp;lt;Recver&amp;gt;
+					      &amp;lt;InstId&amp;gt;&amp;quot;+RecverInstId+&amp;quot;&amp;lt;/InstId&amp;gt;
+					    &amp;lt;/Recver&amp;gt;
+					    &amp;lt;Resend&amp;gt;N&amp;lt;/Resend&amp;gt;
+					    &amp;lt;Date&amp;gt;&amp;quot;+yymmdd+&amp;quot;&amp;lt;/Date&amp;gt;
+					    &amp;lt;Time&amp;gt;&amp;quot;+hhmmss+&amp;quot;&amp;lt;/Time&amp;gt;
+					    &amp;lt;Dgst&amp;gt;冲正社保发起&amp;lt;/Dgst&amp;gt;
+					    &amp;lt;Rst&amp;gt;
+						    &amp;lt;Code&amp;gt;0001&amp;lt;/Code&amp;gt;
+						    &amp;lt;Info&amp;gt;待处理&amp;lt;/Info&amp;gt;
+					  &amp;lt;/Rst&amp;gt;
+					  &amp;lt;/GrpHdr&amp;gt;
+					  &amp;lt;BusiText&amp;gt;
+					      &amp;lt;SiSeq&amp;gt;&amp;quot;+SiSeq+&amp;quot;&amp;lt;/SiSeq&amp;gt;
+					      &amp;lt;OSiSeq&amp;gt;&amp;quot;+OSiSeq+&amp;quot;&amp;lt;/OSiSeq&amp;gt;
+					      &amp;lt;TransType&amp;gt;&amp;quot;+TransType+&amp;quot;&amp;lt;/TransType&amp;gt;
+					      &amp;lt;TransMode&amp;gt;&amp;quot;+TransMode+&amp;quot;&amp;lt;/TransMode&amp;gt;
+					      &amp;lt;CrBkAcct&amp;gt;
+						    &amp;lt;Id&amp;gt;&amp;quot;+CrBkAcctId+&amp;quot;&amp;lt;/Id&amp;gt;
+						    &amp;lt;Name&amp;gt;&amp;quot;+CrBkAcctName+&amp;quot;&amp;lt;/Name&amp;gt;
+					      &amp;lt;/CrBkAcct&amp;gt;
+					      &amp;lt;DrBkAcct&amp;gt;
+						    &amp;lt;Id&amp;gt;&amp;quot;+DrBkAcctId+&amp;quot;&amp;lt;/Id&amp;gt;
+						    &amp;lt;Name&amp;gt;&amp;quot;+DrBkAcctName+&amp;quot;&amp;lt;/Name&amp;gt;
+					      &amp;lt;/DrBkAcct&amp;gt;
+					      &amp;lt;SiAcct&amp;gt;
+						    &amp;lt;SiId&amp;gt;&amp;quot;+SiAcctId+&amp;quot;&amp;lt;/SiId&amp;gt;
+					      &amp;lt;/SiAcct&amp;gt;
+					      &amp;lt;Amt Ccy =\&amp;quot;CNY\&amp;quot;&amp;gt;&amp;quot;+Amt+&amp;quot;&amp;lt;/Amt&amp;gt;
+					      &amp;lt;ContriNoticeId&amp;gt;&amp;lt;/ContriNoticeId&amp;gt;
+					  &amp;lt;/BusiText&amp;gt;
+					&amp;lt;/MsgText&amp;gt;
+			           &amp;lt;/soapenv:Body&amp;gt;
+			      &amp;lt;/soapenv:Envelope&amp;gt;&amp;quot;;
+		//return xml;
+		var map = new java.util.HashMap();
+		map = service.parseMsgText(xml,true); //记录发送消息日志
+		var wscall = new x_EAWebServiceCall();
+		var ret = wscall.SendWeblogic(service.shuNiuUrl, xml, &amp;quot;UTF-8&amp;quot;,null,null);
+		map = service.parseMsgText(ret,true); //记录接收消息日志
+		//接收响应报文并处理
+		map = parseMsgText_0112002(ret,map);
+		return map;
+	}catch(e) {
+		return e.toString();
+		//throw new Exception(e);
+	}
+
+}
+
+// 解释单笔结算报文
+// msgText - 单笔结算报文信息XML
+function parseMsgText_0112002(msgText,hdrmap)
+{		
+	//var map = new java.util.HashMap();
+	try {													
+		var dbf = parsers.DocumentBuilderFactory.newInstance();
+		var documentbuilder = dbf.newDocumentBuilder();
+		var document = documentbuilder.parse(new sax.InputSource(new io.StringReader(msgText))); 
+		var nodelist = document.getElementsByTagName(&amp;quot;MsgText&amp;quot;);                  
+		var node = nodelist.item(0);		
+		var RstCode = &amp;quot;&amp;quot;;
+		try{RstCode = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Rst&amp;quot;).item(0).getElementsByTagName(&amp;quot;Code&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		var RstInfo = &amp;quot;&amp;quot;;
+		try{RstInfo = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Rst&amp;quot;).item(0).getElementsByTagName(&amp;quot;Info&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		var BkSeq = &amp;quot;&amp;quot;;
+		var BusiDate = &amp;quot;&amp;quot;;
+		var BusiTime = &amp;quot;&amp;quot;;
+		try{BkSeq = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;BkSeq&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		try{BusiDate = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;BusiDate&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		try{BusiTime = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;BusiTime&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		hdrmap.put(&amp;quot;RstCode&amp;quot;,RstCode);
+		hdrmap.put(&amp;quot;RstInfo&amp;quot;,RstInfo);
+		hdrmap.put(&amp;quot;BkSeq&amp;quot;,BkSeq );
+		hdrmap.put(&amp;quot;BusiDate&amp;quot;,BusiDate );
+		hdrmap.put(&amp;quot;BusiTime&amp;quot;,BusiTime );
+	}
+	catch(e) {
+		throw new Exception(e);
+	}
+								
+	return hdrmap;
+	
+}
+
+function test()
+{
+	var sbcode = &amp;quot;459900&amp;quot;;
+	var yhjgm = &amp;quot;10200000&amp;quot;;
+	var service = new SBCW_sbcwService();
+	var sblsh = service.genSiSeq(sbcode);
+	var CustId = &amp;quot;452122198003311234&amp;quot;;
+	var CustName = &amp;quot;张三&amp;quot;;
+	var CrBkAcctId = &amp;quot;2102112129249004676&amp;quot;;
+	var CrBkAcctName = &amp;quot;长伙码零但续伐投鞍但农续哼腺迎帜&amp;quot;;
+	var DrBkAcctId = &amp;quot;2102112129249004703&amp;quot;;
+	var DrBkAcctName = &amp;quot;长伙码零但续伐投鞍但农续哼蒙眠帜&amp;quot;;
+	var SiAcctId = &amp;quot;1234567890&amp;quot;;
+	var Amt = &amp;quot;18900&amp;quot;;
+//	var ret = F0112001(&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,18900);
+	var ret = F0112002(sbcode,yhjgm,sblsh,CustId ,CustName ,CrBkAcctId ,CrBkAcctName ,DrBkAcctId ,DrBkAcctName ,SiAcctId ,Amt );
+	return ret;
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

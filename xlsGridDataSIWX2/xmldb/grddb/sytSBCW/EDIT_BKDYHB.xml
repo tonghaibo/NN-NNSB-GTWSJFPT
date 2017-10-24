@@ -1,0 +1,493 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >EDIT_BKDYHB</MWID><NAME >银行账户信息表</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >EDIT_BKDYHB.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >系统维护</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >Save</ID><NAME >保存</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >5</IMG><IMGMOUSE >5</IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var GUID = &amp;quot;&amp;quot;;
+var shiList;
+var mrtszList;
+var sec = &amp;quot;&amp;quot;;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	try { GUID = guid; } catch (e) { }
+	
+	if (GUID != &amp;quot;&amp;quot;) {
+		loadData(GUID);
+	}
+	else {
+		_sql.querytods(&amp;quot;TCQBM&amp;quot;);
+		_this.SetCellText(sheet,4,8,_this.XMLDS_GetString(0,&amp;quot;TCQBM&amp;quot;));
+		_this.SetCellText(sheet,6,8,_this.XMLDS_GetString(0,&amp;quot;SMC&amp;quot;));
+		_this.SetCellText(sheet,12,2,&amp;quot;广西壮族自治区&amp;quot;);
+		_this.SetCellText(sheet,14,2,&amp;quot;0&amp;quot;);
+	}
+	
+	var sbbzList = _this.CreateListValue();
+	_this.SetListValue(sbbzList ,&amp;quot;10&amp;quot;,&amp;quot;社保支出基本户&amp;quot;);
+	_this.SetListValue(sbbzList ,&amp;quot;11&amp;quot;,&amp;quot;社保支出过渡户&amp;quot;);
+	_this.SetListValue(sbbzList ,&amp;quot;12&amp;quot;,&amp;quot;社保收入基本户&amp;quot;);
+	_this.SetListValue(sbbzList ,&amp;quot;13&amp;quot;,&amp;quot;社保收入过渡户&amp;quot;);
+	_this.SetListValue(sbbzList ,&amp;quot;14&amp;quot;,&amp;quot;社保财政专户&amp;quot;);
+	_this.SetListValue(sbbzList ,&amp;quot;20&amp;quot;,&amp;quot;单位银行账户&amp;quot;);
+	_this.SetListValue(sbbzList ,&amp;quot;21&amp;quot;,&amp;quot;医院银行账户&amp;quot;);
+	_this.SetListValue(sbbzList ,&amp;quot;22&amp;quot;,&amp;quot;药店银行账户&amp;quot;);
+	_this.SetListValue(sbbzList ,&amp;quot;23&amp;quot;,&amp;quot;外地社保银行账户&amp;quot;);
+	_this.SetListValue(sbbzList ,&amp;quot;24&amp;quot;,&amp;quot;个人银行账户&amp;quot;);
+	
+	//险种类型
+	var xzList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_XZLX&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);   //20161207 lwq modify
+	//_this.SetCellText(1,1,5,&amp;quot;99&amp;quot;);
+	//省份
+	var shengList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_CITYS&amp;where=id=&amp;apos;450000&amp;apos;&amp;quot;),&amp;quot;NAME&amp;quot;,&amp;quot;NAME&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,12,2,shengList);
+	//市县
+	//shiList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_CITYS&amp;where=pid=&amp;apos;450000&amp;apos;&amp;quot;),&amp;quot;NAME&amp;quot;,&amp;quot;NAME&amp;quot;);
+	shiList = _this.CreateListValue();
+	_sql.querytods(&amp;quot;SHIXIANLIST&amp;quot;,&amp;quot;&amp;quot;);
+	for(var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+	      var id = _this.XMLDS_GetStringAt(i,0);
+	      var name = _this.XMLDS_GetStringAt(i,1);
+	     _this.SetListValue(shiList,name,name);
+	}	
+	//_this.SetToComboBox(&amp;quot;&amp;quot;,0,12,5,shiList);
+	_this.SetToSelectBox(&amp;quot;&amp;quot;,0,12,5,&amp;quot;V_CW_CITYS2&amp;quot;,&amp;quot;&amp;quot;);
+	
+	//银行种类
+	var yhList = _this.CreateListValue();
+	_sql.querytods(&amp;quot;getYHZL&amp;quot;,&amp;quot;&amp;quot;);
+	for(var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+	      var id = _this.XMLDS_GetStringAt(i,0);
+	      var name = _this.XMLDS_GetStringAt(i,1);
+	     _this.SetListValue(yhList,id,name);
+	}  
+	//_this.SetCellText(1,1,8,&amp;quot;%&amp;quot;);         
+	
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,4,5,sbbzList);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,8,5,xzList);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,8,8,yhList);
+	
+	//默认统收统支银行标志
+	//默认统收统支银行标志：0-非统收非统支，1-统一征收银行，2-统一支付银行，3-本行征收，4-本行支付
+	mrtszList = _this.CreateListValue();
+	//20161201 lwq 统收统支银行标志变更
+	sec = _this.GetCellText(0,4,5);
+	if (sec == &amp;quot;&amp;quot;){
+		_this.SetListValue(mrtszList,&amp;quot;&amp;quot;,&amp;quot;    &amp;quot;);
+	}else if (sec == &amp;quot;10&amp;quot;){
+		_this.SetListValue(mrtszList,&amp;quot;11&amp;quot;,&amp;quot;支出_跨行统一支付户&amp;quot;);
+		_this.SetListValue(mrtszList,&amp;quot;12&amp;quot;,&amp;quot;支出_本行支付户&amp;quot;);
+		_this.SetListValue(mrtszList,&amp;quot;9&amp;quot;,&amp;quot;不参与业务对接&amp;quot;);
+	}else if (sec == &amp;quot;11&amp;quot;){
+		_this.SetListValue(mrtszList,&amp;quot;10&amp;quot;,&amp;quot;支出_跨行非支付户代发点&amp;quot;);
+		_this.SetListValue(mrtszList,&amp;quot;9&amp;quot;,&amp;quot;不参与业务对接&amp;quot;);
+	}else if (sec == &amp;quot;12&amp;quot;){
+		_this.SetListValue(mrtszList,&amp;quot;217&amp;quot;,&amp;quot;收入_跨行统一征收户(单险征收)&amp;quot;);
+		_this.SetListValue(mrtszList,&amp;quot;218&amp;quot;,&amp;quot;收入_跨行统一征收户(多险一票)&amp;quot;);
+		_this.SetListValue(mrtszList,&amp;quot;227&amp;quot;,&amp;quot;收入_本行征收户(单险征收)&amp;quot;);
+		_this.SetListValue(mrtszList,&amp;quot;228&amp;quot;,&amp;quot;收入_本行征收户(多险一票)&amp;quot;);
+		_this.SetListValue(mrtszList,&amp;quot;9&amp;quot;,&amp;quot;不参与业务对接&amp;quot;);
+	}else if (sec == &amp;quot;13&amp;quot;){
+		_this.SetListValue(mrtszList,&amp;quot;200&amp;quot;,&amp;quot;收入_跨行非征收户代收点&amp;quot;);
+		_this.SetListValue(mrtszList,&amp;quot;9&amp;quot;,&amp;quot;不参与业务对接&amp;quot;);
+	}else{
+		_this.SetListValue(mrtszList,&amp;quot;9&amp;quot;,&amp;quot;不参与业务对接&amp;quot;);
+	}
+	 
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,12,8,mrtszList);
+	
+	//电子托收打印标志
+        var dybzList = _this.CreateListValue();
+        _this.SetListValue(dybzList,&amp;quot;0&amp;quot;,&amp;quot;银行打印&amp;quot;);
+	_this.SetListValue(dybzList,&amp;quot;1&amp;quot;,&amp;quot;社保打印&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,14,2,dybzList);
+        _this.Redraw();
+}
+
+
+function loadData(guid)
+{
+	_sql.querytods(&amp;quot;BKDYH&amp;quot;,&amp;quot;GUID=&amp;quot;+GUID);
+	if (_this.XMLDS_GetRowCount() &amp;gt; 0) {
+		_this.SetCellText(0,4,2,_this.XMLDS_GetString(0,&amp;quot;khyh&amp;quot;));	//开户银行
+		_this.SetCellText(0,6,2,_this.XMLDS_GetString(0,&amp;quot;yhhm&amp;quot;));	//开户银行户名
+		_this.SetCellText(0,8,2,_this.XMLDS_GetString(0,&amp;quot;yhzh&amp;quot;));	//开户银行账号
+		_this.SetCellText(0,4,5,_this.XMLDS_GetString(0,&amp;quot;bz&amp;quot;));		//社保标志
+		_this.SetCellText(0,8,5,_this.XMLDS_GetString(0,&amp;quot;xzlx&amp;quot;));	//险种类型
+		_this.SetCellText(0,4,8,_this.XMLDS_GetString(0,&amp;quot;jgbh&amp;quot;));	//机构编号
+		_this.SetCellText(0,6,8,_this.XMLDS_GetString(0,&amp;quot;jgmc&amp;quot;));	//机构名称
+		_this.SetCellText(0,8,8,_this.XMLDS_GetString(0,&amp;quot;yhzl&amp;quot;));	//银行种类
+		_this.SetCellText(0,10,2,_this.XMLDS_GetString(0,&amp;quot;kmbh&amp;quot;));	//科目编号
+		_this.SetCellText(0,10,5,_this.XMLDS_GetString(0,&amp;quot;kmmc&amp;quot;));	//科目名称
+		_this.SetCellText(0,12,2,_this.XMLDS_GetString(0,&amp;quot;bae101&amp;quot;));	//所属省份
+		_this.SetCellText(0,12,5,_this.XMLDS_GetString(0,&amp;quot;bae102&amp;quot;));	//所属地市县
+		_this.SetCellText(0,12,8,_this.XMLDS_GetString(0,&amp;quot;MRTSTZYHBZ&amp;quot;));	//默认统收统支银行标志
+		_this.SetCellText(0,14,2,_this.XMLDS_GetString(0,&amp;quot;BPDYBZ&amp;quot;));	//电子托收打印标志
+		
+	}
+
+}
+
+function checkSave()
+{
+	var khyh = _this.GetCellText(0,4,2);	//开户银行*
+	var yhhm = _this.GetCellText(0,6,2);	//开户银行户名*
+	var yhzh = _this.GetCellText(0,8,2);	//开户银行账号*
+	var bz   = _this.GetCellText(0,4,5);	//社保标志*
+	var xzlx = _this.GetCellText(0,8,5);	//险种类型*
+	var jgbh = _this.GetCellText(0,4,8);	//机构编号
+	var jgmc = _this.GetCellText(0,6,8);	//机构名称
+	var yhzl = _this.GetCellText(0,8,8);	//银行种类*
+	var kmbh = _this.GetCellText(0,10,2);	//科目编号
+	var bae101 = _this.GetCellText(0,12,2);	//所属省份*
+	var bae102 = _this.GetCellText(0,12,5);	//所属地市县*
+	var mrtstzyhbz = _this.GetCellText(0,12,8);	//默认统收统支银行标志*
+	var bpdybz = _this.GetCellText(0,14,2);	//电子托收打印
+	
+	if (khyh == &amp;quot;&amp;quot;) { alert(&amp;quot;开户银行不能为空!&amp;quot;); return false; }
+	if (yhhm == &amp;quot;&amp;quot;) { alert(&amp;quot;开户银行户名不能为空!&amp;quot;); return false; }
+	if (yhzh == &amp;quot;&amp;quot;) { alert(&amp;quot;开户银行账号不能为空!&amp;quot;); return false; }
+	if (bz == &amp;quot;&amp;quot;) { alert(&amp;quot;社保标志不能为空!&amp;quot;); return false; }
+	if (xzlx == &amp;quot;&amp;quot;) { alert(&amp;quot;险种类型不能为空!&amp;quot;); return false; }
+	if (yhzl == &amp;quot;&amp;quot;) { alert(&amp;quot;银行种类不能为空!&amp;quot;); return false; }
+	if (bae101 == &amp;quot;&amp;quot;) { alert(&amp;quot;所属省份不能为空!&amp;quot;); return false; }
+	if (bae102 == &amp;quot;&amp;quot;) { alert(&amp;quot;所属地市县不能为空!&amp;quot;); return false; }
+	if (mrtstzyhbz == &amp;quot;&amp;quot;) { alert(&amp;quot;默认统收统支银行标志不能为空!&amp;quot;); return false; }
+	if((bz.substring(0,1) == &amp;quot;1&amp;quot;) &amp;&amp; (kmbh == &amp;quot;&amp;quot;)) {
+		alert(&amp;quot;社保账户科目编号不能为空！&amp;quot;);
+		return false;
+	}
+	
+	return true;
+		
+}
+
+//保存
+function Save()
+{
+	if (checkSave() == false) return;
+	
+	if (!confirm(&amp;quot;保存当前数据，是否继续？&amp;quot;)) return;
+	try {
+		var param = new Object();
+		param.sbh = G_ORGID;
+		param.zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+		param.usrid = G_USRID;
+		param.usrnam = G_USRNAM;
+		param.guid = GUID;
+		
+		param.khyh = _this.GetCellText(0,4,2);	//开户银行
+		param.yhhm = _this.GetCellText(0,6,2);	//开户银行户名
+		param.yhzh = _this.GetCellText(0,8,2);	//开户银行账号
+		param.bz   = _this.GetCellText(0,4,5);	//社保标志
+		param.xzlx = _this.GetCellText(0,8,5);	//险种类型
+		param.jgbh = _this.GetCellText(0,4,8);	//机构编号
+		param.jgmc = _this.GetCellText(0,6,8);	//机构名称
+		param.yhzl = _this.GetCellText(0,8,8);	//银行种类
+		param.kmbh = _this.GetCellText(0,10,2);	//科目编号
+		param.bae101 = _this.GetCellText(0,12,2);	//所属省份
+		param.bae102 = _this.GetCellText(0,12,5);	//所属地市县
+		param.mrtstzyhbz = _this.GetCellText(0,12,8);	//默认统收统支银行标志
+		param.bpdybz = _this.GetCellText(0,14,2);	//电子托收打印
+		
+		var ret = invokeOSFuncExt(&amp;quot;Save&amp;quot;,param);
+		if (ret.split(&amp;quot;~&amp;quot;)[0] == &amp;quot;1&amp;quot;) {
+			alert(&amp;quot;保存成功！&amp;quot;);
+			GUID = ret.split(&amp;quot;~&amp;quot;)[1];
+			window.returnValue = 1;
+			window.close();			
+		}
+		else {
+			alert(&amp;quot;保存出错：&amp;quot;+ret);
+		}
+	}
+	catch (e) {
+		alert(&amp;quot;保存失败：&amp;quot;+e.toString());
+	}
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	//科目编号
+	if (row == 10 &amp;&amp; col == 2) {
+		_sql.querytods(&amp;quot;KMMC&amp;quot;,&amp;quot;KMBH=&amp;quot;+newvalue);
+		if(_this.XMLDS_GetRowCount() == 0) {
+			alert(&amp;quot;查询无此科目编号，请重新输入&amp;quot;);
+			_this.SetCellText(sheet,row,col,&amp;quot;&amp;quot;);
+			_this.SetCellText(sheet,10,5,&amp;quot;&amp;quot;);
+			return false;
+		}
+		var mjbz = _this.XMLDS_GetString(0,&amp;quot;mjbz&amp;quot;);
+		var kmlx = _this.XMLDS_GetString(0,&amp;quot;kmlx&amp;quot;);
+		if(mjbz != &amp;quot;1&amp;quot;) {
+			alert(&amp;quot;只能录入末级科目，请重新输入&amp;quot;);
+			_this.SetCellText(sheet,row,col,&amp;quot;&amp;quot;);
+			_this.SetCellText(sheet,10,5,&amp;quot;&amp;quot;);
+			return false;		
+		}
+		if(kmlx != &amp;quot;资产类&amp;quot;) {
+			alert(&amp;quot;只能录入资产类科目，请重新输入&amp;quot;);
+			_this.SetCellText(sheet,row,col,&amp;quot;&amp;quot;);
+			_this.SetCellText(sheet,10,5,&amp;quot;&amp;quot;);
+			return false;		
+		}		
+		_this.SetCellText(0,10,5,_this.XMLDS_GetString(0,&amp;quot;NAME&amp;quot;));
+	}
+	//社保标志为支出，统收标志为收入，需校验是否为收支
+	//默认统收统支银行标志：0-非统收非统支，1-统一征收银行，2-统一支付银行，3-本行征收，4-本行支付
+	//20160831 dxb 统一征收或统一支付 整个账套只能有一个
+	if(row == 4 &amp;&amp; col == 5) {
+//		if(newvalue == &amp;quot;10&amp;quot; || newvalue == &amp;quot;11&amp;quot;) {//社保支出户
+//			var mrtsyhbz = _this.GetCellText(0,12,8);
+//			if(mrtsyhbz != 0) {
+//				if(mrtsyhbz == 1 || mrtsyhbz == 3) {
+//					alert(&amp;quot;社保标志为支出，默认统收标志也要为支出！&amp;quot;);
+//					_this.SetCellText(sheet,row,col,oldvalue);
+//				}
+//			}
+//		}
+//		if(newvalue == &amp;quot;12&amp;quot; || newvalue == &amp;quot;13&amp;quot;) {//社保收入户
+//			var mrtsyhbz = _this.GetCellText(0,12,8);
+//			if(mrtsyhbz != 0) {
+//				if(mrtsyhbz == 2 || mrtsyhbz == 4) {
+//					alert(&amp;quot;社保标志为收入，默认统收标志也要为收入！&amp;quot;);
+//					_this.SetCellText(sheet,row,col,oldvalue);
+//				}
+//			}
+//		}
+		//20161201 lwq 统收统支银行标志变更,社保标志与默认统收统支银行标志下拉框联动
+		mrtszList = _this.CreateListValue();
+		if(newvalue == &amp;quot;10&amp;quot;) {
+			_this.SetListValue(mrtszList,&amp;quot;11&amp;quot;,&amp;quot;支出_跨行统一支付户&amp;quot;);
+			_this.SetListValue(mrtszList,&amp;quot;12&amp;quot;,&amp;quot;支出_本行支付户&amp;quot;);	
+			_this.SetListValue(mrtszList,&amp;quot;9&amp;quot;,&amp;quot;不参与业务对接&amp;quot;);		
+		}else if (newvalue == &amp;quot;11&amp;quot;){
+			_this.SetListValue(mrtszList,&amp;quot;10&amp;quot;,&amp;quot;支出_跨行非支付户代发点&amp;quot;);
+			_this.SetListValue(mrtszList,&amp;quot;9&amp;quot;,&amp;quot;不参与业务对接&amp;quot;);
+		}else if (newvalue == &amp;quot;12&amp;quot;){
+			_this.SetListValue(mrtszList,&amp;quot;217&amp;quot;,&amp;quot;收入_跨行统一征收户(单险征收)&amp;quot;);
+			_this.SetListValue(mrtszList,&amp;quot;218&amp;quot;,&amp;quot;收入_跨行统一征收户(多险一票)&amp;quot;);
+			_this.SetListValue(mrtszList,&amp;quot;227&amp;quot;,&amp;quot;收入_本行征收户(单险征收)&amp;quot;);
+			_this.SetListValue(mrtszList,&amp;quot;228&amp;quot;,&amp;quot;收入_本行征收户(多险一票)&amp;quot;);
+			_this.SetListValue(mrtszList,&amp;quot;9&amp;quot;,&amp;quot;不参与业务对接&amp;quot;);
+		}else if (newvalue == &amp;quot;13&amp;quot;){
+			_this.SetListValue(mrtszList,&amp;quot;200&amp;quot;,&amp;quot;收入_跨行非征收户代收点&amp;quot;);
+			_this.SetListValue(mrtszList,&amp;quot;9&amp;quot;,&amp;quot;不参与业务对接&amp;quot;);
+		}else{
+			_this.SetListValue(mrtszList,&amp;quot;9&amp;quot;,&amp;quot;不参与业务对接&amp;quot;);
+		}			
+		_this.SetToComboBox(&amp;quot;&amp;quot;,0,12,8,mrtszList);
+		
+		var bz = _this.GetCellText(0,4,5);	//社保标志*
+		if (bz.substring(0,1) == &amp;quot;1&amp;quot;) {
+			_this.SetCellText(0,10,1,(_this.GetCellText(0,10,1)).replace(&amp;quot;*&amp;quot;,&amp;quot;&amp;quot;));
+			_this.SetCellText(0,10,4,(_this.GetCellText(0,10,4)).replace(&amp;quot;*&amp;quot;,&amp;quot;&amp;quot;));
+			_this.SetCellText(0,10,1,&amp;quot;*&amp;quot;+_this.GetCellText(0,10,1));
+			_this.SetCellText(0,10,4,&amp;quot;*&amp;quot;+_this.GetCellText(0,10,4));
+		}	
+		else {
+			_this.SetCellText(0,10,1,(_this.GetCellText(0,10,1)).replace(&amp;quot;*&amp;quot;,&amp;quot;&amp;quot;));
+			_this.SetCellText(0,10,4,(_this.GetCellText(0,10,4)).replace(&amp;quot;*&amp;quot;,&amp;quot;&amp;quot;));
+		}
+	}
+	//社保标志为支出，统收标志为收入，需校验是否为收支
+	//默认统收统支银行标志：0-非统收非统支，1-统一征收银行，2-统一支付银行，3-本行征收，4-本行支付
+	//20160831 dxb 统一征收或统一支付 整个账套只能有一个	
+	if(row == 12 &amp;&amp; col == 8) {
+		if(newvalue != 0) {
+			if(newvalue == 1 || newvalue == 3) {
+				var sbbz = _this.GetCellText(0,4,5);
+				if(sbbz == &amp;quot;10&amp;quot; || sbbz == &amp;apos;11&amp;apos;) {
+					alert(&amp;quot;默认统收标志为支出，社保标志也要为支出！&amp;quot;);
+					_this.SetCellText(sheet,row,col,oldvalue);
+					return false;					
+				}
+			}
+			if(newvalue == 2 || newvalue == 4) {
+				var sbbz = _this.GetCellText(0,4,5);
+				if(sbbz == &amp;quot;12&amp;quot; || sbbz == &amp;apos;13&amp;apos;) {
+					alert(&amp;quot;默认统收标志为收入，社保标志也要为收入！&amp;quot;);
+					_this.SetCellText(sheet,row,col,oldvalue);	
+					return false;				
+				}
+			}			
+		}
+		var sbh = G_ORGID;
+		var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+		var yhzl = _this.GetCellText(0,8,8);
+		if(newvalue == 1) {
+			_sql.querytods(&amp;quot;QueryCount&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;mrtsbz=&amp;quot;+newvalue+&amp;quot;&amp;yhzl=&amp;quot;+yhzl);
+			var cnt = _this.XMLDS_GetStringAt(0,0);
+			if(cnt &amp;gt; 0) {
+				alert(&amp;quot;该银行已设置有统一征收银行，不能重复设置&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+				return false;
+			}
+		}
+		if(newvalue == 2) {
+			_sql.querytods(&amp;quot;QueryCount&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;mrtsbz=&amp;quot;+newvalue);
+			var cnt = _this.XMLDS_GetStringAt(0,0);
+			if(cnt &amp;gt; 0) {
+				alert(&amp;quot;该银行已设置有统一支付银行，不能重复设置&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+				return false;				
+			}			
+		}
+	}
+}
+
+function selectKM()
+{
+	var obj = new Object();
+	obj.filter = &amp;quot;kmlx=&amp;apos;资产类&amp;apos;&amp;quot;;//&amp;quot;xjyhbz &amp;lt;&amp;gt; 0&amp;quot;;
+        obj.mjbz = &amp;quot;1&amp;quot;;
+        obj.bz = &amp;quot;&amp;quot;;
+        obj.jb = 0;
+        obj.kmbh = &amp;quot;&amp;quot;;
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_KMSEL&amp;quot;,obj,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+	var cur_kmbh = retVal;
+	if (cur_kmbh != &amp;quot;&amp;quot; &amp;&amp; cur_kmbh != &amp;quot;undefined&amp;quot; &amp;&amp; cur_kmbh != undefined) {
+		_sql.querytods(&amp;quot;KMMC&amp;quot;,&amp;quot;KMBH=&amp;quot;+cur_kmbh);
+		_this.SetCellText(0,10,2,cur_kmbh);
+		_this.SetCellText(0,10,5,_this.XMLDS_GetString(0,&amp;quot;NAME&amp;quot;));
+	}  
+}
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+	//科目编号
+	if (row == 10 &amp;&amp; col == 2) {
+		selectKM();			
+	}
+
+}
+
+//按F8
+function _thisOnF8KeyDown(sheet,row,col)
+{
+	selectKM();
+}
+
+//SelectBox控件修改单元格内容
+function _thisOnSelectBoxCellModify(sheet,row,col,oldvalue,newvalue,key,where)
+{
+	if (sheet == 0 &amp;&amp; row == 12 &amp;&amp; col == 5) {
+		var name = invokeOSFunc(&amp;quot;getShiXianName&amp;quot;,&amp;quot;id=&amp;quot;+newvalue);
+		if (name == &amp;quot;null&amp;quot;) {
+			alert(&amp;quot;没有找到匹配数据，请检查！&amp;quot;);
+			_this.SetCellText(sheet,row,col,&amp;quot;&amp;quot;);
+		}
+		else {
+			_this.SetCellText(sheet,row,col,name);
+		}
+	}
+}
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function Save()
+{
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var sql = &amp;quot;select * from cw_bkdyhb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and guid=&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;&amp;quot;;
+		var cnt = db.GetSQLRowCount(sql);
+		if (cnt == 0) {
+			var uuid = db.GetSQL(&amp;quot;select sys_guid() from dual&amp;quot;);
+			var id = db.GetSQL(&amp;quot;select SEQ_AEF3_AAE400.nextval aae400 from dual&amp;quot;);
+			guid = uuid;
+			sql = &amp;quot;insert into cw_bkdyhb(guid,id,sbh,zth,xzlx,jgbh,jgmc,khyh,yhzh,yhhm,yhzl,bae101,bae102,bz,kmbh,mrtstzyhbz,bpdybz)
+				values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;
+				.format([uuid,id,sbh,zth,xzlx,jgbh,jgmc,khyh,yhzh,yhhm,yhzl,bae101,bae102,bz,kmbh,mrtstzyhbz,bpdybz]);
+			db.ExcecutSQL(sql);
+		}
+		else {
+			sql = &amp;quot;update cw_bkdyhb 
+				set xzlx=&amp;apos;%s&amp;apos;,jgbh=&amp;apos;%s&amp;apos;,jgmc=&amp;apos;%s&amp;apos;,khyh=&amp;apos;%s&amp;apos;,yhzh=&amp;apos;%s&amp;apos;,yhhm=&amp;apos;%s&amp;apos;,yhzl=&amp;apos;%s&amp;apos;,bae101=&amp;apos;%s&amp;apos;,bae102=&amp;apos;%s&amp;apos;,bz=&amp;apos;%s&amp;apos;,
+				kmbh=&amp;apos;%s&amp;apos;,mrtstzyhbz=&amp;apos;%s&amp;apos;,bpdybz=&amp;apos;%s&amp;apos;
+				where sbh=&amp;apos;%s&amp;apos; and zth=&amp;apos;%s&amp;apos; and guid=&amp;apos;%s&amp;apos;&amp;quot;
+				.format([xzlx,jgbh,jgmc,khyh,yhzh,yhhm,yhzl,bae101,bae102,bz,kmbh,mrtstzyhbz,bpdybz,sbh,zth,guid]);
+
+			db.ExcecutSQL(sql);
+		}
+		db.Commit();
+		return &amp;quot;1~&amp;quot; + guid;
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+function getShiXianName()
+{
+	var db = null;
+	var ret = &amp;quot;&amp;quot;;
+	try {
+		db = new pub.EADatabase();
+		var sql = &amp;quot;select * from v_cw_citys where id=&amp;apos;&amp;quot;+id+&amp;quot;&amp;apos;&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		var name = ds.getStringAt(0,&amp;quot;NAME&amp;quot;);
+		var pid = ds.getStringAt(0,&amp;quot;PID&amp;quot;);
+		if (pid != &amp;quot;&amp;quot;) {
+			sql = &amp;quot;select * from v_cw_citys where id=&amp;apos;&amp;quot;+pid+&amp;quot;&amp;apos;&amp;quot;;
+			var tmpds = db.QuerySQL(sql);
+			var pname = tmpds.getStringAt(0,&amp;quot;NAME&amp;quot;);
+			var pid2 = tmpds.getStringAt(0,&amp;quot;PID&amp;quot;);
+			if (pid2 != &amp;quot;&amp;quot;) {
+				ret = pname + name;
+				return ret;
+			}
+		}
+		ret = name;
+		return ret;
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return &amp;quot;null&amp;quot;;//e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}	
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >BKDYH</ID><NAME ></NAME><DATDSC >SELECT * from v_cw_bkdyhb where guid=&amp;apos;[%GUID]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 >BKDYH</C7><C8 >BKDYH</C8><C9 ></C9></ROW>
+<ROW num="1" ><ID >getYHZL</ID><NAME >获取银行种类</NAME><DATDSC >select aaa102 id,aaa103 name from aa10 where aaa101 = &amp;apos;发放机构&amp;apos; order by to_number(aaa102)</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 >getYHZL</C9></ROW>
+<ROW num="2" ><ID >KMMC</ID><NAME ></NAME><DATDSC >select name,kmlx,mjbz from v_accitem where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and id=&amp;apos;[%KMBH]&amp;apos;</DATDSC><C4 >KMMC</C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9></ROW>
+<ROW num="3" ><ID >QueryCount</ID><NAME ></NAME><DATDSC >SELECT COUNT(*) FROM CW_BKDYHB 
+WHERE SBH = &amp;apos;[%sbh]&amp;apos; and zth = &amp;apos;[%zth]&amp;apos;  and yhzl = &amp;apos;[%yhzl]&amp;apos;
+      and mrtstzyhbz = &amp;apos;[%mrtsbz]&amp;apos;</DATDSC><C4 ></C4><C5 >QueryCount</C5><C6 >QueryCount</C6><C7 ></C7><C8 ></C8><C9 ></C9></ROW>
+<ROW num="4" ><ID >TCQBM</ID><NAME ></NAME><DATDSC >select * from cw_sbsb where sbh=&amp;apos;[%SYS_ORGID]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9></ROW>
+<ROW num="5" ><ID >SHIXIANLIST</ID><NAME ></NAME><DATDSC >select id,decode(level,1,name,2,&amp;apos;　&amp;apos;||name,3,&amp;apos;　　&amp;apos;||name) name,level 
+  from v_cw_citys 
+  start with pid=&amp;apos;450000&amp;apos;
+  connect by prior id=pid 
+  order by id</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

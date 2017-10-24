@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >indexinit</MWID><NAME >指标数据初始化</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >indexinit.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >2</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var cur_yyyy = &amp;quot;&amp;quot;;
+var cur_mm = &amp;quot;&amp;quot;;
+var mmList =&amp;quot;&amp;quot;;
+var yyList = &amp;quot;&amp;quot;;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	yyList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_YYYY&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	//mmList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_MM&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);	
+	cur_yyyy = G_LOGDAT.substring(0,4);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,3,2,yyList); _this.SetCellText(0,3,2,cur_yyyy);	
+	_this.ShowTabBar(1);
+}
+
+//导入指标
+function importindex()
+{
+	var yy = _this.GetCellText(0,3,2);
+	var sbh = G_ORGID;
+	var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+	var param = new Object();
+	param.sbh = sbh;
+	param.zth = zth;
+	param.thisorgid = G_ORGID;
+	param.thisaccid = G_ACCID;
+	param.yy = yy;
+	var ret = _this.invokeOSFuncExt(&amp;quot;importindex&amp;quot;,param);
+	alert(ret);
+}
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if(sheet ==0) {
+		if(id == &amp;quot;导入&amp;quot;) {
+			importindex();
+		}
+	}
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+//	if(sheet == 0) {
+//		if(row == 2 &amp;&amp; col == 6) {
+//			if(newvalue == &amp;quot;1&amp;quot;) {
+//				_this.SetToStandardCell(0,2,4);
+//				_this.SetCellText(0,2,4,&amp;quot;&amp;quot;);
+//				_this.SetCellLock(0,2,4,1);	
+//			}
+//			else {
+//				_this.SetCellLock(0,2,4,0);
+//				_this.SetToComboBox(&amp;quot;&amp;quot;,0,2,4,mmList);
+//			}
+//		}
+//	}
+}
+
+
+
+
+
+
+
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function importindex()
+{
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var replocid = &amp;quot;&amp;quot;; //报表位置编号
+		var sql = &amp;quot;select bmbh from oa_reploc where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos; and hzbz=&amp;apos;2&amp;apos;&amp;quot;;
+		try { replocid = db.GetSQL(sql); } catch(e) { throw new Exception(&amp;quot;科目数据写入报表指标库出错！报表位置定义编号未找到！&amp;quot;+e.toString()); }
+		
+		sql = &amp;quot;select count(*) from fin_indexdetail where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos; and indexyear = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and replocid=&amp;apos;&amp;quot;+replocid+&amp;quot;&amp;apos;&amp;quot;;
+		var cnt = 1 * db.GetSQL(sql);
+		if (cnt &amp;gt; 0) {
+			return &amp;quot;检测到指标库中已经有&amp;quot;+yy+&amp;quot;年的数据，不能重复导入！&amp;quot;;
+		}
+		
+		sql = &amp;quot;select yy,mm,kmbh,sum(je) je,org,acc,sbh,zth 
+			from cw_pzmxb where yy=&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;
+			group by yy,mm,kmbh,org,acc,sbh,zth&amp;quot;;	     	        
+
+		var ds = db.QuerySQL(sql);
+		for(var row=0;row&amp;lt;ds.getRowCount();row++) {
+			var yy = ds.getStringAt(row,&amp;quot;yy&amp;quot;);
+			var mm = ds.getStringAt(row,&amp;quot;mm&amp;quot;);
+			if(mm.length() == 1) mm = &amp;quot;0&amp;quot;+mm.toString();                	
+			var kmbh = ds.getStringAt(row,&amp;quot;kmbh&amp;quot;);
+			var je = 1.0 * ds.getStringAt(row,&amp;quot;je&amp;quot;);
+			var org = ds.getStringAt(row,&amp;quot;org&amp;quot;);
+			var acc = ds.getStringAt(row,&amp;quot;acc&amp;quot;);
+			var sbh = ds.getStringAt(row,&amp;quot;sbh&amp;quot;);
+			var zth = ds.getStringAt(row,&amp;quot;zth&amp;quot;);
+		
+			var indexitemid = &amp;quot;03&amp;quot;;  //指标项 03本月数
+		
+			//获取科目编号对应的指标编号
+			var column_money = &amp;quot;money&amp;quot;+mm;
+			sql = &amp;quot;select indexid from fin_index where kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;&amp;quot;;
+			var idxds = db.QuerySQL(sql);
+			if (idxds.getRowCount() &amp;lt;= 0) {
+				throw new Exception(&amp;quot;科目 &amp;quot;+kmbh+&amp;quot; 未设置对应指标！&amp;quot;);
+			}
+			
+			for (var i=0;i&amp;lt;idxds.getRowCount();i++) {
+				var indexid = idxds.getStringAt(i,&amp;quot;INDEXID&amp;quot;);
+				
+				sql = &amp;quot;select nvl(&amp;quot;+column_money+&amp;quot;,0) &amp;quot;+column_money+&amp;quot; from fin_indexdetail 
+					where org=&amp;apos;&amp;quot;+org+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+acc+&amp;quot;&amp;apos; and indexyear = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and indexid = &amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos; and indexitemid=&amp;apos;&amp;quot;+indexitemid+&amp;quot;&amp;apos; and replocid=&amp;apos;&amp;quot;+replocid+&amp;quot;&amp;apos;&amp;quot;;
+				var sum_money = 0.00;       
+				var tmpds = db.QuerySQL(sql);
+				if(tmpds.getRowCount() &amp;gt; 0) {
+					sum_money = 1.0 * tmpds.getStringAt(0,column_money);
+					sum_money += je;					
+					sql = &amp;quot;update fin_indexdetail set &amp;quot;+column_money+&amp;quot;=&amp;quot;+sum_money+&amp;quot; 
+					       where org=&amp;apos;&amp;quot;+org+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+acc+&amp;quot;&amp;apos; and indexyear = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and indexid = &amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos; and indexitemid=&amp;apos;&amp;quot;+indexitemid+&amp;quot;&amp;apos; and replocid=&amp;apos;&amp;quot;+replocid+&amp;quot;&amp;apos;&amp;quot;;
+					db.ExcecutSQL(sql);              
+				}
+				else if(tmpds.getRowCount() == 0 ) {
+					sql = &amp;quot;insert into fin_indexdetail(org,acc,indexid,indexyear,indexitemid,&amp;quot;+column_money+&amp;quot;,replocid)
+						values(&amp;apos;&amp;quot;+org+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+acc+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+indexitemid+&amp;quot;&amp;apos;,&amp;quot;+je+&amp;quot;,&amp;apos;&amp;quot;+replocid+&amp;quot;&amp;apos;)&amp;quot;;
+					db.ExcecutSQL(sql);                  	       
+				}
+			}         
+		} 	
+		db.Commit();
+		return &amp;quot;导入成功！&amp;quot;;	
+	}catch(e){
+		if(db != null) db.Rollback();
+		return &amp;quot;导入失败，&amp;quot;+e.toString();
+	}finally{
+		if(db != null) db.Close();
+	}
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

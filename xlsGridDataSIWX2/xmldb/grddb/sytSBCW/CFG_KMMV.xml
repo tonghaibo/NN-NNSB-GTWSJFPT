@@ -1,0 +1,251 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >CFG_KMMV</MWID><NAME >科目移动</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CFG_KMMV.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >系统维护</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0 = &amp;quot;&amp;quot;;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet){
+	ZXGFILE0 = _this.SaveTempZXGFile(0); 
+	_this.SetCellText(0,7,2,kmbh);
+	_this.SetCellText(0,7,4,kmmc);
+	
+	var movetype = _this.CreateListValue();
+	_this.SetListValue(movetype,&amp;quot;1&amp;quot;,&amp;quot;移动数据，保留原科目&amp;quot;);
+	_this.SetListValue(movetype,&amp;quot;2&amp;quot;,&amp;quot;移动数据，删除原科目&amp;quot;);
+	_this.SetToRadioBox(&amp;quot;&amp;quot;,sheet,2,2,movetype);
+	_this.SetCellText(sheet,2,2,&amp;quot;1&amp;quot;);
+	
+	_this.SetToCheckBox(&amp;quot;&amp;quot;,sheet,2,4,&amp;quot;用原科目属性覆盖新科目属性&amp;quot;,&amp;quot;1&amp;quot;,&amp;quot;0&amp;quot;);
+	
+	_this.ShowToolBar(0);
+	
+}
+
+//选择科目
+function showKM()
+{
+	var obj = new Object();
+        obj.filter = &amp;quot;&amp;quot;;
+        obj.mjbz = &amp;quot;1&amp;quot;;
+        obj.bz = &amp;quot;&amp;quot;;
+        obj.jb = 0;
+        obj.kmbh = &amp;quot;&amp;quot;;
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_KMSEL&amp;quot;,obj,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+	if (retVal != &amp;quot;&amp;quot; &amp;&amp; retVal != &amp;quot;undefined&amp;quot; &amp;&amp; retVal != undefined) {
+		_this.SetCellText(0,8,2,retVal);
+		_sql.querytods(&amp;quot;KMINFO&amp;quot;,&amp;quot;KMBH=&amp;quot;+retVal);
+		_this.SetCellText(0,8,4,_this.XMLDS_GetString(0,&amp;quot;KMMC&amp;quot;));
+	}
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col){
+	var kmbh_next = _this.GetCellText(0,8,2);
+	var kmmc_next = _this.GetCellText(0,8,4);
+	
+	if(id==&amp;quot;开始&amp;quot;){
+		if (!confirm(&amp;quot;开始移动科目，是否继续？&amp;quot;)) return;
+		try {			
+			var param = new Object();
+			param.sbh = G_ORGID;
+			param.zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+			param.org = G_ORGID;
+			param.acc = G_ACCID;
+			param.kmbh = kmbh;
+			param.kmbh2 = kmbh_next;
+			param.kmmc2 = kmmc_next;
+			param.movetype = _this.GetCellText(sheet,2,2);
+			param.override = _this.GetCellText(sheet,2,4);
+		
+			if(kmbh_next == &amp;quot;&amp;quot; || kmbh_next == &amp;quot;undefined&amp;quot;){
+				alert(&amp;quot;移动目标科目号不能为空&amp;quot;);
+				return;
+			}
+			var ret = invokeOSFuncExt(&amp;quot;moveKM&amp;quot;,param);
+			if(ret == &amp;quot;1&amp;quot;){
+				alert(&amp;quot;科目移动完成!(&amp;quot;+kmbh+&amp;quot; -&amp;gt; &amp;quot;+kmbh_next+&amp;quot;)&amp;quot;);
+			}else{
+				alert(&amp;quot;科目移动失败:&amp;quot;+ret);
+			}
+			window.returnValue = 1;
+			window.close();
+		}catch(e){
+			alert(e.toString());
+		}
+	}else if(id == &amp;quot;退出&amp;quot;){
+		window.returnValue = -1;
+		window.close();
+	}
+}
+
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+	if (sheet == 0 &amp;&amp; row == 8 &amp;&amp; col == 6) {
+		showKM();
+	}
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 0 &amp;&amp; row == 8 &amp;&amp; col == 2) {
+		_sql.querytods(&amp;quot;KMINFO&amp;quot;,&amp;quot;KMBH=&amp;quot;+newvalue);
+		if (_this.XMLDS_GetRowCount() &amp;gt; 0) {
+			var mjbz = _this.XMLDS_GetString(0,&amp;quot;MJBZ&amp;quot;);
+			if (mjbz == &amp;quot;1&amp;quot;) {
+				_this.SetCellText(0,8,4,_this.XMLDS_GetString(0,&amp;quot;KMMC&amp;quot;));
+			}
+			else {
+				alert(&amp;quot;科目 &amp;quot;+newvalue+&amp;quot; 不是末级科目!&amp;quot;);
+				_this.SetCellText(0,8,2,oldvalue);
+				_this.SetCellFocus(0,8,2);
+			}
+		}
+		else {
+			alert(&amp;quot;科目 &amp;quot;+newvalue+&amp;quot; 不存在!&amp;quot;);
+			_this.SetCellText(0,8,2,oldvalue);
+			_this.SetCellFocus(0,8,2);
+		}
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var xmldb = new JavaPackage(&amp;quot;com.xlsgrid.net.xmldb&amp;quot;);
+var web = new JavaPackage(&amp;quot;com.xlsgrid.net.web&amp;quot;);
+var orajdbc = new JavaPackage(&amp;quot;oracle.jdbc&amp;quot;);
+
+function moveKM()
+{	
+	var db = null;
+	var ps = null;
+	var sql = &amp;quot;&amp;quot;;  
+	var ccxx = &amp;quot;&amp;quot;;
+	var retVal = 1;
+	var ccxxcd = 0;
+	var errlen = &amp;quot;&amp;quot;;
+	var errtext = &amp;quot;&amp;quot;;
+	try {
+		db = new pub.EADatabase();
+		var conn = db.GetConn();
+		//获取执行环境
+		var statement = conn.createStatement();
+			
+		sql = &amp;quot;select xjyhbz,slh,jb,mjbz, yxyefx from cw_kmb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and org = &amp;apos;&amp;quot;+org+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+acc+&amp;quot;&amp;apos;and kmbh=&amp;apos;&amp;quot;+kmbh2+&amp;quot;&amp;apos;&amp;quot;;
+		var tmpds = db.QuerySQL(sql);
+		if (tmpds.getRowCount() == 0) {
+			return &amp;quot;没有找到此科目编号[&amp;quot;+kmbh2+&amp;quot;]&amp;quot;;
+		}
+		
+		var yhbz = tmpds.getStringAt(0,&amp;quot;XJYHBZ&amp;quot;);
+		var slh = tmpds.getStringAt(0,&amp;quot;SLH&amp;quot;);
+		var jb = tmpds.getStringAt(0,&amp;quot;JB&amp;quot;);
+		var mjbz = tmpds.getStringAt(0,&amp;quot;MJBZ&amp;quot;);
+		var yxyefx = tmpds.getStringAt(0,&amp;quot;YXYEFX&amp;quot;);
+		
+		sql = &amp;quot;select dwbz,grbz,gdzcbz,kmlx from cw_kmb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and org = &amp;apos;&amp;quot;+org+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+acc+&amp;quot;&amp;apos;and kmbh=&amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;&amp;quot;;
+		tmpds = db.QuerySQL(sql);
+		var dwbz = tmpds.getStringAt(0,&amp;quot;DWBZ&amp;quot;);
+		var grbz = tmpds.getStringAt(0,&amp;quot;GRBZ&amp;quot;);
+		var gdzcbz = tmpds.getStringAt(0,&amp;quot;GDZCBZ&amp;quot;);
+		var kmlx = tmpds.getStringAt(0,&amp;quot;KMLX&amp;quot;);
+
+		var jb2 = &amp;quot;&amp;quot; + (1 * jb + 1);
+		sql = &amp;quot;insert into cw_kmb( org, acc, sbh, zth, kmbh, kmmc, kmjc,  kmlx, slh, jb, mjbz, yxyefx, dwbz,grbz, gdzcbz, xjyhbz ) 
+				values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;
+				.format([org,acc,sbh,zth,kmbh2,kmmc2,kmmc2,kmlx,kmbh2,jb2,&amp;quot;1&amp;quot;,yxyefx,dwbz,grbz,gdzcbz,yhbz]);
+		//db.ExcecutSQL(sql);
+		
+		sql = &amp;quot;update cw_kmb set mjbz = 0, dwbz = 0,grbz=0, gdzcbz = 0  where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and org = &amp;apos;&amp;quot;+org+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+acc+&amp;quot;&amp;apos;and kmbh=&amp;apos;&amp;quot;+kmbh2+&amp;quot;&amp;apos;&amp;quot;;
+		//db.ExcecutSQL(sql);
+				
+		var errlen = 4096;
+		var praFunc = conn.prepareCall(&amp;quot;{?=call cw_pack.check_move_kmbh(?,?,?,?,?,?,?)}&amp;quot;);
+		praFunc.registerOutParameter(1,java.sql.Types.INTEGER);
+		praFunc.setString(2,sbh);
+		praFunc.setString(3,zth);
+		praFunc.setString(4,kmbh);
+		praFunc.setString(5,kmbh2);
+		praFunc.setString(6,&amp;quot;move&amp;quot;);
+		praFunc.registerOutParameter(7,java.sql.Types.VARCHAR);
+		praFunc.setInt(8,errlen);
+	
+		praFunc.executeUpdate();
+		
+		retVal = praFunc.getString(1);
+		ccxx = praFunc.getString(7);
+
+		if(retVal != &amp;quot;&amp;quot; &amp;&amp; retVal != 1){
+			db.Rollback();
+			return 1;
+		}
+		 
+		//用原科目属性覆盖新科目属性
+		if (override == &amp;quot;1&amp;quot;) {
+			sql = &amp;quot;select qlbz, zzgs1, zzgs2, zzgs3,zzgs4 from cw_kmb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;&amp;quot;;
+			var myds = db.QuerySQL(sql);
+			var qlbz = myds.getStringAt(0,&amp;quot;QLBZ&amp;quot;);
+			var zzgs1 = myds.getStringAt(0,&amp;quot;ZZGS1&amp;quot;);
+			var zzgs2 = myds.getStringAt(0,&amp;quot;ZZGS2&amp;quot;);
+			var zzgs3 = myds.getStringAt(0,&amp;quot;ZZGS3&amp;quot;);
+			var zzgs4 = myds.getStringAt(0,&amp;quot;ZZGS4&amp;quot;);
+			
+			sql = &amp;quot;update cw_kmb set qlbz = &amp;apos;%s&amp;apos;, zzgs1 = &amp;apos;%s&amp;apos;, zzgs2 = &amp;apos;%s&amp;apos;, zzgs3 = &amp;apos;%s&amp;apos;, zzgs4 = &amp;apos;%s&amp;apos; where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and kmbh = &amp;apos;&amp;quot;+kmbh2+&amp;quot;&amp;apos;&amp;quot;;
+			db.ExcecutSQL(sql);
+		}
+		
+		//移动数据并删除科目
+		if (movetype == &amp;quot;2&amp;quot;) {
+			if (jb == &amp;quot;1&amp;quot;) {
+				sql = &amp;quot;delete from cw_kmb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and org = &amp;apos;&amp;quot;+org+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+acc+&amp;quot;&amp;apos;and kmbh=&amp;apos;&amp;quot;+kmbh2+&amp;quot;&amp;apos;&amp;quot;;
+				db.ExcecutSQL(sql);
+			}
+			else if (1*jb &amp;gt; 1) {
+				sql = &amp;quot;select count(*)  from cw_kmb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and slh=&amp;apos;&amp;quot;+slh+&amp;quot;&amp;apos;&amp;quot;;
+				var cnt = 1 * db.GetSQL(sql);
+				if (cnt &amp;gt; 1) {
+					sql = &amp;quot;delete from cw_kmb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;&amp;quot;;
+					db.ExcecutSQL(sql);					
+				}
+				else if (cnt == 1) {
+					sql = &amp;quot;delete from cw_kmb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;&amp;quot;;
+					db.ExcecutSQL(sql);
+					
+					sql = &amp;quot;update cw_kmb set mjbz = 1 where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and kmbh=&amp;apos;&amp;quot;+slh+&amp;quot;&amp;apos;&amp;quot;;
+					db.ExcecutSQL(sql);
+				}
+			}
+		}
+		
+		return &amp;quot;1&amp;quot;;//&amp;quot;移动科目 &amp;quot; + kmbh + &amp;quot; ==&amp;gt; &amp;quot; + kmbh2 + &amp;quot; 成功!&amp;quot;;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >KMINFO</ID><NAME ></NAME><DATDSC >select * from cw_kmb where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and kmbh=&amp;apos;[%KMBH]&amp;apos;</DATDSC></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

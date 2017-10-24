@@ -1,0 +1,328 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >Test</MWID><NAME >Test</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >Test.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0=&amp;quot;&amp;quot;;
+var _scny = &amp;quot;&amp;quot;; //生成年月
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	ZXGFILE0 = _this.SaveTempZXGFile(0);
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,&amp;quot;18%&amp;quot;);
+	
+	//生成年月
+	_this.SetToSelectBox(&amp;quot;&amp;quot;,1,1,2,&amp;quot;V_CW_YYYY_MM&amp;quot;,&amp;quot;&amp;quot;);
+	try { _scny = SCNY; } catch(e) {}
+	if (_scny == &amp;quot;&amp;quot;) {
+		_this.SetCellText(1,1,2,G_LOGDAT.substring(0,7));
+	}
+	else {
+		_this.SetCellText(1,1,2,_scny);
+	}
+
+	
+	//险种类型
+	var xzList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_XZLX&amp;where=name&amp;lt;&amp;gt;&amp;apos;全部&amp;apos;&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,1,10,xzList);
+	
+	
+	if (_this.getCellText(1,1,2) != &amp;quot;&amp;quot;) {
+		loadData();
+	}
+	
+}
+
+
+//查询
+function loadData()
+{
+	
+	var scny = (_this.GetCellText(1,1,2)).replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;); 
+	var djh = _this.GetCellText(1,1,4);
+	var pch = _this.GetCellText(1,1,7);
+	var xz = _this.GetCellText(1,1,10);
+	var dwbh = _this.GetCellText(1,3,2);
+	var grbh = _this.GetCellText(1,3,4);
+	var dfzh = _this.GetCellText(1,3,7);
+	var sbzh = _this.GetCellText(1,3,10);
+
+	var xml = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;g_sfny=&amp;quot;+scny+&amp;quot;&amp;g_djh=&amp;quot;+djh+&amp;quot;&amp;g_pch=&amp;quot;+pch+&amp;quot;&amp;g_xz=&amp;quot;+xz+&amp;quot;&amp;g_dwbh=&amp;quot;+dwbh+&amp;quot;&amp;g_grbh=&amp;quot;+grbh+&amp;quot;&amp;g_dfzh=&amp;quot;+dfzh+&amp;quot;&amp;g_sbzh=&amp;quot;+sbzh);
+	_this.LoadZXGFile(ZXGFILE0,-1,0);
+	
+	_this.SetFixedRow(0,0);
+	_this.SetFixedCol(0,0);
+	_this.SetMainCellRange(0,1,0,10,70);
+	_this.SetXmlDS(0,1,0,10,70,xml);
+	
+
+	var sumbs = 0;
+	var sumje = 0.0;
+	var con_dj = 0;
+	var con_dw = 0;
+	var con_r = 0;
+	var rsarr = new Array();　//创建一个数组统计人数
+	var dwarr = new Array();　//创建一个数组统计单位数
+	for (var r=_this.GetMainCellRangeRow1(0);r&amp;lt;=_this.GetMainCellRangeRow2(0);r++) {
+		if(_this.GetCellText(0,r,0)!=&amp;quot;&amp;quot;)
+		{
+			sumbs ++;
+		}
+		var je = 1.0 * _this.GetCellText(0,r,29);
+		sumje += je;
+		//单据总数
+		if(_this.GetCellText(0,r,0))
+		{
+			
+			if(_this.GetCellText(0,r-1,11) != &amp;quot;&amp;quot;)
+			{
+				if(_this.GetCurrentRow(0) == 0) 
+				{
+					return;
+				}
+				if(_this.GetCellText(0,r,11)  != _this.GetCellText(0,r-1,11))
+				{
+					con_dj ++;
+				}
+			}
+		}
+		//单位总数
+		if(_this.GetCellText(0,r,0)!=&amp;quot;&amp;quot; &amp;&amp; _this.GetCellText(0,r,4)!=&amp;quot;&amp;quot;)
+		{
+			
+			var newdwbh = _this.GetCellText(0,r,4);
+
+			if(!contains(dwarr,newdwbh)) {
+				dwarr.push(newdwbh);
+			}
+			if(_this.GetCurrentRow(0) == 0) 
+			{
+				return;
+			}
+			con_dw = dwarr.length;
+		}
+	
+			
+		//人数
+		if(_this.GetCellText(0,r,0)!=&amp;quot;&amp;quot; &amp;&amp; _this.GetCellText(0,r,5)!=&amp;quot;&amp;quot;)
+		{
+			
+			var newrs = _this.GetCellText(0,r,5);
+			if(_this.GetCurrentRow(0) == 0 &amp;&amp; _this.GetCellText(0,r-1,5) == &amp;quot;%&amp;quot;) 
+			{
+				return;
+			}
+			if(!contains(rsarr,newrs)) {
+				rsarr.push(newrs);
+			}
+			
+			
+			con_r = rsarr.length;
+		}
+		
+	}
+
+	
+	_this.SetCellText(0,_this.GetRowCount(0)-1,0,&amp;quot;合 计： 总笔数: &amp;quot;+sumbs+&amp;quot;              总金额: &amp;quot;+sumje.toFixed(2)+ &amp;quot;            单据笔数：&amp;quot;+con_dj+&amp;quot;              单位数：&amp;quot;+con_dw+&amp;quot;                 人数：&amp;quot;+con_r);
+	
+	_this.AutoFixColWidth(0,600);
+	_this.AutoFixScreenWidth();
+	_this.RefreshFormula();
+
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{	
+	if (sheet == 1 &amp;&amp; row == 1 &amp;&amp; col == 12) {
+
+		loadData();
+	}
+	
+}
+
+
+
+
+
+//判断数组是否存在某个元素
+function contains(arr, obj) {  
+    var i = arr.length;  
+    while (i--) {  
+        if (arr[i] === obj) {  
+            return true;  
+        }  
+    }  
+    return false;  
+}  
+//	
+	
+	
+	
+	
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	//生成年月
+//	if( sheet == &amp;quot;1&amp;quot; &amp;&amp; row == &amp;quot;1&amp;quot; &amp;&amp; col == &amp;quot;2&amp;quot;)
+//	{
+//		loadData();
+//	}
+//	
+	
+	
+	
+	if (sheet == 1) 
+	{
+		if (row == 1 &amp;&amp; col == 2) 
+		{
+			var ym1 = _this.GetCellText(1,1,2);
+			if (ym1.indexOf(&amp;quot;-&amp;quot;) == -1) 
+			{
+				var ym11 = ym1.substring(0,4)+&amp;quot;-&amp;quot;+ym1.substring(4,6);
+				_this.SetCellText(1,1,2,ym11);
+			}
+			ym1 = ym1.replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;);
+			if (ym1.length &amp;lt; 6) 
+			{
+				alert(&amp;quot;输入的期限不正确，请检查！格式：YYYYMM/YYYY-MM 201501/2015-01&amp;quot;);
+				_this.SetCellText(1,row,col,oldvalue);
+			}
+			
+		}
+		//险种下拉
+		if(  row == &amp;quot;1&amp;quot; &amp;&amp; col == &amp;quot;10&amp;quot;)
+		{
+			loadData();
+		}
+		loadData();
+	}
+
+}
+
+
+
+
+//判断单位数	
+//var newdwbh = _this.GetCellText(0,r,2);
+//		if(!contains(arrayObj,newdwbh)) {
+//			arrayObj.push(newdwbh);
+//		}	
+//		con_dw=arrayObj.length;
+	
+//判断数组是否存在某个元素
+//function contains(arr, obj) {  
+//    var i = arr.length;  
+//    while (i--) {  
+//        if (arr[i] === obj) {  
+//            return true;  
+//        }  
+//    }  
+//    return false;  
+//}  
+//	
+	</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >
+select rownum rn,t.* from (SELECT
+   AAA027 TCQDM,
+   ZTH,   
+   aab004 DWMC,   
+   aab001 DWBH,
+   AAC001 GRBH,
+   BAC005 YWLX,
+   AAE208 SCNY,
+   ZFBZ,
+   ZFR,
+   ZFSJ,   
+   BAE074 djh,
+   BAE415 PCH,
+   BAZ611 HDPCH,
+   AAE002 JSRQ,
+   (select name from V_CW_XZLX b where a.aae140 = b.id) XZLX,
+   BIC476 RYLX,
+   AAE117 ZFZT,
+   AAC004 XB,
+   AAC003 XM,
+   AAE135 SFHM,
+   AAE145 KFFS,
+   BAE419 SBDFJG,
+   AAE008 YHHH,
+   AAE009 YHHM,
+   AAE010 YHZH,
+   AAE024 KHYHMC,
+   AAB019 YWDWLX,
+   BIE086 KXLXBH,
+   AIC263 ZJE,
+   AAE076 lsh,
+   BAE421 BPWJBH,
+   BAC001 BPWJMC,
+   BAC002 BPRQ,
+   BAC003 HPWJMC,
+   BAC004 HPRQ,
+   BAZ901 HPJGZTM,
+   BAZ902 HPSBYY,
+   BAE011 HPJBR,
+   BAE036 HPJBRQ,
+   BAE116 BPZT,
+   AAE004 QSR,
+   AAE011 KPJBR,
+   AAE036 KPJBRQ,
+   BZE011 CJR,
+   BZE036 CJRQ,
+   BZE034 CJRJGDM,
+   BAZ001 JLBH,
+   BAZ002 CZXH,
+   BIE087 CWZCSJ,
+   AAE013 BZ,
+   BAE012 CWSFSHR,
+   BAE034 CWSFSHRQ,
+   AAE400 CWSFSCBKD,
+   AAB119 JFRS,
+   AAB120 JFJS,
+   BAE324 SBKHYHMC,
+   BAE310 SBYHZH,
+   BAE309 SBYHHM,
+   BAE117 SFSHZT,
+   BAE013 SFSHR,
+   BAE035 SFSHSJ,
+   YSZL_YHRZLSH YHRZLSH,
+   YSZL_YHRZRQ YHRZRQ,
+   YSZL_YHRZSJ YHRZSJ,
+   YSZL_YSCBDXSXF CBDXSXF,
+   YSZL_YSSBJGSXF SBSXF,
+   DYSKSJ_JBR,
+   DYSKSJ_JBRQ,
+   DYSKSJ_YSPZH
+
+FROM SI_ac95_TMP a
+where  aae140 like &amp;apos;[%g_xz]%&amp;apos;
+ and nvl(aac001,&amp;apos;null&amp;apos;) like &amp;apos;[%g_grbh]%&amp;apos;
+ and nvl(bae310,&amp;apos;null&amp;apos;) like &amp;apos;[%g_sbzh]%&amp;apos;
+ and nvl(aae010,&amp;apos;null&amp;apos;) like &amp;apos;[%g_dfzh]%&amp;apos;
+ and aae208 like &amp;apos;[%g_sfny]%&amp;apos;
+ and nvl(aab001,&amp;apos;null&amp;apos;) like &amp;apos;[%g_dwbh]%&amp;apos;
+ and nvl(BAE074,&amp;apos;null&amp;apos;) like &amp;apos;[%g_djh]%&amp;apos;
+ and nvl(BAE415,&amp;apos;-1&amp;apos;) like &amp;apos;[%g_pch]%&amp;apos;
+order by djh,dwbh,grbh,pch
+) t</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 >MAIN</C6><C7 >MAIN</C7><C8 >MAIN</C8><C9 >MAIN</C9><C10 >MAIN</C10><C11 >MAIN</C11><C12 >MAIN</C12><C13 >MAIN</C13></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

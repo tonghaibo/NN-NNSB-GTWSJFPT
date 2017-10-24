@@ -1,0 +1,64 @@
+
+        #bottomNav {
+            z-index:999;
+            position:fixed;
+            width:100%;
+            background: -webkit-linear-gradient(top, #fdfdfd, #CDCDCD);
+
+            margin-top: -50px; 
+    	    height: 50px;
+            bottom:0;
+            left:0;
+            width:100%;
+         
+            overflow:visible;
+        }
+        #bottomNav input{
+            width: 90%;
+        }
+        #tstart-toolbar-bottom
+         {
+             position: fixed;/*固定*/
+             bottom: 0;/*在最下*/
+             color: #3E3E3E;
+             left: 0;
+             text-align: left;
+             width: 100%;
+             z-index: 500;
+             _position:absolute; /* for IE6 */
+             _top: expression(documentElement.scrollTop + documentElement.clientHeight-this.offsetHeight); /* for IE6 */
+             overflow:visible;
+         }
+         #tstart-toolbar-bottom .tstart-left
+         {
+             float: left;/*在左*/             
+             width: 300px;
+             margin: 5px 5px 5px 5px;
+             padding: 5px;
+             border: 1px solid silver;
+             background-color:white;
+             /*椭圆与阴影*/
+             box-shadow: 0px 0px 5px #000;
+             -moz-box-shadow: 0px 0px 5px #000;
+             -webkit-box-shadow: 0px 0px 5px #000;
+         }
+         #tstart-toolbar-bottom .tstart-right
+         {
+             float: right; /*在右*/
+             width: 300px;
+             margin: 5px 5px 5px 5px;
+             padding: 5px;
+             border: 1px solid silver;
+             background-color:white;
+             
+             box-shadow: 0px 0px 5px #000;
+             -moz-box-shadow: 0px 0px 5px #000;
+             -webkit-box-shadow: 0px 0px 5px #000;
+         }
+ #popup{
+  position: absolute;display:none; z-index:999999; background-color:#FFF; left: 601px; top: 217px; height: 150px; width: 217px;line-height:94px;text-align:center;
+  border: 1px solid #03F;
+}
+#embedding{
+  position: absolute; background-color: #36F; top: 94px;height:56px; width:217px;line-height:56px;text-align:center;
+}

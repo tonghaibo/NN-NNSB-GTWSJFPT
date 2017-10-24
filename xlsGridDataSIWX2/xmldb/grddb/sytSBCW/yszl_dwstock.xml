@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >yszl_dwstock</MWID><NAME >银社直连单位存量</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >yszl_dwstock.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE1;
+var sbh = &amp;quot;&amp;quot;;
+var zth = &amp;quot;&amp;quot;;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SplitSheet(0,&amp;quot;V&amp;quot;,&amp;quot;50&amp;quot;);
+	sbh = G_ORGID;
+	zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+    	_this.SetMainCellRange(1,2,1,_this.GetRowCount(1)-1,_this.GetColCount(1)-1);
+    	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );	
+	ZXGFILE1  = _this.SaveTempZXGFile(1);
+	//银行种类 这里用银海提供的银海种类视图
+//	var yhzlList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_YW_YHZL&amp;quot;),&amp;quot;AAA102&amp;quot;,&amp;quot;AAA103&amp;quot;);
+	_this.SetToSelectBox(&amp;quot;&amp;quot;,0,1,2,&amp;quot;v_yw_xlsgrid_yhzl&amp;quot;,&amp;quot;&amp;quot;);
+	loadMainData();		
+}
+
+function loadMainData()
+{
+	_this.LoadZXGFile(ZXGFILE1,-1,1);
+    	_this.SetMainCellRange(1,2,1,_this.GetRowCount(1)-1,_this.GetColCount(1)-1);
+    	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );	
+}
+
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if(id == &amp;quot;查询&amp;quot;) {
+		loadMainData();
+	}
+	else if(id == &amp;quot;发送存量文件&amp;quot;) {
+		SendFile();
+	}
+}
+
+function SendFile()
+{
+	var yhzl_yh = _this.GetCellText(0,1,2);
+	if(yhzl_yh == &amp;quot;&amp;quot;) {
+		alert(&amp;quot;银行种类不能为空&amp;quot;);
+		return;
+	}
+	var param = new Object();
+	param.sbh = sbh;
+	param.zth = zth;
+	param.yhzl_yh = yhzl_yh;
+	var ret = _this.invokeOSFuncExt(&amp;quot;SendFile&amp;quot;,param);
+	alert(ret);
+}
+
+
+
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var web = new JavaPackage(&amp;quot;com.xlsgrid.net.web&amp;quot;);
+var servletpack = new JavaPackage(&amp;quot;com.xlsgrid.net.servlet&amp;quot;);
+var ftppack = new JavaPackage(&amp;quot;org.apache.commons.net.ftp&amp;quot;);
+var timepack = new JavaPackage( &amp;quot;com.xlsgrid.net.time&amp;quot; );
+var jschftp = new JavaPackage( &amp;quot;com.jcraft.jsch&amp;quot; );
+
+function SendFile()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	try{
+		db = new pub.EADatabase();
+		var yszl_sbjgdm = db.GetSQL(&amp;quot;select yszl_sbjgdm from cw_ztb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;);
+		var sql = &amp;quot;select
+				  &amp;apos;社保机构编码&amp;apos;||chr(9)||
+				  &amp;apos;社保机构名称&amp;apos;||chr(9)||
+				  &amp;apos;单位编号&amp;apos;||chr(9)||
+				  &amp;apos;单位名称&amp;apos;||chr(9)||
+				  &amp;apos;组织机构代码&amp;apos;||chr(9)||
+				  &amp;apos;单位开户银行种类&amp;apos;||chr(9)||
+				  &amp;apos;单位开户银行名称&amp;apos;||chr(9)||
+				  &amp;apos;单位开户银行账号&amp;apos; line
+				from dual
+				union all
+				select
+				  sbjgbm ||chr(9)||
+				  sbjgmc ||chr(9)||
+				  dwbh ||chr(9)||
+				  dwmc ||chr(9)||
+				  zzjgdm ||chr(9)||
+				  jf_yhid ||chr(9)||
+				  jf_yhhm ||chr(9)||
+				  jf_yhzh line
+				from ( 
+				  select distinct
+				    a.aab301||a.xtlb||&amp;apos;1&amp;apos; sbjgbm
+				    ,a.aab301_name||a.xtlb_name sbjgmc
+				    ,a.aab001 dwbh
+				    ,a.aab004 dwmc
+				    ,a.aab003 zzjgdm
+				    ,b.jf_yhid
+				    ,b.jf_yhhm
+				    ,b.jf_yhzh
+				  from ab01 a,ab02 b
+				  where a.aab001 = b.aab001
+				    and a.aab301 = b.AAB301
+				    and a.XTLB = b.XTLB
+				    and b.aab051 = &amp;apos;1&amp;apos;
+				    and b.jf_yhhm is not null
+				    and b.jf_yhzh is not null  
+				    and b.jf_yhid is not null
+				  order by sbjgbm,dwbh
+				)
+				where sbjgbm = &amp;apos;&amp;quot;+yszl_sbjgdm+&amp;quot;&amp;apos;
+				and   jf_yhid = &amp;apos;&amp;quot;+yhzl_yh+&amp;quot;&amp;apos;&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		var fileStr = &amp;quot;&amp;quot;;
+		for (var k=0;k&amp;lt;ds.getRowCount();k++) {
+			var line = ds.getStringAt(k,&amp;quot;line&amp;quot;)+&amp;quot;\n&amp;quot;;
+			fileStr += line;
+		}	
+		pub.EAFunc.WriteToFileEx(&amp;quot;/u/yszl_dsdf/RS45990081ToBK10500000_DWCLXX.txt&amp;quot;,fileStr,true);
+		return fileStr;
+		//上传文件到FTP目录
+		sql = &amp;quot;select * from CW_DFDSB_YSZL where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yszl_yhjgdm=&amp;apos;&amp;quot;+yhjgdm+&amp;quot;&amp;apos;&amp;quot;;
+		var ftpds = db.QuerySQL(sql); //ftp的配置信息
+		if (ftpds.getRowCount() &amp;gt; 0) {
+			//var wjm = &amp;quot;&amp;quot;;//ftpds.getStringAt(0,&amp;quot;WJM&amp;quot;);
+			var ftpip = ftpds.getStringAt(0,&amp;quot;FTP_IP&amp;quot;);
+			var ftpport = ftpds.getStringAt(0,&amp;quot;FTP_PORT&amp;quot;);
+			var ftpuser = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_NAME&amp;quot;);
+			var ftppasswd = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_PASSWD&amp;quot;);		
+			var ftploginpath = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_PATH&amp;quot;);			
+			var ftpuppath = ftpds.getStringAt(0,&amp;quot;FTP_UP_PATH&amp;quot;);
+			var upwjm = ftploginpath +&amp;quot;/&amp;quot;+ ftpuppath; 					
+			var fileName = &amp;quot;/u/yszl_dsdf/&amp;quot;+ftpuppath+&amp;quot;/&amp;quot;+wjm+&amp;quot;.txt&amp;quot;; ///u/dsdf/sy_NY20151217.txt
+			pub.EAFunc.WriteToFileEx(fileName,fileStr,true);  //生成本地文件,覆盖方式
+
+			//上传sftp				
+			var jsch = new jschftp.JSch();
+			var sftp = null;
+			var sshSession = null;
+			try{
+				sshSession = jsch.getSession(ftpuser,ftpip,&amp;quot;22&amp;quot;);
+				sshSession.setPassword(ftppasswd);
+				var config = new java.util.Properties();
+				config.put(&amp;quot;StrictHostKeyChecking&amp;quot;,&amp;quot;no&amp;quot;);
+				sshSession.setConfig(config);
+				sshSession.connect();
+				var channel = sshSession.openChannel(&amp;quot;sftp&amp;quot;);
+				channel.connect();
+				sftp = channel;
+				//上传一个文件
+				sftp.cd(ftploginpath + &amp;quot;/&amp;quot; + ftpuppath);
+				var localFile = new java.io.File(fileName);
+				sftp.put(new java.io.FileInputStream(localFile),localFile.getName());
+				sftp.ls(ftploginpath + &amp;quot;/&amp;quot; + ftpuppath + &amp;quot;/&amp;quot;+localFile.getName());
+				sftp.quit();
+				sshSession.disconnect();
+			}catch(ee){
+				if(sftp != null) sftp.quit();
+				if(sshSession != null) sshSession.disconnect();
+				if(db != null) db.Rollback();
+				return &amp;quot;上传文件到sftp失败:&amp;quot;+ee.toString()+&amp;quot;\n&amp;quot;+ftploginpath + &amp;quot;/&amp;quot; + ftpuppath;
+			}
+			db.Rollback();
+			return &amp;quot;上传单位存量文件到sftp服务器成功！！&amp;quot;;
+
+		}	
+		else {
+			db.Rollback();
+			return &amp;quot;上传单位存量文件失败，cw_dfdsb_yszl表没有配&amp;quot;;
+		}			
+			
+	}catch(e){
+		if(db != null) db.Rollback();
+		return e.toString();
+	}finally {
+		if(db != null) db.Close();
+	}
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

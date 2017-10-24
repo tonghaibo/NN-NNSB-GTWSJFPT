@@ -1,0 +1,371 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >QMCL_JZZ_JZBG</MWID><NAME >记总帐记帐报告</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >QMCL_JZZ_JZBG.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD >0</HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0;
+var sbh = &amp;quot;&amp;quot;;
+var zth= &amp;quot;&amp;quot;;
+var G_YY = &amp;quot;&amp;quot;;
+var G_MM = &amp;quot;&amp;quot;;
+var minzzh = &amp;quot;&amp;quot;;
+var maxzzh = &amp;quot;&amp;quot;;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.ShowToolBar(0);
+	sbh = G_ORGID;
+	zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+	G_YY = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	G_MM = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHOW_ZERO,1);
+       ZXGFILE0 = _this.SaveTempZXGFile(0);
+	initLayout();
+	try{
+		minzzh = zzh1;
+		maxzzh = zzh2;	
+		if(minzzh != &amp;quot;&amp;quot; &amp;&amp; maxzzh != &amp;quot;&amp;quot;) {
+			_sql.querytods(&amp;quot;getZS&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;yy=&amp;quot;+G_YY+&amp;quot;&amp;mm=&amp;quot;+G_MM+&amp;quot;&amp;pzlx=记&amp;quot;+&amp;quot;&amp;minzzh=&amp;quot;+minzzh+&amp;quot;&amp;maxzzh=&amp;quot;+maxzzh);
+			var zs = _this.XMLDS_GetStringAt(0,0);
+			_this.SetCellText(1,1,2,zs);
+		}
+	}catch(e){}
+		
+	loadMainData();
+	_this.AutoFixScreenWidth();
+}
+
+//布局初始化
+function initLayout()
+{
+	_this.SplitSheet(1,&amp;quot;v&amp;quot;,50);
+}
+
+//加载数据
+function loadMainData()
+{
+	//未记帐汇总字列表
+	_this.LoadZXGFile(ZXGFILE0,-1,0);
+	var param = new Object();
+	if(minzzh != &amp;quot;&amp;quot; &amp;&amp; maxzzh != &amp;quot;&amp;quot;) {
+		param.sbh = sbh;
+		param.zth = zth;
+		param.yy = G_YY;
+		param.mm = G_MM;
+		param.pzlx = &amp;quot;记&amp;quot;;
+		param.minzzh = minzzh;
+		param.maxzzh = maxzzh;
+		param.kmcd = getKMCD(1);
+		var xml = _this.invokeOSFuncExt(&amp;quot;jzz&amp;quot;,param);
+		if(xml.split(&amp;quot;~&amp;quot;)[0] == &amp;quot;&amp;quot;) {
+			_this.SetXmlDS(0,2,1,14,4,xml.split(&amp;quot;~&amp;quot;)[1]);	
+		}else {
+			alert(xml.split(&amp;quot;~&amp;quot;)[0]);
+		}					
+	}
+	_this.AutoFixScreenWidth();
+}
+
+function QRJZ()
+{
+	if(minzzh == &amp;quot;&amp;quot; &amp;&amp; maxzzh == &amp;quot;&amp;quot;) {
+		return;
+	}
+	var param = new Object();
+	param.sbh = sbh;
+	param.zth = zth;
+	param.yy = G_YY;
+	param.mm = G_MM;
+	param.pzlx = &amp;quot;记&amp;quot;;
+	param.minzzh = minzzh;
+	param.maxzzh = maxzzh;
+	param.czrxm = G_USRNAM;
+	var ret = _this.invokeOSFuncExt(&amp;quot;QRJZ&amp;quot;,param);
+	alert(ret);
+	window.close();	
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if(id == &amp;quot;确认记帐&amp;quot;) {
+		QRJZ();
+	}
+}
+
+//获取科目长度 参数 n : 级别
+function getKMCD(n) {
+	var strkm = &amp;quot;kmcd&amp;quot;+n;
+	_sql.querytods(&amp;quot;getKMCD&amp;quot;,&amp;quot;kmcdn=&amp;quot;+strkm+&amp;quot;&amp;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth);
+	var kmcd = _this.XMLDS_GetStringAt(0,0);
+	return kmcd;
+}
+
+
+//计算合计金额
+function jsSumJE(sheet_yhrjzb)
+{
+	var jfje_sum = 0.00;
+	var dfje_sum = 0.00;
+	var ye_sum   = 0.00;
+	var jfbs     = 0;
+	var dfbs     = 0;
+	for(var i =_this.GetMainCellRangeRow1(sheet_yhrjzb);i&amp;lt;=_this.GetMainCellRangeRow2(sheet_yhrjzb);i++){
+		var jefx = _this.GetCellText(sheet_yhrjzb,i,4); //使用金额方向计算
+		var jfje = 0;
+		var dfje = 0;
+		if (jefx == &amp;quot;借&amp;quot;) jfje = _this.GetCellText(sheet_yhrjzb,i,3)*1.00;
+		if (jefx == &amp;quot;贷&amp;quot;) dfje = _this.GetCellText(sheet_yhrjzb,i,3)*1.00;
+		
+		var ye   = 0;
+		var qcbz = 0;
+		var sblsh = _this.GetCellText(sheet_yhrjzb,i,5);
+		
+		if(ye == &amp;quot;&amp;quot;) ye = 0.00;
+		if(jfje == &amp;quot;&amp;quot;) jfje = 0.00;
+		if(dfje == &amp;quot;&amp;quot;) dfje = 0.00;
+		
+		if(sblsh != &amp;quot;&amp;quot;){
+			if(qcbz == 1) {
+				ye_sum = 1.0* round(ye,2);
+			}else{
+				if(jefx == &amp;quot;借&amp;quot;){
+					jfbs ++;
+					jfje_sum = 1.00 * round(jfje_sum,2) + 1.00 * round(jfje,2);
+					ye_sum = 1.00 * round(ye_sum,2) + 1.00 * round(jfje,2);
+					//_this.SetCellText(sheet_yhrjzb,i,10,ye_sum);
+				}else if(jefx == &amp;quot;贷&amp;quot;){
+					dfbs ++;
+					dfje_sum = 1.00 * round(dfje_sum,2) + 1.00 * round(dfje,2);
+					ye_sum = 1.00 * round(ye_sum,2) - 1.00 * round(dfje,2);
+					//_this.SetCellText(sheet_yhrjzb,i,10,ye_sum);
+				}
+			}
+		}
+
+	}
+	
+	var retje_sum = jfje_sum - dfje_sum;
+	var retjefx = &amp;quot;&amp;quot;;
+	if (retje_sum &amp;gt; 0) {
+		retjefx = &amp;quot;借&amp;quot;;
+	}
+	else {
+		retjefx = &amp;quot;贷&amp;quot;;
+		retje_sum = Math.abs(retje_sum);
+	}
+	
+	//_this.SetCellText(sheet_param,1,10,&amp;quot;借：&amp;quot;+jfbs+&amp;quot;笔；   贷：&amp;quot;+dfbs+&amp;quot;笔；&amp;quot;);
+	if (sheet_yhrjzb != sheet_rjzmx1 &amp;&amp; sheet_yhrjzb != sheet_rjzmx2) {
+		_this.SetCellText(sheet_yhrjzb,_this.GetRowCount(sheet_yhrjzb)-1,3,retje_sum);
+	}
+	_this.SetCellText(sheet_yhrjzb,_this.GetRowCount(sheet_yhrjzb)-1,4,retjefx);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function jzz() {
+	var db = null;
+	var xml = &amp;quot;&amp;quot;;
+	try{
+		db = new pub .EADatabase();		  				  	        
+		var sql = &amp;quot;select substr( kmbh, 1, &amp;quot;+kmcd+&amp;quot;) kmbh,
+			        sum(decode( jefx, &amp;apos;借&amp;apos;, je, 0 ) ) jfje, 
+			        sum(decode ( jefx, &amp;apos;贷&amp;apos;, je, 0 )) dfje
+			        from cw_pzmxb a
+			        WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;  
+			          AND YY = &amp;quot;+yy+&amp;quot; AND MM = &amp;quot;+mm+&amp;quot;
+			          AND zzh &amp;lt;= &amp;quot;+maxzzh+&amp;quot;  and zzh &amp;gt;= &amp;quot;+minzzh+&amp;quot;
+			          and pzlx = &amp;apos;&amp;quot;+pzlx+&amp;quot;&amp;apos;
+			          and exists (
+			              select 1 from cw_pzhzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth =&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; 
+			              	and yy=&amp;quot;+yy+&amp;quot; and mm=&amp;quot;+mm+&amp;quot; and pzlx = &amp;apos;&amp;quot;+pzlx+&amp;quot;&amp;apos; and zt = &amp;apos;未核&amp;apos; and zzh = a.zzh
+			          )
+			        group by substr( kmbh, 1, &amp;quot;+kmcd+&amp;quot;)&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		xml = &amp;quot;&amp;lt;?xml version = &amp;apos;1.0&amp;apos;?&amp;gt;&amp;lt;ROWSET&amp;gt;&amp;quot;;
+		for(var i=0;i&amp;lt;ds.getRowCount();i++){
+			var kmbh = ds.getStringAt(i,&amp;quot;kmbh&amp;quot;);
+			var jfje = ds.getStringAt(i,&amp;quot;jfje&amp;quot;)*1.0;
+			var dfje = ds.getStringAt(i,&amp;quot;dfje&amp;quot;)*1.0;
+			var yefx = &amp;quot;&amp;quot;;
+			var ye = &amp;quot;&amp;quot;;
+			var yxyefx = &amp;quot;&amp;quot;;
+			var qcye = &amp;quot;&amp;quot;;
+			var qcyefx = &amp;quot;&amp;quot;;
+			var kmmc = &amp;quot;&amp;quot;;
+			sql = &amp;quot;select yxyefx from cw_kmb WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND kmbh = &amp;quot;+kmbh;
+			try{
+				yxyefx = db.GetSQL(sql);
+			}catch(e) {
+				return &amp;quot;查询允许余额方向出错\r\n错误信息：&amp;quot;+e.toString()+&amp;quot;~&amp;quot;;
+			}
+			sql = &amp;quot;select ye,yefx  from cw_qcyeb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;quot;+yy+&amp;quot; and  mm = &amp;quot;+mm+&amp;quot; and kmbh = &amp;quot;+kmbh;
+			var tmpds = db.QuerySQL(sql);
+			try{
+				qcye = tmpds.getStringAt(0,&amp;quot;ye&amp;quot;)*1.0;
+				qcyefx = tmpds.getStringAt(0,&amp;quot;yefx&amp;quot;);
+			}catch(e) {
+				return &amp;quot;科目编号【&amp;quot;+kmbh+&amp;quot;】查询期初余额表出错\r\n错误信息：&amp;quot;+e.toString()+&amp;quot;~&amp;quot;;
+			}
+			if(qcye == &amp;quot;&amp;quot;) {
+				qcye = 0;
+				qcyefx = &amp;quot;借&amp;quot;;
+			}
+			if(qcyefx == &amp;quot;借&amp;quot;) {
+				yefx = &amp;quot;借&amp;quot;;
+				ye = qcye + jfje - dfje;
+				if(ye &amp;lt; 0) {
+					if(yxyefx == &amp;quot;双&amp;quot;) {
+						yefx = &amp;quot;贷&amp;quot;;
+						ye = -1.0 * ye;
+					}
+				}
+			}
+			else {
+				ye = qcye - jfje + dfje;
+				yefx = &amp;quot;贷&amp;quot;;
+				if(ye &amp;lt; 0) {
+					if(yxyefx == &amp;quot;双&amp;quot;) {
+						yefx = &amp;quot;借&amp;quot;;
+						ye = -1.0 * ye;
+					}
+				}				
+			}
+			kmmc = db.GetSQL(&amp;quot;select cw_pack4.kmmc( &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;, &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;, &amp;quot;+kmbh+&amp;quot; ) from dual&amp;quot;);
+			var rowStr = &amp;quot;&amp;lt;ROW num=&amp;apos;&amp;quot;+(i+1)+&amp;quot;&amp;apos; SELECTFLAG=&amp;apos;0&amp;apos; name=&amp;apos;&amp;apos;&amp;gt;
+						&amp;lt;KMBH&amp;gt;&amp;quot;+kmbh+&amp;quot;&amp;lt;/KMBH&amp;gt;						
+						&amp;lt;KMMC&amp;gt;&amp;quot;+kmmc+&amp;quot;&amp;lt;/KMMC&amp;gt;						
+						&amp;lt;YE&amp;gt;&amp;quot;+ye+&amp;quot;&amp;lt;/YE&amp;gt;						
+						&amp;lt;YEFX&amp;gt;&amp;quot;+yefx+&amp;quot;&amp;lt;/YEFX&amp;gt;
+				       &amp;lt;/ROW&amp;gt;&amp;quot;;
+			xml += 	rowStr;       
+						
+		} 
+		xml+= &amp;quot;&amp;lt;/ROW&amp;gt;&amp;lt;/ROWSET&amp;gt;&amp;quot;;       
+		return &amp;quot;~&amp;quot;+xml;	        			
+	}catch(e) {
+		if(db != null) db.Rollback();
+		return e.toString()+&amp;quot;~&amp;quot;;
+	}finally {
+		if(db != null) db.Close();
+	}
+}
+
+function QRJZ()
+{
+	var db = null;
+	try{
+		db = new pub.EADatabase();
+		var sql = &amp;quot;update cw_pzhzb set zt = &amp;apos;已记帐&amp;apos; , jzrxm = &amp;apos;&amp;quot;+czrxm+&amp;quot;&amp;apos;
+		            where SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND YY = &amp;quot;+yy+&amp;quot; AND mm = &amp;quot;+mm+&amp;quot; and zzh &amp;gt;= &amp;quot;+minzzh+&amp;quot; and zzh &amp;lt;= &amp;quot;+maxzzh+&amp;quot; and pzlx = &amp;apos;&amp;quot;+pzlx+&amp;quot;&amp;apos;&amp;quot;;
+		db.ExcecutSQL(sql); 
+		sql = &amp;quot;update cw_pzb set zt = &amp;apos;记总帐&amp;apos;
+		            where SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND YY = &amp;quot;+yy+&amp;quot; AND mm = &amp;quot;+mm+&amp;quot; and zzh &amp;gt;= &amp;quot;+minzzh+&amp;quot; and zzh &amp;lt;= &amp;quot;+maxzzh+&amp;quot; and pzlx = &amp;apos;&amp;quot;+pzlx+&amp;quot;&amp;apos;&amp;quot;;  
+		db.ExcecutSQL(sql);
+		sql = &amp;quot;update cw_pzmxb set zt = &amp;apos;记总帐&amp;apos;
+		            where SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND YY = &amp;quot;+yy+&amp;quot; AND mm = &amp;quot;+mm+&amp;quot; and zzh &amp;gt;= &amp;quot;+minzzh+&amp;quot; and zzh &amp;lt;= &amp;quot;+maxzzh+&amp;quot; and pzlx = &amp;apos;&amp;quot;+pzlx+&amp;quot;&amp;apos;&amp;quot;;
+		db.ExcecutSQL(sql);
+		db.Commit(); 
+		return &amp;quot;记帐完成&amp;quot;;                              
+	}catch(e) {
+		if(db != null) db.Rollback();
+		return e.toString();	
+	}finally {
+		if(db != null) db.Close();
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >  select mm,zzh,pzlx,zdrxm,jzrxm
+  from
+  (
+  SELECT  cw_pzhzb.yy ,           
+          cw_pzhzb.mm ,           
+          cw_pzhzb.zzh ,           
+          cw_pzhzb.pzlx ,           
+          cw_pzhzb.zt ,          
+          cw_pzhzb.zdrxm ,           
+          cw_pzhzb.jzrxm     
+        FROM cw_pzhzb      
+        WHERE ( CW_PZHZB.SBH = &amp;apos;[%sbh]&amp;apos; ) and          
+        ( CW_PZHZB.ZTH = &amp;apos;[%zth]&amp;apos; ) and          
+        ( CW_PZHZB.YY = [%yy] ) and          
+        ( CW_PZHZB.MM = [%mm]) and          
+        ( CW_PZHZB.PZLX = &amp;apos;[%pzlx]&amp;apos; ) and          
+        ( CW_PZHZB.ZZH &amp;gt;= [%minzzh]) and          
+        ( CW_PZHZB.ZZH &amp;lt;= [%maxzzh]) and
+        zt != &amp;apos;已记账&amp;apos; 
+        ORDER BY cw_pzhzb.zzh ASC  
+    )    </DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 ></C6></ROW>
+<ROW num="1" ><ID >getZZH</ID><NAME ></NAME><DATDSC >select min(zzh),max(zzh)
+       from cw_pzhzb 
+       where sbh= &amp;apos;[%sbh]&amp;apos; and zth = &amp;apos;[%zth]&amp;apos; and yy = &amp;apos;[%yy]&amp;apos; 
+             and mm = &amp;apos;[%mm]&amp;apos; and pzlx = &amp;apos;[%pzlx]&amp;apos; 
+             and zt != &amp;apos;已记帐&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 >getZZH</C6></ROW>
+<ROW num="2" ><ID >getKMCD</ID><NAME ></NAME><DATDSC >select [%kmcdn]
+from cw_ztb
+where sbh = &amp;apos;[%sbh]&amp;apos; and zth = &amp;apos;[%zth]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6></ROW>
+<ROW num="3" ><ID >getZS</ID><NAME >求张数</NAME><DATDSC >select count(*) 
+from cw_pzb 
+where  SBH = &amp;apos;[%sbh]&amp;apos; AND 
+       ZTH = &amp;apos;[%zth]&amp;apos; AND 
+       YY = [%yy] AND
+        mm = [%mm] and 
+        zzh &amp;gt;= [%minzzh] and 
+        zzh &amp;lt;= [%maxzzh] and 
+        pzlx = &amp;apos;[%pzlx]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

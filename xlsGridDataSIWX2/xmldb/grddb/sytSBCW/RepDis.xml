@@ -1,0 +1,273 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RepDis</MWID><NAME >报表分配</NAME><NOTE ></NOTE><NOACCNAME >1</NOACCNAME><FILE >RepDis.zxg</FILE><SCENE ></SCENE><FIXED >2,0</FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><syt >SBCW</syt><SHOWBTN >0</SHOWBTN><WIDTHMOD >1</WIDTHMOD></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >setByORG</ID><NAME >按组织分配</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE><C10 >savedata</C10><C11 >savedata</C11><C12 >batchSet</C12><C13 >batchSet1</C13><C14 >setByORG</C14></ROW>
+<ROW num="1" ><ID >batchSet</ID><NAME >批量设置</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE><C10 ></C10><C11 ></C11><C12 >GRDBTNDS_1</C12><C13 >savedata1</C13><C14 ></C14></ROW>
+<ROW num="2" ><ID >savedata</ID><NAME >保存</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >5</IMG><IMGMOUSE >5</IMGMOUSE><C10 ></C10><C11 ></C11><C12 ></C12><C13 >GRDBTNDS_2</C13><C14 ></C14></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0 = &amp;quot;&amp;quot;;
+var yyyyList;
+var yymmList;
+var mmList;
+var cur_selrow = -1;
+var cur_repid = &amp;quot;&amp;quot;;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SplitSheet(1,&amp;quot;H&amp;quot;,&amp;quot;45%&amp;quot;);
+	_this.SetColVisible(0,5,-1);
+//	_this.SetColVisible(0,6,-1);
+	
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this.SELECTFLAG_SINGLEROW);
+	_this.SetMainCellRange(0,2,0,_this.GetRowCount(0)-1,8);
+	
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this.SELECTFLAG_SINGLEROW);
+	_this.SetMainCellRange(1,1,1,3,6);
+	
+	var reptypeList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_FINREPCLASS&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	var xml = _sql.query(&amp;quot;ORGREP&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetXmlDS(1,1,1,3,6,xml);
+	for (var r=_this.GetMainCellRangeRow1(1);r&amp;lt;=_this.GetMainCellRangeRow2(1);r++) {
+		//_this.SetToBoolBox(1,r,0);
+		_this.SetToComboBox(&amp;quot;&amp;quot;,1,r,6,reptypeList);
+	}
+	
+	mmList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_MM&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;ID&amp;quot;);
+	_this.SetListValue(mmList,&amp;quot;&amp;quot;,&amp;quot; &amp;quot;);
+	yyyyList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_YYYY&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+//	_this.SetToComboBox(&amp;quot;&amp;quot;,0,0,2,yyyyList);
+//	_this.SetCellText(0,0,2,G_LOGDAT.substring(0,4));
+	_this.SetToSelectBox(&amp;quot;&amp;quot;,0,0,4,&amp;quot;V_YYYY_MM&amp;quot;,&amp;quot;&amp;quot;);
+	
+	ZXGFILE0 = _this.SaveTempZXGFile(0);
+	
+}
+
+function loadOrgRep(repid)
+{
+	_this.LoadZXGFile(ZXGFILE0,-1,0);
+	_this.SetFixedRow(0,2);
+//	_this.SetToComboBox(&amp;quot;&amp;quot;,0,0,2,yyyyList);
+//	_this.SetToComboBox(&amp;quot;&amp;quot;,0,0,4,yyyyList);
+//	_this.SetToSelectBox(&amp;quot;&amp;quot;,0,0,4,&amp;quot;V_YYYY_MM&amp;quot;,&amp;quot;&amp;quot;);
+	
+	var xml = _sql.query(&amp;quot;ORG&amp;quot;,&amp;quot;repid=&amp;quot;+ repid);
+	_this.SetMainCellRange(0,2,0,_this.GetRowCount(0)-1,8);
+	_this.SetXmlDS(0,2,0,_this.GetRowCount(0)-1,8,xml);
+	for ( var i = 1; i &amp;lt; _this.GetRowCount(0); i ++) {
+		_this.SetToBoolBox(0,i,0);
+		if (i!=1)_this.SetToComboBox(&amp;quot;&amp;quot;,0,i,8,mmList);
+	}
+
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if ( sheet == 1 &amp;&amp; row &amp;gt; 0 ) {
+		var repid = _this.GetCellText(1,row,1);
+		cur_selrow = row;
+		cur_repid = repid;
+		
+		clearOldValues(0);
+		_this.SetCellText(0,1,0,&amp;quot;&amp;quot;);		
+		loadOrgRep(repid);
+		
+		var startyear = _this.GetCellText(1,cur_selrow,4);
+		var startmm = _this.GetCellText(1,cur_selrow,5);
+		if (1*startmm &amp;lt; 10) startmm = &amp;quot;0&amp;quot;+startmm;
+		_this.SetCellText(0,0,2,startyear+&amp;quot;-&amp;quot;+startmm);
+		
+		_this.SetToolbarString(&amp;quot;  当前选中报表编号：&amp;quot;+repid);
+
+	}
+	else if (sheet == 0) {
+		if (col == 0 &amp;&amp; row &amp;gt;= _this.GetMainCellRangeRow1(0) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(0)) {
+			var newvalue = _this.GetCellText(0,row,0);
+			var startyear = _this.GetCellText(1,cur_selrow,4);
+			if (newvalue == 1) _this.SetCellText(0,row,6,startyear);
+			else _this.SetCellText(0,row,6,&amp;quot;&amp;quot;);
+		}
+	}
+}
+
+function clearOldValues(s1)
+{
+	var row1 = 2;
+	var row2 = _this.GetRowCount(s1)-1;
+	if (row2 &amp;gt; 4) {
+		for (var i = row2; i &amp;gt; 4; i --) {
+			_this.DeleteRow(s1,i-1);
+		}
+	}
+	for (var i = row1; i &amp;lt;= 4; i ++) {
+		for (var j = 0; j &amp;lt; 5; j ++) {
+			_this.SetCellText(s1,i,j,&amp;quot;&amp;quot;);
+		}
+	}
+	_this.SetToBoolBox(0,1,0);
+}
+function savedata()
+{
+	var param= new Object();
+	var year = _this.GetCellText(1,cur_selrow,4); //_this.GetCellText(0,0,2);
+	var endyymm = _this.GetCellText(0,0,4);
+	
+	if ( cur_repid == &amp;quot;&amp;quot; ) {
+		alert(&amp;quot;请先选择分配的报表！&amp;quot;);
+	} else {
+		param.repid = cur_repid;
+		param.year = year;
+		param.endyymm = endyymm;
+		param.xml = _this.GetXml(0,2,0,_this.GetRowCount(0)-1,8);
+		try {
+			var num = _this.invokeOSFuncExt(&amp;quot;save&amp;quot;, param);
+			if (num == &amp;quot;1&amp;quot;)
+				alert(&amp;quot;已成功分配报表！&amp;quot;);
+		} catch ( e ) {
+			alert(e);
+		}
+	}
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{  
+	if(sheet == 0) {
+		if (col == 0) {
+			if (row == 1) {
+		  		for (var i = _this.GetMainCellRangeRow1(0); i &amp;lt;= _this.GetMainCellRangeRow2(0); i ++) {
+		  			_this.SetCellText(sheet,i,col,newvalue);
+		  			var startyear = _this.GetCellText(1,cur_selrow,4);
+					if (newvalue == 1) _this.SetCellText(0,i,6,startyear);
+					else _this.SetCellText(0,i,6,&amp;quot;&amp;quot;);
+		  		}
+	  		}
+	  		else {
+	  			var startyear = _this.GetCellText(1,cur_selrow,4);
+				if (newvalue == 1) _this.SetCellText(0,row,6,startyear);
+				else _this.SetCellText(0,row,6,&amp;quot;&amp;quot;);
+	  		}
+	  	}
+	  	else if (row == 0 &amp;&amp; col == 4) {
+	  		var yymm = newvalue.split(&amp;quot;-&amp;quot;);
+	  		if (yymm.length != 2) {
+	  			alert(&amp;quot;输入格式不正确！&amp;quot;);
+	  			_this.SetCellText(sheet,row,col,oldvalue);
+	  			return;
+	  		}
+	  		else if (yymm[1] &amp;lt;=0 || yymm[1] &amp;gt; 12) {
+	  			alert(&amp;quot;输入格式不正确！&amp;quot;);
+	  			_this.SetCellText(sheet,row,col,oldvalue);
+	  			return;
+	  		}
+	  		
+	  		if (1*yymm[1] &amp;lt; 10) {
+	  			_this.SetCellText(sheet,row,col,yymm[0]+&amp;quot;-0&amp;quot;+yymm[1]);
+	  		}
+	  	}
+		
+  	}
+}
+
+//批量设置
+function batchSet()
+{
+	var startyy = _this.GetCellText(0,0,2);
+	var yymm = _this.GetCellText(0,0,4);
+	if (startyy == &amp;quot;&amp;quot;) {
+		alert(&amp;quot;请设置开始年份！&amp;quot;);
+		return;
+	}
+	
+	var yy = yymm.split(&amp;quot;-&amp;quot;)[0];
+	var mm = yymm.split(&amp;quot;-&amp;quot;)[1];
+	
+	_this.SetCellText(0,1,0,&amp;quot;1&amp;quot;);
+	for (var r=_this.GetMainCellRangeRow1(0);r&amp;lt;=_this.GetMainCellRangeRow2(0);r++) {
+		if (_this.GetCellText(0,r,1) != &amp;quot;&amp;quot;) {
+			_this.SetCellText(0,r,0,&amp;quot;1&amp;quot;);
+			_this.SetCellText(0,r,7,yy);
+			_this.SetCellText(0,r,8,mm);
+		}
+	}
+}
+
+//按组织分配
+function setByORG()
+{
+	window.location.href = &amp;quot;show.sp?grdid=RepDis2&amp;quot;;
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage ( &amp;quot;com.xlsgrid.net.pub&amp;quot; );
+
+// 客户端param传入的参数可以直接使用
+
+function save()
+{
+	var db = null;
+	var msg = &amp;quot;&amp;quot;;
+	var sql = &amp;quot;&amp;quot;;
+	
+	try {
+		db = new pub.EADatabase();
+		var ds = new pub.EAXmlDS(xml);
+		//sql = &amp;quot;delete from fin_reporg where repmodid = &amp;apos;%s&amp;apos; and year=&amp;apos;%s&amp;apos;&amp;quot;.format([repid,year]);
+		sql = &amp;quot;delete from fin_reporg where repmodid = &amp;apos;%s&amp;apos;&amp;quot;.format([repid]);
+		db.ExcecutSQL(sql);
+		for ( var row = 0; row &amp;lt; ds.getRowCount(); row ++ ) {
+			var useflg = ds.getStringAt(row,&amp;quot;yn&amp;quot;);
+			var endyear = ds.getStringAt(row,&amp;quot;endyear&amp;quot;);
+			var endmm = ds.getStringAt(row,&amp;quot;endmm&amp;quot;);
+			if (useflg == 1) {
+				var orgid = ds.getStringAt(row,&amp;quot;id&amp;quot;);
+				sql = &amp;quot;insert into fin_reporg(orgid,repmodid,useflg,year,endyear,endmm) values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;.format([orgid,repid,useflg,year,endyear,endmm]);
+				db.ExcecutSQL(sql);
+			}
+		}	
+		db.Commit();
+		return &amp;quot;1&amp;quot;;
+	}
+	catch ( ee ) {
+		db.Rollback();
+		throw new pub.EAException ( ee.toString() );
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+	
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >ORG</ID><NAME ></NAME><DATDSC >select decode(b.orgid,&amp;apos;&amp;apos;,0,1) yn,a.id,a.name,&amp;apos;&amp;apos; NUL1,&amp;apos;&amp;apos; NUL2,
+  &amp;apos;[%repid]&amp;apos; repid,year,endyear,endmm
+from v_org a, fin_reporg b
+where b.orgid(+) = a.id and b.repmodid(+) = &amp;apos;[%repid]&amp;apos;
+   --and b.year(+)=&amp;apos;[%year]&amp;apos; 
+   and a.id&amp;lt;&amp;gt;&amp;apos;XLSGRID&amp;apos;
+ order by a.id</DATDSC><C4 >ORG</C4><C5 ></C5><C6 >ORG</C6><C7 >ORG</C7><C8 >ORG</C8><C9 >ORG</C9><C10 >ORG</C10><C11 >ORG</C11><C12 >ORG</C12><C13 >ORG</C13><C14 ></C14><C15 >ORG</C15><C16 >ORG</C16><C17 ></C17><C18 ></C18><C19 ></C19></ROW>
+<ROW num="1" ><ID >ORGREP</ID><NAME ></NAME><DATDSC >select reportid,reportname,reportyear,startyear,startmonth,reporttype
+from fin_repmodel 
+where isused=&amp;apos;1&amp;apos;  
+order by reportid</DATDSC><C4 >ORGREP</C4><C5 >ORGREP</C5><C6 >ORGREP</C6><C7 >ORGREP</C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 >ORGREP</C14><C15 >ORGREP</C15><C16 >ORGREP</C16><C17 >ORGREP</C17><C18 >ORGREP</C18><C19 >ORGREP</C19></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

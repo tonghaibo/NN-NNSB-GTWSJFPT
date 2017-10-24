@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >REPFX</MWID><NAME >报表分析</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >REPFX.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >报表分析</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS >xlsgrid/js/SBCW/BBFXPubJS.djs</EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var zTree;
+// zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
+var setting = {
+	data: {
+		simpleData: {
+			enable: true
+		}
+	},
+	callback: {
+		onClick: zTreeOnClick
+	}
+};
+
+// zTree 的数据属性，深入使用请参考 API 文档（zTreeNode 节点数据详解）
+//var zNodes = [
+//   {name:&amp;quot;test1&amp;quot;, open:true, children:[
+//      {name:&amp;quot;test1_1&amp;quot;,orgid:&amp;quot;1&amp;quot;,accid:&amp;quot;21&amp;quot;}, {name:&amp;quot;test1_2&amp;quot;,orgid:&amp;quot;1&amp;quot;,accid:&amp;quot;21&amp;quot;}]},
+//   {name:&amp;quot;test2&amp;quot;, open:true, children:[
+//      {name:&amp;quot;test2_1&amp;quot;,orgid:&amp;quot;1&amp;quot;,accid:&amp;quot;21&amp;quot;}, {name:&amp;quot;test2_2&amp;quot;,orgid:&amp;quot;1&amp;quot;,accid:&amp;quot;21&amp;quot;}]}
+//   ];
+
+$(document).ready(function(){
+      var zNodes = eval(getReplocNodes());
+      zTree = $.fn.zTree.init($(&amp;quot;#treeReploc&amp;quot;), setting, zNodes);
+      
+      //var node = zTree.getNodeByTId(&amp;quot;treeReploc_0012121&amp;quot;);
+//      var node = zTree.getNodeByParam(&amp;quot;id&amp;quot;,&amp;quot;00121&amp;quot;);
+//      zTree.expandNode(node,true,true,true);
+      zTree.expandAll(true);
+
+	var node = zTree.getNodeByParam(&amp;quot;id&amp;quot;,&amp;quot;1001&amp;quot;);
+//	zTree.selectNode(node);	
+//	loadReport(node.orgid,node.accid,node.id);
+
+	parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;show.sp?grdid=FXBEDIT&amp;quot;;
+                
+});
+
+//点击树节点事件
+function zTreeOnClick(event, treeId, treeNode) 
+{
+	//alert(treeNode.tId + &amp;quot;, &amp;quot; + treeNode.name+&amp;quot;,orgid=&amp;quot;+treeNode.orgid+&amp;quot;,accid=&amp;quot;+treeNode.accid);
+    	var typ = treeNode.typ;
+	var orgid = treeNode.orgid;
+	var accid = treeNode.accid;
+	var fxbh = treeNode.id;
+	var fxname = treeNode.name;
+	alert(fxbh +&amp;quot;~&amp;quot;+fxname);
+	if (typ == &amp;quot;0&amp;quot;) {
+		loadReport(orgid,accid,fxbh,fxname);
+	}
+};
+
+//获取报表位置节点数据
+function getReplocNodes()
+{
+	var nodes = invokeOSFunc(&amp;quot;GetReplocTree&amp;quot;,&amp;quot;thisorgid=&amp;quot;+G_ORGID+&amp;quot;&amp;thisaccid=&amp;quot;+G_ACCID);
+	//_this.SetCellText(1,1,3,nodes);
+	return nodes;
+}
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	
+}
+
+
+function loadReport(orgid,accid,fxbh,fxname)
+{	
+
+//	parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;show.sp?grdid=&amp;quot;+fxbh+&amp;quot;&amp;ORGID=&amp;quot;+orgid+&amp;quot;&amp;ACCID=&amp;quot;+accid;
+//	if (fxbh == &amp;quot;1002&amp;quot;) parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;BIMain.sp?FORMGUID=3CC4AEFAE53226C8E053E90C10AC3066&amp;quot;;
+	if (fxbh != &amp;quot;&amp;quot;) {
+		parent.document.all(&amp;quot;right&amp;quot;).src = &amp;quot;BBFXPubJS.sp?thisorgid=&amp;quot;+orgid+&amp;quot;&amp;thisaccid=&amp;quot;+accid+&amp;quot;&amp;fxbh=&amp;quot;+fxbh+&amp;quot;&amp;fxname=&amp;quot;+fxname;
+	}
+}
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var grdpack = new JavaPackage ( &amp;quot;com.xlsgrid.net.grd&amp;quot; ); 
+
+//在Head区引用额外脚本
+function addHeaderHtml(mwobj,request,sb,usrinfo)
+//var sb = new java.lang.StringBuffer();var usrinfo = new web.EAUserinfo();
+{
+	sb.append(&amp;quot;&amp;lt;link rel=\&amp;quot;stylesheet\&amp;quot; href=\&amp;quot;xlsgrid/zTree/css/zTreeStyle/zTreeStyle.css\&amp;quot; type=\&amp;quot;text/css\&amp;quot;&amp;gt;\n&amp;quot;); 
+	sb.append(&amp;quot;&amp;lt;script type=\&amp;quot;text/javascript\&amp;quot; src=\&amp;quot;xlsgrid/zTree/js/jquery-1.4.4.min.js\&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;\n&amp;quot;); 
+	sb.append(&amp;quot;&amp;lt;script type=\&amp;quot;text/javascript\&amp;quot; src=\&amp;quot;xlsgrid/zTree/js/jquery.ztree.core.js\&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;\n&amp;quot;); 
+
+	sb.append(&amp;quot;&amp;lt;table border=\&amp;quot;0\&amp;quot; width=\&amp;quot;100%\&amp;quot; cellspacing=\&amp;quot;0\&amp;quot; cellpadding=\&amp;quot;0\&amp;quot; height=\&amp;quot;100%\&amp;quot;&amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td bgcolor=\&amp;quot;#EFEFEF\&amp;quot; align=center valign=middle&amp;gt;&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;table border=\&amp;quot;0\&amp;quot; width=\&amp;quot;100%\&amp;quot; height=\&amp;quot;100%\&amp;quot; cellspacing=\&amp;quot;0\&amp;quot; cellpadding=\&amp;quot;0\&amp;quot; &amp;gt;&amp;lt;tr&amp;gt;&amp;lt;td  style=\&amp;quot;border: 1px solid #EEEEEE\&amp;quot;&amp;gt;	&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;table border=\&amp;quot;0\&amp;quot; width=\&amp;quot;100%\&amp;quot; height=\&amp;quot;100%\&amp;quot; cellspacing=\&amp;quot;0\&amp;quot; cellpadding=\&amp;quot;0\&amp;quot; &amp;gt;&amp;lt;tr&amp;gt;&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;td width=20% height=100% style=\&amp;quot;border:solid 1px gray\&amp;quot; valign=top;&amp;gt;&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;div style=\&amp;quot;overflow-y:scroll;height:100%;\&amp;quot;&amp;gt;&amp;lt;ul id=\&amp;quot;treeReploc\&amp;quot; class=\&amp;quot;ztree\&amp;quot;&amp;gt;&amp;lt;/ul&amp;gt;&amp;lt;/div&amp;gt;&amp;lt;/td&amp;gt;&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;td width=80% height=100% valign=top;&amp;gt;&amp;lt;IFRAME id=&amp;apos;_right&amp;apos; name=&amp;apos;_right&amp;apos; border=&amp;apos;0&amp;apos; frameBorder=&amp;apos;0&amp;apos; width=&amp;apos;100%&amp;apos; height=&amp;apos;100%&amp;apos; scrolling=&amp;apos;yes&amp;apos; style=&amp;apos;border: 0px solid #808080;&amp;apos;&amp;gt;&amp;lt;/IFRAME&amp;gt;&amp;quot;);
+	sb.append(&amp;quot;&amp;lt;td width=0% height=0% style=\&amp;quot;border:solid 0px gray\&amp;quot;  valign=top;&amp;gt;&amp;quot;);
+
+}
+
+//添加额外html
+//afterBodyHtml事件后触发，已过时，建议用afterBodyHtml事件进行处理
+function addBottomHtml(mwobj,request,sb,usrinfo)
+//var mwobj=grd.EAMidWareBase();var request=javax.servlet.http.HttpServletRequest();var sb = new java.lang.StringBuffer();var usrinfo = new web.EAUserinfo();
+{
+	sb.append(&amp;quot;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;&amp;quot;);	
+	sb.append(&amp;quot;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;lt;/table&amp;gt;&amp;quot;);
+}
+
+//获取报表位置节点数据
+function GetReplocTree()
+{
+	var pubFunc = new SBCW_PUBFUNC();     
+	var json = pubFunc.getRepFxTreeJson(thisorgid,thisaccid);
+	return json;
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

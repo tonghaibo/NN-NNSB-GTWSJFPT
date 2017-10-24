@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >YL_ZEHZB</MWID><NAME >医疗费用总额控制汇总表</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >YL_ZEHZB.zxg</FILE><SCENE ></SCENE><FIXED >6,1</FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES></ROW>
+</ROWSET>
+</grdds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >YYYY</ID><NAME >年份</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 >YYYY</C13></ROW>
+<ROW num="1" ><ID >MM</ID><NAME >月份</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL >%</DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 >MM</C13></ROW>
+</ROWSET>
+</grdpamds><grdshwds>
+<ROWSET>
+<ROW num="0" ><ID >0,6,1</ID><NAME ></NAME><DBNAME ></DBNAME><DSKEY >DSC:MAIN</DSKEY><NROW >10</NROW><NCOL >18</NCOL><PAGES ></PAGES><PAGESIZE ></PAGESIZE><URL ></URL><CTLTYP ></CTLTYP><DYNCTL ></DYNCTL><LISTID ></LISTID><ISCROSS ></ISCROSS><HROW ></HROW><HCOLS ></HCOLS><ROWORDER ></ROWORDER><VCOLS ></VCOLS><VCOLSQL ></VCOLSQL><VALUECOL ></VALUECOL></ROW>
+</ROWSET>
+</grdshwds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.AutoFixColWidth(sheet,600);
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select DWMC,&amp;apos;&amp;apos; dwmc2,GZ_ZJE,ZJE,TZ_GZ_ZJE,TZ_ZJE,GZ_JE,JE,
+	GZ_MZ,TC_MZ,GZ_MZ+TC_MZ MZSUM,
+	GZ_ZY,TC_ZY,GZ_ZY+TC_ZY ZYSUM,
+	GZ_MZ+TC_MZ+GZ_ZY+TC_ZY YLSUM,
+	CZ,JY,BL
+from (
+SELECT A.SBH,
+       A.ZTH,
+       A.XH,
+       A.YY,
+       A.DWBH,
+       A.DWMC,
+       A.ZJE,
+       A.GZ_ZJE,
+       A.YWZJE,
+       A.TZ_ZJE,
+       A.TZ_GZ_ZJE,
+       A.BL,
+       B.JE,
+       DECODE(A.JYBZ, &amp;apos;1&amp;apos;, A.JYJE, 0) CZ,
+       DECODE(A.JYBZ, &amp;apos;2&amp;apos;, A.JYJE, 0) JY,
+       SUM(PF_GET_ZEKZB_JE(A.SBH, A.ZTH, B.DJH, &amp;apos;1&amp;apos;)) TC_ZY,
+       SUM(PF_GET_ZEKZB_JE(A.SBH, A.ZTH, B.DJH, &amp;apos;2&amp;apos;)) TC_MZ,
+       SUM(PF_GET_ZEKZB_JE(A.SBH, A.ZTH, B.DJH, &amp;apos;3&amp;apos;)) GZ_ZY,
+       SUM(PF_GET_ZEKZB_JE(A.SBH, A.ZTH, B.DJH, &amp;apos;4&amp;apos;)) GZ_MZ,
+       B.GZ_JE
+  FROM CW_ZEKZB A, CW_ZEKZMXB B
+ WHERE A.SBH = B.SBH AND A.ZTH = B.ZTH and a.org=b.org and a.acc=b.acc
+   AND A.YY = B.YY
+   AND A.XH = B.XH
+   AND A.ORG = &amp;apos;[%SYS_ORGID]&amp;apos;
+   AND A.ACC = &amp;apos;[%SYS_ACCID]&amp;apos;
+   AND A.YY = [%YYYY]
+   AND B.BFBZ = &amp;apos;0&amp;apos;
+   AND B.MM = DECODE(&amp;apos;[%MM]&amp;apos;,&amp;apos;&amp;apos;, B.MM, &amp;apos;[%MM]&amp;apos;)
+ GROUP BY A.SBH,
+          A.ZTH,
+          A.XH,
+          A.YY,
+          A.DWBH,
+          A.DWMC,
+          A.ZJE,
+          A.GZ_ZJE,
+          A.YWZJE,
+          A.TZ_ZJE,
+          A.TZ_GZ_ZJE,
+          A.BL,
+          B.JE,
+          DECODE(A.JYBZ, &amp;apos;1&amp;apos;, A.JYJE, 0),
+          DECODE(A.JYBZ, &amp;apos;2&amp;apos;, A.JYJE, 0),
+	  B.GZ_JE
+ ORDER BY A.SBH, A.ZTH, A.DWBH
+ )</DATDSC></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

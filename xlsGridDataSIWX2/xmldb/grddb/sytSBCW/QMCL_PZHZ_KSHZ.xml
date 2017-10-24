@@ -1,0 +1,456 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >QMCL_PZHZ_KSHZ</MWID><NAME >凭证汇总开始汇总</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >QMCL_PZHZ_KSHZ.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var sbh = &amp;quot;&amp;quot;;
+var zth = &amp;quot;&amp;quot;;
+var ZXGFILE1;
+var ZXGFILE2;
+var cur_maxpzh = 0;
+var cur_minpzh = 0;
+var cur_mindat = &amp;quot;&amp;quot;;
+var cur_maxdat = &amp;quot;&amp;quot;;
+var cur_yjzmaxpzh = 0;
+var cur_yjzminpzh = 0;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	sbh = G_ORGID;
+	zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+	initLayout();
+	var minmaxpzh = getMAX_PZH(&amp;quot;已记帐&amp;quot;);
+	
+//	cur_yjzmaxpzh = minmaxpzh.split(&amp;quot;~&amp;quot;)[1];
+//	cur_yjzminpzh = minmaxpzh.split(&amp;quot;~&amp;quot;)[0];
+//	20161107 lyh modify 值反了
+	cur_yjzmaxpzh = minmaxpzh.split(&amp;quot;~&amp;quot;)[0];
+	cur_yjzminpzh = minmaxpzh.split(&amp;quot;~&amp;quot;)[1];
+//	20161110 lyh modify 值反了
+//	_this.SetCellText(0,3,2,cur_yjzmaxpzh);
+//	_this.SetCellText(0,3,4,cur_yjzminpzh);
+	
+	_this.SetCellText(0,3,4,cur_yjzmaxpzh);
+	_this.SetCellText(0,3,2,cur_yjzminpzh);
+
+	minmaxpzh = getMAX_PZH(&amp;quot;&amp;quot;);
+	cur_minpzh = minmaxpzh.split(&amp;quot;~&amp;quot;)[1];
+	cur_maxpzh = minmaxpzh.split(&amp;quot;~&amp;quot;)[0];
+	cur_mindat = minmaxpzh.split(&amp;quot;~&amp;quot;)[2];
+	cur_maxdat = minmaxpzh.split(&amp;quot;~&amp;quot;)[3];
+	
+	_this.SetToCheckBox(&amp;quot;&amp;quot;,0,3,1,&amp;quot;凭证号：&amp;quot;,&amp;quot;1&amp;quot;,&amp;quot;0&amp;quot;);
+	_this.SetToCheckBox(&amp;quot;&amp;quot;,0,6,1,&amp;quot;日期：&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;0&amp;quot;);
+	
+	ZXGFILE1 = _this.SaveTempZXGFile(1);
+	ZXGFILE2 = _this.SaveTempZXGFile(2);
+	
+	_this.SetCellText(0,3,1,&amp;quot;1&amp;quot;);
+	_this.SetCellLock(0,3,2,1);
+	_this.SetCellLock(0,3,4,0);
+	_this.SetCellText(0,6,1,&amp;quot;0&amp;quot;);
+	_this.SetToStandardCell(0,6,2);
+	_this.SetToStandardCell(0,6,4);
+	_this.SetCellLock(0,6,2,1);
+	_this.SetCellLock(0,6,4,1);
+
+	
+	loadData();
+}
+
+//初始化布局
+function initLayout()
+{
+	_this.ShowToolBar(0);
+	_this.SplitSheet(0,&amp;quot;V&amp;quot;,100);
+	_this.SplitSheet(1,&amp;quot;H&amp;quot;,&amp;quot;50%&amp;quot;);
+	_this.SetToDateBox(&amp;quot;&amp;quot;,0,6,2,&amp;quot;&amp;quot;);
+	_this.SetToDateBox(&amp;quot;&amp;quot;,0,6,4,&amp;quot;&amp;quot;);
+	var yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	var mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1];
+	var tmp_mm = mm * 1;
+	var min_dd = &amp;quot;01&amp;quot;;
+	var max_dd = getLastDay(yy,tmp_mm);
+
+	var dat1 = yy+&amp;quot;-&amp;quot;+mm+&amp;quot;-&amp;quot;+min_dd;
+	var dat2 = yy+&amp;quot;-&amp;quot;+mm+&amp;quot;-&amp;quot;+max_dd;
+//	_this.SetCellText(0,5,2,dat1);
+//	_this.SetCellText(0,5,4,dat2);
+}
+
+function getLastDay(year,month){
+	var day = new Date(year,month,0);  
+        var lastdate = day.getDate();
+        return lastdate;
+}
+
+function loadData()
+{
+	_this.LoadZXGFile(ZXGFILE1,-1,1);
+	_this.LoadZXGFile(ZXGFILE2,-1,2);
+	_this.SetFixedRow(1,3);
+	_this.SetFixedRow(2,3);
+	
+	var min_pzh = _this.GetCellText(0,3,2);
+	var max_pzh = _this.GetCellText(0,3,4);
+	if(max_pzh == &amp;quot;&amp;quot;) max_pzh = 0;
+	if(min_pzh == &amp;quot;&amp;quot;) min_pzh = 0;
+	var pzlx = &amp;quot;记&amp;quot;;
+	var yy = &amp;quot;&amp;quot;;
+	var mm = &amp;quot;&amp;quot;;
+	var dat1 = _this.GetCellText(0,6,2);
+	var dat2 = _this.GetCellText(0,6,4);
+	if(dat1 == &amp;quot;&amp;quot; &amp;&amp; dat2 == &amp;quot;&amp;quot;) {
+		yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+		mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1];
+	}	
+	else {
+		yy = dat1.split(&amp;quot;-&amp;quot;)[0];
+		mm = dat1.split(&amp;quot;-&amp;quot;)[1];
+	}
+	
+	var sdd1 = 1*cur_mindat.split(&amp;quot;-&amp;quot;)[2];
+	var sdd2 = 1*cur_maxdat.split(&amp;quot;-&amp;quot;)[2];
+	
+	var bz = _this.GetCellText(0,3,1);
+	var filter = &amp;quot; and zt in (&amp;apos;已核&amp;apos;,&amp;apos;未核&amp;apos;)&amp;quot;;
+	if (bz == 1) {
+		filter += &amp;quot; and pzh&amp;gt;=&amp;quot;+min_pzh+&amp;quot; and pzh&amp;lt;=&amp;quot;+max_pzh;
+	}
+	else {
+		if (isNaN(sdd1) == true || isNaN(sdd2) == true) return; 
+		filter += &amp;quot; and dd&amp;gt;=&amp;quot;+(1*cur_mindat.split(&amp;quot;-&amp;quot;)[2])+&amp;quot; and dd&amp;lt;=&amp;quot;+(1*cur_maxdat.split(&amp;quot;-&amp;quot;)[2]);
+	}
+
+	var xml1 = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;pzlx=&amp;quot;+pzlx+&amp;quot;&amp;yy=&amp;quot;+yy+&amp;quot;&amp;mm=&amp;quot;+mm+&amp;quot;&amp;filter=&amp;quot;+filter);										
+	_this.SetXmlDS(2,3,1,9,4,xml1);
+	
+	filter = &amp;quot; and zt in (&amp;apos;已记帐&amp;apos;)&amp;quot;;
+	if (bz == 1) {
+		filter += &amp;quot; and pzh&amp;gt;=&amp;quot;+min_pzh+&amp;quot; and pzh&amp;lt;=&amp;quot;+max_pzh;
+	}
+	else {
+		if (isNaN(sdd1) == true || isNaN(sdd2) == true) return; 
+		filter += &amp;quot; and dd&amp;gt;=&amp;quot;+(1*cur_mindat.split(&amp;quot;-&amp;quot;)[2])+&amp;quot; and dd&amp;lt;=&amp;quot;+(1*cur_maxdat.split(&amp;quot;-&amp;quot;)[2]);
+	}
+
+	var xml2 = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;pzlx=&amp;quot;+pzlx+&amp;quot;&amp;yy=&amp;quot;+yy+&amp;quot;&amp;mm=&amp;quot;+mm+&amp;quot;&amp;filter=&amp;quot;+filter);
+	_this.SetXmlDS(1,3,1,9,4,xml2);
+	
+	_this.AutoFixScreenWidth();
+	
+}
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if(sheet == 0) {
+		if(row == 3 &amp;&amp; col == 4) {
+			if( 1*newvalue &amp;lt; cur_minpzh) {
+				alert(&amp;quot;截止凭证号不能小于起始凭证号&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+				return;
+			}
+			else if (1*newvalue &amp;gt; cur_maxpzh) {
+				alert(&amp;quot;截止凭证号不能大于最大凭证号&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+				return;
+			}
+			
+			loadData();
+		}
+		else if(row == 6 &amp;&amp; col == 4) {
+			var dat2 = _this.GetCellText(0,6,4);
+			if( dat2 &amp;lt; cur_mindat) {
+				alert(&amp;quot;截止日期[&amp;quot;+dat2+&amp;quot;]不能小于起始日期[&amp;quot;+cur_mindat+&amp;quot;]&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+				return;
+			}
+			if (newvalue &amp;gt; cur_maxpzh) {
+				alert(&amp;quot;截止日期不能大于最大日期&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+				return;
+			}
+		}
+		
+	}
+}
+
+//单元格焦点变动
+function _thisOnCellFocusChange(sheet,rowold,colold,rownew,colnew)
+{
+	if(sheet == 0) {
+		if(rowold == 6 &amp;&amp; rowold== 4) {
+			//_thisOnCellModify(sheet,rowold,colold,&amp;quot;&amp;quot;,_this.GetCellText(0,6,4));
+		}				
+	}
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if(id == &amp;quot;开始汇总&amp;quot;) {
+		var param = new Object();
+		param.thisorgid = G_ORGID;
+		param.thisaccid = G_ACCID;
+		param.sbh = sbh;
+		param.zth = zth;
+		param.yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+		param.mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+		param.pzlx = &amp;quot;记&amp;quot;;
+		var max_pzh = _this.GetCellText(0,3,4);
+		var min_pzh = _this.GetCellText(0,3,2);
+		var dd1 = &amp;quot;&amp;quot;;
+		var dd2 = &amp;quot;&amp;quot;;
+		var viewtyp = _this.GetCellText(0,3,1); //按凭证号汇总		
+		if(viewtyp == 1) { 
+			if (min_pzh == &amp;quot;&amp;quot; || max_pzh == &amp;quot;&amp;quot;) {
+				alert(&amp;quot;没有已记帐的凭证记录，不能汇总！请检查！&amp;quot;);
+				return;
+			}
+			_sql.querytods(&amp;quot;CHECKPZH&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;yy=&amp;quot;+param.yy+&amp;quot;&amp;mm=&amp;quot;+param.mm+&amp;quot;&amp;pzlx=&amp;quot;+param.pzlx+&amp;quot;&amp;MINPZH=&amp;quot;+min_pzh+&amp;quot;&amp;MAXPZH=&amp;quot;+max_pzh);
+			if (_this.XMLDS_GetRowCount() &amp;gt; 0) {
+				alert(&amp;quot;所输入的凭证号中有未记帐凭证，请重新输入！&amp;quot;);
+				return;
+			}
+			
+//			if (min_pzh &amp;lt; 1) {
+//				alert(&amp;quot;必须按凭证号顺序汇总,请重新选择要汇总的凭证号&amp;quot;);
+//				return;		
+//			}
+			var bz = 0;
+			for(var i =3;i&amp;lt;_this.GetRowCount(1);i++) {
+				var pzh = _this.GetCellText(1,i,3);
+				if(pzh != &amp;quot;&amp;quot;) {
+					bz ++;
+				}
+			}
+			if(bz == 0) {
+				alert(&amp;quot;没有已记帐凭证，不能汇总,请检查&amp;quot;);
+				return;
+			}
+		}
+		else {
+			if (_this.GetCellText(2,3,3) == &amp;quot;&amp;quot;) {
+				alert(&amp;quot;所输入的凭证号中有未记帐凭证，请重新输入！&amp;quot;);
+				return;
+			}
+			if (_this.GetCellText(1,3,3) == &amp;quot;&amp;quot;) {
+				alert(&amp;quot;没有已记帐凭证，不能汇总！&amp;quot;);
+				return;
+			}
+			var dat1 = _this.GetCellText(0,6,2);
+			var dat2 = _this.GetCellText(0,6,4);
+			dd1 = 1*dat1.split(&amp;quot;-&amp;quot;)[2];
+			dd2 = 1*dat2.split(&amp;quot;-&amp;quot;)[2];
+		}
+		
+		param.viewtyp = viewtyp;
+		param.min_pzh = min_pzh;
+		param.max_pzh = max_pzh;
+		param.dd = G_LOGDAT.split(&amp;quot;-&amp;quot;)[2]*1;
+		param.czyxm = G_USRNAM;
+		param.pzdd1 = dd1;
+		param.pzdd2 = dd2;
+		var ret = invokeOSFuncExt(&amp;quot;PZHZ&amp;quot;,param);
+		alert(ret);
+		window.close();
+	}
+	
+}
+
+//获取当前年月没有汇总的最大和最小凭证号
+function getMAX_PZH(zt)
+{
+	var yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	var mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+	_sql.querytods(&amp;quot;getPZH&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;yy=&amp;quot;+yy+&amp;quot;&amp;mm=&amp;quot;+mm+&amp;quot;&amp;pzlx=记&amp;zt=&amp;quot;+zt);
+	var max_pzh = _this.XMLDS_GetStringAt(0,0);
+	var min_pzh = _this.XMLDS_GetStringAt(0,1);
+	var min_dat = _this.XMLDS_GetStringAt(0,2);
+	var max_dat = _this.XMLDS_GetStringAt(0,3);
+	return max_pzh+&amp;quot;~&amp;quot;+min_pzh+&amp;quot;~&amp;quot;+min_dat+&amp;quot;~&amp;quot;+max_dat;
+}
+
+
+
+//点击核选框
+function _thisOnCheckboxCtrlChange(id,sheet,row,col)
+{
+	if (id == &amp;quot;CELL_0_6_1&amp;quot;) {
+		_this.SetCellLock(0,3,2,1);
+		_this.SetCellLock(0,3,4,1);
+		_this.SetCellText(0,3,1,&amp;quot;0&amp;quot;);
+		_this.SetCellText(0,3,2,&amp;quot;&amp;quot;);
+		_this.SetCellText(0,3,4,&amp;quot;&amp;quot;);
+		_this.SetToStandardCell(0,3,4);
+		_this.SetToDateBox(&amp;quot;&amp;quot;,0,6,2,cur_mindat);
+		_this.SetToDateBox(&amp;quot;&amp;quot;,0,6,4,cur_maxdat);
+		_this.SetCellLock(0,6,4,0);
+		
+		loadData();
+	}
+	else if (id == &amp;quot;CELL_0_3_1&amp;quot;) {
+		_this.SetCellLock(0,3,2,1);
+		_this.SetCellLock(0,3,4,0);
+		_this.SetCellText(0,6,1,&amp;quot;0&amp;quot;);
+		_this.SetToStandardCell(0,6,2);
+		_this.SetToStandardCell(0,6,4);
+		_this.SetCellLock(0,6,2,1);
+		_this.SetCellLock(0,6,4,1);
+		_this.SetCellText(0,6,2,&amp;quot;&amp;quot;);
+		_this.SetCellText(0,6,4,&amp;quot;&amp;quot;);
+		
+//		20161110 lyh modify 前面赋值相反了，后面调账赋值
+//		_this.SetCellText(0,3,2,cur_yjzmaxpzh);
+//		_this.SetCellText(0,3,4,cur_yjzminpzh);
+		_this.SetCellText(0,3,4,cur_yjzmaxpzh);
+		_this.SetCellText(0,3,2,cur_yjzminpzh);
+		
+		loadData();
+	}
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (sheet == 0) {
+		var bz = _this.GetCellText(0,3,1);
+		var pzh2 = 1*_this.GetCellText(0,3,4);
+		if (bz == 1 &amp;&amp; row == 3 &amp;&amp; col == 5) { // +
+			if (pzh2 + 1 &amp;lt;= cur_maxpzh) {
+				_this.SetCellText(0,3,4,pzh2+1);
+				loadData();
+			}
+		}
+		else if (bz == 1 &amp;&amp; row == 4 &amp;&amp; col == 5) { // -
+			if (pzh2 - 1 &amp;gt;= 1) {
+				_this.SetCellText(0,3,4,pzh2-1);
+				loadData();
+			}
+		}
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+//凭证汇总
+function PZHZ() 
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	try {
+		db = new pub .EADatabase();
+		//根据汇总的类型，查询最大凭证号和最小凭证号
+		if (viewtyp != &amp;quot;1&amp;quot;) {
+			sql = &amp;quot;SELECT min(pzh) minpzh,max(pzh) maxpzh 
+			       FROM cw_pzb      
+			       WHERE SBH=&amp;apos;%s&amp;apos; and ZTH=&amp;apos;%s&amp;apos; and YY=&amp;apos;%s&amp;apos; and MM=&amp;apos;%s&amp;apos; and PZLX=&amp;apos;%s&amp;apos; and zzh is null and zt=&amp;apos;已记帐&amp;apos;
+			           and dd&amp;gt;=&amp;apos;%s&amp;apos; and dd&amp;lt;=&amp;apos;%s&amp;apos;&amp;quot;.format([sbh,zth,yy,mm,pzlx,pzdd1,pzdd2]);
+			var pzhds = db.QuerySQL(sql);
+			if (pzhds.getRowCount() &amp;gt; 0) {
+				min_pzh = pzhds.getStringAt(0,&amp;quot;MINPZH&amp;quot;);
+				max_pzh = pzhds.getStringAt(0,&amp;quot;MAXPZH&amp;quot;);
+			}
+		}
+		
+		if (min_pzh == &amp;quot;&amp;quot; || max_pzh == &amp;quot;&amp;quot;) {
+			return &amp;quot;没有已记帐的凭证记录，不能汇总！请检查！&amp;quot;;
+		} 
+		
+		sql = &amp;quot;select sum(nvl( je, 0 ) ) jfje
+		           from cw_pzmxb 
+		           where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and jefx = &amp;apos;借&amp;apos; 
+		           and pzlx = &amp;apos;&amp;quot;+pzlx+&amp;quot;&amp;apos; and pzh &amp;gt;= &amp;quot;+min_pzh+&amp;quot; and pzh &amp;lt;= &amp;quot;+max_pzh;
+		var jfje = db.GetSQL(sql);
+	        var sql = &amp;quot;select sum(nvl( je, 0 ) ) dfje
+		           from cw_pzmxb 
+		           where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and jefx = &amp;apos;贷&amp;apos; 
+		           and pzlx = &amp;apos;&amp;quot;+pzlx+&amp;quot;&amp;apos; and pzh &amp;gt;= &amp;quot;+min_pzh+&amp;quot; and pzh &amp;lt;= &amp;quot;+max_pzh;
+		var dfje = db.GetSQL(sql);		
+		if(jfje != dfje) {
+	        	db.Rollback();
+	        	return &amp;quot;凭证借贷方不平，请检查凭证表后重新汇总！&amp;quot;;
+	        }
+	        
+		//汇总字号
+		sql = &amp;quot;select nvl(max( zzh ),0) + 1  from cw_pzhzb where sbh= &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and pzlx = &amp;apos;&amp;quot;+pzlx+&amp;quot;&amp;apos;&amp;quot;;
+		var zzh = db.GetSQL(sql);
+		for(var i=1*min_pzh;i&amp;lt;=1*max_pzh;i++) {
+			sql = &amp;quot;select nvl(zzh,0)  from cw_pzb where SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND YY = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; AND MM = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; AND PZH = &amp;quot;+i;
+			var dqzzh = db.GetSQL(sql);
+			if(dqzzh != 0) {			
+				return &amp;quot;凭证号&amp;quot;+i+&amp;quot;号已汇总，不能再进行汇总，请检查凭证表！&amp;quot;;
+			}	
+
+		}
+		
+		//插入凭证汇总表
+		sql = &amp;quot;INSERT INTO CW_PZHZB(org,acc,sbh, zth, yy, mm, dd, pzlx, zzh, pzh1, pzh2, zt, zdrxm) 
+	               VALUES (&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos;, &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;, &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;, &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos;, &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos;, &amp;apos;&amp;quot;+dd+&amp;quot;&amp;apos;, &amp;apos;&amp;quot;+pzlx+&amp;quot;&amp;apos;, &amp;apos;&amp;quot;+zzh+&amp;quot;&amp;apos;, &amp;quot;+min_pzh+&amp;quot;, &amp;quot;+max_pzh+&amp;quot;, &amp;apos;未核&amp;apos;, &amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;)&amp;quot;; 
+	        db.ExcecutSQL(sql);
+	        //修改凭证表
+	        sql = &amp;quot;update cw_pzb  set zzh = &amp;quot;+zzh+&amp;quot;, hzdd = &amp;apos;&amp;quot;+dd+&amp;quot;&amp;apos; 
+	               where SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND YY = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; AND MM = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; 
+	               AND PZH &amp;gt;= &amp;quot;+min_pzh+&amp;quot; and pzh &amp;lt;= &amp;quot;+max_pzh+&amp;quot; and pzlx = &amp;apos;&amp;quot;+pzlx+&amp;quot;&amp;apos;&amp;quot;;
+	        db.ExcecutSQL(sql);
+	        sql = &amp;quot;update cw_pzmxb  set zzh = &amp;quot;+zzh+&amp;quot;, hzdd = &amp;apos;&amp;quot;+dd+&amp;quot;&amp;apos; 
+	               where SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND YY = &amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; AND MM = &amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; 
+	               AND PZH &amp;gt;= &amp;quot;+min_pzh+&amp;quot; and pzh &amp;lt;= &amp;quot;+max_pzh+&amp;quot; and pzlx = &amp;apos;&amp;quot;+pzlx+&amp;quot;&amp;apos;&amp;quot;;
+	        db.ExcecutSQL(sql);	        
+	        
+	        db.Commit();
+	        return &amp;quot;汇总成功&amp;quot;;
+	                                          			
+	}catch(e) {
+		if(db != null) db.Rollback();
+		return e.toString();
+	}finally {
+		if(db != null) db.Close();
+	}
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >  SELECT  cw_pzb.mm,cw_pzb.dd,cw_pzb.pzh ,cw_pzb.zt 
+        FROM cw_pzb      
+        WHERE ( CW_PZB.SBH = &amp;apos;[%sbh]&amp;apos; ) and    
+              ( CW_PZB.ZTH = &amp;apos;[%zth]&amp;apos; ) and    
+              ( CW_PZB.YY = &amp;apos;[%yy]&amp;apos; ) and     
+              ( CW_PZB.MM = &amp;apos;[%mm]&amp;apos; ) and    
+              ( CW_PZB.PZLX = &amp;apos;[%pzlx]&amp;apos; ) and zzh is null
+               [%filter]
+        ORDER BY cw_pzb.pzh ASC  </DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 >MAIN</C6><C7 >MAIN</C7><C8 ></C8><C9 >MAIN</C9><C10 >MAIN</C10><C11 >MAIN</C11></ROW>
+<ROW num="1" ><ID >getPZH</ID><NAME ></NAME><DATDSC >select nvl(max(pzh),&amp;apos;&amp;apos;) maxpzh,nvl(min(pzh),&amp;apos;&amp;apos;) minpzh,
+  to_char(min(to_date((yy*100+mm)*100+dd,&amp;apos;yyyymmdd&amp;apos;)),&amp;apos;yyyy-mm-dd&amp;apos;) mindat,
+  to_char(max(to_date((yy*100+mm)*100+dd,&amp;apos;yyyymmdd&amp;apos;)),&amp;apos;yyyy-mm-dd&amp;apos;) maxdat
+from cw_pzb
+where sbh = &amp;apos;[%sbh]&amp;apos; and zth = &amp;apos;[%zth]&amp;apos;
+	and yy = &amp;apos;[%yy]&amp;apos; and mm = &amp;apos;[%mm]&amp;apos;
+	and pzlx = &amp;apos;[%pzlx]&amp;apos;
+	and zt like &amp;apos;[%zt]%&amp;apos;
+	and zzh is null</DATDSC><C4 ></C4><C5 ></C5><C6 >getPZH</C6><C7 >getPZH</C7><C8 >getPZH</C8><C9 >getPZH</C9><C10 ></C10><C11 ></C11></ROW>
+<ROW num="2" ><ID >CHECKPZH</ID><NAME ></NAME><DATDSC >SELECT  cw_pzb.mm,cw_pzb.dd,cw_pzb.pzh ,cw_pzb.zt 
+        FROM cw_pzb      
+        WHERE ( CW_PZB.SBH = &amp;apos;[%sbh]&amp;apos; ) and    
+              ( CW_PZB.ZTH = &amp;apos;[%zth]&amp;apos; ) and    
+              ( CW_PZB.YY = &amp;apos;[%yy]&amp;apos; ) and     
+              ( CW_PZB.MM = &amp;apos;[%mm]&amp;apos; ) and    
+              ( CW_PZB.PZLX = &amp;apos;[%pzlx]&amp;apos; ) 
+              and pzh&amp;gt;=[%MINPZH] and pzh&amp;lt;=[%MAXPZH]
+              and zt!=&amp;apos;已记帐&amp;apos; and zzh is null
+        ORDER BY cw_pzb.pzh ASC  </DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 >CHECKPZH</C11></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

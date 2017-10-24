@@ -1,0 +1,548 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >PZGL_YE</MWID><NAME >余额查询</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >PZGL_YE.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0 = &amp;quot;&amp;quot;;
+var g_filter = &amp;quot;&amp;quot;;
+var g_filter2 = &amp;quot;&amp;quot;;
+var currRow = -1;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	var xmlmenu = &amp;quot;&amp;lt;item id=\&amp;quot;dy1\&amp;quot; name=\&amp;quot;打印当前页\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;dy2\&amp;quot; name=\&amp;quot;打印全部科目\&amp;quot;/&amp;gt;&amp;quot;;
+	_this.SetToButton(&amp;quot;&amp;quot;,1,1,26,&amp;quot;打印&amp;quot;,&amp;quot;打印&amp;quot;,xmlmenu,1,&amp;quot;-1&amp;quot;,&amp;quot;-1&amp;quot;);
+        _this.SetColVisible(0,2,0); 
+        _this.SetColVisible(0,11,0); 
+        _this.SplitSheet(1,&amp;quot;V&amp;quot;,40);
+        _this.SplitSheet(0,&amp;quot;H&amp;quot;,&amp;quot;90%&amp;quot;);
+        _this.ShowToolBar(0);
+        var yyList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_YYYY&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+        var mmList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_MM&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+        var ddList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_DD&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+        _this.SetToComboBox(&amp;quot;&amp;quot;,1,1,2,yyList);	_this.SetCellText(1,1,2,1*G_LOGDAT.substring(0,4));
+        _this.SetToComboBox(&amp;quot;&amp;quot;,1,1,4,mmList);	_this.SetCellText(1,1,4,1*G_LOGDAT.substring(5,7));
+        _this.SetToComboBox(&amp;quot;&amp;quot;,1,1,6,mmList);	_this.SetCellText(1,1,6,1*G_LOGDAT.substring(5,7));
+        _this.SetToComboBox(&amp;quot;&amp;quot;,1,1,10,ddList);
+        _this.SetToComboBox(&amp;quot;&amp;quot;,1,1,12,ddList); 
+
+	var kmtypList = _this.CreateListValue();
+	_this.SetListValue(kmtypList,&amp;quot;%&amp;quot;,&amp;quot;0-全部&amp;quot;);	
+	_this.SetListValue(kmtypList,&amp;quot;资产类&amp;quot;,&amp;quot;1-资产类&amp;quot;);
+	_this.SetListValue(kmtypList,&amp;quot;负债类&amp;quot;,&amp;quot;2-负债类&amp;quot;);
+	_this.SetListValue(kmtypList,&amp;quot;基金类&amp;quot;,&amp;quot;3-基金类&amp;quot;);
+	_this.SetListValue(kmtypList,&amp;quot;收入类&amp;quot;,&amp;quot;4-收入类&amp;quot;);
+	_this.SetListValue(kmtypList,&amp;quot;支出类&amp;quot;,&amp;quot;5-支出类&amp;quot;);
+	_this.SetToRadioBox(&amp;quot;&amp;quot;,2,10,2,kmtypList);
+	
+	var kxtypList = _this.CreateListValue();
+	_this.SetListValue(kxtypList ,&amp;quot;%&amp;quot;,&amp;quot;0-全部&amp;quot;);	
+	_this.SetListValue(kxtypList ,&amp;quot;1&amp;quot;,&amp;quot;1-养老&amp;quot;);
+	_this.SetListValue(kxtypList ,&amp;quot;2&amp;quot;,&amp;quot;2-失业&amp;quot;);
+	_this.SetListValue(kxtypList ,&amp;quot;3&amp;quot;,&amp;quot;3-基本医疗&amp;quot;);
+	_this.SetListValue(kxtypList ,&amp;quot;4&amp;quot;,&amp;quot;4-工伤&amp;quot;);
+	_this.SetListValue(kxtypList ,&amp;quot;5&amp;quot;,&amp;quot;5-生育&amp;quot;);
+	_this.SetListValue(kxtypList ,&amp;quot;6&amp;quot;,&amp;quot;6-其他医疗&amp;quot;);
+	_this.SetListValue(kxtypList ,&amp;quot;7&amp;quot;,&amp;quot;7-居民医疗&amp;quot;);
+	_this.SetListValue(kxtypList ,&amp;quot;8&amp;quot;,&amp;quot;8-机关养老&amp;quot;);
+	_this.SetListValue(kxtypList ,&amp;quot;9&amp;quot;,&amp;quot;9-职业年金&amp;quot;);
+	_this.SetToRadioBox(&amp;quot;&amp;quot;,2,2,2,kxtypList );	
+	
+//	var logym = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0] + G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]; 
+//	var kmList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_ACCITEM&amp;where=nvl(RJZKM_LRBZ,&amp;apos;1&amp;apos;)=&amp;apos;1&amp;apos; and (nvl(jssj,&amp;apos;999999&amp;apos;)&amp;gt;=&amp;quot;+logym+&amp;quot; and nvl(kssj,&amp;apos;190001&amp;apos;)&amp;lt;=&amp;quot;+logym+&amp;quot;)&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+//	_this.SetToComboBox(&amp;quot;&amp;quot;,1,1,15,kmList);
+
+       _this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );	     
+       _this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHOW_ZERO,1); 
+       _this.AutoFixScreenWidth();      
+       ZXGFILE0 = _this.SaveTempZXGFile(0);            
+       
+       loadData(&amp;quot;%&amp;quot;,0,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+       _this.SetCellText(2,10,2,&amp;quot;%&amp;quot;);
+       _this.SetCellText(2,2,2,&amp;quot;%&amp;quot;);
+               
+}
+
+//选择科目
+function showKM()
+{
+	var obj = new Object();
+        obj.filter = &amp;quot;xjyhbz &amp;lt;&amp;gt; 0&amp;quot;;
+        obj.mjbz = &amp;quot;0&amp;quot;;
+        obj.bz = &amp;quot;&amp;quot;;
+        obj.jb = 0;
+        obj.kmbh = &amp;quot;&amp;quot;;
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_KMSEL&amp;quot;,obj,&amp;quot;dialogWidth=600px;dialogHeight=645px&amp;quot;);  //20161213 lwq modify dialogHeight
+	var cur_kmbh = retVal;
+	if (cur_kmbh != &amp;quot;&amp;quot; &amp;&amp; cur_kmbh != &amp;quot;undefined&amp;quot; &amp;&amp; cur_kmbh != undefined) {
+		_this.SetCellText(1,1,15,cur_kmbh);
+		loadData(cur_kmbh,0,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+	}
+}
+
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+       if(id == &amp;quot;查询&amp;quot;) {
+	   var kmbh = _this.GetCellText(1,1,15);
+	   if (kmbh == &amp;quot;&amp;quot;) kmbh = &amp;quot;%&amp;quot;;
+           //loadData(&amp;quot;%&amp;quot;,0,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+           loadData(kmbh,0,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+           _this.SetCellText(2,10,2,&amp;quot;%&amp;quot;);
+           _this.SetCellText(2,2,2,&amp;quot;%&amp;quot;);
+           
+       }
+       if(id == &amp;quot;上一级&amp;quot;) {
+           getUpper();
+       }
+       if(id == &amp;quot;下一级&amp;quot;) {
+           getLower();
+       }
+       if(id == &amp;quot;浏览明细账&amp;quot;) {
+            var yy = _this.GetCellText(1,1,2);
+            var mm1 = _this.GetCellText(1,1,4);
+            var mm2 = _this.GetCellText(1,1,6);
+            var currRow = _this.GetCurrentRow(0);
+            if(currRow == -1){alert(&amp;quot;先选中行&amp;quot;);return;} 
+            var kmbh = _this.GetCellText(0,currRow,3);
+            if(kmbh == &amp;quot;&amp;quot;){return;}
+            var kmmc = _this.GetCellText(0,currRow,4); 
+            //openWindow(&amp;quot;show.sp?grdid=PZGL_YEMXZ&amp;YY=&amp;quot;+yy+&amp;quot;&amp;MM1=&amp;quot;+mm1+&amp;quot;&amp;MM2=&amp;quot;+mm2+&amp;quot;&amp;KMBH=&amp;quot;+kmbh+&amp;quot;&amp;KMMC=&amp;quot;+kmmc+&amp;quot;&amp;filter=&amp;quot;);
+            window.showModalDialog(&amp;quot;show.sp?grdid=PZGL_YEMXZ&amp;YY=&amp;quot;+yy+&amp;quot;&amp;MM1=&amp;quot;+mm1+&amp;quot;&amp;MM2=&amp;quot;+mm2+&amp;quot;&amp;KMBH=&amp;quot;+kmbh+&amp;quot;&amp;KMMC=&amp;quot;+kmmc+&amp;quot;&amp;filter=&amp;quot;,null,&amp;quot;dialogWidth=1200px;dialogHeight=800px&amp;quot;);
+            
+       }
+}
+
+//获取当月最后一天日期
+function getLastMonthDay(year,month)
+{    
+	var  day = new Date(year,month,0);   
+	var lastdate = day.getDate();    
+	return lastdate;  
+}
+
+function loadData(kmbh,kmjb,filter,filter2) {
+	//alert(&amp;quot;kmbh=&amp;quot;+kmbh+&amp;quot;,kmjb=&amp;quot;+kmjb+&amp;quot;,filter=&amp;quot;+filter+&amp;quot;,filter2=&amp;quot;+filter2);
+     _this.LoadZXGFile(ZXGFILE0,-1,0);
+     _this.SetFixedRow(0,3);
+     _this.AutoFixScreenWidth(); 
+     var yy = _this.GetCellText(1,1,2);
+     var mm1 = 1*_this.GetCellText(1,1,4);
+     var mm2 = 1*_this.GetCellText(1,1,6);
+     var dd1 = 1*_this.GetCellText(1,1,10);
+     var dd2 = 1*_this.GetCellText(1,1,12);
+     var sbh = G_ORGID;
+     var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+     var title = &amp;quot;&amp;quot;;
+     if(dd1 &amp;gt; dd2){alert(&amp;quot;输入日范围错误&amp;quot;);return;}
+     if(dd1 == &amp;quot;&amp;quot;)dd1 = 1;
+     if(dd2 == &amp;quot;&amp;quot;)dd2 = getLastMonthDay(yy,mm2);
+     if(mm1 &amp;gt; mm2){alert(&amp;quot;输入月范围错误&amp;quot;);return;}
+     if(yy==&amp;quot;&amp;quot; || mm1==&amp;quot;&amp;quot; || mm2==&amp;quot;&amp;quot;){alert(&amp;quot;年月范围不能为空&amp;quot;);return;}
+     if(mm1 == mm2){
+     	title = yy+&amp;quot;年&amp;quot;+mm1+&amp;quot;月&amp;quot;; 
+     	if(dd1 == dd2){title += dd1+&amp;quot;日余额&amp;quot;;}
+     	else if(dd1 != dd2){title += dd1+&amp;quot;日至&amp;quot;+dd2+&amp;quot;日余额&amp;quot;;}
+     }
+     else if(mm1 != mm2){
+     	title = yy+&amp;quot;年&amp;quot;+mm1+&amp;quot;月&amp;quot;+dd1+&amp;quot;日至&amp;quot;+mm2+&amp;quot;月&amp;quot;+dd2+&amp;quot;日余额&amp;quot;;
+     }
+    
+     
+     if (filter != &amp;quot;&amp;quot;) filter = &amp;quot;and &amp;quot; + filter;
+     if (filter2 != &amp;quot;&amp;quot;) filter2 = &amp;quot;and&amp;quot; + filter2;
+     var xml = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;YY=&amp;quot;+yy+&amp;quot;&amp;MM1=&amp;quot;+mm1+&amp;quot;&amp;MM2=&amp;quot;+mm2+&amp;quot;&amp;DD1=&amp;quot;+dd1+&amp;quot;&amp;DD2=&amp;quot;+dd2+&amp;quot;&amp;KMBH=&amp;quot;+kmbh+&amp;quot;&amp;KMJB=&amp;quot;+kmjb+&amp;quot;&amp;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;filter=&amp;quot;+filter+&amp;quot;&amp;filter2=&amp;quot;+filter2);
+     _this.SetMainCellRange(0,3,1,6,11);    
+     _this.SetXmlDS(0,3,1,6,11,xml);
+     
+	for (var r=_this.GetMainCellRangeRow1(0);r&amp;lt;=_this.GetMainCellRangeRow2(0);r++) {
+		var mjbz = _this.GetCellText(0,r,1);
+		var kmbh = _this.GetCellText(0,r,3);
+		if(kmbh != &amp;quot;&amp;quot;) {
+			if (mjbz != 1) {
+				_this.SetCellText(0,r,1,&amp;quot;+&amp;quot;);
+			}
+			else {
+			        _this.SetCellText(0,r,1,&amp;quot;&amp;quot;);
+			}
+		}
+	} 
+	loadSumRow();
+      _this.SetColVisible(0,2,0);
+      _this.SetColVisible(0,11,0);
+      _this.SetCellText(0,1,1,title);
+}
+
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (sheet == 0) currRow = row;
+	else if (sheet == 1 &amp;&amp; row == 1 &amp;&amp; col == 16) {
+		showKM();
+	}
+}
+
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+     if(sheet == 0) {
+         if(row &amp;gt; 2 &amp; row &amp;lt;_this.GetRowCount(0)-2) {
+               var mjbz = _this.GetCellText(0,row ,1);
+               var kmbh = _this.GetCellText(0,row ,3);
+               if(mjbz == &amp;quot;+&amp;quot;) {              
+	               var kmbh1 = _this.GetCellText(0,row ,3);
+	               var kmjb1 = _this.GetCellText(0,row ,2);               
+	               var flg = 0;
+	               for(var i = row+1;i&amp;lt;_this.GetRowCount(0)-1;i++) {
+	                  var kmbh2 = _this.GetCellText(0,i ,3);
+	                  var kmjb2 = _this.GetCellText(0,i ,2);
+	                  if(kmbh2.indexOf(kmbh1) &amp;gt;= 0 &amp;&amp; (kmjb2&amp;gt;kmjb1)) {
+	                      flg = 1;
+	                      break;    
+	                  }                   
+	               }  
+	               if(flg == 1) {
+	                    getUpper();
+	               }
+	               else getLower();
+              }
+              else {
+              	     if (kmbh != &amp;quot;&amp;quot;) {
+              	     	_thisOnButtonCtrlClick(&amp;quot;浏览明细账&amp;quot;,sheet,row,col)
+              	     }
+              }           
+         }
+    }
+}
+
+//折叠
+function getUpper() {
+     //var currRow = _this.GetCurrentRow(0);
+     var mjbz = _this.GetCellText(0,currRow ,1);
+     var kmbh = _this.GetCellText(0,currRow ,3);
+     var kmjb = _this.GetCellText(0,currRow ,2);
+     if(mjbz == 1) return;
+     if(kmjb == 1) {
+        loadData(&amp;quot;%&amp;quot;,0,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;); 
+     }
+     else {
+         for(var i = currRow-1;i &amp;gt; 2;i--) {
+               var kmbh2 = _this.GetCellText(0,i ,3);
+               var kmjb2 = _this.GetCellText(0,i ,2);              
+               if( kmbh.indexOf(kmbh2) &amp;gt;= -1 &amp;&amp; (kmjb2 == kmjb-2 || kmjb-2 &amp;lt;= 0)) {
+               	     if (kmjb-1 &amp;lt;= 0) kmjb2 = 0;
+               	     else {
+               	     	kmjb2 = 1*_this.GetCellText(0,currRow,2) - 1;
+               	     	kmbh2 = kmbh.substring(0,kmbh.length-3);
+               	     }
+                     loadData(kmbh2,kmjb2,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+               }
+         }
+         
+     }
+}
+
+//展开
+function getLower() {
+     var currRow = _this.GetCurrentRow(0);
+     var mjbz = _this.GetCellText(0,currRow ,1);
+     var kmbh = _this.GetCellText(0,currRow ,3);
+     var kmjb = _this.GetCellText(0,currRow ,2);
+     if(mjbz != &amp;quot;+&amp;quot;) return;
+     loadData(kmbh,kmjb,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);     
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 1) {
+		if (row == 1 &amp;&amp; col == 4) {	
+			var mm1 = 1*_this.GetCellText(1,1,4);
+			var mm2 = 1*_this.GetCellText(1,1,6);
+			if (mm1 &amp;gt; mm2) _this.SetCellText(1,1,6,mm1);
+		}
+		else if (row == 1 &amp;&amp; col == 10) {	
+			var dd1 = 1*_this.GetCellText(1,1,10);
+			var dd2 = 1*_this.GetCellText(1,1,12);
+			if (dd1 &amp;gt; dd2) _this.SetCellText(1,1,12,dd1);
+		}
+		else if (row == 1 &amp;&amp; col == 15) {
+			if (newvalue != &amp;quot;&amp;quot;) {
+				_sql.querytods(&amp;quot;KMINFO&amp;quot;,&amp;quot;KMBH=&amp;quot;+newvalue);
+				if (_this.XMLDS_GetRowCount() &amp;gt; 0) {
+					var kmmc = _this.XMLDS_GetString(0,&amp;quot;NAME&amp;quot;);
+					//_this.SetCellShowText(sheet,1,15,kmmc);
+				}
+				else {
+					alert(&amp;quot;没有找到该科目！&amp;quot;);
+					_this.SetCellText(sheet,1,15,oldvalue);
+					return;
+				}
+			}
+			else {
+				//_this.SetCellShowText(sheet,1,15,&amp;quot;&amp;quot;);
+			}
+		}
+	}
+	else if (sheet == 2) {
+		// 科目类型改变
+		if (row == 10 &amp;&amp; col == 2) {
+			var kmlx = newvalue;
+			if(kmlx != &amp;quot;%&amp;quot;) {
+			     g_filter= &amp;quot;x.kmlx like &amp;apos;%&amp;quot;+kmlx+&amp;quot;%&amp;apos;&amp;quot;;  
+			}
+			else {
+			     g_filter=&amp;quot;&amp;quot;;
+			}  			 
+			loadData(&amp;quot;%&amp;quot;,0,g_filter,g_filter2);
+		}
+		//款项类型改变
+		if(row == 2 &amp;&amp; col == 2) {
+		        var kxlx = newvalue;
+		        if(kxlx != &amp;quot;%&amp;quot;) {
+		            g_filter2=&amp;quot; substr(x.kmbh,4,1) like &amp;apos;%&amp;quot;+kxlx+&amp;quot;%&amp;apos;&amp;quot;;
+		        }
+		        else {
+		            g_filter2 = &amp;quot;&amp;quot;;
+		        }
+		        loadData(&amp;quot;%&amp;quot;,0,g_filter,g_filter2);
+		}
+	}
+}
+
+
+function loadSumRow() {
+       var sum_qcye =0;
+       var sum_qmye =0;
+       var ld_sum_jfje = 0; 
+       var ld_sum_dfje = 0;
+       var ls_qcyefx = &amp;quot;&amp;quot;; 
+       var ls_qmyefx = &amp;quot;&amp;quot;;
+       for(var i=3;i&amp;lt;_this.GetRowCount(0)-2;i++) {
+           var qcyefx = _this.GetCellText(0,i,5);
+           var qmyefx = _this.GetCellText(0,i,9);
+           var qcye = _this.GetCellText(0,i,6)*1.0;
+           var qmye = _this.GetCellText(0,i,10)*1.0;
+           var jfje = _this.GetCellText(0,i,7)*1.0;
+           var dfje = _this.GetCellText(0,i,8)*1.0;
+           if(qcyefx == &amp;quot;借&amp;quot;){
+               sum_qcye = 1.0*sum_qcye + 1.0*qcye;
+           }else if(qcyefx == &amp;quot;贷&amp;quot;) {
+               sum_qcye = 1.0*sum_qcye - 1.0*qcye;
+           }
+           if(qmyefx == &amp;quot;借&amp;quot;){
+               sum_qmye = 1.0*sum_qmye + 1.0*qmye;
+           }else if(qmyefx == &amp;quot;贷&amp;quot;) {
+               sum_qmye = 1.0*sum_qmye - 1.0*qmye;
+           }
+	    ld_sum_jfje = 1.0*ld_sum_jfje + 1.0*jfje;
+	    ld_sum_dfje = 1.0*ld_sum_dfje + 1.0*dfje;                      
+       }
+       if(round(sum_qcye,2) == 0) {
+           	ls_qcyefx =&amp;quot;平&amp;quot;;
+       }
+       else if(sum_qcye &amp;lt; 0) {
+               ls_qcyefx =&amp;quot;贷&amp;quot;;
+       }
+       else if(sum_qcye &amp;gt; 0) {
+               ls_qcyefx =&amp;quot;借&amp;quot;;
+       } 
+       if(round(sum_qmye,2) == 0) {
+           	ls_qmyefx =&amp;quot;平&amp;quot;;
+       }
+       else if(sum_qmye &amp;lt; 0) {
+               ls_qmyefx =&amp;quot;贷&amp;quot;;
+       }
+       else if(sum_qmye &amp;gt; 0) {
+               ls_qmyefx =&amp;quot;借&amp;quot;;
+       }  
+       sum_qcye = Math.abs( round(sum_qcye,2) );
+       sum_qmye = Math.abs( round(sum_qmye,2) ); 
+       _this.SetCellText(0,_this.GetRowCount(0)-2,5, ls_qcyefx);
+       _this.SetCellText(0,_this.GetRowCount(0)-2,6, round(sum_qcye,2) );
+       _this.SetCellText(0,_this.GetRowCount(0)-2,7, round(ld_sum_jfje,2) ); 
+       _this.SetCellText(0,_this.GetRowCount(0)-2,8, round(ld_sum_dfje,2) ); 
+       _this.SetCellText(0,_this.GetRowCount(0)-2,9, ls_qmyefx); 
+       _this.SetCellText(0,_this.GetRowCount(0)-2,10,round(sum_qmye,2) );                                         
+}
+
+function round(v,e){
+
+var t=1;
+
+for(;e&amp;gt;0;t*=10,e--);
+
+for(;e&amp;lt;0;t/=10,e++);
+
+return Math.round(v*t)/t;
+
+}
+
+//打印
+function printYE(bz)
+{
+	var isnull = _this.GetCellText(0,3,3);
+	if (isnull == &amp;quot;&amp;quot;) {
+		alert(&amp;quot;没有余额数据，不打印！&amp;quot;);
+		return;
+	}
+	
+	if(bz == &amp;quot;0&amp;quot;) {
+		_this.Print(0,0);
+		
+	}
+	else if(bz == &amp;quot;1&amp;quot;) {
+	       var yy = _this.GetCellText(1,1,2);
+	       var mm1 = _this.GetCellText(1,1,4);
+	       var mm2 = _this.GetCellText(1,1,6);
+	       var dd1 = _this.GetCellText(1,1,10);
+	       var dd2 = _this.GetCellText(1,1,12);
+     	       if(dd1 == &amp;quot;&amp;quot;)dd1 = 1;
+     	       if(dd2 == &amp;quot;&amp;quot;)dd2 = 31;	     
+	       var sbh = G_ORGID;
+	       var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);	
+	       _this.LoadZXGFile(ZXGFILE0,-1,3);
+	       var xml = &amp;quot;&amp;quot;;
+	       try{ xml = _sql.query(&amp;quot;MAIN2&amp;quot;,&amp;quot;YY=&amp;quot;+yy+&amp;quot;&amp;MM1=&amp;quot;+mm1+&amp;quot;&amp;MM2=&amp;quot;+mm2+&amp;quot;&amp;DD1=&amp;quot;+dd1+&amp;quot;&amp;DD2=&amp;quot;+dd2+&amp;quot;&amp;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth);}catch(e){_this.SetCellText(0,2,1,e);}
+	       _this.SetXmlDS(3,3,1,6,11,xml);
+	       _this.SetColVisible(3,1,0);
+	       var sum_qcye =0;
+	       var sum_qmye =0;
+	       var ld_sum_jfje = 0; 
+	       var ld_sum_dfje = 0;
+	       var ls_qcyefx = &amp;quot;&amp;quot;; 
+	       var ls_qmyefx = &amp;quot;&amp;quot;;
+	       for(var i=3;i&amp;lt;_this.GetRowCount(3)-2;i++) {
+	           var qcyefx = _this.GetCellText(3,i,5);
+	           var qmyefx = _this.GetCellText(3,i,9);
+	           var qcye = _this.GetCellText(3,i,6)*1;
+	           var qmye = _this.GetCellText(3,i,10)*1;
+	           var jfje = _this.GetCellText(3,i,7)*1;
+	           var dfje = _this.GetCellText(3,i,8)*1;
+	           if(qcyefx == &amp;quot;借&amp;quot;){
+	               sum_qcye += qcye;
+	           }else if(qcyefx == &amp;quot;贷&amp;quot;) {
+	               sum_qcye = sum_qcye-qcye;
+	           }
+	           if(qmyefx == &amp;quot;借&amp;quot;){
+	               sum_qmye += qmye;
+	           }else if(qmyefx == &amp;quot;贷&amp;quot;) {
+	               sum_qmye = sum_qmye-qmye;
+	           }
+		    ld_sum_jfje = ld_sum_jfje + jfje;
+		    ld_sum_dfje = ld_sum_dfje + dfje;                      
+	       }
+	       if(round(sum_qcye,2) == 0) {
+	           	ls_qcyefx =&amp;quot;平&amp;quot;;
+	       }
+	       else if(sum_qcye &amp;lt; 0) {
+	               ls_qcyefx =&amp;quot;贷&amp;quot;;
+	       }
+	       else if(sum_qcye &amp;gt; 0) {
+	               ls_qcyefx =&amp;quot;借&amp;quot;;
+	       } 
+	       if(round(sum_qmye,2) == 0) {
+	           	ls_qmyefx =&amp;quot;平&amp;quot;;
+	       }
+	       else if(sum_qmye &amp;lt; 0) {
+	               ls_qmyefx =&amp;quot;贷&amp;quot;;
+	       }
+	       else if(sum_qmye &amp;gt; 0) {
+	               ls_qmyefx =&amp;quot;借&amp;quot;;
+	       }  
+	       sum_qcye = Math.abs(sum_qcye);
+	       sum_qmye = Math.abs(sum_qmye); 
+	       _this.SetCellText(3,_this.GetRowCount(3)-2,5,ls_qcyefx);
+	       _this.SetCellText(3,_this.GetRowCount(3)-2,6,sum_qcye);
+	       _this.SetCellText(3,_this.GetRowCount(3)-2,7,ld_sum_jfje); 
+	       _this.SetCellText(3,_this.GetRowCount(3)-2,8,ld_sum_dfje); 
+	       _this.SetCellText(3,_this.GetRowCount(3)-2,9,ls_qmyefx); 
+	       _this.SetCellText(3,_this.GetRowCount(3)-2,10,sum_qmye); 	    
+	       _this.Print(3,0);
+	}
+}
+
+
+//点击菜单项
+function _thisOnMenuItemSelect(sheet,row,col,menuitemid)
+{
+	if(sheet == 1) {
+		if(menuitemid == &amp;quot;dy1&amp;quot;) {
+			printYE(0);
+		}else if(menuitemid == &amp;quot;dy2&amp;quot;) {
+			printYE(1);
+		}
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select x.mjbz mjbz, x.jb jb, x.kmbh kmbh, substr(&amp;apos;                    &amp;apos;,1,(x.jb-1)*3)||x.kmmc kmmc,
+    x.qcyefx qcyefx, x.qcye qcye,x.jfje+nvl(y.jfje,0) jfje, x.dfje+nvl(y.dfje,0) dfje,    
+        decode(            sign(x.qcye*(decode(x.qcyefx,&amp;apos;借&amp;apos;,1,-1))+ x.jfje+nvl(y.jfje,0) - x.dfje - nvl(y.dfje,0)),0,&amp;apos;平&amp;apos;,
+        decode(x.yxyefx,&amp;apos;借&amp;apos;,&amp;apos;借&amp;apos;,&amp;apos;贷&amp;apos;,&amp;apos;贷&amp;apos;,
+           decode(sign(x.qcye*(decode(x.qcyefx,&amp;apos;借&amp;apos;,1,-1))+ x.jfje+nvl(y.jfje,0) - x.dfje - nvl(y.dfje,0)),1,&amp;apos;借&amp;apos;,&amp;apos;贷&amp;apos;))) qmyefx
+   ,decode(x.yxyefx,&amp;apos;借&amp;apos;,   x.qcye*(decode(x.qcyefx,&amp;apos;借&amp;apos;,1,-1))+ x.jfje+nvl(y.jfje,0) - x.dfje - nvl(y.dfje,0),
+              &amp;apos;贷&amp;apos;, -(x.qcye*(decode(x.qcyefx,&amp;apos;借&amp;apos;,1,-1))+ x.jfje+nvl(y.jfje,0) - x.dfje - nvl(y.dfje,0)),
+                abs(x.qcye*(decode(x.qcyefx,&amp;apos;借&amp;apos;,1,-1))+ x.jfje+nvl(y.jfje,0) - x.dfje - nvl(y.dfje,0))) qmye,x.kmlx
+
+from(select  a.mjbz mjbz,a.jb jb,a.kmbh kmbh, a.kmmc kmmc, a.kmlx,nvl(b.ye,0) qcye,nvl(b.yefx,&amp;apos;平&amp;apos;) qcyefx, sum(nvl(c.jfje,0)) jfje,sum(nvl(c.dfje,0)) dfje, a.yxyefx yxyefx
+     from  cw_kmb a,cw_qcyeb b, cw_qcyeb c
+     where a.org=&amp;apos;[%SYS_ORGID]&amp;apos; and a.acc=&amp;apos;[%SYS_ACCID]&amp;apos; and 
+         a.sbh=c.sbh(+) and a.zth=c.zth(+) and a.kmbh=c.kmbh(+) and c.yy(+)=[%YY] and c.mm(+)&amp;gt;=[%MM1] and c.mm(+)&amp;lt;=[%MM2] and                
+         a.sbh=b.sbh(+) and a.zth=b.zth(+) and a.kmbh=b.kmbh(+) and b.yy(+)=[%YY] and b.mm(+)=[%MM1]  and 
+         a.jb&amp;lt;=([%KMJB]+1) and ((&amp;apos;[%KMBH]&amp;apos; like a.kmbh||&amp;apos;%&amp;apos;) or (a.kmbh like &amp;apos;[%KMBH]&amp;apos;||&amp;apos;%&amp;apos;))
+     group by a.mjbz,a.jb,a.kmbh,a.kmmc,b.ye,b.yefx,a.yxyefx,a.kmlx ) x,
+   (select  a.kmbh kmbh,sum(decode(c.jefx,&amp;apos;借&amp;apos;,c.je,0)) jfje,sum(decode(c.jefx,&amp;apos;贷&amp;apos;,c.je,0)) dfje
+     from  cw_kmb a, cw_pzmxb c
+     where a.org=&amp;apos;[%SYS_ORGID]&amp;apos; and a.acc=&amp;apos;[%SYS_ACCID]&amp;apos; and a.sbh=c.sbh and a.zth=c.zth 
+         and (c.kmbh like a.kmbh||&amp;apos;%&amp;apos;)
+         and (c.yy*12+c.mm)&amp;gt;=([%YY]*12+[%MM1]) and c.yy=[%YY] and c.mm&amp;gt;=[%MM1] and c.mm&amp;lt;=[%MM2] and  (c.zt=&amp;apos;未核&amp;apos; or c.zt=&amp;apos;已核&amp;apos;)
+         and a.jb&amp;lt;=([%KMJB]+1) and ((&amp;apos;[%KMBH]&amp;apos; like a.kmbh||&amp;apos;%&amp;apos;) or (a.kmbh like &amp;apos;[%KMBH]&amp;apos;||&amp;apos;%&amp;apos;) )
+         and (31*(c.yy*12+c.mm)+c.dd)&amp;gt;=(31*([%YY]*12+[%MM1])+[%DD1]) and (31*(c.yy*12+c.mm)+c.dd)&amp;lt;=(31*([%YY]*12+[%MM2])+[%DD2])
+		 group by a.kmbh ) y
+where x.kmbh=y.kmbh(+) and(1=1[%filter])and(1=1[%filter2]) and(x.qcye&amp;lt;&amp;gt;0 or x.jfje&amp;lt;&amp;gt; 0 or nvl(y.jfje,0)&amp;lt;&amp;gt;0 or x.dfje&amp;lt;&amp;gt; 0 or nvl(y.dfje,0)&amp;lt;&amp;gt;0)  order by kmbh</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 >MAIN</C6><C7 >MAIN</C7><C8 >MAIN</C8><C9 >MAIN</C9><C10 >MAIN</C10><C11 >MAIN</C11><C12 >MAIN</C12><C13 >MAIN</C13><C14 >MAIN</C14><C15 >MAIN</C15><C16 >MAIN</C16><C17 >MAIN</C17></ROW>
+<ROW num="1" ><ID >MAIN2</ID><NAME >打印全部科目</NAME><DATDSC >select x.mjbz mjbz, x.jb jb, x.kmbh kmbh, substr(&amp;apos;                    &amp;apos;,1,(x.jb-1)*3)||x.kmmc kmmc,
+    x.qcyefx qcyefx, x.qcye qcye,x.jfje+nvl(y.jfje,0) jfje, x.dfje+nvl(y.dfje,0) dfje,    
+        decode(            sign(x.qcye*(decode(x.qcyefx,&amp;apos;借&amp;apos;,1,-1))+ x.jfje+nvl(y.jfje,0) - x.dfje - nvl(y.dfje,0)),0,&amp;apos;平&amp;apos;,
+        decode(x.yxyefx,&amp;apos;借&amp;apos;,&amp;apos;借&amp;apos;,&amp;apos;贷&amp;apos;,&amp;apos;贷&amp;apos;,
+           decode(sign(x.qcye*(decode(x.qcyefx,&amp;apos;借&amp;apos;,1,-1))+ x.jfje+nvl(y.jfje,0) - x.dfje - nvl(y.dfje,0)),1,&amp;apos;借&amp;apos;,&amp;apos;贷&amp;apos;))) qmyefx
+   ,decode(x.yxyefx,&amp;apos;借&amp;apos;,   x.qcye*(decode(x.qcyefx,&amp;apos;借&amp;apos;,1,-1))+ x.jfje+nvl(y.jfje,0) - x.dfje - nvl(y.dfje,0),
+              &amp;apos;贷&amp;apos;, -(x.qcye*(decode(x.qcyefx,&amp;apos;借&amp;apos;,1,-1))+ x.jfje+nvl(y.jfje,0) - x.dfje - nvl(y.dfje,0)),
+                abs(x.qcye*(decode(x.qcyefx,&amp;apos;借&amp;apos;,1,-1))+ x.jfje+nvl(y.jfje,0) - x.dfje - nvl(y.dfje,0))) qmye,x.kmlx
+
+from(select  a.mjbz mjbz,a.jb jb,a.kmbh kmbh, a.kmmc kmmc, a.kmlx,nvl(b.ye,0) qcye,nvl(b.yefx,&amp;apos;平&amp;apos;) qcyefx, sum(nvl(c.jfje,0)) jfje,sum(nvl(c.dfje,0)) dfje, a.yxyefx yxyefx
+     from  cw_kmb a,cw_qcyeb b, cw_qcyeb c
+     where a.org=&amp;apos;[%SYS_ORGID]&amp;apos; and a.acc=&amp;apos;[%SYS_ACCID]&amp;apos; and 
+         a.sbh=c.sbh(+) and a.zth=c.zth(+) and a.kmbh=c.kmbh(+) and c.yy(+)=[%YY] and c.mm(+)&amp;gt;=[%MM1] and c.mm(+)&amp;lt;=[%MM2] and                
+         a.sbh=b.sbh(+) and a.zth=b.zth(+) and a.kmbh=b.kmbh(+) and b.yy(+)=[%YY] and b.mm(+)=[%MM1]       group by a.mjbz,a.jb,a.kmbh,a.kmmc,b.ye,b.yefx,a.yxyefx,a.kmlx ) x,
+   (select  a.kmbh kmbh,sum(decode(c.jefx,&amp;apos;借&amp;apos;,c.je,0)) jfje,sum(decode(c.jefx,&amp;apos;贷&amp;apos;,c.je,0)) dfje
+     from  cw_kmb a, cw_pzmxb c
+     where a.org=&amp;apos;[%SYS_ORGID]&amp;apos; and a.acc=&amp;apos;[%SYS_ACCID]&amp;apos; and a.sbh=c.sbh and a.zth=c.zth 
+         and (c.kmbh like a.kmbh||&amp;apos;%&amp;apos;)
+         and (c.yy*12+c.mm)&amp;gt;=([%YY]*12+[%MM1]) and c.yy=[%YY] and c.mm&amp;gt;=[%MM1] and c.mm&amp;lt;=[%MM2] and  (c.zt=&amp;apos;未核&amp;apos; or c.zt=&amp;apos;已核&amp;apos;)
+         and (31*(c.yy*12+c.mm)+c.dd)&amp;gt;=(31*([%YY]*12+[%MM1])+[%DD1]) and (31*(c.yy*12+c.mm)+c.dd)&amp;lt;=(31*([%YY]*12+[%MM2])+[%DD2])
+		 group by a.kmbh ) y
+where x.kmbh=y.kmbh(+)  and(x.qcye&amp;lt;&amp;gt;0 or x.jfje&amp;lt;&amp;gt; 0 or nvl(y.jfje,0)&amp;lt;&amp;gt;0 or x.dfje&amp;lt;&amp;gt; 0 or nvl(y.dfje,0)&amp;lt;&amp;gt;0)  order by kmbh
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 >MAIN2</C14><C15 >MAIN2</C15><C16 ></C16><C17 ></C17></ROW>
+<ROW num="2" ><ID >KMINFO</ID><NAME ></NAME><DATDSC >select * from v_accitem where acc=&amp;apos;[%SYS_ACCID]&amp;apos; and id=&amp;apos;[%KMBH]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

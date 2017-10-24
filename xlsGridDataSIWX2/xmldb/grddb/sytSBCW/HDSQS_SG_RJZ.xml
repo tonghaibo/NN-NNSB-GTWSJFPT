@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >HDSQS_SG_RJZ</MWID><NAME >加载手工核对数据</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >HDSQS_SG_RJZ.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >//20170330 lwq  development model=&amp;gt;20170330 finish
+var sbh = &amp;quot;&amp;quot;;
+var zth = &amp;quot;&amp;quot;;
+var dwbh = &amp;quot;&amp;quot;;
+var dwmc = &amp;quot;&amp;quot;;
+var kssj = &amp;quot;&amp;quot;;
+var jzsj = &amp;quot;&amp;quot;;
+
+var ZXGFILE0 = &amp;quot;&amp;quot;;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	try {
+		objParam = window.dialogArguments;
+		if (objParam.sbh != null &amp;&amp; objParam.sbh != undefined) {
+			sbh = objParam.sbh;
+			zth = objParam.zth;
+			dwbh = objParam.dwbh;
+			dwmc = objParam.dwmc;
+			kssj = objParam.kssj;
+			jzsj = objParam.jzsj;
+		}
+	} catch (e) {}
+	document.title = &amp;quot;选择&amp;quot; + dwmc + &amp;quot;日记账&amp;quot;;
+	
+	_this.AddToolbarButton(&amp;quot;udf_OK&amp;quot;,&amp;quot;确定&amp;quot;,&amp;quot;确定&amp;quot;,&amp;quot;&amp;quot;,1,1,1,40);
+	
+	_this.SetColVisible(0,7,-1);
+	ZXGFILE0 = _this.SaveTempZXGFile(0); 
+	setBoolBox();
+	_this.AutoFixScreenWidth();
+	
+	loadData();
+}
+
+function setBoolBox(){
+	for(var i = 1;i&amp;lt;= _this.GetRowCount(0) - 1;i ++){
+		_this.SetToBoolBox(0,i,0);
+		_this.SetCellText(0,i,0,0);
+	}
+	_this.SetCellText(0,1,0,1);
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if(sheet == 0 &amp;&amp; col == 0){  //单选
+		for(var r = 2;r&amp;lt;= _this.GetRowCount(0) - 1;r++){
+			if(row != r){
+				_this.SetCellText(0,r,0,0);
+			}
+			_this.SetCellText(0,row,0,newvalue);
+		}
+	}
+}
+
+//加载主数据
+function loadData(){
+	_this.SetToolbarString(&amp;quot;正在加载数据...&amp;quot;);
+	
+	//清除前面的数据
+	_this.LoadZXGFile(ZXGFILE0,-1,0);
+	setBoolBox();
+	_this.SetFixedRow(0,2);		
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHOW_ZERO,1); //设置0也显示
+	_this.SetMainCellRange(0,2,1,_this.GetRowCount(0)-1,_this.GetColCount(0)-1);
+	
+	var xml = _sql.query(&amp;quot;loaddata&amp;quot;,&amp;quot;KSSJ=&amp;quot;+kssj+&amp;quot;&amp;DWBH=&amp;quot;+dwbh+&amp;quot;&amp;JZSJ=&amp;quot;+jzsj+&amp;quot;&amp;SBH=&amp;quot;+sbh+&amp;quot;&amp;ZTH=&amp;quot;+zth);
+	_this.SetXmlDS(0,2,1,_this.GetRowCount(0)-1,_this.GetColCount(0)-1,xml);
+	
+	_this.SetToolbarString(&amp;quot;&amp;quot;);
+	_this.AutoFixScreenWidth();
+	_this.AutoFixColWidth(0,600); 
+}
+
+//确定
+function OK(){
+	var flag = &amp;quot;&amp;quot;;
+	var dzrq = &amp;quot;&amp;quot;;
+	var jgyl_bxf = &amp;quot;&amp;quot;;
+	var zynj_bxf = &amp;quot;&amp;quot;;
+	var hj_bxf = &amp;quot;&amp;quot;;
+	var siseqno = &amp;quot;&amp;quot;;
+	var lsh = &amp;quot;&amp;quot;;	
+	for(var r = 2;r&amp;lt;=_this.GetRowCount(0)-1;r++){
+		flag = _this.GetCellText(0,r,0);
+		if (flag == &amp;quot;1&amp;quot;) {	
+			dzrq = _this.GetCellText(0,r,1);
+			jgyl_bxf =  _this.GetCellText(0,r,4);
+			zynj_bxf = _this.GetCellText(0,r,5) ;
+			hj_bxf = _this.GetCellText(0,r,6) ;
+			siseqno = _this.GetCellText(0,r,7);
+			lsh = _this.GetCellText(0,r,8);		
+		}
+	}
+	
+	if(flag == &amp;quot;&amp;quot;){
+		if (!confirm(&amp;quot;您未中一行记录\n是否关闭?&amp;quot;)) return;
+		window.close();
+	}else{
+		window.returnValue = &amp;quot;1@&amp;quot;+dzrq+&amp;quot;@&amp;quot;+jgyl_bxf+&amp;quot;@&amp;quot;+zynj_bxf+&amp;quot;@&amp;quot;+hj_bxf+&amp;quot;@&amp;quot;+siseqno+&amp;quot;@&amp;quot;+lsh;
+		window.close();
+	}
+}</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >loaddata</ID><NAME >加载日记账数据</NAME><DATDSC >SELECT DZRQ,zy,kmbh,JGYL_BXF,ZYNJ_BXF,HJ_BXF,SISEQNO,RJZ_LSH LSH
+FROM (SELECT A.SBH,A.ZTH,C.TCQBM,YY || TRIM(TO_CHAR(MM, &amp;apos;00&amp;apos;)) || TRIM(TO_CHAR(DD, &amp;apos;00&amp;apos;)) DZRQ,a.ZY,a.KMBH,NVL(B.YWDWBH, B.DWBH) DWBH,B.DWMC,A.RJZ_LSH,A.SISEQNO,C.SMC,
+             SUM(DECODE(RJLXMX_XZLX,&amp;apos;12&amp;apos;,DECODE(RJZMX_JEFX, &amp;apos;借&amp;apos;, RJZMX_JE, -RJZMX_JE),0)) JGYL_BXF,
+             SUM(DECODE(RJLXMX_XZLX,&amp;apos;13&amp;apos;,DECODE(RJZMX_JEFX, &amp;apos;借&amp;apos;, RJZMX_JE, -RJZMX_JE),0)) ZYNJ_BXF,
+             SUM(DECODE(RJZMX_JEFX, &amp;apos;借&amp;apos;, RJZMX_JE, -RJZMX_JE)) HJ_BXF
+        FROM CW_RJZ_ALL A, SI_DWB B, CW_SBSB C
+       WHERE A.SBH = &amp;apos;[%SBH]&amp;apos;
+         AND A.ZTH = &amp;apos;[%ZTH]&amp;apos;
+         AND A.SBH(+) = B.SBH
+         AND A.ZTH(+) = B.ZTH
+         AND A.RJZ_DWBH(+) = B.DWBH
+         AND B.SBH = C.SBH
+         AND A.KMBH LIKE &amp;apos;102%&amp;apos;
+         and nvl(b.qsbz,0) = 0
+         AND NOT EXISTS(SELECT 1 FROM CW_JGYLSJHDB d WHERE a.sbh = d.sbh AND a.zth = d.zth AND a.RJZ_LSH = d.rjzlsh and d.sbh = &amp;apos;[%SBH]&amp;apos; and d.zth = &amp;apos;[%ZTH]&amp;apos; and nvl(bz,0) = 0 )
+         AND NOT EXISTS(SELECT 1 FROM V_SI_DJB_TMP E WHERE A.SBH = E.SBH AND A.ZTH = E.ZTH AND A.DJH = E.DJH AND YWLX IN (&amp;apos;A110&amp;apos;, &amp;apos;A120&amp;apos;) 
+         			AND E.RZBZ = 1 AND E.ZFBZ = 0 AND E.SBH = &amp;apos;[%SBH]&amp;apos; AND E.ZTH = &amp;apos;[%ZTH]&amp;apos;)
+       GROUP BY YY || TRIM(TO_CHAR(MM, &amp;apos;00&amp;apos;)) || TRIM(TO_CHAR(DD, &amp;apos;00&amp;apos;)),NVL(B.YWDWBH, B.DWBH),B.DWMC,A.RJZ_LSH,A.SISEQNO,A.SBH,A.ZTH,C.TCQBM,C.SMC,a.KMBH,a.ZY
+       ORDER BY NVL(B.YWDWBH, B.DWBH), DZRQ) C,ab01 d
+WHERE SBH = &amp;apos;[%SBH]&amp;apos;
+ AND ZTH = &amp;apos;[%ZTH]&amp;apos;
+ AND DZRQ &amp;gt;= &amp;apos;[%KSSJ]&amp;apos;
+ AND DZRQ &amp;lt;= &amp;apos;[%JZSJ]&amp;apos;
+ AND DWBH NOT LIKE &amp;apos;J%&amp;apos;     
+ AND d.aae111 IS NOT NULL
+ AND c.dwbh = d.aab001
+ AND c.tcqbm = d.aab301
+ and dwbh = &amp;apos;[%DWBH]&amp;apos;
+ORDER BY DWBH, DZRQ</DATDSC></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

@@ -1,0 +1,708 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >Q</MWTYP><MWID >RepModule</MWID><NAME >财务报表模板</NAME><NOTE ></NOTE><FILE >RepModule.zxg</FILE><FIXED >1,1</FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><JAVACLS ></JAVACLS><syt >SBCW</syt><NOACCNAME >1</NOACCNAME></ROW>
+</ROWSET>
+</grdds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >REPTYP</ID><NAME >报表类型</NAME><NOTNULL >0</NOTNULL><KEYVAL >V_FINREPSUBCLASS</KEYVAL><INPCTL >list</INPCTL><DISPORD >23</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 >REPTYP</C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 >REPTYP</C18><C19 >REPTYP</C19><C20 ></C20><C21 >REPTYP</C21><C22 >REPTYP</C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 >REPTYP</C26><C27 >REPTYP</C27><C28 ></C28><C29 ></C29><C30 >REPTYP</C30><C31 ></C31><C32 >REPTYP</C32><C33 >REPTYP</C33><C34 ></C34><C35 ></C35><C36 >REPTYP</C36><C37 >REPTYP</C37><C38 ></C38><C39 ></C39><C40 >REPTYP</C40><C41 ></C41><C42 ></C42><C43 >REPTYP</C43><C44 ></C44></ROW>
+<ROW num="1" ><ID >YYMM</ID><NAME >报表年月</NAME><NOTNULL >1</NOTNULL><KEYVAL >V_YYYY_MM</KEYVAL><INPCTL >list</INPCTL><DISPORD >1</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP >格式：YYYY-MM</TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG >0</KEYFLG><C13 >YYMM</C13><C14 >YYMM</C14><C15 >YYMM</C15><C16 >YYMM</C16><C17 >YYMM</C17><C18 >YYMM</C18><C19 ></C19><C20 >YYMM</C20><C21 >YYMM</C21><C22 >YYMM</C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 >YYMM</C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 ></C35><C36 ></C36><C37 ></C37><C38 >YYMM</C38><C39 ></C39><C40 >YYMM</C40><C41 ></C41><C42 ></C42><C43 >YYMM</C43><C44 ></C44></ROW>
+<ROW num="2" ><ID >ORGID</ID><NAME >公司</NAME><NOTNULL ></NOTNULL><KEYVAL >V_ORG</KEYVAL><INPCTL >list</INPCTL><DISPORD >2</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 >ORGID</C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 >ORGID</C25><C26 >ORGID</C26><C27 >ORGID</C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 ></C35><C36 ></C36><C37 ></C37><C38 ></C38><C39 ></C39><C40 >ORGID</C40><C41 >ORGID</C41><C42 >ORGID</C42><C43 >ORGID</C43><C44 >ORGID</C44></ROW>
+<ROW num="3" ><ID >FINREP</ID><NAME >报表</NAME><NOTNULL ></NOTNULL><KEYVAL >V_FINREP</KEYVAL><INPCTL >idlist</INPCTL><DISPORD >24</DISPORD><SQLWHE >typ like &amp;apos;[%TYP]%&amp;apos; and subtyp like  &amp;apos;[%REPTYP]%&amp;apos;</SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 >QTYP</C21><C22 >FINREP</C22><C23 >FINREP</C23><C24 >FINREP</C24><C25 ></C25><C26 >FINREP</C26><C27 >FINREP</C27><C28 ></C28><C29 >FINREP</C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 ></C35><C36 ></C36><C37 >FINREP</C37><C38 ></C38><C39 ></C39><C40 >FINREP</C40><C41 ></C41><C42 ></C42><C43 >FINREP</C43><C44 >FINREP</C44></ROW>
+<ROW num="4" ><ID >STAT</ID><NAME >报表状态</NAME><NOTNULL ></NOTNULL><KEYVAL >V_STAT</KEYVAL><INPCTL >list</INPCTL><DISPORD >21</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 >STAT</C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 >STAT</C26><C27 >STAT</C27><C28 >STAT</C28><C29 ></C29><C30 ></C30><C31 >STAT</C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 ></C35><C36 ></C36><C37 ></C37><C38 ></C38><C39 ></C39><C40 >STAT</C40><C41 ></C41><C42 ></C42><C43 >STAT</C43><C44 ></C44></ROW>
+<ROW num="5" ><ID >TYP</ID><NAME >套表类型</NAME><NOTNULL ></NOTNULL><KEYVAL >V_FINREPCLASS</KEYVAL><INPCTL ></INPCTL><DISPORD >22</DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 >TYP</C32><C33 ></C33><C34 >TYP</C34><C35 >TYP</C35><C36 ></C36><C37 ></C37><C38 ></C38><C39 >TYP</C39><C40 >TYP</C40><C41 ></C41><C42 ></C42><C43 >TYP</C43><C44 ></C44></ROW>
+</ROWSET>
+</grdpamds><grdshwds>
+<ROWSET>
+<ROW num="0" ><ID >0,1,1</ID><NAME ></NAME><DSKEY >DSC:DETAIL</DSKEY><NROW >3</NROW><NCOL >12</NCOL><ISMAIN >1</ISMAIN><ISCROSS ></ISCROSS><HCOLS ></HCOLS><VCOLS ></VCOLS><VALUECOL ></VALUECOL><C11 >0,1,1</C11><C12 ></C12></ROW>
+</ROWSET>
+</grdshwds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+var orgid_col = 1;
+var grdid_col = 2;
+var yymm_col = 4;
+var acc_col = 11;
+var guid_col = 12;
+var stat_col = 5;
+
+var openfirst = true;
+var clickfirst = true;
+
+//================================================================// 
+// 函数：_thisOnpost_loaddata
+// 说明：
+// 参数：
+// 返回：
+// 样例：
+// 作者：
+// 创建日期：02/13/06 16:05:32
+// 修改日志：
+//================================================================// 
+function _thisOnpost_loaddata(sheet)
+{
+//	document.title = &amp;quot;选择报表模板&amp;quot;;
+//	if (document.all.YYMM.value == &amp;quot;&amp;quot;) {
+//		document.all.YYMM.value = G_LOGDAT.substring(0,7);
+//	}
+	//document.getElementById(&amp;quot;searchbut&amp;quot;).click();
+	
+	try {
+		if (document.all.TYP.value == &amp;quot;&amp;quot;) {
+			document.all.TYP.value = TYP;
+		}
+		if (typeof REPTYP != &amp;quot;undefined&amp;quot; &amp;&amp; document.all.REPTYP.value == &amp;quot;&amp;quot;) {
+			document.all.REPTYP.value = REPTYP;
+		}
+	} catch ( e ) { }
+	
+	try {
+		if (openfirst &amp;&amp; BJ == &amp;quot;Pl&amp;quot;) {
+			_this.AddToolbarButton(&amp;quot;PlPHcheck&amp;quot;,&amp;quot;批量检查&amp;quot;,&amp;quot;批量检查&amp;quot;,&amp;quot;&amp;quot;,0,0,1,80);
+			_this.AddToolbarButton(&amp;quot;Plcheck&amp;quot;,&amp;quot;批量审核&amp;quot;,&amp;quot;批量审核&amp;quot;,&amp;quot;&amp;quot;,0,3,1,80);
+			_this.AddToolbarButton(&amp;quot;Pluncheck&amp;quot;,&amp;quot;批量取消审核&amp;quot;,&amp;quot;批量取消审核&amp;quot;,&amp;quot;&amp;quot;,0,0,1,105);
+			if (G_ORGID == &amp;quot;01&amp;quot;)
+				_this.AddToolbarButton(&amp;quot;Plzbcheck&amp;quot;,&amp;quot;批量总部审核&amp;quot;,&amp;quot;批量总部审核&amp;quot;,&amp;quot;&amp;quot;,0,3,1,105);
+			_this.LoadScene(0,5);
+			openfirst = false;
+		}
+	} catch ( e ) { _this.LoadScene(0,4); }
+	
+	_this.SetColVisible(0,acc_col,0);
+	_this.SetColVisible(0,guid_col,0);
+	
+ 	initSheet();
+ 	//$(&amp;quot;select[name=ORGID]&amp;quot;).trigger(&amp;apos;change&amp;apos;);	//触发组织改变事件
+}
+
+function initSheet()
+{
+	for ( var i = 1; i &amp;lt; _this.GetRowCount(0); i ++ ) {
+		var repstat = _this.GetCellText(0,i,5);
+		if (repstat == &amp;quot;未制作&amp;quot; || repstat == &amp;quot;退回&amp;quot;) {
+			_this.SetCellColor(0,i,5,255,0,0);
+		} else if (repstat == &amp;quot;制单&amp;quot;) {
+			_this.SetCellColor(0,i,5,180,50,120);
+		} else if (repstat == &amp;quot;已核&amp;quot;) {
+			_this.SetCellColor(0,i,5,0,0,255);
+		} else if (repstat == &amp;quot;总部已核&amp;quot;) {
+			_this.SetCellColor(0,i,5,0,255,0);
+		} else if (repstat == &amp;quot;已上报&amp;quot;) {
+			_this.SetCellColor(0,i,5,162,21,198);
+		} else if (repstat == &amp;quot;已汇总&amp;quot;) {
+			_this.SetCellColor(0,i,5,114,99,110);
+		}
+	}
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	var msg = &amp;quot;是否确认&amp;quot;;
+	var bj1 = 0;
+	var bj2 = 0;
+	var pa1 = &amp;quot;&amp;quot;;
+	var par = &amp;quot;&amp;quot;;
+	var tm1 = &amp;quot;&amp;quot;;
+	var tm2 = &amp;quot;&amp;quot;;
+	var inf = &amp;quot;&amp;quot;;
+	
+	if ( id == &amp;quot;Plcheck&amp;quot; ) {
+		msg += &amp;quot;批量审核？&amp;quot;;
+		for (var r = 1; r &amp;lt; _this.GetRowCount(sheet); r ++) {
+			if (_this.GetRowSelected(sheet,r) == 1 ) {
+				if (_this.GetCellText(sheet,r,stat_col) != &amp;quot;制单&amp;quot; &amp;&amp; _this.GetCellText(sheet,r,stat_col) != &amp;quot;退回&amp;quot;) {
+					_this.SetRowSelected(sheet,r,-1);
+					bj1 = 1;
+				} else {
+					if (pa1 != &amp;quot;&amp;quot;) pa1 += &amp;quot;;&amp;quot;;
+					var _orgid = _this.GetCellText(sheet,r,orgid_col).split(&amp;apos;.&amp;apos;)[0];
+					var _accid = _this.GetCellText(sheet,r,acc_col);
+					var _repid = _this.GetCellText(sheet,r,grdid_col);
+					var _yymm = _this.GetCellText(sheet,r,yymm_col);
+					var _orgnam = _this.GetCellText(sheet,r,orgid_col).split(&amp;apos;.&amp;apos;)[1];
+					pa1 += _orgid+&amp;quot;,&amp;quot;+_accid+&amp;quot;,&amp;quot;+_repid+&amp;quot;,&amp;quot;+_yymm+&amp;quot;,&amp;quot;+_orgnam;
+					bj2 = 2;
+				}
+			}
+		}
+		_this.SetRedraw(1);
+		
+		if (bj1 == 1 &amp;&amp; bj2 == 0) {
+			msg += &amp;quot;\n\n提示：\n\t所选报表全部不符合要求，已取消批量审核！&amp;quot;;
+			alert(msg);
+		} else {
+			if (bj1 == 1 &amp;&amp; bj2 == 2) msg += &amp;quot;\n\n提示：\n\t所选报表存在部分不符合要求，已取消选中！&amp;quot;;
+			if (confirm(msg)) {
+				window.status = &amp;quot;正在进行批量审核,请稍候……&amp;quot;;
+				inf = &amp;quot;批量审核检查结果：&amp;quot;;
+				
+				for (var i = 0; i &amp;lt; pa1.split(&amp;quot;;&amp;quot;).length; i ++) {	//拆分请求，解决请求超时问题
+					var str = pa1.split(&amp;quot;;&amp;quot;)[i];
+					var orgid = str.split(&amp;quot;,&amp;quot;)[0];
+					var orgnam = str.split(&amp;quot;,&amp;quot;)[4];
+					
+					if (tm1 == &amp;quot;&amp;quot;) {
+						tm1 = orgid;
+						tm2 = orgnam;
+					}
+					
+					if (orgid != tm1) {
+						window.status = &amp;quot;正在批量审核 【&amp;quot;+ tm2 +&amp;quot;】 报表……&amp;quot;;
+						var ret = invokeOSFunc(&amp;quot;DFFIN.RepModule.f_Check&amp;quot;, &amp;quot;par=&amp;quot;+ par);
+						inf += &amp;quot;\n\t【&amp;quot;+ tm2 +&amp;quot;】 &amp;quot;+ ret.split(&amp;quot;-&amp;quot;)[1];
+						tm1 = orgid;
+						tm2 = orgnam;
+						par = orgid+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[1]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[2]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[3];
+					} else {
+						if (par == &amp;quot;&amp;quot;)
+							par = orgid+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[1]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[2]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[3];
+						else
+							par += &amp;quot;;&amp;quot;+orgid+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[1]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[2]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[3];
+					}
+					if (i == 1*pa1.split(&amp;quot;;&amp;quot;).length-1) {
+						tm2 = orgnam;
+						window.status = &amp;quot;正在批量审核 【&amp;quot;+ tm2 +&amp;quot;】 报表……&amp;quot;;
+						var ret = invokeOSFunc(&amp;quot;DFFIN.RepModule.f_Check&amp;quot;, &amp;quot;par=&amp;quot;+ par);
+						inf += &amp;quot;\n\t【&amp;quot;+ tm2 +&amp;quot;】 &amp;quot;+ ret.split(&amp;quot;-&amp;quot;)[1];
+					}
+				}
+				
+				if (_this.GetSheetCount() == 1) {
+					_this.AddSheet(&amp;quot;批量审核检查结果&amp;quot;);
+					_this.SplitSheet(0,&amp;quot;V&amp;quot;,&amp;quot;50%&amp;quot;);
+					_this.SetCellBkColor(1,-1,-1,255,255,255);
+					_this.SetToCodeEditor(&amp;quot;&amp;quot;,1,-1,-1,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+					_this.SetCellText(1,-1,-1,inf);
+					_this.SetCellLock(1,-1,-1,1);
+					_this.SetRedraw(1);
+					_this.ShowTabBar(1);
+				} else {
+					_this.SetSheetName(1,&amp;quot;批量审核检查结果&amp;quot;);
+					_this.SetCellText(1,-1,-1,inf);
+				}
+				window.status = &amp;quot;批量审核完成！&amp;quot;;
+			}
+		}
+	}
+	if ( id == &amp;quot;Pluncheck&amp;quot; ) {
+		msg += &amp;quot;批量取消审核？&amp;quot;;
+		for (var r = 1; r &amp;lt; _this.GetRowCount(sheet); r ++) {
+			if (_this.GetRowSelected(sheet,r) == 1 ) {
+				if (_this.GetCellText(sheet,r,stat_col) != &amp;quot;已核&amp;quot;) {
+					_this.SetRowSelected(sheet,r,-1);
+					bj1 = 3;
+				} else {
+					if (pa1 != &amp;quot;&amp;quot;) pa1 += &amp;quot;;&amp;quot;;
+					var _orgid = _this.GetCellText(sheet,r,orgid_col).split(&amp;apos;.&amp;apos;)[0];
+					var _accid = _this.GetCellText(sheet,r,acc_col);
+					var _repid = _this.GetCellText(sheet,r,grdid_col);
+					var _yymm = _this.GetCellText(sheet,r,yymm_col);
+					var _orgnam = _this.GetCellText(sheet,r,orgid_col).split(&amp;apos;.&amp;apos;)[1];
+					pa1 += _orgid+&amp;quot;,&amp;quot;+_accid+&amp;quot;,&amp;quot;+_repid+&amp;quot;,&amp;quot;+_yymm+&amp;quot;,&amp;quot;+_orgnam;
+					bj2 = 4;
+				}
+			}
+		}
+		_this.SetRedraw(1);
+		
+		if (bj1 == 3 &amp;&amp; bj2 == 0) {
+			msg += &amp;quot;\n\n提示：\n\t所选报表全部不符合要求，已取消批量取消审核！&amp;quot;;
+			alert(msg);
+		} else {
+			if (bj1 == 3 &amp;&amp; bj2 == 4) msg += &amp;quot;\n\n提示：\n\t所选报表存在部分不符合要求，已取消选中！&amp;quot;;
+			if (confirm(msg)) {
+				window.status = &amp;quot;正在进行批量取消审核,请稍候……&amp;quot;;
+				
+				for (var i = 0; i &amp;lt; pa1.split(&amp;quot;;&amp;quot;).length; i ++) {	//拆分请求，解决请求超时问题
+					var str = pa1.split(&amp;quot;;&amp;quot;)[i];
+					var orgid = str.split(&amp;quot;,&amp;quot;)[0];
+					var orgnam = str.split(&amp;quot;,&amp;quot;)[4];
+					
+					if (tm1 == &amp;quot;&amp;quot;) {
+						tm1 = orgid;
+						tm2 = orgnam;
+					}
+					
+					if (orgid != tm1) {
+						window.status = &amp;quot;正在批量取消审核 【&amp;quot;+ tm2 +&amp;quot;】 报表……&amp;quot;;
+						var ret = invokeOSFunc(&amp;quot;DFFIN.RepModule.unCheck&amp;quot;, &amp;quot;par=&amp;quot;+ par);
+						if (ret != &amp;quot;1&amp;quot;) {
+							alert(&amp;quot;批量取消审核 &amp;quot;+ tm2 +&amp;quot; 报表失败！\n&amp;quot;+ ret);
+							return;
+						}
+						tm1 = orgid;
+						tm2 = orgnam;
+						par = orgid+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[1]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[2]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[3];
+					} else {
+						if (par == &amp;quot;&amp;quot;)
+							par = orgid+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[1]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[2]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[3];
+						else
+							par += &amp;quot;;&amp;quot;+orgid+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[1]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[2]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[3];
+					}
+					if (i == 1*pa1.split(&amp;quot;;&amp;quot;).length-1) {
+						tm2 = orgnam;
+						window.status = &amp;quot;正在批量取消审核 【&amp;quot;+ tm2 +&amp;quot;】 报表……&amp;quot;;
+						var ret = invokeOSFunc(&amp;quot;DFFIN.RepModule.unCheck&amp;quot;, &amp;quot;par=&amp;quot;+ par);
+						if (ret != &amp;quot;1&amp;quot;) {
+							alert(&amp;quot;批量取消审核 &amp;quot;+ tm2 +&amp;quot; 报表失败！\n&amp;quot;+ ret);
+							return;
+						}
+					}
+				}
+				
+				alert(&amp;quot;批量取消审核成功！&amp;quot;);
+				window.status = &amp;quot;批量取消审核完成！&amp;quot;;
+			}
+		}
+	}
+	if ( id == &amp;quot;PlPHcheck&amp;quot; ) {
+		msg += &amp;quot;批量检查？&amp;quot;;
+		for (var r = 1; r &amp;lt; _this.GetRowCount(sheet); r ++) {
+			if (_this.GetRowSelected(sheet,r) == 1 ) {
+				if (_this.GetCellText(sheet,r,stat_col) == &amp;quot;未制作&amp;quot;
+				|| _this.GetCellText(sheet,r,stat_col) == &amp;quot;退回&amp;quot;
+				|| _this.GetCellText(sheet,r,stat_col) == &amp;quot;制单&amp;quot;) {
+					_this.SetRowSelected(sheet,r,-1);
+					bj1 = 5;
+				} else {
+					if (pa1 != &amp;quot;&amp;quot;) pa1 += &amp;quot;;&amp;quot;;
+					var _orgid = _this.GetCellText(sheet,r,orgid_col).split(&amp;apos;.&amp;apos;)[0];
+					var _accid = _this.GetCellText(sheet,r,acc_col);
+					var _repid = _this.GetCellText(sheet,r,grdid_col);
+					var _yymm = _this.GetCellText(sheet,r,yymm_col);
+					var _orgnam = _this.GetCellText(sheet,r,orgid_col).split(&amp;apos;.&amp;apos;)[1];
+					pa1 += _orgid+&amp;quot;,&amp;quot;+_accid+&amp;quot;,&amp;quot;+_repid+&amp;quot;,&amp;quot;+_yymm+&amp;quot;,&amp;quot;+_orgnam;
+					bj2 = 6;
+				}
+			}
+		}
+		_this.SetRedraw(1);
+		
+		if (bj1 == 5 &amp;&amp; bj2 == 0) {
+			msg += &amp;quot;\n\n提示：\n\t所选报表全部不符合要求，已取消批量检查！&amp;quot;;
+			alert(msg);
+		} else {
+			if (bj1 == 5 &amp;&amp; bj2 == 6) msg += &amp;quot;\n\n提示：\n\t所选报表存在部分不符合要求，已取消选中！&amp;quot;;
+			if (confirm(msg)) {
+				window.status = &amp;quot;正在进行批量检查,请稍候……&amp;quot;;
+				inf = &amp;quot;批量检查结果：&amp;quot;;
+				
+				for (var i = 0; i &amp;lt; pa1.split(&amp;quot;;&amp;quot;).length; i ++) {	//拆分请求，解决请求超时问题
+					var str = pa1.split(&amp;quot;;&amp;quot;)[i];
+					var orgid = str.split(&amp;quot;,&amp;quot;)[0];
+					var orgnam = str.split(&amp;quot;,&amp;quot;)[4];
+					
+					if (tm1 == &amp;quot;&amp;quot;) {
+						tm1 = orgid;
+						tm2 = orgnam;
+					}
+					
+					if (orgid != tm1) {
+						window.status = &amp;quot;正在批量检查 【&amp;quot;+ tm2 +&amp;quot;】 报表……&amp;quot;;
+						var ret = invokeOSFunc(&amp;quot;DFFIN.RepModule.PHCheck&amp;quot;, &amp;quot;par=&amp;quot;+ par);
+						inf += &amp;quot;\n\t【&amp;quot;+ tm2 +&amp;quot;】 &amp;quot;+ ret.split(&amp;quot;-&amp;quot;)[1];
+						tm1 = orgid;
+						tm2 = orgnam;
+						par = orgid+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[1]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[2]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[3];
+					} else {
+						if (par == &amp;quot;&amp;quot;)
+							par = orgid+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[1]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[2]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[3];
+						else
+							par += &amp;quot;;&amp;quot;+orgid+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[1]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[2]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[3];
+					}
+					if (i == 1*pa1.split(&amp;quot;;&amp;quot;).length-1) {
+						tm2 = orgnam;
+						window.status = &amp;quot;正在批量检查 【&amp;quot;+ tm2 +&amp;quot;】 报表……&amp;quot;;
+						var ret = invokeOSFunc(&amp;quot;DFFIN.RepModule.PHCheck&amp;quot;, &amp;quot;par=&amp;quot;+ par);
+						inf += &amp;quot;\n\t【&amp;quot;+ tm2 +&amp;quot;】 &amp;quot;+ ret.split(&amp;quot;-&amp;quot;)[1];
+					}
+				}
+				
+				if (_this.GetSheetCount() == 1) {
+					_this.AddSheet(&amp;quot;批量检查结果&amp;quot;);
+					_this.SplitSheet(0,&amp;quot;V&amp;quot;,&amp;quot;50%&amp;quot;);
+					_this.SetCellBkColor(1,-1,-1,255,255,255);
+					_this.SetToCodeEditor(&amp;quot;&amp;quot;,1,-1,-1,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+					_this.SetCellText(1,-1,-1,inf);
+					_this.SetCellLock(1,-1,-1,1);
+					_this.SetRedraw(1);
+					_this.ShowTabBar(1);
+				} else {
+					_this.SetSheetName(1,&amp;quot;批量检查结果&amp;quot;);
+					_this.SetCellText(1,-1,-1,inf);
+				}
+				window.status = &amp;quot;批量检查完成！&amp;quot;;
+			}
+		}
+	}
+	if ( id == &amp;quot;Plzbcheck&amp;quot; ) {
+		msg += &amp;quot;批量总部审核？&amp;quot;;
+		for (var r = 1; r &amp;lt; _this.GetRowCount(sheet); r ++) {
+			if (_this.GetRowSelected(sheet,r) == 1 ) {
+				if (_this.GetCellText(sheet,r,stat_col) != &amp;quot;已上报&amp;quot;) {
+					_this.SetRowSelected(sheet,r,-1);
+					bj1 = 7;
+				} else {
+					if (pa1 != &amp;quot;&amp;quot;) pa1 += &amp;quot;;&amp;quot;;
+					var _orgid = _this.GetCellText(sheet,r,orgid_col).split(&amp;apos;.&amp;apos;)[0];
+					var _accid = _this.GetCellText(sheet,r,acc_col);
+					var _repid = _this.GetCellText(sheet,r,grdid_col);
+					var _yymm = _this.GetCellText(sheet,r,yymm_col);
+					var _orgnam = _this.GetCellText(sheet,r,orgid_col).split(&amp;apos;.&amp;apos;)[1];
+					pa1 += _orgid+&amp;quot;,&amp;quot;+_accid+&amp;quot;,&amp;quot;+_repid+&amp;quot;,&amp;quot;+_yymm+&amp;quot;,&amp;quot;+_orgnam;
+					bj2 = 8;
+				}
+			}
+		}
+		_this.SetRedraw(1);
+		
+		if (bj1 == 7 &amp;&amp; bj2 == 0) {
+			msg += &amp;quot;\n\n提示：\n\t所选报表全部不符合要求，已取消批量总部审核！&amp;quot;;
+			alert(msg);
+		} else {
+			if (bj1 == 7 &amp; bj2 == 8) msg += &amp;quot;\n\n提示：\n\t所选报表存在部分不符合要求，已取消选中！&amp;quot;;
+			if (confirm(msg)) {
+				window.status = &amp;quot;正在进行批量总部审核,请稍候……&amp;quot;;
+				inf = &amp;quot;批量总部审核检查结果：&amp;quot;;
+				
+				for (var i = 0; i &amp;lt; pa1.split(&amp;quot;;&amp;quot;).length; i ++) {	//拆分请求，解决请求超时问题
+					var str = pa1.split(&amp;quot;;&amp;quot;)[i];
+					var orgid = str.split(&amp;quot;,&amp;quot;)[0];
+					var orgnam = str.split(&amp;quot;,&amp;quot;)[4];
+					
+					if (tm1 == &amp;quot;&amp;quot;) {
+						tm1 = orgid;
+						tm2 = orgnam;
+					}
+					
+					if (orgid != tm1) {
+						window.status = &amp;quot;正在批量总部审核 【&amp;quot;+ tm2 +&amp;quot;】 报表……&amp;quot;;
+						var ret = invokeOSFunc(&amp;quot;DFFIN.RepModule.zbCheck&amp;quot;, &amp;quot;par=&amp;quot;+ par);
+						inf += &amp;quot;\n\t【&amp;quot;+ tm2 +&amp;quot;】 &amp;quot;+ ret.split(&amp;quot;-&amp;quot;)[1];
+						tm1 = orgid;
+						tm2 = orgnam;
+						par = orgid+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[1]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[2]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[3];
+					} else {
+						if (par == &amp;quot;&amp;quot;)
+							par = orgid+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[1]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[2]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[3];
+						else
+							par += &amp;quot;;&amp;quot;+orgid+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[1]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[2]+&amp;quot;,&amp;quot;+str.split(&amp;quot;,&amp;quot;)[3];
+					}
+					if (i == 1*pa1.split(&amp;quot;;&amp;quot;).length-1) {
+						tm2 = orgnam;
+						window.status = &amp;quot;正在批量总部审核 【&amp;quot;+ tm2 +&amp;quot;】 报表……&amp;quot;;
+						var ret = invokeOSFunc(&amp;quot;DFFIN.RepModule.zbCheck&amp;quot;, &amp;quot;par=&amp;quot;+ par);
+						inf += &amp;quot;\n\t【&amp;quot;+ tm2 +&amp;quot;】 &amp;quot;+ ret.split(&amp;quot;-&amp;quot;)[1];
+					}
+				}
+				
+				if (_this.GetSheetCount() == 1) {
+					_this.AddSheet(&amp;quot;批量总部审核检查结果&amp;quot;);
+					_this.SplitSheet(0,&amp;quot;V&amp;quot;,&amp;quot;50%&amp;quot;);
+					_this.SetCellBkColor(1,-1,-1,255,255,255);
+					_this.SetToCodeEditor(&amp;quot;&amp;quot;,1,-1,-1,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+					_this.SetCellText(1,-1,-1,inf);
+					_this.SetCellLock(1,-1,-1,1);
+					_this.SetRedraw(1);
+					_this.ShowTabBar(1);
+				} else {
+					_this.SetSheetName(1,&amp;quot;批量总部审核检查结果&amp;quot;);
+					_this.SetCellText(1,-1,-1,inf);
+				}
+				window.status = &amp;quot;批量总部审核完成！&amp;quot;;
+			}
+		}
+	}
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (col == 0 &amp;&amp; row &amp;gt; 0) {
+		_this.SetRedraw(1);
+		for (var r = 1; r &amp;lt; _this.GetRowCount(sheet); r ++) {
+			if (_this.GetCellText(sheet,r,stat_col) == _this.GetCellText(sheet,row,stat_col)
+			&amp;&amp; r != row &amp;&amp; _this.GetRowSelected(sheet,row) == 1 &amp;&amp; clickfirst) {
+				_this.SetRowSelected(sheet,r,_this.GetRowSelected(sheet,row));
+			}
+		}
+		clickfirst = false;
+	}
+}
+
+//================================================================// 
+// 函数：thisOnSelectMainCellRangeRow
+// 说明：打开报表
+// 参数：
+// 返回：
+// 样例：
+// 作者：
+// 创建日期：02/13/06 16:04:13
+// 修改日志：
+//================================================================// 
+function _thisOnSelectMainCellRangeRow(sheet,row)
+{
+        var orgid = _this.GetCellText(sheet,row,orgid_col).split(&amp;apos;.&amp;apos;)[0];
+        var accid = _this.GetCellText(sheet,row,acc_col);
+        var grdid = _this.GetCellText(sheet,row,grdid_col);
+        var guid = _this.GetCellText(sheet,row,guid_col);
+        var yymm = _this.GetCellText(sheet,row,yymm_col);
+	
+	if (guid != &amp;quot;&amp;quot;) {
+		var homeU = homeurl.substring(0,homeurl.indexOf(&amp;quot;/ROOT_&amp;quot;)) + &amp;quot;/ROOT_&amp;quot; + accid;
+		var url = homeU  + &amp;quot;/show.sp?grdid=&amp;quot;+grdid+&amp;quot;&amp;guid=&amp;quot;+guid+&amp;quot;&amp;loaddata=1&amp;repid=&amp;quot;+grdid
+	        	+&amp;quot;&amp;repnam=&amp;quot;+REPTYP+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;action=entry&amp;quot;+&amp;quot;&amp;thisorgid=&amp;quot;+orgid+&amp;quot;&amp;thisaccid=&amp;quot;+accid+&amp;quot;&amp;oporg=&amp;quot;+G_ORGID;
+	        if (orgid != &amp;quot;&amp;quot;) openWindow(url);
+        }
+}
+
+//下拉控件联动
+$(document).ready(function() {
+	//给控件绑定事件
+	$(&amp;quot;select[name=ORGID]&amp;quot;).bind(&amp;quot;change&amp;quot;,{&amp;apos;selid&amp;apos;:&amp;apos;sel_orgid&amp;apos;},setRepList);
+	$(&amp;quot;select[name=REPTYP]&amp;quot;).bind(&amp;quot;change&amp;quot;,{&amp;apos;selid&amp;apos;:&amp;apos;sel_reptyp&amp;apos;},setRepList);
+	$(&amp;quot;select[name=TYP]&amp;quot;).bind(&amp;quot;change&amp;quot;,{&amp;apos;selid&amp;apos;:&amp;apos;sel_typ&amp;apos;},setRepList);
+});
+
+var sel_orgid = &amp;quot;&amp;quot;;
+var sel_subtyp = &amp;quot;&amp;quot;;
+var sel_typ = &amp;quot;&amp;quot;;
+function setRepList(event)
+{
+	var id = event.data[&amp;apos;selid&amp;apos;];
+	//alert(&amp;quot;select changed.this=&amp;quot;+typeof this+ &amp;quot; val=&amp;quot; +$(this).val());
+	if (id == &amp;quot;sel_orgid&amp;quot;) sel_orgid = $(this).val();
+	else if (id == &amp;quot;sel_reptyp&amp;quot;) sel_subtyp = $(this).val();
+	else if (id == &amp;quot;sel_typ&amp;quot;) sel_typ = $(this).val();
+	_sql.querytods(&amp;quot;selrep&amp;quot;,&amp;quot;orgid=&amp;quot;+sel_orgid+&amp;quot;&amp;subtyp=&amp;quot;+sel_subtyp+&amp;quot;&amp;typ=&amp;quot;+sel_typ);
+	$(&amp;quot;select[name=FINREP]&amp;quot;).empty();// 清空下拉框
+	$(&amp;quot;select[name=FINREP]&amp;quot;).append(&amp;quot;&amp;lt;option value=&amp;apos;&amp;apos;&amp;gt;&amp;lt;/option&amp;gt;&amp;quot;);	//加一个空值
+	for (var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+		var id = _this.XMLDS_GetString(i,&amp;quot;ID&amp;quot;);
+		var name = _this.XMLDS_GetString(i,&amp;quot;NAME&amp;quot;);
+		$(&amp;quot;select[name=FINREP]&amp;quot;).append(&amp;quot;&amp;lt;option value=&amp;apos;&amp;quot;+id+&amp;quot;&amp;apos;&amp;gt;&amp;quot;+name+&amp;quot;&amp;lt;/option&amp;gt;&amp;quot;);
+	}
+}
+
+//改变报表框宽度
+$(function() {
+    $(&amp;quot;select[name=FINREP]&amp;quot;)
+        .mouseover(function() {
+            $(this)
+                .data(&amp;quot;origWidth&amp;quot;, $(this).css(&amp;quot;width&amp;quot;))
+                .css(&amp;quot;width&amp;quot;, &amp;quot;auto&amp;quot;);
+        })
+        .mouseout(function() {
+            //$(this).css(&amp;quot;width&amp;quot;, $(this).data(&amp;quot;origWidth&amp;quot;));
+        });
+});
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >
+var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var webpack = new JavaPackage ( &amp;quot;com.xlsgrid.net.web&amp;quot; );
+
+//在Head区引用额外脚本
+function addHeaderHtml(mwobj,request,sb,usrinfo)
+//var sb = new java.lang.StringBuffer();var usrinfo = new web.EAUserinfo();
+{
+	sb.append(&amp;quot;&amp;lt;script type=&amp;apos;text/javascript&amp;apos; src=&amp;apos;xlsgrid/js/jquery-1.3.2.min.js&amp;apos;&amp;gt;&amp;lt;/script&amp;gt;\n&amp;quot;); //压缩版  
+}
+
+//批量审核处理
+function f_Check()
+{
+	var db = null;
+	var sytid = &amp;quot;DFFIN&amp;quot;;
+	var stat = &amp;quot;2&amp;quot;;
+	var phret = &amp;quot;&amp;quot;;
+	
+	try {
+		db = new pub.EADatabase();
+		var sbcw = new SBCW_PUBDFFIN();
+		
+		for (var i = 0; i &amp;lt; par.split(&amp;quot;;&amp;quot;).length(); i ++) {
+			var str = par.split(&amp;quot;;&amp;quot;)[i];
+			var orgid = str.split(&amp;quot;,&amp;quot;)[0];
+			var accid = str.split(&amp;quot;,&amp;quot;)[1];
+			var repid = str.split(&amp;quot;,&amp;quot;)[2];
+			var yymm = str.split(&amp;quot;,&amp;quot;)[3];
+			var ret = &amp;quot;&amp;quot;;
+			
+			sbcw.setIndexDetail(db,sytid,orgid,accid,yymm,repid);	//写入指标库
+			ret = sbcw.checkReportPH(db,orgid,accid,repid,yymm);	//报表平衡检查
+			sbcw.setReportStat(db,accid,repid,yymm,stat);		//状态改为审核
+		}
+		if (phret != &amp;quot;&amp;quot;) return &amp;quot;n-审核未能通过，检查存在以下错误：\n&amp;quot;+ phret;
+		return &amp;quot;s-审核成功！【表内、表间检查通过】&amp;quot;;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return &amp;quot;e-审核失败！\n&amp;quot;+ e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+//批量总部审核处理
+function zbCheck()
+{
+	var db = null;
+	var stat = &amp;quot;4&amp;quot;;
+	var phret = &amp;quot;&amp;quot;;
+	
+	try {
+		db = new pub.EADatabase();
+		var sbcw = new SBCW_PUBDFFIN();
+		
+		for (var i = 0; i &amp;lt; par.split(&amp;quot;;&amp;quot;).length(); i ++) {
+			var str = par.split(&amp;quot;;&amp;quot;)[i];
+			var orgid = str.split(&amp;quot;,&amp;quot;)[0];
+			var accid = str.split(&amp;quot;,&amp;quot;)[1];
+			var repid = str.split(&amp;quot;,&amp;quot;)[2];
+			var yymm = str.split(&amp;quot;,&amp;quot;)[3];
+			var ret = &amp;quot;&amp;quot;;
+			
+			ret = sbcw.checkReportPH(db,orgid,accid,repid,yymm);	//报表平衡检查
+			sbcw.setReportStat(db,accid,repid,yymm,stat);		//状态改为审核
+		}
+		if (phret != &amp;quot;&amp;quot;) return &amp;quot;n-总部审核未能通过，检查存在以下错误：\n&amp;quot;+ phret;
+		return &amp;quot;s-总部审核成功！【表内、表间检查通过】&amp;quot;;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return &amp;quot;e-总部审核失败！\n&amp;quot;+ e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+//批量取消审核处理
+function unCheck()
+{
+	var db = null;
+	var sytid = &amp;quot;SBCW&amp;quot;;
+	var stat = &amp;quot;1&amp;quot;;
+	
+	try {
+		db = new pub.EADatabase();
+		var sbcw = new SBCW_PUBDFFIN();
+		
+		for (var i = 0; i &amp;lt; par.split(&amp;quot;;&amp;quot;).length(); i ++) {
+			var str = par.split(&amp;quot;;&amp;quot;)[i];
+			var orgid = str.split(&amp;quot;,&amp;quot;)[0];
+			var accid = str.split(&amp;quot;,&amp;quot;)[1];
+			var repid = str.split(&amp;quot;,&amp;quot;)[2];
+			var yymm = str.split(&amp;quot;,&amp;quot;)[3];
+			
+			sbcw.f_clearIdxDetail(db,sytid,orgid,accid,repid,yymm);	//清除指标库	
+			sbcw.setReportStat(db,accid,repid,yymm,stat);			//状态改为制单
+		}
+		return &amp;quot;1&amp;quot;;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+//批量平衡检查
+function PHCheck()
+{
+	var db = null;
+	var sytid = &amp;quot;SBCW&amp;quot;;
+	var phret = &amp;quot;&amp;quot;;
+	
+	try {
+		db = new pub.EADatabase();
+		var sbcw = new SBCW_PUBDFFIN();
+		
+		for (var i = 0; i &amp;lt; par.split(&amp;quot;;&amp;quot;).length(); i ++) {
+			var str = par.split(&amp;quot;;&amp;quot;)[i];
+			var orgid = str.split(&amp;quot;,&amp;quot;)[0];
+			var accid = str.split(&amp;quot;,&amp;quot;)[1];
+			var repid = str.split(&amp;quot;,&amp;quot;)[2];
+			var yymm = str.split(&amp;quot;,&amp;quot;)[3];
+			
+			phret = sbcw.checkReportPH(db,orgid,accid,repid,yymm);	//报表平衡检查
+		}
+		if (phret != &amp;quot;&amp;quot;) return &amp;quot;n-检查未能通过，存在以下错误：\n&amp;quot;+ phret;
+		return &amp;quot;s-检查报表全部通过！&amp;quot;;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return &amp;quot;e-检查失败！\n&amp;quot;+ e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+//显示查询参数前预处理
+//用于在查询或报表显示查询参数前的预处理。
+//可以往sb（StringBuffer）中append HTML内容或额外附近脚本
+//可以修改paramDs的内容，决定哪些参数可见或修改默认值
+//  ID:编号;  NAME:标题; KEYVAL:关键字; SQLWHE:WHERE条件; DEFVAL:默认值
+//  TIP:提示; EDTFLG:是否可修改;  VISFLG:是否可显示; KEYFLG:关键字段(没有作用)
+//  DISPORD:参数显示次序号(修改无效); INPCTL:控件类型
+function beforeShowParam(request,sb,paramDs,usrinfo)
+//var request=javax.servlet.http.HttpServletRequest(); var sb = new java.lang.StringBuffer();var paramDs = new EAXmlDS();var usrinfo = new web.EAUserinfo();
+{
+	var usrinfo = webpack.EASession.GetLoginInfo(request);
+	var sytid = usrinfo.getSytid();
+	var usrid = usrinfo.getUsrid();
+	var usrorgid = usrinfo.getusrOrg();
+	
+	for (var r = 0; r &amp;lt; paramDs.getRowCount(); r ++) {
+		if (paramDs.getStringAt(r,&amp;quot;ID&amp;quot;) == &amp;quot;ORGID&amp;quot; &amp;&amp; sytid == &amp;quot;SBCW&amp;quot; &amp;&amp; usrorgid != &amp;quot;01&amp;quot;) {
+			paramDs.setValueAt(r,&amp;quot;EDTFLG&amp;quot;,0);
+			paramDs.setValueAt(r,&amp;quot;VISFLG&amp;quot;,0);
+			paramDs.setValueAt(r,&amp;quot;DEFVAL&amp;quot;,usrorgid);
+		}
+	}
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >DETAIL</ID><NAME ></NAME><DATDSC >select b.orgid||&amp;apos;.&amp;apos;||b.orgnam 组织,b.id 报表编号,b.name 报表名称,
+	nvl(a.yymm,decode(b.subtyp,&amp;apos;预算&amp;apos;,substr(&amp;apos;[%YYMM]&amp;apos;,1,4),&amp;apos;[%YYMM]&amp;apos;)) 报表年月,
+	decode(a.stat,1,&amp;apos;制单&amp;apos;,2,&amp;apos;已核&amp;apos;,3,&amp;apos;已上报&amp;apos;,4,&amp;apos;总部已核&amp;apos;,5,&amp;apos;退回&amp;apos;,6,&amp;apos;已汇总&amp;apos;,&amp;apos;未制作&amp;apos;) 报表状态,
+	a.crtusr 制表人,to_char(a.crtdat,&amp;apos;YYYY-MM-DD HH24:MI:SS&amp;apos;) 制表时间,
+	a.chkusrnam 审核人,to_char(a.chkdat,&amp;apos;YYYY-MM-DD HH24:MI:SS&amp;apos;) 审核时间,
+	to_char(a.refertime,&amp;apos;YYYY-MM-DD HH24:MI:SS&amp;apos;) 上报时间,a.acc,a.guid
+   from ( select * from v_repmodel where acc in (select ID from ACC where SYT=&amp;apos;DFFIN&amp;apos; )
+   	) a, v_finreporg b
+ where a.org(+) = b.orgid and a.repid(+) = b.id
+   and a.yymm(+) like decode(b.subtyp,&amp;apos;预算&amp;apos;,substr(&amp;apos;[%YYMM]&amp;apos;,1,4),&amp;apos;[%YYMM]%&amp;apos;)
+   and b.year=substr(&amp;apos;[%YYMM]&amp;apos;,1,4)
+   and nvl(a.stat, &amp;apos;0&amp;apos;) like &amp;apos;[%STAT]%&amp;apos;
+   and nvl(b.typ, &amp;apos; &amp;apos;) like &amp;apos;[%TYP]%&amp;apos;
+   and nvl(b.subtyp, &amp;apos; &amp;apos;) like &amp;apos;[%REPTYP]%&amp;apos;
+   and b.orgid like &amp;apos;[%ORGID]%&amp;apos;
+   and b.id like decode(&amp;apos;[%FINREP]&amp;apos;,&amp;apos;undefined&amp;apos;,&amp;apos;%&amp;apos;,&amp;apos;[%FINREP]%&amp;apos;)
+ order by b.orgid,b.typ,b.subtyp desc,b.sortid,b.id</DATDSC><C4 >DETAIL</C4><C5 >DETAIL</C5><C6 >DETAIL</C6><C7 >DETAIL</C7><C8 >DETAIL</C8><C9 >DETAIL</C9><C10 >DETAIL</C10><C11 >DETAIL</C11><C12 >DETAIL</C12><C13 >DETAIL</C13><C14 >DETAIL</C14><C15 >DETAIL</C15><C16 >DETAIL</C16><C17 >DETAIL</C17><C18 >DETAIL</C18><C19 >DETAIL</C19><C20 >DETAIL</C20><C21 >DETAIL</C21><C22 >DETAIL</C22><C23 ></C23><C24 >DETAIL</C24><C25 >DETAIL</C25><C26 >DETAIL</C26><C27 >DETAIL</C27><C28 >DETAIL</C28><C29 >DETAIL</C29><C30 >DETAIL</C30><C31 >DETAIL</C31><C32 >DETAIL</C32><C33 >DETAIL</C33><C34 >DETAIL</C34><C35 >DETAIL</C35><C36 ></C36><C37 >DETAIL</C37><C38 >DETAIL</C38><C39 >DETAIL</C39><C40 >DETAIL</C40><C41 >DETAIL</C41><C42 >DETAIL</C42><C43 >DETAIL</C43><C44 >DETAIL</C44><C45 ></C45></ROW>
+<ROW num="1" ><ID >selrep</ID><NAME ></NAME><DATDSC >select distinct id,name from (
+	select id,typ||&amp;apos;-&amp;apos;||id||name name
+	  from v_finreporg
+	 where orgid like &amp;apos;[%orgid]%&amp;apos;
+	   and subtyp like &amp;apos;[%subtyp]%&amp;apos;
+	   and typ like &amp;apos;[%typ]%&amp;apos;
+) order by id</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 >selrep</C23><C24 ></C24><C25 >selrep</C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 ></C35><C36 >selrep</C36><C37 ></C37><C38 ></C38><C39 ></C39><C40 ></C40><C41 ></C41><C42 ></C42><C43 ></C43><C44 ></C44><C45 >selrep</C45></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><REFID1 >0参考编号1</REFID1><REFNAM1 >0参考名称1</REFNAM1><REFID2 >0参考编号2</REFID2><REFNAM2 >0参考名称2</REFNAM2><NOTE >0备注信息</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0参考编号1</REFID1><REFNAM1 >0参考名称1</REFNAM1><REFID2 >0参考编号2</REFID2><REFNAM2 >0参考名称2</REFNAM2></ROW>
+</ROWSET>
+</flddtl></mdroot>

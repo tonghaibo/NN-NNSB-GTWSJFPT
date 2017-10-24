@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >PUBFUNC</MWID><NAME >公共函数调用</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >PUBFUNC.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE ></GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+//日记帐余额检查
+function f_check_next_qcye(db,orgid,accid,kmbh,yy,mm)
+{
+	var ret = 0;
+	var zth = accid.substring(accid.indexOf(orgid)+orgid.length());
+	var sql = &amp;quot;select yy,mm from cw_rjzb where org=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+accid+&amp;quot;&amp;apos; and kmbh=&amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos; and sxh=0 and 
+		((yy=&amp;quot;+yy+&amp;quot; and mm&amp;gt;&amp;quot;+mm+&amp;quot;) or yy&amp;gt;&amp;quot;+yy+&amp;quot;) and rownum = 1&amp;quot;;
+	var tmpds = db.QuerySQL(sql);
+//	if (tmpds.getRowCount() &amp;gt; 0) {
+//		var tmp_yy = tmpds.getStringAt(0,&amp;quot;YY&amp;quot;);
+//		var tmp_mm = tmpds.getStringAt(0,&amp;quot;MM&amp;quot;);
+//		if (tmp_mm == 12) {
+//			tmp_yy = tmp_yy + 1;
+//			tmp_mm = 1;
+//		}
+//		else {
+//			tmp_mm = tmp_mm + 1;
+//		}
+//return &amp;quot;accid=&amp;quot;+accid+&amp;quot;,zth=&amp;quot;+zth+&amp;quot;,kmbh=&amp;quot;+kmbh+&amp;quot;,yy=&amp;quot;+yy+&amp;quot;,mm=&amp;quot;+mm;
+		var conn = db.GetConn();
+		var statement = conn.createStatement();
+		var stmt = conn.prepareCall(&amp;quot;{?=call RJZ_YEJS.rjz_qcye(?,?,?,?,?)}&amp;quot;);
+		stmt.registerOutParameter(1,java.sql.Types.INTEGER);
+		stmt.setString(2, orgid);
+		stmt.setString(3, zth);
+		stmt.setString(4, kmbh);
+		stmt.setString(5, yy);
+		stmt.setString(6, mm);
+
+		stmt.executeUpdate();
+		ret = stmt.getString(1);
+		
+		stmt.close();
+		
+		return ret;
+//	}
+	return ret;
+}
+
+//报表位置树节点数据
+//hzbz-汇总标志
+function getReplocTreeJson(orgid,thisaccid,hzbz)
+{
+	var json = &amp;quot;[{ id:999999, pId:0,name:\&amp;quot;报表位置\&amp;quot;,open:true, iconOpen:\&amp;quot;xlsgrid/zTree/css/zTreeStyle/img/diy/1_open.png\&amp;quot;, iconClose:\&amp;quot;xlsgrid/zTree/css/zTreeStyle/img/diy/1_close.png\&amp;quot; }&amp;quot;;
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var sql = &amp;quot;select * from oa_reploc where 1=1 &amp;quot;;
+		//sql += &amp;quot; and (zth in (select distinct zth from cw_ztb where yszth=(select yszth from cw_ztb where org=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos;)) or zth is null)&amp;quot;;
+		if (hzbz == 1) { //汇总位置
+			sql += &amp;quot; and hzbz&amp;lt;&amp;gt;&amp;apos;2&amp;apos; and org=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos;&amp;quot;;
+		}
+		else {
+			sql += &amp;quot; and hzbz in (&amp;apos;0&amp;apos;,&amp;apos;1&amp;apos;)&amp;quot;;
+		}
+		
+		if (orgid != &amp;quot;1&amp;quot;) {
+			//sql += &amp;quot; and org=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos;&amp;quot;;
+			sql += &amp;quot; and sjbmbh in (select bmbh from oa_reploc where sbh=&amp;apos;&amp;quot;+orgid+&amp;quot;&amp;apos; and sjbmbh is null)&amp;quot;;
+		}
+		else {
+			sql += &amp;quot; and (sjbmbh is null or sjbmbh=&amp;apos;&amp;apos;) &amp;quot;;
+		}
+		sql += &amp;quot; order by bmbh,sjbmbh&amp;quot;;	
+		
+		var ds = db.QuerySQL(sql);
+		for(var i=0;i&amp;lt;ds.getRowCount();i++) {
+			var bmbh = ds.getStringAt(i,&amp;quot;BMBH&amp;quot;);
+			var bmmc = ds.getStringAt(i,&amp;quot;BMMC&amp;quot;);
+			var orgid = ds.getStringAt(i,&amp;quot;ORG&amp;quot;);
+			var accid = ds.getStringAt(i,&amp;quot;ACC&amp;quot;);
+			var hzbz2 = ds.getStringAt(i,&amp;quot;HZBZ&amp;quot;);
+			var zth = ds.getStringAt(i,&amp;quot;ZTH&amp;quot;);
+			//var typ = (zth == &amp;quot;&amp;quot; ? &amp;quot;ORG&amp;quot; : &amp;quot;ACC&amp;quot;);
+			var typ = (hzbz2 == &amp;quot;0&amp;quot; ? &amp;quot;ORG&amp;quot; : &amp;quot;ACC&amp;quot;);
+
+			var node = &amp;quot;{ id:\&amp;quot;&amp;quot;+bmbh+&amp;quot;\&amp;quot;,pId:999999,open:false,name:\&amp;quot;&amp;quot;+bmbh+&amp;quot;.&amp;quot;+bmmc+&amp;quot;\&amp;quot;,orgid:\&amp;quot;&amp;quot;+orgid+&amp;quot;\&amp;quot;,accid:\&amp;quot;&amp;quot;+accid+&amp;quot;\&amp;quot;,replocid:\&amp;quot;&amp;quot;+bmbh+&amp;quot;\&amp;quot;,typ:\&amp;quot;&amp;quot;+typ+&amp;quot;\&amp;quot;}&amp;quot;;
+			json += &amp;quot;,&amp;quot; + node;
+			json += getAccTreeJson(db,bmbh,orgid,accid,hzbz);
+  		}
+  		json += &amp;quot;]&amp;quot;;
+	        return json;
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();	
+	}       
+
+}
+
+function getAccTreeJson(db,bmbh,thisorgid,thisaccid,hzbz)
+{
+	var json = &amp;quot;&amp;quot;;
+	var imageid = 0;
+	var sql = &amp;quot;select * from oa_reploc where sjbmbh=&amp;apos;&amp;quot;+bmbh+&amp;quot;&amp;apos;&amp;quot;;
+	//var sql = &amp;quot;select * from oa_reploc where sjbmbh=&amp;apos;&amp;quot;+bmbh+&amp;quot;&amp;apos; and (zth in (select distinct zth from cw_ztb where yszth in (select yszth from cw_ztb where acc=&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos;)) or zth is null) order by bmbh&amp;quot;;
+	if (hzbz == 1) {
+		sql += &amp;quot; and hzbz&amp;lt;&amp;gt;&amp;apos;2&amp;apos; and org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;&amp;quot;;
+	}	
+	sql += &amp;quot; order by bmbh,sjbmbh&amp;quot;;
+	
+	var ds = db.QuerySQL(sql);
+	for(var i=0;i&amp;lt;ds.getRowCount();i++) {
+		var sjbmbh = ds.getStringAt(i,&amp;quot;SJBMBH&amp;quot;);
+		var bmbh = ds.getStringAt(i,&amp;quot;BMBH&amp;quot;);
+		var bmmc = ds.getStringAt(i,&amp;quot;BMMC&amp;quot;);
+		var orgid = ds.getStringAt(i,&amp;quot;ORG&amp;quot;);
+		var accid = ds.getStringAt(i,&amp;quot;ACC&amp;quot;);
+		var hzbz2 = ds.getStringAt(i,&amp;quot;HZBZ&amp;quot;);
+		var zth = ds.getStringAt(i,&amp;quot;ZTH&amp;quot;);
+		//var typ = (zth == &amp;quot;&amp;quot; ? &amp;quot;ORG&amp;quot; : &amp;quot;ACC&amp;quot;);
+		var typ = (hzbz2 == &amp;quot;0&amp;quot; ? &amp;quot;ORG&amp;quot; : &amp;quot;ACC&amp;quot;);
+		imageid = (zth == &amp;quot;&amp;quot; ? &amp;quot;0&amp;quot; : &amp;quot;1&amp;quot;);
+		
+		var node = &amp;quot;{ id:\&amp;quot;&amp;quot;+bmbh+&amp;quot;\&amp;quot;,pId:\&amp;quot;&amp;quot;+sjbmbh+&amp;quot;\&amp;quot;,open:false,name:\&amp;quot;&amp;quot;+bmbh+&amp;quot;.&amp;quot;+bmmc+&amp;quot;\&amp;quot;,orgid:\&amp;quot;&amp;quot;+orgid+&amp;quot;\&amp;quot;,accid:\&amp;quot;&amp;quot;+accid+&amp;quot;\&amp;quot;,replocid:\&amp;quot;&amp;quot;+bmbh+&amp;quot;\&amp;quot;,typ:\&amp;quot;&amp;quot;+typ+&amp;quot;\&amp;quot;}&amp;quot;;
+		json += &amp;quot;,&amp;quot; + node;		
+		
+		if (typ == &amp;quot;ORG&amp;quot;) {
+			json += getAccTreeJson(db,bmbh,thisorgid,thisaccid,hzbz);
+		}
+	}
+	return json;
+}
+
+
+//报表分析树节点数据
+function getRepFxTreeJson(orgid,accid)
+{
+	var json = &amp;quot;[{ id:999999, pId:0,name:\&amp;quot;分析浏览\&amp;quot;,open:true, iconOpen:\&amp;quot;xlsgrid/zTree/css/zTreeStyle/img/diy/1_open.png\&amp;quot;, iconClose:\&amp;quot;xlsgrid/zTree/css/zTreeStyle/img/diy/1_close.png\&amp;quot; }&amp;quot;;
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var sql = &amp;quot;select * from oa_fxb where flbz=&amp;apos;1&amp;apos; order by fxbh&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		for(var i=0;i&amp;lt;ds.getRowCount();i++) {
+			var fxbh = ds.getStringAt(i,&amp;quot;FXBH&amp;quot;);
+			var fxmc = ds.getStringAt(i,&amp;quot;FXMC&amp;quot;);
+			var flbz = ds.getStringAt(i,&amp;quot;FLBZ&amp;quot;);
+
+			var node = &amp;quot;{ id:\&amp;quot;&amp;quot;+fxbh+&amp;quot;\&amp;quot;,pId:999999,open:false,name:\&amp;quot;&amp;quot;+fxbh+&amp;quot;.&amp;quot;+fxmc+&amp;quot;\&amp;quot;,orgid:\&amp;quot;&amp;quot;+orgid+&amp;quot;\&amp;quot;,accid:\&amp;quot;&amp;quot;+accid+&amp;quot;\&amp;quot;,typ:\&amp;quot;&amp;quot;+flbz+&amp;quot;\&amp;quot;}&amp;quot;;
+			json += &amp;quot;,&amp;quot; + node;
+			
+			sql = &amp;quot;select * from oa_fxb where flbz=&amp;apos;0&amp;apos; and slh=&amp;apos;&amp;quot;+fxbh+&amp;quot;&amp;apos; order by fxbh&amp;quot;;
+			var tmpds = db.QuerySQL(sql);
+			for(var k=0;k&amp;lt;tmpds.getRowCount();k++) {
+				var fxbh = tmpds.getStringAt(k,&amp;quot;FXBH&amp;quot;);
+				var fxmc = tmpds.getStringAt(k,&amp;quot;FXMC&amp;quot;);
+				var flbz = tmpds.getStringAt(k,&amp;quot;FLBZ&amp;quot;);
+				var slh = tmpds.getStringAt(k,&amp;quot;SLH&amp;quot;);
+				
+				node = &amp;quot;{ id:\&amp;quot;&amp;quot;+fxbh+&amp;quot;\&amp;quot;,pId:\&amp;quot;&amp;quot;+slh+&amp;quot;\&amp;quot;,open:false,name:\&amp;quot;&amp;quot;+fxbh+&amp;quot;.&amp;quot;+fxmc+&amp;quot;\&amp;quot;,orgid:\&amp;quot;&amp;quot;+orgid+&amp;quot;\&amp;quot;,accid:\&amp;quot;&amp;quot;+accid+&amp;quot;\&amp;quot;,typ:\&amp;quot;&amp;quot;+flbz+&amp;quot;\&amp;quot;}&amp;quot;;
+				json += &amp;quot;,&amp;quot; + node;
+			}
+  		}
+  		json += &amp;quot;]&amp;quot;;
+	        return json;
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();	
+	}       
+
+}
+
+
+//检查银行是否启用了银社直连，如果启用了，那么就不允许再使用手工录日记帐的旧模式
+//返回值：如果未启用返回0，如果已启用返回启用的日期
+function checkYSZLStatusByYH(db,sbh,zth,yhbm)
+{
+	var sql = &amp;quot;select nvl(max(yszl_qdbz),&amp;apos;0&amp;apos;) yszl_qdbz,nvl(max(yszl_qdrq),&amp;apos;&amp;apos;) yszl_qdrq from cw_dfdsb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and (yhbm=&amp;apos;&amp;quot;+yhbm+&amp;quot;&amp;apos; or yhzl=&amp;apos;&amp;quot;+yhbm+&amp;quot;&amp;apos;)&amp;quot;;
+	var ds = db.QuerySQL(sql);
+	if (ds.getRowCount() &amp;gt; 0) {
+		var yszl_qdbz = ds.getStringAt(0,&amp;quot;YSZL_QDBZ&amp;quot;);
+		var yszl_qdrq = ds.getStringAt(0,&amp;quot;YSZL_QDRQ&amp;quot;);
+		if (yszl_qdbz == &amp;quot;0&amp;quot;) {
+			return &amp;quot;0&amp;quot;;
+		}
+		return yszl_qdrq;
+	}
+	return &amp;quot;0&amp;quot;;
+}
+
+//检查科目对应的银行是否启用了银社直连
+function checkYSZLStatusByKM(db,sbh,zth,kmbh)
+{
+	var yhzl = &amp;quot;&amp;quot;;
+	var sql = &amp;quot;select nvl(yhzl,&amp;apos;NUL&amp;apos;) yhzl from cw_kmb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and kmbh=&amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;&amp;quot;;
+	var ds = db.QuerySQL(sql);
+	if (ds.getRowCount() &amp;lt;= 0) return &amp;quot;0&amp;quot;;
+	yhzl = ds.getStringAt(0,&amp;quot;YHZL&amp;quot;);	
+	if (yhzl == &amp;quot;NUL&amp;quot;) return &amp;quot;0&amp;quot;;
+	
+	var yszlstat = checkYSZLStatusByYH(db,sbh,zth,yhzl);	
+	return yszlstat;
+	
+}
+
+//银社直连每日发生单笔交易数量总控,意思是设定每天允许交易的最大笔数，超过这个就不能再发生银社交易
+function checkYSZLMaxCount(db,sbh,zth,yszl_yhjgdm) //db、所编号、账套号、银社直连银行机构代码
+{
+	var sql = &amp;quot;select nvl(yszl_max,0) yszl_max from cw_dfdsb a where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; 
+			 and yhzl= (select yhzl from cw_dfdsb_yszl where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and szbz = &amp;apos;1&amp;apos; and yszl_yhjgdm =  &amp;apos;&amp;quot;+yszl_yhjgdm+&amp;quot;&amp;apos;)
+			 and szbz = &amp;apos;1&amp;apos;&amp;quot;;
+	//设置的最大交易笔数
+	var yszl_maxcount = 0;
+	var ds = db.QuerySQL(sql);
+	if (ds.getRowCount() &amp;gt; 0) {
+		yszl_maxcount = 1.0*ds.getStringAt(0,&amp;quot;yszl_max&amp;quot;);
+	}
+	//已缴费笔数
+	var dbjs_count = 0;
+	sql = &amp;quot;select nvl(count(distinct(reference)),0) cnt from si_msgtextlog 
+			where businesscode = &amp;apos;0212001&amp;apos; and to_char(crtdat,&amp;apos;yyyy-mm-dd&amp;apos;) = to_char(sysdate,&amp;apos;yyyy-mm-dd&amp;apos;)&amp;quot;;
+	dbjs_count = 1.0*db.GetSQL(sql);
+	return yszl_maxcount-dbjs_count;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

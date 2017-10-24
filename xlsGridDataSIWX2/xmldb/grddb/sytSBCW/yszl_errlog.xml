@@ -1,0 +1,214 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >yszl_errlog</MWID><NAME >批量文件异常处理</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >yszl_errlog.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >reSend</ID><NAME >手工重发</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE ></IMGMOUSE><C10 >reSend</C10></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0 = &amp;quot;&amp;quot;;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	ZXGFILE0 = _this.SaveTempZXGFile(0);
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,40);
+	_this.SetToDateBox(&amp;quot;&amp;quot;,1,1,2,G_LOGDAT);
+	_this.SetToDateBox(&amp;quot;&amp;quot;,1,1,4,G_LOGDAT);
+	var cgList = _this.CreateListValue();
+	_this.SetListValue(cgList,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+	_this.SetListValue(cgList,&amp;quot;0&amp;quot;,&amp;quot;未处理&amp;quot;);
+	_this.SetListValue(cgList,&amp;quot;1&amp;quot;,&amp;quot;已处理&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,1,13,cgList);
+	_this.SetCellText(1,1,13,&amp;quot;%&amp;quot;);	
+	loadMain();
+}
+
+function loadMain()
+{
+	_this.LoadZXGFile(ZXGFILE0,-1,0);
+	_this.SetMainCellRange(0,2,2,_this.GetRowCount(0)-1,_this.GetColCount(0)-1);
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this.SELECTFLAG_SINGLEROW);
+	_this.SetFixedRow(0,2);
+	_this.SetFixedCol(0,2);
+	var dat1 = _this.GetCellText(1,1,2);
+	var dat2 = _this.GetCellText(1,1,4);
+	var cgbz = _this.GetCellText(1,1,13);
+	var ref = _this.GetCellText(1,1,7);
+	var bkseq = _this.GetCellText(1,1,10);
+	var xml = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;dat1=&amp;quot;+dat1+&amp;quot;&amp;dat2=&amp;quot;+dat2+&amp;quot;&amp;cgbz=&amp;quot;+cgbz+&amp;quot;&amp;ref=&amp;quot;+ref+&amp;quot;&amp;bkseq=&amp;quot;+bkseq);
+	_this.SetXmlDS(0,_this.GetMainCellRangeRow1(0),_this.GetMainCellRangeCol1(0),_this.GetMainCellRangeRow2(0),_this.GetMainCellRangeCol2(0),xml);	
+	for(var i=_this.GetMainCellRangeRow1(0);i&amp;lt;=_this.GetMainCellRangeRow2(0);i++) {
+		var ref = _this.GetCellText(0,i,2);
+		var cgbz = _this.GetCellText(0,i,17);
+		if(ref != &amp;quot;&amp;quot;) {
+			_this.SetToBoolBox(0,i,1);
+		}
+		if(cgbz == &amp;quot;0&amp;quot;) {
+			_this.SetCellColor(0,i,17,255,0,0);
+			_this.SetCellShowText(0,i,17,&amp;quot;未处理&amp;quot;);
+		}
+		else if(cgbz == &amp;quot;1&amp;quot;){
+			_this.SetCellColor(0,i,17,0,0,255);
+			_this.SetCellShowText(0,i,17,&amp;quot;已处理&amp;quot;);			
+		}
+	}
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if(id == &amp;quot;查询&amp;quot;) {
+		loadMain();
+	}
+}
+
+//手工重发
+function reSend()
+{
+	var cnt = 0;
+	for(var i=_this.GetMainCellRangeRow1(0);i&amp;lt;=_this.GetMainCellRangeRow2(0);i++) {
+		var flag = _this.GetCellText(0,i,1);
+		var ref = _this.GetCellText(0,i,2);
+		if(ref != &amp;quot;&amp;quot; &amp;&amp; flag == 1) {
+			cnt++;
+			var cgbz = _this.GetCellText(0,i,17);
+			if(cgbz != &amp;quot;0&amp;quot;) {
+				alert(&amp;quot;此次交易错误已处理，不能重复操作！&amp;quot;);
+				return false;
+			}
+			if(!window.confirm(&amp;quot;是否确定要手工重发？&amp;quot;)) return false;
+			var sbInstId = _this.GetCellText(0,i,5);
+			var bkInstId = _this.GetCellText(0,i,6);
+			var SiSeq = _this.GetCellText(0,i,7);
+			var BkSeq = _this.GetCellText(0,i,8);
+			var fileName = _this.GetCellText(0,i,12);
+			var fileMD5 = _this.GetCellText(0,i,15);
+			var param = new Object();
+			param.sbInstId = sbInstId;
+			param.bkInstId = bkInstId;
+			param.SiSeq = SiSeq ;
+			param.BkSeq = BkSeq ;
+			param.fileName = fileName ;
+			param.fileMD5 = fileMD5 ;
+			param.fileTypeCode = &amp;quot;0122001&amp;quot;;
+			param.ref = ref;
+			param.czyxm = G_USRNAM;
+			var ret = _this.invokeOSFuncExt(&amp;quot;reSend&amp;quot;,param);
+			alert(ret);
+		}
+	}
+	if(cnt == 0) {
+		alert(&amp;quot;请选择一条数据重发！&amp;quot;);
+		return false;
+	}
+	loadMain();
+}
+
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if(sheet == 1) {
+		if(col == 7 || col == 10 || col == 13) {
+			loadMain();
+		}
+	}
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if(sheet == 0 ) {
+		if(row &amp;gt;= _this.GetMainCellRangeRow1(0) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(0)) {
+			if(col &amp;gt; 1 &amp;&amp; _this.GetCellText(0,row,2) != &amp;quot;&amp;quot;) {
+				var oldvalue = _this.GetCellText(0,row,1);
+				if(oldvalue == 0) {
+					_this.SetCellText(0,row,1,1);
+				}
+				else {
+					_this.SetCellText(0,row,1,0);
+				}
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function reSend()
+{
+	var ret = &amp;quot;&amp;quot;;
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		//调用导入方法的中间件 N0122001
+		var imp = new SBCW_N0122001();
+		ret = imp.F0122001(sbInstId,bkInstId,fileName,ref,fileMD5,BkSeq,SiSeq,fileTypeCode,czyxm);
+		if(ret == 1) {
+			var sql = &amp;quot;update YSZL_ERRORLOG set cgbz = &amp;apos;1&amp;apos; where ref = &amp;apos;&amp;quot;+ref+&amp;quot;&amp;apos;&amp;quot;;
+			db.ExcecutSQL(sql);
+		}		
+		return ret;
+	}catch(e) {
+		if(db != null) db.Rollback();
+		return e.toString();
+	}finally {
+		if(db != null) db.Close();
+	}
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >SELECT ref,
+       sendid,
+       recvid,
+       sbjgdm,
+       yhjgdm,
+       siseq,
+       bkseq,
+       buscd,
+       yszlywlx,
+       filetypecode,
+       filename,
+       errmsg,
+       crtdat,filemd5,czyxm,cgbz
+  FROM YSZL_ERRORLOG
+  where sbjgdm in (select yszl_sbjgdm from cw_ztb where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc = &amp;apos;[%SYS_ACCID]&amp;apos;)
+  and to_char(crtdat,&amp;apos;yyyy-mm-dd&amp;apos;) &amp;gt;= &amp;apos;[%dat1]&amp;apos;
+  and to_char(crtdat,&amp;apos;yyyy-mm-dd&amp;apos;) &amp;lt;= &amp;apos;[%dat2]&amp;apos;
+  and cgbz like &amp;apos;%[%cgbz]%&amp;apos;
+  and ref like &amp;apos;[%ref]%&amp;apos;
+  and bkseq like &amp;apos;[%bkseq]%&amp;apos; order by bkseq,crtdat</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 >MAIN</C6><C7 >MAIN</C7><C8 >MAIN</C8><C9 >MAIN</C9></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

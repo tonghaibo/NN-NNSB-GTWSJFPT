@@ -1,0 +1,211 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >FTP</MWID><NAME >连接FTP</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >FTP.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >selok</ID><NAME >确定</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >selok</C10></ROW>
+<ROW num="1" ><ID >getback</ID><NAME >返回</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >返回</C10></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0;
+
+var host = &amp;quot;&amp;quot;;
+var user = &amp;quot;&amp;quot;;
+var userpwd = &amp;quot;&amp;quot;;
+var loginPath = &amp;quot;&amp;quot;;
+var downPath = &amp;quot;&amp;quot;;
+var default_yhbm = &amp;quot;&amp;quot;;	
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	//_this.ShowToolBar(0);
+	_this.SplitSheet(1,&amp;quot;H&amp;quot;,&amp;quot;40%&amp;quot;);
+	_this.SetMainCellRange(0,4,1,15,3);
+	ZXGFILE0 = _this.SaveTempZXGFile(0); 
+	
+	var yhzlList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=v_cw_yhhp_lb&amp;where=name!=&amp;apos;全部&amp;apos;&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,1,3,2,yhzlList);
+	try{
+	    default_yhbm = curr_yhbm
+            _this.SetCellText(1,3,2,default_yhbm);
+	    setFtpInfo(default_yhbm);	
+	}catch(e){
+            _this.SetCellText(1,3,2,&amp;quot;103&amp;quot;);
+	     setFtpInfo(103);
+	}	
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+}
+
+function setFtpInfo(yhbm)
+{
+//	alert(yhbm);
+	_sql.querytods(&amp;quot;FTPINFO&amp;quot;,&amp;quot;YHBM=&amp;quot;+yhbm);
+	host = _this.XMLDS_GetString(0,&amp;quot;FTP_IP&amp;quot;);
+	user = _this.XMLDS_GetString(0,&amp;quot;FTP_GXSI_LOGIN_NAME2&amp;quot;);
+	userpwd = _this.XMLDS_GetString(0,&amp;quot;FTP_GXSI_LOGIN_PASSWD2&amp;quot;);
+	if(user == &amp;quot;&amp;quot;) {user = _this.XMLDS_GetString(0,&amp;quot;FTP_GXSI_LOGIN_NAME&amp;quot;);}
+	if(userpwd == &amp;quot;&amp;quot;) {userpwd = _this.XMLDS_GetString(0,&amp;quot;FTP_GXSI_LOGIN_PASSWD&amp;quot;);}
+	_this.SetCellText(1,5,2,host);
+	_this.SetCellText(1,7,2,user);
+	_this.SetCellText(1,9,2,userpwd);
+//	if(yhbm == 1){
+//		loginPath = &amp;quot;/dsdf/jsyh/jsyh_ftpdown/jgyl&amp;quot;;
+//	}else if(yhbm== 2){
+//		loginPath = &amp;quot;/dsdf/nyyh/nyyh_ftpdown/jgyl&amp;quot;;
+//	}else if(yhbm == 3){
+//		loginPath = &amp;quot;/dsdf/gsyh/gsyh_ftpdown/jgyl&amp;quot;;
+//	}else if(yhbm== 5){
+//		loginPath = &amp;quot;/ftp/zgyh-ftpdown/jgyl&amp;quot;;
+//		alert(loginPath );
+//	}else if(yhbm== 6){
+//		loginPath = &amp;quot;/ftp/jtyh-ftpdown/jgyl&amp;quot;;
+//		alert(loginPath );
+//	}
+	
+
+	loginPath = _this.XMLDS_GetString(0,&amp;quot;FTP_GXSI_LOGIN_PATH&amp;quot;);
+	downPath = _this.XMLDS_GetString(0,&amp;quot;FTP_DOWN_PATH&amp;quot;);
+	_this.SetCellText(1,11,2,loginPath+&amp;quot;/&amp;quot;+downPath);
+	listFiles(host,user,userpwd,loginPath+&amp;quot;/&amp;quot;+downPath);
+	_this.SetCellText(1,11,2,loginPath);
+	listFiles(host,user,userpwd,loginPath);
+}
+
+function listFiles(host,user,userpwd,path)
+{
+	_this.LoadZXGFile(ZXGFILE0,-1,0);
+	_this.SetMainCellRange(0,4,1,15,3);
+	
+	var param = new Object();
+	param.host = host;
+	param.user = user;
+	param.userpwd = userpwd;
+	param.path = path;
+	var ret = invokeOSFuncExt(&amp;quot;ftpListFiles&amp;quot;,param);
+	if (ret != &amp;quot;&amp;quot; &amp;&amp; ret.substring(0,1) == &amp;quot;[&amp;quot;) {
+		ret = ret.substring(1,ret.length-1);
+		var files = ret.split(&amp;quot;,&amp;quot;);
+		files.sort();
+		var r = 4;
+		for (var i=0;i&amp;lt;files.length;i++) {
+			if (r &amp;gt;= 15) _this.AppendRow(0,r);
+			_this.SetCellText(0,r,1,(i+1));
+			_this.SetToBoolBox(0,r,2);
+			var file = files[i].replace(/(^\s*)|(\s*$)/g, &amp;quot;&amp;quot;); //去除前后空格
+			_this.SetCellText(0,r,3,file);
+			r ++;
+		}
+	}
+}
+
+
+//确定
+function selok()
+{
+	var param = new Object();
+	param.host = host;
+	param.user = user;
+	param.userpwd = userpwd;
+
+	param.path = _this.GetCellText(1,11,2);
+	
+	var path = _this.GetCellText(1,11,2);
+	var filename = &amp;quot;&amp;quot;;
+	for (var r=4;r&amp;lt;_this.GetRowCount(0);r++) {
+		if (_this.GetCellText(0,r,2) == &amp;quot;1&amp;quot;) {
+			filename = _this.GetCellText(0,r,3);
+			break;
+		}
+	}
+	if (filename == &amp;quot;&amp;quot;) window.returnValue = &amp;quot;&amp;quot;;
+	else window.returnValue = filename+&amp;quot;,&amp;quot;+host+&amp;quot;,&amp;quot;+user+&amp;quot;,&amp;quot;+userpwd+&amp;quot;,&amp;quot;+path;
+	window.close();
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 1 &amp;&amp; row == 3 &amp;&amp; col == 2) {
+		setFtpInfo(newvalue);
+	}
+	else if (sheet == 0) {
+		selectOneRow(sheet,row);
+	}
+}
+
+function selectOneRow(sheet,row)
+{
+	for (var r=4;r&amp;lt;_this.GetRowCount(sheet)-1;r++) {
+		if (_this.GetCellText(sheet,r,1) != &amp;quot;&amp;quot;) {
+			_this.SetCellText(sheet,r,2,&amp;quot;0&amp;quot;);
+		}
+	}
+	_this.SetCellText(sheet,row,2,&amp;quot;1&amp;quot;);
+}
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+	if (sheet == 0) {
+		var dir = _this.GetCellText(sheet,row,3);
+		if (dir != &amp;quot;&amp;quot; &amp;&amp; dir.indexOf(&amp;quot;.TXT&amp;quot;) == -1 &amp;&amp; dir.indexOf(&amp;quot;.txt&amp;quot;) == -1) {
+			var curpath = _this.GetCellText(1,11,2);
+			var path = curpath+&amp;quot;/&amp;quot;+dir;
+			_this.SetCellText(1,11,2,path)
+			listFiles(host,user,userpwd,path);
+		}
+		else if (dir.indexOf(&amp;quot;.TXT&amp;quot;) &amp;gt; -1 || dir.indexOf(&amp;quot;.txt&amp;quot;) &amp;gt; -1) {
+			selectOneRow(sheet,row);
+		}
+	}
+}
+
+
+
+//返回
+function getback()
+{
+	host = _this.GetCellText(1,5,2);
+	user= _this.GetCellText(1,7,2);
+	userpwd= _this.GetCellText(1,9,2);
+	var Path = _this.GetCellText(1,11,2);
+	var XPath = Path.substring(0,Path.lastIndexOf(&amp;quot;/&amp;quot;));
+	_this.SetCellText(1,11,2,XPath);
+	listFiles(host,user,userpwd,XPath);
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function ftpListFiles()
+{
+    try{
+	var eaftp = new pub.EAFtpClient2();
+	eaftp.connectServer(host,user,userpwd);  //登录FTP
+	eaftp.ftpClient.changeWorkingDirectory(path);
+	var files = eaftp.listRemoteFiles(&amp;quot;*&amp;quot;);
+//	java.lang.System.out.println(&amp;quot;ftp files=&amp;quot;+files);
+	eaftp.closeConnect();
+	files = pub.EAFunc.Replace(files.toString(),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);
+	return files;
+    }catch(e) {return e.toString();}	
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >FTPINFO</ID><NAME ></NAME><DATDSC >select * from CW_DFDSB where acc=&amp;apos;[%SYS_ACCID]&amp;apos; and yhbm=&amp;apos;[%YHBM]&amp;apos;</DATDSC><C4 >FTPINFO</C4><C5 >FTPINFO</C5><C6 >FTPINFO</C6><C7 >FTPINFO</C7></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

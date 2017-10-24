@@ -1,0 +1,520 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RJZ_CWYWDWDZ</MWID><NAME >财务业务单位对照</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RJZ_CWYWDWDZ.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var cur_sbh = &amp;quot;&amp;quot;;
+var cur_zth = &amp;quot;&amp;quot;;
+var cur_czyxm = &amp;quot;&amp;quot;;
+
+var cur_id = &amp;quot;&amp;quot;;
+var typ = &amp;quot;&amp;quot;;
+
+var ZXGFILE0 = &amp;quot;&amp;quot;;
+
+var sheet_dwdz = 0;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+	cur_sbh = G_ORGID;
+	cur_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	cur_czyxm = G_USRNAM;
+	
+	//20161229-20161230 lwq modify-add 手工匹配
+	_this.AddToolbarButton(&amp;quot;udf_LoadData(0)&amp;quot;,&amp;quot;自动匹配&amp;quot;,&amp;quot;自动匹配&amp;quot;,&amp;quot;&amp;quot;,1,3,3,40);
+	var xmlmenu = &amp;quot;&amp;lt;item id = \&amp;quot;nameCX\&amp;quot; name= \&amp;quot;按银行户名查询\&amp;quot;/&amp;gt;&amp;lt;item id = \&amp;quot;undefinedCX\&amp;quot; name= \&amp;quot;未分类查询\&amp;quot;/&amp;gt;&amp;quot;;
+	_this.AddToolbarButton(&amp;quot;udf_LoadManualData&amp;quot;,&amp;quot;手工匹配&amp;quot;,&amp;quot;手工匹配&amp;quot;,xmlmenu,1,3,3,40);  
+	_this.AddToolbarButton(&amp;quot;udf_Dwdz&amp;quot;,&amp;quot;财务业务单位对照保存&amp;quot;,&amp;quot;财务业务单位对照保存&amp;quot;,&amp;quot;&amp;quot;,1,3,3,40);
+	
+	setToBox();
+	
+	ZXGFILE0 = _this.SaveTempZXGFile(sheet_dwdz);
+	
+}
+
+//20161230 lwq add
+//点击菜单项
+function _thisOnMenuItemSelect(sheet,row,col,menuitemid)
+{
+	if (menuitemid == &amp;quot;nameCX&amp;quot;)  {
+		LoadData(1,1);
+	}
+	else if(menuitemid == &amp;quot;undefinedCX&amp;quot;){
+		LoadData(1,2);
+	}
+}
+
+//单位对照
+function Dwdz(){
+	//获取选中笔数
+	var check_row = _this.GetCellText(sheet_dwdz,_this.GetRowCount(sheet_dwdz) - 1,3);
+	if( check_row == &amp;quot;&amp;quot; || check_row == &amp;quot;undefined&amp;quot; || check_row == undefined || check_row == 0){
+		alert(&amp;quot;未选中需要对照的单位记录，不允许操作!!&amp;quot;);
+		return false;
+	}
+	
+	//获取xml的数据
+	var xml = _this.GetXml(sheet_dwdz,3,1,_this.GetRowCount(sheet_dwdz)-2,_this.GetColCount(sheet_dwdz)-1);
+	var paramObj = new Object();
+	paramObj.dwdzXml= xml ;
+	paramObj.sbh = cur_sbh;
+	paramObj.zth = cur_zth;
+	paramObj.thisaccid = G_ACCID;
+	paramObj.czyxm = cur_czyxm;
+	
+	var retVal = invokeOSFuncExt(&amp;quot;DwdzSave&amp;quot;,paramObj );
+	var ret = retVal.split(&amp;quot;@&amp;quot;)[0];
+	var msg = retVal.split(&amp;quot;@&amp;quot;)[1];
+	
+	if(ret != 1){
+		alert(retVal);
+	}else{
+		alert(retVal);
+	}
+	cur_id = 0;
+	
+	
+	LoadData(cur_id,typ);
+}
+
+//设置选择框
+function setToBox(){
+	var check_row = 0;
+	var rowcount  = 0;
+	_this.SetToBoolBox(sheet_dwdz,1,1);
+	
+	for(var i=3; i&amp;lt;= _this.GetRowCount(sheet_dwdz)-2;i++){
+		rowcount ++;		
+		_this.SetToBoolBox(sheet_dwdz,i,1);
+		
+		if(_this.GetCellText(sheet_dwdz,i,1) == 1){
+			check_row ++;
+		}
+	}
+	_this.SetCellText(sheet_dwdz,_this.GetRowCount(sheet_dwdz) - 1,1,rowcount );
+	_this.SetCellText(sheet_dwdz,_this.GetRowCount(sheet_dwdz) - 1,3,check_row);
+}
+
+//数据加载
+function LoadData(cur_id,typ){
+	_this.SetToolbarString(&amp;quot;正在加载数据...&amp;quot;);	
+	
+	//清空前面加载的日记账明细数据
+	_this.loadZXGFile(ZXGFILE0,-1,0);
+	
+	//固定行列
+	_this.SetFixedRow(sheet_dwdz,3);
+	_this.SetFixedCol(sheet_dwdz,1);
+	
+	//设置主数据区
+	_this.SetMainCellRange(sheet_dwdz,3,1,_this.GetRowCount(sheet_dwdz)-2,_this.GetColCount(sheet_dwdz)-1);
+	
+	var paramObj = new Object();
+	paramObj.sbh = cur_sbh;
+	paramObj.zth = cur_zth;
+	paramObj.thisaccid = G_ACCID;
+	paramObj.czyxm = cur_czyxm;
+	paramObj.typ = typ;
+	
+	//20161229 lwq modify-add 手工匹配
+	if (cur_id == &amp;quot;0&amp;quot;) {
+		var retVal = invokeOSFuncExt(&amp;quot;LoadXml&amp;quot;,paramObj );
+	} else if (cur_id == &amp;quot;1&amp;quot;) {
+		var retVal = invokeOSFuncExt(&amp;quot;LoadManualXml&amp;quot;,paramObj );
+	}
+	var ret = retVal.split(&amp;quot;@&amp;quot;)[0];
+	var msg = retVal.split(&amp;quot;@&amp;quot;)[1];
+	
+	if(ret != 1){
+		alert(retVal);
+	}else{
+		_this.SetXmlDS(sheet_dwdz,3,1,_this.GetRowCount(sheet_dwdz)-2,_this.GetColCount(sheet_dwdz)-1 ,msg);
+		_this.SetCellText(sheet_dwdz,1,1,1);
+	}
+	setToBox();
+	_this.SetToolbarString(&amp;quot;&amp;quot;);
+	_this.AutoFixScreenWidth();
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{	
+	if(row == 1 &amp;&amp; col == 1){
+		var row = 0;
+		if( _this.GetCellText(sheet_dwdz,1,1) == 0 ){
+			for(var i=3; i&amp;lt;= _this.GetRowCount(sheet_dwdz)-2;i++){
+				if( _this.GetCellText(sheet_dwdz,i,2) != &amp;quot;&amp;quot; &amp;&amp; _this.GetCellText(sheet_dwdz,i,2) != &amp;quot;undefined&amp;quot; &amp;&amp; _this.GetCellText(sheet_dwdz,i,2) != undefined ){
+					row = row  + 1 ;
+					_this.SetCellText(sheet_dwdz,i,1,0);
+				}
+			}
+			if(row == 0) {_this.SetCellText(sheet_dwdz,1,1,oldvalue);}
+		}else {
+			for(var i=3; i&amp;lt;= _this.GetRowCount(sheet_dwdz)-2;i++){
+				if( _this.GetCellText(sheet_dwdz,i,2) != &amp;quot;&amp;quot; &amp;&amp; _this.GetCellText(sheet_dwdz,i,2) != &amp;quot;undefined&amp;quot; &amp;&amp; _this.GetCellText(sheet_dwdz,i,2) != undefined ){
+					row = row  + 1 ;
+					_this.SetCellText(sheet_dwdz,i,1,1);
+				}
+			}
+			if(row == 0){ _this.SetCellText(sheet_dwdz,1,1,oldvalue);}
+		}
+	}
+	if(row &amp;gt;= 3 &amp;&amp; row &amp;lt;= _this.GetRowCount(sheet_dwdz) - 2 &amp;&amp; col == 1){
+		setToBox();
+	}
+	//20161229 lwq add 单位选择弹出框
+	if(row &amp;gt;= 3 &amp;&amp; col == 7 ){ _this.SetCellText(0,_this.GetCurrentRow(0),7,newvalue); }
+	if(row &amp;gt;= 3 &amp;&amp; col == 8 ){ _this.SetCellText(0,_this.GetCurrentRow(0),8,newvalue); }
+	if(row &amp;gt;= 3 &amp;&amp; col == 9 ){ _this.SetCellText(0,_this.GetCurrentRow(0),9,newvalue); }
+}
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+	//20161229 lwq add 单位选择弹出框
+	if(row &amp;gt;= 3 &amp;&amp; (col &amp;gt;= 7 &amp;&amp; col &amp;lt;=8)){
+		var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_DWSEL&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+		if(retVal == -1 || retVal == &amp;quot;undefined&amp;quot; || retVal == undefined){
+			return false;
+		}
+		var dwbh = retVal.split(&amp;quot;~&amp;quot;)[0]; //修改后的业务单位编号
+     		var dwmc = retVal.split(&amp;quot;~&amp;quot;)[1]; //修改后的业务单位名称
+     		var dwjc = retVal.split(&amp;quot;~&amp;quot;)[3]; //修改后的业务单位简称
+     		if (dwbh == _this.GetCellText(0,_this.GetCurrentRow(0),2)) {
+     			alert(&amp;quot;选择的业务单位编号与财务单位编号相同，不能修改！&amp;quot;);
+     		} else {
+		     	_this.SetCellText(0,_this.GetCurrentRow(0),7,dwbh);
+		     	_this.SetCellText(0,_this.GetCurrentRow(0),8,dwmc);
+		     	_this.SetCellText(0,_this.GetCurrentRow(0),9,dwjc);   			
+     		}
+
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >
+//加载数据，构建Xml
+function LoadXml(){
+	var sql = &amp;quot;&amp;quot;;
+	var db = null;
+	var xml = &amp;quot;&amp;quot;;
+	try{
+		db = new pub.EADatabase();
+		//区分业务系统是东软还是银海
+		var uo_ywjk = new SBCW_IYWJK(); //业务接口类
+		var ywjkbz = uo_ywjk.getYWJKBZ(db,thisaccid);
+		
+		if(ywjkbz == &amp;quot;DR&amp;quot;){
+			
+		}else if(ywjkbz == &amp;quot;YH&amp;quot;){
+//			20170314 LYH MODIFY 修改为只要是虚拟单位全部对照
+//			sql = &amp;quot;SELECT DISTINCT B.DWMC FROM CW_RJZB A, SI_DWB B WHERE A.SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND A.ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND A.DWBH LIKE &amp;apos;J%&amp;apos; AND A.SBH = B.SBH AND A.ZTH = B.ZTH
+//   				AND A.DWBH = B.DWBH AND B.YWDWBH IS NULL AND B.DWMC IN (SELECT AAB004 FROM AB01 WHERE AAB301 IN (SELECT TCQBM FROM CW_SBSB WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;) )&amp;quot;;
+			sql = &amp;quot;SELECT dwmc FROM SI_DWB WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND DWBH LIKE &amp;apos;J%&amp;apos; AND YWDWBH IS NULL AND DWMC IN (SELECT AAB004 FROM AB01 WHERE AAB301 IN (SELECT TCQBM FROM CW_SBSB WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;))&amp;quot;;
+			var ds = db.QuerySQL(sql);
+			if(ds.getRowCount() &amp;lt;= 0){
+				db.Rollback();
+				return &amp;quot;0&amp;quot;+&amp;quot;@&amp;quot;+&amp;quot;查询不到数据，财务业务单位无单位需要对照！！&amp;quot;;
+			}else{
+				var row = 0;
+				xml = &amp;quot;&amp;lt;?xml version = &amp;apos;1.0&amp;apos;?&amp;gt;&amp;lt;ROWSET&amp;gt;&amp;quot;;
+				for(var i=0 ;i &amp;lt; ds.getRowCount();i++){
+					//获取单位名称
+					var dwmc = ds.getStringAt(i,&amp;quot;DWMC&amp;quot;);
+					
+					//财务系统信息
+					sql = &amp;quot;select dwbh,dwmc,dwjc,dwlxbh from si_dwb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and dwbh like &amp;apos;J%&amp;apos; and dwmc = &amp;apos;&amp;quot;+dwmc+&amp;quot;&amp;apos;&amp;quot;;
+					var cwdw_ds = db.QuerySQL(sql);
+					var cw_dwbh = cwdw_ds.getStringAt(0,&amp;quot;DWBH&amp;quot;);
+					var cw_dwmc = cwdw_ds.getStringAt(0,&amp;quot;DWMC&amp;quot;);
+					var cw_dwjc = cwdw_ds.getStringAt(0,&amp;quot;DWJC&amp;quot;);
+					var cw_dwlxbh = cwdw_ds.getStringAt(0,&amp;quot;DWLXBH&amp;quot;);
+					
+					//业务系统单位信息
+					sql = &amp;quot;SELECT AAB001,AAB004,BAB004,DECODE(SUBSTRB(AAB019, 1, 1), 3, 3, 5, 9 || AAB113, 7, 98, 9, 0, 0) AAB019,AAE004,NVL(AAE251, AAE005) AAE251,AAE006 FROM AB01 A 
+						WHERE AAB301 IN (SELECT TCQBM FROM CW_SBSB WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;) and aab004 = &amp;apos;&amp;quot;+dwmc+&amp;quot;&amp;apos;&amp;quot;;
+					var ywdw_ds = db.QuerySQL(sql);
+					var yw_dwbh   = ywdw_ds.getStringAt(0,&amp;quot;AAB001&amp;quot;);
+					var yw_dwmc   = ywdw_ds.getStringAt(0,&amp;quot;AAB004&amp;quot;);
+					var yw_dwjc   = ywdw_ds.getStringAt(0,&amp;quot;BAB004&amp;quot;);
+					var yw_dwlxbh = ywdw_ds.getStringAt(0,&amp;quot;AAB019&amp;quot;);
+					var yw_zgy    = ywdw_ds.getStringAt(0,&amp;quot;AAE004&amp;quot;);
+					var yw_dh     = ywdw_ds.getStringAt(0,&amp;quot;AAE251&amp;quot;);
+					var yw_dz     = ywdw_ds.getStringAt(0,&amp;quot;AAE006&amp;quot;);
+					
+					var dz = &amp;quot;←→&amp;quot;;
+					var xz = &amp;quot;1&amp;quot;;
+					//构建XML
+					row ++;
+					var rowStr = &amp;quot;&amp;lt;ROW num=&amp;apos;&amp;quot;+row+&amp;quot;&amp;apos; SELECTFLAG=&amp;apos;0&amp;apos; name=&amp;apos;&amp;apos;&amp;gt;
+								&amp;lt;XZ&amp;gt;&amp;quot;+xz+&amp;quot;&amp;lt;/XZ&amp;gt;
+								&amp;lt;DWBH&amp;gt;&amp;quot;+cw_dwbh+&amp;quot;&amp;lt;/DWBH&amp;gt;
+								&amp;lt;DWMC&amp;gt;&amp;quot;+cw_dwmc+&amp;quot;&amp;lt;/DWMC&amp;gt;
+								&amp;lt;DWJC&amp;gt;&amp;quot;+cw_dwjc+&amp;quot;&amp;lt;/DWJC&amp;gt;
+								&amp;lt;DWLXBH&amp;gt;&amp;quot;+cw_dwlxbh+&amp;quot;&amp;lt;/DWLXBH&amp;gt;
+								&amp;lt;DZ&amp;gt;&amp;quot;+dz+&amp;quot;&amp;lt;/DZ&amp;gt;
+								&amp;lt;AAB001&amp;gt;&amp;quot;+yw_dwbh+&amp;quot;&amp;lt;/AAB001&amp;gt;
+								&amp;lt;AAB004&amp;gt;&amp;quot;+yw_dwmc+&amp;quot;&amp;lt;/AAB004&amp;gt;
+								&amp;lt;BAB004&amp;gt;&amp;quot;+yw_dwjc+&amp;quot;&amp;lt;/BAB004&amp;gt;
+								&amp;lt;AAB019&amp;gt;&amp;quot;+yw_dwlxbh+&amp;quot;&amp;lt;/AAB019&amp;gt;
+								&amp;lt;AAE004&amp;gt;&amp;quot;+yw_zgy+&amp;quot;&amp;lt;/AAE004&amp;gt;
+								&amp;lt;AAE251&amp;gt;&amp;quot;+yw_dh+&amp;quot;&amp;lt;/AAE251&amp;gt;
+								&amp;lt;AAE006&amp;gt;&amp;quot;+yw_dz+&amp;quot;&amp;lt;/AAE006&amp;gt;
+				       			&amp;lt;/ROW&amp;gt;&amp;quot;;
+				       	xml += 	rowStr;
+				       	
+				}//end for(var i=0 ;i &amp;lt;= ds.getRowCount();i++)
+				xml+= &amp;quot;&amp;lt;/ROW&amp;gt;&amp;lt;/ROWSET&amp;gt;&amp;quot;;
+				
+			}//if(ds.getRowCount() &amp;lt;= 0){
+		}//if(ywjkbz == &amp;quot;YH&amp;quot;){
+		
+		return &amp;quot;1&amp;quot;+&amp;quot;@&amp;quot;+xml;
+		
+	}catch(e){
+		if (db != null) db.Rollback();
+		return &amp;quot;2&amp;quot;+&amp;quot;@&amp;quot;+e.toString();
+	}finally{
+		if (db != null) db.Close();
+	}
+}
+
+//20161229-20170104 lwq add 手工匹配查询
+function LoadManualXml(){
+	var sql = &amp;quot;&amp;quot;;
+	var db = null;
+	var xml = &amp;quot;&amp;quot;;
+	try{
+		db = new pub.EADatabase();
+		//区分业务系统是东软还是银海
+		var uo_ywjk = new SBCW_IYWJK(); //业务接口类
+		var ywjkbz = uo_ywjk.getYWJKBZ(db,thisaccid);
+		
+		if(ywjkbz == &amp;quot;DR&amp;quot;){
+			
+		}else if(ywjkbz == &amp;quot;YH&amp;quot;){
+			//20170124 lyh modify 手工匹配的时候不需要查找业务单位名称
+			if(typ == 1){
+				//20170124 lyh modify 手工匹配的时候不需要查找业务单位名称
+				//sql = &amp;quot;SELECT DISTINCT B.DWMC FROM CW_RJZB A, SI_DWB B WHERE A.SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND A.ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND A.DWBH LIKE &amp;apos;J%&amp;apos; AND A.SBH = B.SBH AND A.ZTH = B.ZTH
+	   			//	AND A.DWBH = B.DWBH AND B.YWDWBH IS NULL AND B.DWMC IN (SELECT AAB004 FROM AB01 WHERE AAB301 IN (SELECT TCQBM FROM CW_SBSB WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;) )&amp;quot;;
+				sql = &amp;quot;SELECT dwmc FROM SI_DWB WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND DWBH LIKE &amp;apos;J%&amp;apos; AND YWDWBH IS NULL and dwmc in (select jf_yhhm from ab02 where AAB301 IN (SELECT TCQBM FROM CW_SBSB WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;) )&amp;quot;;
+			}else if(typ == 2){
+				sql = &amp;quot;SELECT dwmc FROM SI_DWB WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND DWBH LIKE &amp;apos;J%&amp;apos; AND YWDWBH IS NULL&amp;quot;;
+			}
+			var ds = db.QuerySQL(sql);
+			if(ds.getRowCount() &amp;lt;= 0){
+				db.Rollback();
+				return &amp;quot;0&amp;quot;+&amp;quot;@&amp;quot;+&amp;quot;查询不到数据，财务业务单位无单位需要对照！！&amp;quot;;
+			}else{
+				var row = 0;
+				xml = &amp;quot;&amp;lt;?xml version = &amp;apos;1.0&amp;apos;?&amp;gt;&amp;lt;ROWSET&amp;gt;&amp;quot;;
+				for(var i=0 ;i &amp;lt; ds.getRowCount();i++){
+					//获取单位名称
+					var dwmc = ds.getStringAt(i,&amp;quot;DWMC&amp;quot;);
+
+					//20170104 lwq modify
+					//财务系统信息
+					sql = &amp;quot;select dwbh,dwmc,dwjc,dwlxbh from si_dwb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and dwbh like &amp;apos;J%&amp;apos; and dwmc = &amp;apos;&amp;quot;+dwmc+&amp;quot;&amp;apos;&amp;quot;;
+					var cwdw_ds = db.QuerySQL(sql);
+					var cw_dwbh = cwdw_ds.getStringAt(0,&amp;quot;DWBH&amp;quot;);
+					var cw_dwmc = cwdw_ds.getStringAt(0,&amp;quot;DWMC&amp;quot;);
+					var cw_dwjc = cwdw_ds.getStringAt(0,&amp;quot;DWJC&amp;quot;);
+					var cw_dwlxbh = cwdw_ds.getStringAt(0,&amp;quot;DWLXBH&amp;quot;);
+
+					var dz = &amp;quot;←→&amp;quot;;
+					var xz = &amp;quot;1&amp;quot;;	
+					
+					var ywdw_ds   = &amp;quot;&amp;quot;;
+					var yw_dwbh   = &amp;quot;&amp;quot;;
+					var yw_dwmc   = &amp;quot;&amp;quot;;
+					var yw_dwjc   = &amp;quot;&amp;quot;;
+					var yw_dwlxbh = &amp;quot;&amp;quot;;
+					var yw_zgy    = &amp;quot;&amp;quot;;
+					var yw_dh     = &amp;quot;&amp;quot;;
+					var yw_dz     = &amp;quot;&amp;quot;;
+
+					//业务系统单位信息
+					if(typ == &amp;quot;1&amp;quot;){//按银行户名查询
+						//20170314 LYH modify 银海险种是三位 OR a.aae140 = &amp;apos;120&amp;apos;
+						sql = &amp;quot;select a.aab001_new AAB001,a.jf_yhhm AAB004,b.AAB004 AAB004_b,b.BAB004,DECODE(SUBSTRB(b.AAB019, 1, 1),3,3,5,9 || b.AAB113,7,98,9,0,0) AAB019,
+							b.AAE004,NVL(b.AAE251, b.AAE005) AAE251, b.AAE006 from ab02 a, ab01 b where a.aab001_new = b.AAB001 and (A.AAE140 = &amp;apos;12&amp;apos; OR a.aae140 = &amp;apos;120&amp;apos; ) and a.jf_yhhm = &amp;apos;&amp;quot;+dwmc+&amp;quot;&amp;apos;&amp;quot;;
+						ywdw_ds = db.QuerySQL(sql);		
+
+						//20170314 lyh modify ywdw_ds.getRowCount() 
+						for(var j=0 ;j &amp;lt;= ywdw_ds.getRowCount()-1;j++){
+							yw_dwbh   = ywdw_ds.getStringAt(0,&amp;quot;AAB001&amp;quot;);
+							yw_dwmc   = ywdw_ds.getStringAt(0,&amp;quot;AAB004&amp;quot;);
+							yw_dwjc   = ywdw_ds.getStringAt(0,&amp;quot;BAB004&amp;quot;);
+							yw_dwlxbh = ywdw_ds.getStringAt(0,&amp;quot;AAB019&amp;quot;);
+							yw_zgy    = ywdw_ds.getStringAt(0,&amp;quot;AAE004&amp;quot;);
+							yw_dh     = ywdw_ds.getStringAt(0,&amp;quot;AAE251&amp;quot;);
+							yw_dz     = ywdw_ds.getStringAt(0,&amp;quot;AAE006&amp;quot;);							
+
+//							20170314 lyh modify 不需要判断财务单位与业务单位一致
+//							if (cw_dwbh == yw_dwbh) {
+								//构建XML
+								row ++;
+								var rowStr = &amp;quot;&amp;lt;ROW num=&amp;apos;&amp;quot;+row+&amp;quot;&amp;apos; SELECTFLAG=&amp;apos;0&amp;apos; name=&amp;apos;&amp;apos;&amp;gt;
+											&amp;lt;XZ&amp;gt;&amp;quot;+xz+&amp;quot;&amp;lt;/XZ&amp;gt;
+											&amp;lt;DWBH&amp;gt;&amp;quot;+cw_dwbh+&amp;quot;&amp;lt;/DWBH&amp;gt;
+											&amp;lt;DWMC&amp;gt;&amp;quot;+cw_dwmc+&amp;quot;&amp;lt;/DWMC&amp;gt;
+											&amp;lt;DWJC&amp;gt;&amp;quot;+cw_dwjc+&amp;quot;&amp;lt;/DWJC&amp;gt;
+											&amp;lt;DWLXBH&amp;gt;&amp;quot;+cw_dwlxbh+&amp;quot;&amp;lt;/DWLXBH&amp;gt;
+											&amp;lt;DZ&amp;gt;&amp;quot;+dz+&amp;quot;&amp;lt;/DZ&amp;gt;
+											&amp;lt;AAB001&amp;gt;&amp;quot;+yw_dwbh+&amp;quot;&amp;lt;/AAB001&amp;gt;
+											&amp;lt;AAB004&amp;gt;&amp;quot;+yw_dwmc+&amp;quot;&amp;lt;/AAB004&amp;gt;
+											&amp;lt;BAB004&amp;gt;&amp;quot;+yw_dwjc+&amp;quot;&amp;lt;/BAB004&amp;gt;
+											&amp;lt;AAB019&amp;gt;&amp;quot;+yw_dwlxbh+&amp;quot;&amp;lt;/AAB019&amp;gt;
+											&amp;lt;AAE004&amp;gt;&amp;quot;+yw_zgy+&amp;quot;&amp;lt;/AAE004&amp;gt;
+											&amp;lt;AAE251&amp;gt;&amp;quot;+yw_dh+&amp;quot;&amp;lt;/AAE251&amp;gt;
+											&amp;lt;AAE006&amp;gt;&amp;quot;+yw_dz+&amp;quot;&amp;lt;/AAE006&amp;gt;
+							       			&amp;lt;/ROW&amp;gt;&amp;quot;;
+							       	xml += 	rowStr;		
+//							}
+						}//end for(var j=0 ;j &amp;lt; ds.getRowCount();j++)			
+					} else if (typ == &amp;quot;2&amp;quot;) {//未分类查询
+							//构建XML
+							row ++;
+							var rowStr = &amp;quot;&amp;lt;ROW num=&amp;apos;&amp;quot;+row+&amp;quot;&amp;apos; SELECTFLAG=&amp;apos;0&amp;apos; name=&amp;apos;&amp;apos;&amp;gt;
+										&amp;lt;XZ&amp;gt;&amp;quot;+xz+&amp;quot;&amp;lt;/XZ&amp;gt;
+										&amp;lt;DWBH&amp;gt;&amp;quot;+cw_dwbh+&amp;quot;&amp;lt;/DWBH&amp;gt;
+										&amp;lt;DWMC&amp;gt;&amp;quot;+cw_dwmc+&amp;quot;&amp;lt;/DWMC&amp;gt;
+										&amp;lt;DWJC&amp;gt;&amp;quot;+cw_dwjc+&amp;quot;&amp;lt;/DWJC&amp;gt;
+										&amp;lt;DWLXBH&amp;gt;&amp;quot;+cw_dwlxbh+&amp;quot;&amp;lt;/DWLXBH&amp;gt;
+										&amp;lt;DZ&amp;gt;&amp;quot;+dz+&amp;quot;&amp;lt;/DZ&amp;gt;
+										&amp;lt;AAB001&amp;gt;&amp;quot;+yw_dwbh+&amp;quot;&amp;lt;/AAB001&amp;gt;
+										&amp;lt;AAB004&amp;gt;&amp;quot;+yw_dwmc+&amp;quot;&amp;lt;/AAB004&amp;gt;
+										&amp;lt;BAB004&amp;gt;&amp;quot;+yw_dwjc+&amp;quot;&amp;lt;/BAB004&amp;gt;
+										&amp;lt;AAB019&amp;gt;&amp;quot;+yw_dwlxbh+&amp;quot;&amp;lt;/AAB019&amp;gt;
+										&amp;lt;AAE004&amp;gt;&amp;quot;+yw_zgy+&amp;quot;&amp;lt;/AAE004&amp;gt;
+										&amp;lt;AAE251&amp;gt;&amp;quot;+yw_dh+&amp;quot;&amp;lt;/AAE251&amp;gt;
+										&amp;lt;AAE006&amp;gt;&amp;quot;+yw_dz+&amp;quot;&amp;lt;/AAE006&amp;gt;
+						       			&amp;lt;/ROW&amp;gt;&amp;quot;;
+						       	xml += 	rowStr;		
+					}//end if (typ == &amp;quot;2&amp;quot;)						       	
+				}//end for(var i=0 ;i &amp;lt;= ds.getRowCount();i++)
+				xml+= &amp;quot;&amp;lt;/ROW&amp;gt;&amp;lt;/ROWSET&amp;gt;&amp;quot;;
+			}//if(ds.getRowCount() &amp;lt;= 0){
+		}//if(ywjkbz == &amp;quot;YH&amp;quot;){
+
+		return &amp;quot;1&amp;quot;+&amp;quot;@&amp;quot;+xml;
+	}catch(e){
+		if (db != null) db.Rollback();
+		return &amp;quot;2&amp;quot;+&amp;quot;@&amp;quot;+e.toString();
+	}finally{
+		if (db != null) db.Close();
+	}
+}
+
+//单位对照
+function DwdzSave(){
+	var sql = &amp;quot;&amp;quot;;
+	var db = null;
+	var cwdwdzXml = &amp;quot;&amp;quot;;
+	var dwlxbh = 0;
+	var row = 0;
+	try{
+		db = new pub.EADatabase();
+		//区分业务系统是东软还是银海
+		var uo_ywjk = new SBCW_IYWJK(); //业务接口类
+		var ywjkbz = uo_ywjk.getYWJKBZ(db,thisaccid);
+		
+		if(ywjkbz == &amp;quot;DR&amp;quot;){
+		}else if(ywjkbz == &amp;quot;YH&amp;quot;){
+			//获取xml.ds
+			cwdwdzXml= new pub.EAXmlDS(dwdzXml);
+			
+			for(var i = 0;i &amp;lt; cwdwdzXml.getRowCount();i++) {
+				var xz = cwdwdzXml.getStringAt(i,&amp;quot;XZ&amp;quot;);
+				
+				if(xz == 1){
+					row ++;
+					
+					var cw_dwbh = cwdwdzXml.getStringAt(i,&amp;quot;DWBH&amp;quot;);
+					var cw_dwmc = cwdwdzXml.getStringAt(i,&amp;quot;DWMC&amp;quot;);
+					var cw_dwjc = cwdwdzXml.getStringAt(i,&amp;quot;DWJC&amp;quot;);
+					var cw_dwlxbh = cwdwdzXml.getStringAt(i,&amp;quot;DWLXBH&amp;quot;);
+					
+					var yw_dwbh   = cwdwdzXml.getStringAt(i,&amp;quot;AAB001&amp;quot;);
+					var yw_dwmc   = cwdwdzXml.getStringAt(i,&amp;quot;AAB004&amp;quot;);
+					var yw_dwjc   = cwdwdzXml.getStringAt(i,&amp;quot;BAB004&amp;quot;);
+					var yw_dwlxbh = cwdwdzXml.getStringAt(i,&amp;quot;AAB019&amp;quot;);
+					var yw_zgy    = cwdwdzXml.getStringAt(i,&amp;quot;AAE004&amp;quot;);
+					var yw_dh     = cwdwdzXml.getStringAt(i,&amp;quot;AAE251&amp;quot;);
+					var yw_dz     = cwdwdzXml.getStringAt(i,&amp;quot;AAE006&amp;quot;);
+					
+					//校验数据
+					if(yw_dwbh == &amp;quot;&amp;quot; || yw_dwbh == &amp;quot;undefined&amp;quot; || yw_dwbh == undefined){
+						db.Rollback();
+						return -1+&amp;quot;@&amp;quot;+&amp;quot;单位编号不能为空，程序出错!!&amp;quot;;
+					}
+					if(yw_dwmc == &amp;quot;&amp;quot; || yw_dwmc == &amp;quot;undefined&amp;quot; || yw_dwmc == undefined){
+						db.Rollback();
+						return -1+&amp;quot;@&amp;quot;+&amp;quot;单位名称不能为空，程序出错!!&amp;quot;;
+					}
+					if(yw_dwjc == &amp;quot;&amp;quot; || yw_dwjc == &amp;quot;undefined&amp;quot; || yw_dwjc == undefined){
+						db.Rollback();
+						return -1+&amp;quot;@&amp;quot;+&amp;quot;单位简称不能为空，程序出错!!&amp;quot;;
+					}
+					if(cw_dwlxbh == &amp;quot;&amp;quot; || cw_dwlxbh == &amp;quot;undefined&amp;quot; || cw_dwlxbh == undefined){
+						db.Rollback();
+						return -1+&amp;quot;@&amp;quot;+&amp;quot;单位类型编号不能为空，程序出错!!&amp;quot;;
+					}
+					
+					//校验业务单位类型是否转换正确
+					sql = &amp;quot;select count(1) from si_dwlxb where dwlxbh = &amp;apos;&amp;quot;+yw_dwlxbh+&amp;quot;&amp;apos;&amp;quot;;
+					var cout = db.GetSQL(sql);
+					if(cout &amp;gt; 0){
+						dwlxbh = yw_dwlxbh;
+					}else if(cout == 0){
+						dwlxbh = cw_dwlxbh;
+					}
+					
+					//判断si_dwb是否已经存入业务单位编号信息
+					sql = &amp;quot;select count(1) from si_dwb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and dwbh = &amp;apos;&amp;quot;+yw_dwbh+&amp;quot;&amp;apos;&amp;quot;;
+					var dwcout = db.GetSQL(sql);
+					if(dwcout == 0){
+						//插入si_dwb
+						sql = &amp;quot;INSERT INTO si_dwb(sbh,zth,dwbh,dwmc,dwjc,dwlxbh,dh,dz,zgyxm,ywdwbh,org,acc)
+							    values(&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+yw_dwbh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+yw_dwmc+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+yw_dwjc+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+dwlxbh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+yw_dh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+yw_dz+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+yw_zgy+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+yw_dwbh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos;)&amp;quot;;
+						db.ExcecutSQL(sql);
+					}
+					
+					//更新si_dwb
+					sql = &amp;quot;update si_dwb set dwjc=&amp;apos;&amp;quot;+yw_dwjc+&amp;quot;&amp;apos;,dwlxbh=&amp;apos;&amp;quot;+dwlxbh+&amp;quot;&amp;apos;,zgyxm=&amp;apos;&amp;quot;+yw_zgy+&amp;quot;&amp;apos;,dh=&amp;apos;&amp;quot;+yw_dh+&amp;quot;&amp;apos;,dz=&amp;apos;&amp;quot;+yw_dz+&amp;quot;&amp;apos;,ywdwbh=&amp;apos;&amp;quot;+yw_dwbh+&amp;quot;&amp;apos; 
+						where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and dwbh = &amp;apos;&amp;quot;+cw_dwbh+&amp;quot;&amp;apos; and ywdwbh is null&amp;quot;;
+					//dwmc = &amp;apos;&amp;quot;+yw_dwmc+&amp;quot;&amp;apos;
+					db.ExcecutSQL(sql);
+					
+				}//if(xz == 1){
+			}//for(var i = 0;i &amp;lt; cwdwdzXml.getRowCount();i++)
+			db.Commit();
+			
+			return 1+&amp;quot;@&amp;quot;+&amp;quot;财务业务单位对照同步成功！！共同步单位：&amp;quot;+row+&amp;quot;笔&amp;quot;;
+		}//if(ywjkbz == &amp;quot;DR&amp;quot;)
+	}catch(e){
+		if (db != null) db.Rollback();
+		return &amp;quot;2&amp;quot;+&amp;quot;@&amp;quot;+e.toString();
+	}finally{
+		if (db != null) db.Close();
+	}
+}
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

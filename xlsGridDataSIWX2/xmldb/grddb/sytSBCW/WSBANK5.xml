@@ -1,0 +1,221 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >WSBANK5</MWID><NAME >WSBANK5</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >WSBANK5.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >webService</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >test</ID><NAME >test</NAME><ACTTYP >0</ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE><C10 >test</C10></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >function test(){
+
+	var xml =&amp;quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;
+			&amp;lt;MsgText&amp;gt;
+			  &amp;lt;GrpHdr&amp;gt;
+			    &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+			    &amp;lt;Ref&amp;gt;1021000000002012090600000000000000000001&amp;lt;/Ref&amp;gt;
+			    &amp;lt;BusCd&amp;gt;0213009&amp;lt;/BusCd&amp;gt;
+			    &amp;lt;TradSrc&amp;gt;B&amp;lt;/TradSrc&amp;gt;
+			    &amp;lt;Sender&amp;gt;
+			      &amp;lt;InstId&amp;gt;10200000&amp;lt;/InstId&amp;gt;
+			    &amp;lt;/Sender&amp;gt;
+			    &amp;lt;Recver&amp;gt;
+			      &amp;lt;InstId&amp;gt;00000001&amp;lt;/InstId&amp;gt;
+			    &amp;lt;/Recver&amp;gt;
+			    &amp;lt;Resend&amp;gt;N&amp;lt;/Resend&amp;gt;
+			    &amp;lt;Date&amp;gt;2017109&amp;lt;/Date&amp;gt;
+			    &amp;lt;Time&amp;gt;100900&amp;lt;/Time&amp;gt;
+			    &amp;lt;Dgst&amp;gt;个人编号查询&amp;lt;/Dgst&amp;gt;
+			    &amp;lt;Rst&amp;gt;
+				    &amp;lt;Code&amp;gt;0001&amp;lt;/Code&amp;gt;
+				    &amp;lt;Info&amp;gt;待处理&amp;lt;/Info&amp;gt;
+			  	&amp;lt;/Rst&amp;gt;
+			  &amp;lt;/GrpHdr&amp;gt;
+			  &amp;lt;BusiText&amp;gt;
+				  &amp;lt;BkSeq&amp;gt;20120814100000008443&amp;lt;/BkSeq&amp;gt;
+				  &amp;lt;CertType&amp;gt;1&amp;lt;/CertType&amp;gt;
+				  &amp;lt;CertId&amp;gt;452123199009030713&amp;lt;/CertId&amp;gt;
+				  &amp;lt;Name&amp;gt;张大昆&amp;lt;/Name&amp;gt;
+				  &amp;lt;BeginNum&amp;gt;&amp;lt;/BeginNum&amp;gt;
+				  &amp;lt;FetchNum&amp;gt;&amp;lt;/FetchNum&amp;gt;
+			
+			  &amp;lt;/BusiText&amp;gt;
+			&amp;lt;/MsgText&amp;gt;&amp;quot;;
+
+			
+}</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var dom = new JavaPackage(&amp;quot;org.w3c.dom&amp;quot;);
+var sax = new JavaPackage(&amp;quot;org.xml.sax&amp;quot;);
+var parsers = new JavaPackage(&amp;quot;javax.xml.parsers&amp;quot;);
+var soap = new JavaPackage(&amp;quot;javax.xml.soap&amp;quot;);
+var io = new JavaPackage(&amp;quot;java.io&amp;quot;);
+var util = new JavaPackage(&amp;quot;java.util&amp;quot;);
+//
+// 个人参保编号查询
+//接收报文-&amp;gt;调用公函数解析消息头-〉调用业务处理函数
+//-〉解析消息体-〉获取查询参数-〉查询AC01表查询个人编号
+//-〉将个人编号封装入报文返回
+//function F0213009()
+function F0213009(requestXml)
+{
+	try{
+		var service = new SBCW_sbcwService();
+		var map = new java.util.HashMap();
+		map = service.parseMsgText(requestXml,false); //记录接收消息日志
+		
+		var wscall = new x_EAWebServiceCall();
+		var responseXml = parseMsgText_0213009(requestXml,map);	
+		service.parseMsgText(responseXml,true); //记录发送消息日志
+		return responseXml;	
+	}catch(e){
+	return e.toString();
+	}
+	
+}
+
+//个人编号查询业务处理方法
+//返回响应的报文XML
+function parseMsgText_0213009(msgText,hdrMap){
+	var responseXml = &amp;quot;&amp;quot;;
+	var service = new SBCW_sbcwService();
+	//社保流水号
+	var SiSeq = service.genSiSeq(hdrMap.get(&amp;quot;RecverId&amp;quot;));
+	
+	var db = null;
+	//定义查询的报文串变量
+	var  LoopCount=&amp;quot;&amp;quot;;
+	//先赋值两个查询返回信息查询成功
+	var BusiRstCode = &amp;quot;0000&amp;quot;;
+	var BusiRstInfo = &amp;quot;查询成功！&amp;quot;;
+	try{
+		db = new pub.EADatabase();
+		var dbf = parsers.DocumentBuilderFactory.newInstance();
+		var documentbuilder = dbf.newDocumentBuilder();
+		var document = documentbuilder.parse(new sax.InputSource(new io.StringReader(msgText))); 
+		var nodelist = document.getElementsByTagName(&amp;quot;MsgText&amp;quot;);                  
+		var node = nodelist.item(0);	
+		var yszl_sbjgdm = hdrMap.get(&amp;quot;RecverId&amp;quot;);
+		var yszl_yhjgdm = hdrMap.get(&amp;quot;SenderId&amp;quot;);
+		//证件类型
+		var CertType = &amp;quot;&amp;quot;;
+		try { CertType = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;CertType&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		//证件号码
+		var CertId = &amp;quot;&amp;quot;;
+		try { CertId = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;CertId&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		//姓名
+		var Name = &amp;quot;&amp;quot;;
+		try { Name = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;Name&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		//开始查询
+		var BeginNum=&amp;quot;&amp;quot;;
+		try { BeginNum = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;BeginNum&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+		//查询的数
+		var FetchNum=&amp;quot;&amp;quot;;
+		try { FetchNum = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;FetchNum&amp;quot;).item(0).getFirstChild().getNodeValue(); } catch(e) {}
+
+		//查询个人编号
+//		var sql = &amp;quot;select * from AC01 where AAC058=&amp;apos;&amp;quot;+CertType+&amp;quot;&amp;apos; AND AAC147=&amp;apos;&amp;quot;+CertId+&amp;quot;&amp;apos; AND AAC003=&amp;apos;&amp;quot;+Name+&amp;quot;&amp;apos;&amp;quot;;
+		var Start = BeginNum*1.0;
+		var End = Start+FetchNum*1.0;
+		var sql=&amp;quot;select *
+       			from
+       			(select  rownum num,a.* 
+             			from AC01 a 
+               			where AAC058=&amp;apos;&amp;quot;+CertType+&amp;quot;&amp;apos;
+               			AND AAC147=&amp;apos;&amp;quot;+CertId+&amp;quot;&amp;apos; 
+               			AND AAC003=&amp;apos;况箭&amp;apos;)
+       			where num&amp;gt;&amp;quot;+Start+&amp;quot;
+       			AND num&amp;lt;=&amp;quot;+End;
+       			
+		var ds=db.QuerySQL(sql);
+		//查询记录行数
+		var cnt=ds.getRowCount();
+				
+		if(cnt&amp;gt;0){
+			//个人编号显示
+			var Loopitem = &amp;quot;&amp;quot;;
+			//报文串			
+			  LoopCount= &amp;quot;&amp;lt;CertType&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAC058&amp;quot;)+&amp;quot;&amp;lt;/CertType&amp;gt;
+          				&amp;lt;CertId&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAC147&amp;quot;)+&amp;quot;&amp;lt;/CertId&amp;gt;
+         				&amp;lt;Name&amp;gt;&amp;quot;+ds.getStringAt(0,&amp;quot;AAC003&amp;quot;)+&amp;quot;&amp;lt;/Name&amp;gt;
+					&amp;lt;LoopCount&amp;gt;&amp;quot;+cnt+&amp;quot;&amp;lt;/LoopCount&amp;gt;
+					&amp;lt;TotalCount&amp;gt;&amp;quot;+cnt+&amp;quot;&amp;lt;/TotalCount&amp;gt;&amp;quot;;
+			//循环查到个人编号					
+			for(var i=0;i&amp;lt;cnt;i++){
+				//个人编号
+				var SiId = &amp;quot;&amp;quot;;
+				SiId = ds.getStringAt(i,&amp;quot;AAC001&amp;quot;);
+				Loopitem+=&amp;quot;
+				&amp;lt;Loop&amp;gt;&amp;lt;SiId&amp;gt;&amp;quot;+SiId+&amp;quot;&amp;lt;/SiId&amp;gt;&amp;lt;/Loop&amp;gt;&amp;quot;;
+			}
+
+			 LoopCount +=Loopitem;
+			
+		}else{
+				BusiRstCode = &amp;quot;2001&amp;quot;;
+				BusiRstInfo = &amp;quot;查询不到&amp;quot;;
+				LoopCount =&amp;quot;&amp;quot;;
+			}	
+		
+
+	}catch(e){
+		BusiRstCode = &amp;quot;2001&amp;quot;;
+		BusiRstInfo = &amp;quot;系统异常&amp;quot;+e.toString();
+		LoopCount =&amp;quot;&amp;quot;;
+
+	}
+
+	//组装返回报文
+	var respText = &amp;quot;&amp;lt;MsgText&amp;gt;
+				  &amp;lt;GrpHdr&amp;gt;
+				    &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+				    &amp;lt;Ref&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Ref&amp;quot;)+&amp;quot;&amp;lt;/Ref&amp;gt;
+				    &amp;lt;BusCd&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;BusCd&amp;quot;)+&amp;quot;&amp;lt;/BusCd&amp;gt;
+				    &amp;lt;TradSrc&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;TradSrc&amp;quot;)+&amp;quot;&amp;lt;/TradSrc&amp;gt;
+				    &amp;lt;Sender&amp;gt;
+				      &amp;lt;InstId&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;SenderId&amp;quot;)+&amp;quot;&amp;lt;/InstId&amp;gt;
+				    &amp;lt;/Sender&amp;gt;
+				    &amp;lt;Recver&amp;gt;
+				      &amp;lt;InstId&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;RecverId&amp;quot;)+&amp;quot;&amp;lt;/InstId&amp;gt;
+				    &amp;lt;/Recver&amp;gt;
+				    &amp;lt;Resend&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Resend&amp;quot;)+&amp;quot;&amp;lt;/Resend&amp;gt;
+				    &amp;lt;Date&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Date&amp;quot;)+&amp;quot;&amp;lt;/Date&amp;gt;
+				    &amp;lt;Time&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Time&amp;quot;)+&amp;quot;&amp;lt;/Time&amp;gt;
+				    &amp;lt;Dgst&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;Dgst&amp;quot;)+&amp;quot;&amp;lt;/Dgst&amp;gt;
+				    &amp;lt;Rst&amp;gt;
+					    &amp;lt;Code&amp;gt;0000&amp;lt;/Code&amp;gt;
+					    &amp;lt;Info&amp;gt;已处理&amp;lt;/Info&amp;gt;
+				  	&amp;lt;/Rst&amp;gt;
+				  &amp;lt;/GrpHdr&amp;gt;
+				  &amp;lt;BusiText&amp;gt;
+				  	&amp;lt;Rst&amp;gt;
+					    &amp;lt;Code&amp;gt;&amp;quot;+BusiRstCode+&amp;quot;&amp;lt;/Code&amp;gt;
+					    &amp;lt;Info&amp;gt;&amp;quot;+BusiRstInfo+&amp;quot;&amp;lt;/Info&amp;gt;
+				  	&amp;lt;/Rst&amp;gt;
+					  &amp;lt;BkSeq&amp;gt;&amp;quot;+hdrMap.get(&amp;quot;BkSeq&amp;quot;)+&amp;quot;&amp;lt;/BkSeq&amp;gt;
+					  &amp;lt;SiSeq&amp;gt;&amp;quot;+SiSeq+&amp;quot;&amp;lt;/SiSeq&amp;gt;
+					  &amp;quot;+LoopCount+&amp;quot;
+				  &amp;lt;/BusiText&amp;gt;
+				&amp;lt;/MsgText&amp;gt;&amp;quot;;
+				
+	return respText;	
+
+}
+
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

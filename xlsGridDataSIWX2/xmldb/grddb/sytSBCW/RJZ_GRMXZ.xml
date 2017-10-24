@@ -1,0 +1,740 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RJZ_GRMXZ</MWID><NAME >个人明细账</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RJZ_GRMXZ.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var sheet_rjz = 0;
+var sheet_rjzmx1 = 1;
+var sheet_rjzmx2 = 2;
+var sheet_param = 3;
+var sheet_tips = 4;
+var sheet_print = 5;
+var cur_sbh = &amp;quot;&amp;quot;;
+var cur_zth = &amp;quot;&amp;quot;;
+var cur_yyyy = &amp;quot;&amp;quot;; 	//当前选择的年份
+var cur_mm = &amp;quot;&amp;quot;;	//当前选择的月份
+var cur_grbh = &amp;quot;&amp;quot;;
+
+var ZXGFILE0 = &amp;quot;&amp;quot;;
+var ZXGFILE1 = &amp;quot;&amp;quot;;
+var ZXGFILE2 = &amp;quot;&amp;quot;;
+
+var printBZ;
+
+//页面布局初始化
+function initLayout()
+{	
+	_this.SplitSheet(sheet_param,&amp;quot;V&amp;quot;,45);
+	_this.SplitSheet(sheet_rjz,&amp;quot;V&amp;quot;,&amp;quot;50%&amp;quot;);
+	_this.SplitSheet(sheet_tips,&amp;quot;V&amp;quot;,30);
+	_this.SplitSheet(sheet_rjzmx1,&amp;quot;H&amp;quot;,&amp;quot;50%&amp;quot;);
+	
+	ZXGFILE0 = _this.SaveTempZXGFile(0); 
+	ZXGFILE1 = _this.SaveTempZXGFile(1);
+	ZXGFILE2 = _this.SaveTempZXGFile(2);	
+	
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetAttribe(&amp;quot;SHEET_2&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+	var xmlmenu = &amp;quot;&amp;lt;item id=\&amp;quot;print_selected\&amp;quot; name=\&amp;quot;只打印选中行\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;print_fromcurrow\&amp;quot; name=\&amp;quot;从当前行开始打印\&amp;quot;/&amp;gt;&amp;quot;;    	   
+	_this.AddToolbarButton(&amp;quot;udf_printRJZ&amp;quot;,&amp;quot;打印收据&amp;quot;,&amp;quot;打印收据&amp;quot;,&amp;quot;&amp;quot;,1,6,6,80);	
+	
+	xmlmenu = &amp;quot;&amp;lt;item id=\&amp;quot;rjztjb1\&amp;quot; name=\&amp;quot;日记账款项统计\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;rjztjb2\&amp;quot; name=\&amp;quot;零星医疗费报账支出明细表\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;rjztjb3\&amp;quot; name=\&amp;quot;现金支出汇总表\&amp;quot;/&amp;gt;&amp;quot;
+		+ &amp;quot;&amp;lt;item id=\&amp;quot;rjztjb4\&amp;quot; name=\&amp;quot;享受大额医疗补助人员名单\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;rjztjb5\&amp;quot; name=\&amp;quot;费用申报表\&amp;quot;/&amp;gt;&amp;quot;;
+	_this.AddToolbarButton(&amp;quot;btnrjztj&amp;quot;,&amp;quot;统计&amp;quot;,&amp;quot;统计&amp;quot;,xmlmenu,1,16,16,80);
+	
+	_this.SetToCheckBox(&amp;quot;&amp;quot;,sheet_param,1,12,&amp;quot;发票自增&amp;quot;,&amp;quot;1&amp;quot;,&amp;quot;0&amp;quot;);
+	_this.SetCellText(sheet_param,1,12,&amp;quot;1&amp;quot;);
+	
+}
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	cur_sbh = G_ORGID;
+	cur_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	initLayout();
+	
+	var yyList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_YYYY&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);	
+	cur_yyyy = G_LOGDAT.substring(0,4);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,sheet_param,1,1,yyList); _this.SetCellText(sheet_param,1,1,cur_yyyy);
+	
+	//替换打印标志  设置汉字
+	printBZ = _this.CreateListValue();
+	_this.SetListValue(printBZ,&amp;quot;0&amp;quot;,&amp;quot;未打印&amp;quot;);
+	_this.SetListValue(printBZ,&amp;quot;1&amp;quot;,&amp;quot;已打印&amp;quot;);
+	_this.AddSheet(&amp;quot;print&amp;quot;);
+	_this.LoadScene(sheet_param,10);
+	_this.AutoFixScreenWidth();
+}
+
+//加载个人明细账
+function loadGrmxzData(grbh,yyyy){
+	_this.SetToolbarString(&amp;quot;正在加载数据...&amp;quot;);
+	_this.SetRedraw(0);
+	
+	//清除前面的数据
+	_this.LoadZXGFile(ZXGFILE0,-1,0);
+	_this.SetFixedRow(sheet_rjz,1);	
+	_this.SetColVisible(sheet_rjz,1,-1);
+	_this.SetMainCellRange(sheet_rjz,1,0,_this.GetRowCount(sheet_rjz)-2,_this.GetColCount(sheet_rjz)-1);
+
+//	alert(yyyy+&amp;apos;asd&amp;apos;+grbh);
+	//加载日记账数据
+	var xml = _sql.query(&amp;quot;grmxz&amp;quot;,&amp;quot;YYYY=&amp;quot;+yyyy+&amp;quot;&amp;GRBH=&amp;quot;+grbh);
+	_this.SetXmlDS(sheet_rjz,1,0,_this.GetRowCount(sheet_rjz)-2,_this.GetColCount(sheet_rjz)-1,xml);
+	setDataRowXsxx(1);
+	
+	//加载日记帐明细
+	var lsh = _this.GetCellText(sheet_rjz,1,16);
+	loadRJZMXData(lsh);
+	
+	//计算合计数
+	var jfje_sum = 0.00;
+	var dfje_sum = 0.00;
+	var ye_sum   = 0.00;
+	var jfbs     = 0;
+	var dfbs     = 0;
+	for(var row = _this.GetMainCellRangeRow1(sheet_rjz);row &amp;lt;= _this.GetMainCellRangeCol2(sheet_rjz);row++ ){
+	   	var jefx = _this.GetCellText(sheet_rjz,row,11);
+	   	var sxh  = _this.GetCellText(sheet_rjz,row,19);
+	   	ye_sum   = _this.GetCellText(sheet_rjz,row,12);
+	  
+	   if(ye_sum == &amp;quot;&amp;quot; &amp;&amp; ye_sum == null) ye_sum = 0.00;
+	   
+	   if(sxh != 0 &amp;&amp; jefx == &amp;quot;借&amp;quot;){
+	      	//计算余额数
+	      	if(row == _this.GetMainCellRangeRow1(sheet_rjz)){
+	         	 ye_sum +=  1.0*_this.GetCellText(sheet_rjz,row,9);
+	     	}else if(row &amp;gt; _this.GetMainCellRangeRow1(sheet_rjz) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(sheet_rjz)){
+	         	ye_sum =  1.0*_this.GetCellText(sheet_rjz,row-1,12) + 1.0*_this.GetCellText(sheet_rjz,row,9);
+	      	}
+	      
+	      	jfje_sum += 1.0*_this.GetCellText(sheet_rjz,row,9);	      	     
+	      	jfbs ++;
+	   }else if(sxh != 0 &amp;&amp; jefx == &amp;quot;贷&amp;quot;){
+	     	//计算余额数
+	      	if(row == _this.GetMainCellRangeRow1(sheet_rjz)){
+	         	ye_sum -=  1.0*_this.GetCellText(sheet_rjz,row,10);
+	      	}else if(row &amp;gt; _this.GetMainCellRangeRow1(sheet_rjz) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(sheet_rjz)){
+	         	ye_sum =  1.0*_this.GetCellText(sheet_rjz,row-1,12) - 1.0*_this.GetCellText(sheet_rjz,row,10);
+	      	}
+	      
+	      	dfje_sum +=  1.0*_this.GetCellText(sheet_rjz,row,10);
+	      	dfbs ++;
+	   }
+	   //替换打印标志
+	   _this.SetToComboBox(&amp;quot;&amp;quot;,sheet_rjz,row,34,printBZ);
+	   _this.SetCellText(sheet_rjz,row,12,ye_sum);
+
+	}
+	
+	//设置合计数
+	_this.SetCellText(sheet_rjz,_this.GetRowCount(sheet_rjz)-1,9,jfje_sum);
+	_this.SetCellText(sheet_rjz,_this.GetRowCount(sheet_rjz)-1,10,dfje_sum);
+	//设置查询条件合计数
+	_this.SetCellText(sheet_param,1,8,&amp;quot;借：&amp;quot;+jfbs+&amp;quot;笔  贷：&amp;quot;+dfbs+&amp;quot;笔&amp;quot;);
+
+	_this.AutoFixScreenWidth();
+	_this.SetToolbarString(&amp;quot;&amp;quot;);
+	_this.SetRedraw(1);
+
+}
+
+//加载日记账明细
+function loadRJZMXData(lsh){
+	_this.SetToolbarString(&amp;quot;正在加载数据...&amp;quot;);
+	
+	//清空前面加载的日记账明细数据
+	_this.loadZXGFile(ZXGFILE1,-1,1);
+	_this.loadZXGFile(ZXGFILE2,-1,2);
+	
+	_this.SetFixedRow(sheet_rjzmx1,1);
+	_this.SetFixedRow(sheet_rjzmx2,1);
+	
+	_this.SetColVisible(sheet_rjzmx1,5,-1);
+	_this.SetColVisible(sheet_rjzmx1,6,-1);
+	_this.SetColVisible(sheet_rjzmx2,5,-1);
+	_this.SetColVisible(sheet_rjzmx2,6,-1);
+	
+	_this.SetMainCellRange(sheet_rjzmx1,1,0,_this.GetRowCount(sheet_rjzmx1)-2,_this.GetColCount(sheet_rjzmx1)-1);
+	_this.SetMainCellRange(sheet_rjzmx2,1,0,_this.GetRowCount(sheet_rjzmx2)-2,_this.GetColCount(sheet_rjzmx2)-1);
+
+	_sql.querytods(&amp;quot;rjzmxb&amp;quot;,&amp;quot;LSH=&amp;quot;+lsh);
+	
+	var sumrow = _this.XMLDS_GetRowCount();
+	var midrow = Math.ceil(sumrow / 2);	
+	var row1 = _this.GetMainCellRangeRow1(sheet_rjzmx1);
+	var row2 = _this.GetMainCellRangeRow2(sheet_rjzmx1);
+	var n = 0;
+	for (var i=0;i&amp;lt;midrow;i++) {
+		n ++;
+		if (n &amp;gt; row2) {
+			_this.AppendRow(sheet_rjzmx1,n-1);
+		}
+		_this.SetCellText(sheet_rjzmx1,row1,0,_this.XMLDS_GetString(i,&amp;quot;RJLX&amp;quot;));
+		_this.SetCellText(sheet_rjzmx1,row1,1,_this.XMLDS_GetString(i,&amp;quot;KXMC&amp;quot;));
+		_this.SetCellText(sheet_rjzmx1,row1,2,_this.XMLDS_GetString(i,&amp;quot;YM1&amp;quot;));
+		_this.SetCellText(sheet_rjzmx1,row1,3,_this.XMLDS_GetString(i,&amp;quot;YM2&amp;quot;));
+		_this.SetCellText(sheet_rjzmx1,row1,4,_this.XMLDS_GetString(i,&amp;quot;JE&amp;quot;));
+		_this.SetCellText(sheet_rjzmx1,row1,5,_this.XMLDS_GetString(i,&amp;quot;ORG&amp;quot;));
+		_this.SetCellText(sheet_rjzmx1,row1,6,_this.XMLDS_GetString(i,&amp;quot;ACC&amp;quot;));
+		_this.SetCellText(sheet_rjzmx1,row1,7,_this.XMLDS_GetString(i,&amp;quot;LSH&amp;quot;));
+		_this.SetCellText(sheet_rjzmx1,row1,8,_this.XMLDS_GetString(i,&amp;quot;LXBH&amp;quot;));
+		_this.SetCellText(sheet_rjzmx1,row1,9,_this.XMLDS_GetString(i,&amp;quot;LXXH&amp;quot;));
+		row1 ++;
+	}
+	row1 = _this.GetMainCellRangeRow1(sheet_rjzmx2);
+	row2 = _this.GetMainCellRangeRow2(sheet_rjzmx2);
+	n = 0;
+	for (var i=midrow;i&amp;lt;sumrow;i++) {
+	 	n ++;
+		if (n &amp;gt; row2) {
+			_this.AppendRow(sheet_rjzmx2,n-1);
+		}
+		_this.SetCellText(sheet_rjzmx2,row1,0,_this.XMLDS_GetString(i,&amp;quot;RJLX&amp;quot;));
+		_this.SetCellText(sheet_rjzmx2,row1,1,_this.XMLDS_GetString(i,&amp;quot;KXMC&amp;quot;));
+		_this.SetCellText(sheet_rjzmx2,row1,2,_this.XMLDS_GetString(i,&amp;quot;YM1&amp;quot;));
+		_this.SetCellText(sheet_rjzmx2,row1,3,_this.XMLDS_GetString(i,&amp;quot;YM2&amp;quot;));
+		_this.SetCellText(sheet_rjzmx2,row1,4,_this.XMLDS_GetString(i,&amp;quot;JE&amp;quot;));
+		_this.SetCellText(sheet_rjzmx2,row1,5,_this.XMLDS_GetString(i,&amp;quot;ORG&amp;quot;));
+		_this.SetCellText(sheet_rjzmx2,row1,6,_this.XMLDS_GetString(i,&amp;quot;ACC&amp;quot;));
+		_this.SetCellText(sheet_rjzmx2,row1,7,_this.XMLDS_GetString(i,&amp;quot;LSH&amp;quot;));
+		_this.SetCellText(sheet_rjzmx2,row1,8,_this.XMLDS_GetString(i,&amp;quot;LXBH&amp;quot;));
+		_this.SetCellText(sheet_rjzmx2,row1,9,_this.XMLDS_GetString(i,&amp;quot;LXXH&amp;quot;));
+
+		row1 ++;
+	}
+	
+	_this.SetToolbarString(&amp;quot;&amp;quot;);
+	_this.AutoFixScreenWidth();
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if(sheet == sheet_param){
+		if(row == 1 &amp;&amp; col == 6){
+			var grbh = _this.GetCellText(sheet_param,1,5);			
+			if(grbh == &amp;quot;&amp;quot; || grbh == null || grbh == &amp;quot;undefined&amp;quot;){
+				alert(&amp;quot;个人编号不能为空!!&amp;quot;);
+			}else{				
+				loadGrmxzData(grbh,cur_yyyy);
+			}
+		}
+	}else if( sheet == sheet_rjz &amp;&amp; row &amp;gt;= _this.GetMainCellRangeRow1(sheet_rjz) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(sheet_rjz) ){
+	   var lsh = _this.GetCellText(sheet_rjz,row,16);	//获取流水号
+	   loadRJZMXData(lsh);					//调用日记账明细函数
+	   setDataRowXsxx(row);
+	}
+}
+
+//显示提示信息内容
+function setDataRowXsxx(row){
+	//坐标（0，2） 赋值内容 _this.GetCellText(sheet_rjz,row,5
+	_this.SetCellText(sheet_tips,1,2,_this.GetCellText(sheet_rjz,row,5));
+	_this.SetCellText(sheet_tips,1,5,_this.GetCellText(sheet_rjz,row,13));
+	_this.SetCellText(sheet_tips,1,7,_this.GetCellText(sheet_rjz,row,17));
+	_this.SetCellText(sheet_tips,1,9,_this.GetCellText(sheet_rjz,row,38));
+}
+
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if(sheet == sheet_param){
+		if(row == 1 &amp;&amp; col == 5){
+			var grbh = _this.GetCellText(sheet_param,1,5);
+			if(grbh == &amp;quot;&amp;quot; || grbh == null || grbh == &amp;quot;undefined&amp;quot;){
+				alert(&amp;quot;个人编号不能为空!!&amp;quot;);
+			}else{				
+				loadGrmxzData(grbh,cur_yyyy);
+			}
+		}
+	}
+}
+
+
+//点击菜单项
+function _thisOnMenuItemSelect(sheet,row,col,menuitemid)
+{
+	if (menuitemid == &amp;quot;rjztjb1&amp;quot; || menuitemid == &amp;quot;rjztjb2&amp;quot; || menuitemid == &amp;quot;rjztjb3&amp;quot; || menuitemid == &amp;quot;rjztjb4&amp;quot; || menuitemid == &amp;quot;rjztjb5&amp;quot; || menuitemid == &amp;quot;rjztjb6&amp;quot;)  {
+		//window.open(&amp;quot;show.sp?grdid=RJZ_TJ&amp;quot;);	
+		var yyyy = _this.GetCellText(sheet_param,1,1);
+		var mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]; //formatMD(_this.GetCellText(sheet_param,1,3));
+		var dat1 = yyyy + &amp;quot;-&amp;quot; + mm + &amp;quot;-01&amp;quot;;
+		_sql.querytods(&amp;quot;LASTDAY&amp;quot;,&amp;quot;DAT1=&amp;quot;+dat1);
+		var dat2 = _this.XMLDS_GetString(0,&amp;quot;DAT2&amp;quot;);
+		var kmbh = &amp;quot;&amp;quot;;//_this.GetCellText(sheet_param,1,6);
+		
+		var repmwid = &amp;quot;RJZ_TJ&amp;quot;;
+		if (menuitemid == &amp;quot;rjztjb1&amp;quot;) repmwid = &amp;quot;RJZ_TJ&amp;quot;;	//日记帐款项统计
+		else if (menuitemid == &amp;quot;rjztjb2&amp;quot;) repmwid = &amp;quot;RJZ_TJ2&amp;quot;;	//零星医疗费报账支出明细表
+		else if (menuitemid == &amp;quot;rjztjb3&amp;quot;) repmwid = &amp;quot;RJZ_TJ3&amp;quot;;	//现金支出汇总表
+		else if (menuitemid == &amp;quot;rjztjb4&amp;quot;) repmwid = &amp;quot;RJZ_TJ4&amp;quot;;	//享受大额医疗补助人员名单
+		else if (menuitemid == &amp;quot;rjztjb5&amp;quot;) repmwid = &amp;quot;RJZ_TJ5&amp;quot;;	//费用申报表
+//		else if (menuitemid == &amp;quot;rjztjb6&amp;quot;) repmwid = &amp;quot;RJZ_TJ6&amp;quot;;	//享受大额医疗补助人员名单
+
+		window.showModalDialog(&amp;quot;show.sp?grdid=&amp;quot;+repmwid+&amp;quot;&amp;DAT1=&amp;quot;+dat1+&amp;quot;&amp;DAT2=&amp;quot;+dat2+&amp;quot;&amp;KMBH=&amp;quot;+kmbh,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=1000px;dialogHeight=600px;&amp;quot;);
+	}
+	else if(menuitemid == &amp;quot;print_fromcurrow&amp;quot;){//当前行开始打印
+		printRJZ(2);
+	}
+	else if(menuitemid == &amp;quot;print_selected&amp;quot;){//打印选中行
+		printRJZ(1)
+	}
+
+}
+
+//打印日记帐
+//mod=1打印选中行 mod=2从当前行开始打印
+//function printRJZ(mod)
+function printRJZ()
+{
+	//增加权限控制
+	var author = invokeOSFunc(&amp;quot;Print&amp;quot;,&amp;quot;&amp;quot;);
+	if (author != 1) return;
+	
+	var fpzz = _this.GetCellText(sheet_param,1,12); //发票自增
+	var printnum = &amp;quot;&amp;quot;; //打印发票号
+	var cnt = 0;
+	var showPrintView = 0; //只第一次显示打印预览窗口
+	
+	_this.LoadZXGFile(zxgRoot+&amp;quot;RJZ_PRINT.zxg&amp;quot;,-1,sheet_print);	
+//	if (mod == 2) {
+//		var currow = _this.GetCurrentRow(sheet_rjz);		
+//		for (var r=currow;r&amp;lt;=_this.GetMainCellRangeRow2(sheet_rjz);r++) {
+//			var lsh = _this.GetCellText(sheet_rjz,r,16);
+//			var dybz = _this.GetCellText(sheet_rjz,r,34);
+//			if (lsh != &amp;quot;&amp;quot;) {
+//				if (dybz == 1) {
+//					if (!confirm(&amp;quot;该日记帐（流水号&amp;quot;+lsh+&amp;quot;）已打印[&amp;quot;+_this.GetCellText(sheet_rjz,r,26)+&amp;quot;]，是否重新打印？&amp;quot;)) {
+//						continue;
+//					}
+//				}
+//				//给打印模板赋值
+//				setRJZPrintData(lsh,sheet_print);
+//				//发送打印作业
+//				_this.Print(sheet_print,0);
+//			}
+//		}
+//	}
+//	else if (mod == 1) {		
+		var rownum = 0;
+		for (var r=_this.GetMainCellRangeRow1(sheet_rjz);r&amp;lt;=_this.GetMainCellRangeRow2(sheet_rjz);r++) {
+			var flag = _this.GetCellText(sheet_rjz,r,1);
+			var lsh = _this.GetCellText(sheet_rjz,r,16);
+			var dybz = _this.GetCellText(sheet_rjz,r,34);
+			var kmbh = _this.GetCellText(sheet_rjz,r,13);
+			
+			if (flag == &amp;quot;1&amp;quot; &amp;&amp; lsh != &amp;quot;&amp;quot;) {
+				//电子托收打印标志判断
+				_sql.querytods(&amp;quot;BPDYBZ&amp;quot;,&amp;quot;SBH=&amp;quot;+cur_sbh+&amp;quot;&amp;ZTH=&amp;quot;+cur_zth+&amp;quot;&amp;KMBH=&amp;quot;+kmbh);
+				var bpdybz = _this.XMLDS_GetString(0,&amp;quot;BPDYBZ&amp;quot;);
+				if (bpdybz != &amp;quot;1&amp;quot;) {
+					alert(&amp;quot;该日记帐（流水号&amp;quot;+lsh+&amp;quot;）对应的银行科目帐号的电子托收打印不是社保打印，不能打印！&amp;quot;);
+					continue;
+				}
+				
+				if (dybz == 1) {
+					if (!confirm(&amp;quot;该日记帐（流水号&amp;quot;+lsh+&amp;quot;）已打印[&amp;quot;+_this.GetCellText(sheet_rjz,r,35)+&amp;quot;]，是否重新打印？&amp;quot;)) {
+						continue;
+					}
+				}
+				
+				cnt ++;
+				if (printnum == &amp;quot;&amp;quot;) {
+					printnum = prompt(&amp;quot;请输入发票上的第XXXXXXX号&amp;quot;,&amp;quot;0000000&amp;quot;);
+					if (printnum == null &amp;&amp; printnum == &amp;quot;&amp;quot;) {
+						alert(&amp;quot;打印原始发票号必须录入！&amp;quot;);
+						return;
+					}
+				}
+				else if (printnum != &amp;quot;&amp;quot; &amp;&amp; cnt &amp;gt; 1 &amp;&amp; fpzz == &amp;quot;1&amp;quot;) {
+					printnum = (1 * printnum) + 1;
+				}
+				printnum = getPrintNum(printnum,7);
+
+				//给打印模板赋值 //2016-12-21增加判断
+				var setrst = setRJZPrintData(lsh,sheet_print);
+				if (setrst != 0) {
+					alert(&amp;quot;信息不全，不能打印！\n&amp;quot;+setrst);
+					return;
+				}
+				
+				//打印预览窗口
+				if (showPrintView == 0) {
+					if (printView(sheet_print) != &amp;quot;1&amp;quot;) return;
+					showPrintView ++;
+				}
+				
+				//发送打印作业
+				_this.Print(sheet_print,0);
+								
+				//更新打印标志
+				_sql.run(&amp;quot;UPDATEPRINT&amp;quot;,&amp;quot;LSH=&amp;quot;+lsh+&amp;quot;&amp;DYR=&amp;quot;+G_USRNAM+&amp;quot;&amp;PRINTNUM=&amp;quot;+printnum);
+				_this.SetCellText(sheet_rjz,r,34,&amp;quot;1&amp;quot;);
+				_this.SetCellColor(sheet_rjz,r,25,0,0,255);
+				_this.SetCellText(sheet_rjz,r,35,getNowFormatDate());
+				_this.SetCellText(sheet_rjz,r,36,G_USRNAM);
+			}else{
+				rownum ++;
+				if(rownum == _this.GetMainCellRangeRow2(sheet_rjz)){
+					alert(&amp;quot;未选中数据!!&amp;quot;);
+					return false;
+				}				
+			}
+		}
+//	}
+}
+
+
+
+//给日记帐打印模板赋值
+function setRJZPrintData(lsh,sheet_print)
+{
+	_sql.querytods(&amp;quot;PRINTDS&amp;quot;,&amp;quot;LSH=&amp;quot;+lsh);
+//	var xmlstr = invokeOSFunc(&amp;quot;getRJZPrintData&amp;quot;,&amp;quot;thisaccid=&amp;quot;+G_ACCID+&amp;quot;&amp;thisorgid=&amp;quot;+G_ORGID+&amp;quot;&amp;printdjh=&amp;quot;+djh);
+//	_this.XMLDS_Parse(xmlstr);
+//	//alert(xmlstr);
+	
+	var yy = _this.XMLDS_GetString(0,&amp;quot;YY&amp;quot;);
+	var mm = _this.XMLDS_GetString(0,&amp;quot;MM&amp;quot;);
+	var dd = _this.XMLDS_GetString(0,&amp;quot;DD&amp;quot;);
+	var djh = _this.XMLDS_GetString(0,&amp;quot;DJH&amp;quot;);
+	var zy = _this.XMLDS_GetString(0,&amp;quot;ZY&amp;quot;);
+	var kmbh = _this.XMLDS_GetString(0,&amp;quot;KMBH&amp;quot;);
+	var dwbh = _this.XMLDS_GetString(0,&amp;quot;DWBH&amp;quot;);
+	var dwmc = _this.XMLDS_GetString(0,&amp;quot;DWMC&amp;quot;);
+	var ym1 = _this.XMLDS_GetString(0,&amp;quot;YM1&amp;quot;);
+	var ym2 = _this.XMLDS_GetString(0,&amp;quot;YM2&amp;quot;);
+	var jsfs = &amp;quot;银行托收&amp;quot;;//_this.XMLDS_GetString(0,&amp;quot;JSFS&amp;quot;);
+	var dwkmyhmc = _this.XMLDS_GetString(0,&amp;quot;DWKMYHMC&amp;quot;);
+	var dwyhzh = _this.XMLDS_GetString(0,&amp;quot;dwyhzh&amp;quot;);
+	var sumje = 0.0;//_this.XMLDS_GetString(0,&amp;quot;JE&amp;quot;);
+	
+	if (dwkmyhmc == &amp;quot;&amp;quot; || dwyhzh == &amp;quot;&amp;quot;) return &amp;quot;单位(&amp;quot;+dwbh+&amp;quot;-&amp;quot;+dwmc+&amp;quot;)的银行帐号信息不详，请到日记管理-&amp;gt;参保对象-&amp;gt;单位设置模块进行设置！&amp;quot;;
+
+	_this.SetCellText(sheet_print,0,5,&amp;quot;　　　　　　　　　单据号:&amp;quot;+djh+&amp;quot;　打印日期:&amp;quot;+getCurrDate());
+	_this.SetCellText(sheet_print,1,1,&amp;quot;单位编号:&amp;quot;+dwbh+&amp;quot;　　　　　　    　　　&amp;quot;+yy+&amp;quot;　 　   &amp;quot;+mm+&amp;quot;　　　&amp;quot;+dd);
+	//_this.SetCellText(sheet_print,2,2,dwmc);
+	_this.SetCellText(sheet_print,2,2,dwmc+&amp;quot;\n&amp;quot;+dwkmyhmc+&amp;quot;\n&amp;quot;+dwyhzh);
+	_this.SetCellText(sheet_print,2,6,ym1+&amp;quot;-&amp;quot;+ym2);	
+	//_this.SetCellText(sheet_print,17,1,zy);
+	_this.SetCellText(sheet_print,13,1,&amp;quot;　　　&amp;quot;+zy);  //备注
+	_this.SetCellText(sheet_print,13,7,&amp;quot;　　　&amp;quot;+jsfs);
+	//_this.SetCellText(sheet_print,15,7,&amp;quot;   &amp;quot;+G_USRNAM); //收款人
+	_this.SetCellText(sheet_print,15,7,&amp;quot;&amp;quot;); //收款人不打印
+
+
+	//缴费项目	期限	单位缴	个人缴	
+	var rowhead = formatPrintStr(&amp;quot;缴费项目&amp;quot;,20,0)+formatPrintStr(&amp;quot;期限&amp;quot;,12,0)+formatPrintStr(&amp;quot;单位缴&amp;quot;,12,1)+formatPrintStr(&amp;quot;个人缴&amp;quot;,12,1);
+	_this.SetCellText(sheet_print,5,1,rowhead);
+	_this.SetCellText(sheet_print,5,5,rowhead);
+	
+	var rowcnt = _this.XMLDS_GetRowCount();
+//	if (rowcnt &amp;lt;= 12) {
+//		var rowstr = &amp;quot;&amp;quot;;
+//		for (var i=0;i&amp;lt;rowcnt;i++) {
+//			var rjlx = _this.XMLDS_GetString(i,&amp;quot;RJLX&amp;quot;);
+//			var kxmc = _this.XMLDS_GetString(i,&amp;quot;KXMC&amp;quot;);
+//			var ym1 = _this.XMLDS_GetString(i,&amp;quot;YM1&amp;quot;);
+//			var ym2 = _this.XMLDS_GetString(i,&amp;quot;YM2&amp;quot;);
+//			var mxjefx = _this.XMLDS_GetString(i,&amp;quot;JEFX&amp;quot;);
+//			var mxje = _this.XMLDS_GetString(i,&amp;quot;MXJE&amp;quot;);
+//			var dwje = _this.XMLDS_GetString(i,&amp;quot;DWJE&amp;quot;);
+//			var grje = _this.XMLDS_GetString(i,&amp;quot;GRJE&amp;quot;);
+//			if (1 * dwje == 0) dwje = &amp;quot;0.00&amp;quot;;
+//			if (1 * grje == 0) grje = &amp;quot;0.00&amp;quot;;
+//			sumje += (1.0 * mxje);
+//			
+//			rowstr += formatPrintStr(rjlx+kxmc,16,0) //缴费项目
+//				+ formatPrintStr(ym1+ym2,12,0) //期限
+//				+ formatPrintStr(dwje,12,1) //单位缴
+//				+ formatPrintStr(grje,10,1) //个人缴
+//				+ &amp;quot;\n&amp;quot;;
+//		}
+//		_this.SetCellText(sheet_print,6,1,rowstr);
+//	}
+//	else {
+		//第一列的内容		
+		var rowstr = &amp;quot;&amp;quot;;
+		for (var i=0;i&amp;lt;rowcnt;i++) {
+			if ( (i+1)%2 == 0) continue; //0,2,4,6,..
+			var rjlx = _this.XMLDS_GetString(i,&amp;quot;RJLX&amp;quot;);
+			var kxmc = _this.XMLDS_GetString(i,&amp;quot;KXMC&amp;quot;);
+			var ym1 = _this.XMLDS_GetString(i,&amp;quot;YM1&amp;quot;);
+			var ym2 = _this.XMLDS_GetString(i,&amp;quot;YM2&amp;quot;);
+			var mxjefx = _this.XMLDS_GetString(i,&amp;quot;JEFX&amp;quot;);
+			var mxje = _this.XMLDS_GetString(i,&amp;quot;MXJE&amp;quot;);
+			var dwje = _this.XMLDS_GetString(i,&amp;quot;DWJE&amp;quot;);;
+			var grje = _this.XMLDS_GetString(i,&amp;quot;GRJE&amp;quot;);;
+			if (1 * dwje == 0) dwje = &amp;quot;0.00&amp;quot;;
+			if (1 * grje == 0) grje = &amp;quot;0.00&amp;quot;;
+			sumje += (1.0 * mxje);
+			
+			rowstr += formatPrintStr(rjlx+kxmc,20,0) //缴费项目
+				+ formatPrintStr(ym1+ym2,12,0) //期限
+				+ formatPrintStr(dwje,12,1) //单位缴
+				+ formatPrintStr(grje,12,1) //个人缴
+				+ &amp;quot;\n&amp;quot;;
+		}		
+		_this.SetCellText(sheet_print,6,1,rowstr);
+		
+		//第二列的内容
+		rowstr = &amp;quot;&amp;quot;;
+		for (var i=12;i&amp;lt;rowcnt;i++) {
+			if ( (i+1)%2 != 0) continue; //1,3,5,7,..
+			var rjlx = _this.XMLDS_GetString(i,&amp;quot;RJLX&amp;quot;);
+			var kxmc = _this.XMLDS_GetString(i,&amp;quot;KXMC&amp;quot;);
+			var ym1 = _this.XMLDS_GetString(i,&amp;quot;YM1&amp;quot;);
+			var ym2 = _this.XMLDS_GetString(i,&amp;quot;YM2&amp;quot;);
+			var mxjefx = _this.XMLDS_GetString(i,&amp;quot;JEFX&amp;quot;);
+			var mxje = _this.XMLDS_GetString(i,&amp;quot;MXJE&amp;quot;);
+			var dwje = _this.XMLDS_GetString(i,&amp;quot;DWJE&amp;quot;);;
+			var grje = _this.XMLDS_GetString(i,&amp;quot;GRJE&amp;quot;);;
+			if (1 * dwje == 0) dwje = &amp;quot;0.00&amp;quot;;
+			if (1 * grje == 0) grje = &amp;quot;0.00&amp;quot;;
+			sumje += (1.0 * mxje);
+			
+			rowstr += formatPrintStr(rjlx+kxmc,20,0) //缴费项目
+				+ formatPrintStr(ym1+ym2,12,0) //期限
+				+ formatPrintStr(dwje,12,1) //单位缴
+				+ formatPrintStr(grje,12,1) //个人缴
+				+ &amp;quot;\n&amp;quot;;
+		}		
+		_this.SetCellText(sheet_print,6,5,rowstr);
+//	}
+	
+	var dxje = convertCurrency(sumje);
+	dxje = dxje.replace(&amp;quot;人民币&amp;quot;,&amp;quot; &amp;quot;) + &amp;quot;（￥&amp;quot;+fmoney(sumje,2)+&amp;quot;）&amp;quot;;
+	_this.SetCellText(sheet_print,4,2,dxje); //大写金额
+	
+	return 0;
+}
+
+///&amp;lt;summary&amp;gt;获得字符串实际长度，中文2，英文1&amp;lt;/summary&amp;gt;
+///&amp;lt;param name=&amp;quot;str&amp;quot;&amp;gt;要获得长度的字符串&amp;lt;/param&amp;gt;  
+function getStrLength(str) 
+{
+	var realLength = 0, len = str.length, charCode = -1;
+	for (var i = 0; i &amp;lt; len; i++) {
+		charCode = str.charCodeAt(i);
+		if (charCode &amp;gt;= 0 &amp;&amp; charCode &amp;lt;= 128) realLength += 1;
+		else realLength += 2;
+	}
+	return realLength;
+}
+
+//在前面或者后面补足空格
+function formatPrintStr(str,len,bef)
+{
+	str = &amp;quot;&amp;quot;+str;
+	var slen = getStrLength(str);//str.length();
+	if (slen &amp;gt; len) return str.substring(0,len);
+	var trim = &amp;quot;&amp;quot;;
+	for (var i=0;i&amp;lt;(len-slen);i++) {
+		trim += &amp;quot; &amp;quot;;
+	}
+	if (bef == 1) return trim + str;
+	else return str + trim;
+
+}
+
+//取当前日期
+function getCurrDate()
+{
+	var now = new Date();
+        var year = now.getFullYear();       //年
+        var month = now.getMonth() + 1;     //月
+        var day = now.getDate();            //日
+        var clock = year + &amp;quot;-&amp;quot;;
+       
+        if(month &amp;lt; 10) clock += &amp;quot;0&amp;quot;;
+        clock += month + &amp;quot;-&amp;quot;;
+	if(day &amp;lt; 10) clock += &amp;quot;0&amp;quot;;
+        clock += day + &amp;quot; &amp;quot;;
+        return(clock); 
+} 
+
+function getNowFormatDate() {
+    var date = new Date();
+    var seperator1 = &amp;quot;-&amp;quot;;
+    var seperator2 = &amp;quot;:&amp;quot;;
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month &amp;gt;= 1 &amp;&amp; month &amp;lt;= 9) {
+        month = &amp;quot;0&amp;quot; + month;
+    }
+    if (strDate &amp;gt;= 0 &amp;&amp; strDate &amp;lt;= 9) {
+        strDate = &amp;quot;0&amp;quot; + strDate;
+    }
+    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+            + &amp;quot; &amp;quot; + date.getHours() + seperator2 + date.getMinutes()
+            + seperator2 + date.getSeconds();
+    return currentdate;
+}
+
+//打印预览窗口
+function printView(sheet_print)
+{
+	var printzxg = _this.SaveTempZXGFile(sheet_print); 
+	var obj = new Object();
+	obj.printZXG = printzxg;
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=RJZPRINTVIEW&amp;quot;,obj,&amp;quot;dialogWidth=600px;dialogHeight=400px;&amp;quot;);
+	return retVal;
+}
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+//打印权限控制
+function Print()
+{
+	return &amp;quot;1&amp;quot;;
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >grmxz</ID><NAME >个人明细账</NAME><DATDSC >SELECT ROWNUM, &amp;apos;&amp;apos; FLAG, A.*
+  FROM (SELECT DISTINCT YY,
+                        MM,
+                        DD,
+                        PCH,
+                        PZLX,
+                        STR_PZH,
+                        DECODE(ZY,
+                               &amp;apos;期初余额&amp;apos;,
+                               DECODE(TO_CHAR(MM) || TO_CHAR(DD),
+                                      &amp;apos;11&amp;apos;,
+                                      &amp;apos;上年结转&amp;apos;,
+                                      &amp;apos;上月结转&amp;apos;),
+                               ZY) ZY,
+                        DECODE(JEFX, &amp;apos;贷&amp;apos;, JE, NULL) JFJE,
+                        DECODE(JEFX, &amp;apos;借&amp;apos;, JE, NULL) DFJE,
+                        DECODE(JEFX, &amp;apos;借&amp;apos;, &amp;apos;贷&amp;apos;, &amp;apos;借&amp;apos;) JEFX,
+                        DECODE(QCBZ, 1, YE, 0.00) YE,
+                        KMBH,
+                        DJH,
+                        OLD_PCH,
+                        LSH,
+                        JSFS,
+                        DYLSH,
+                        SXH,
+                        DWBH,
+                        CZLSH,
+                        CZLX,
+                        CZYY,
+                        CZCZY,
+                        CZRQ,
+                        CXRZ_LSH,
+                        CXRZ_CZY,
+                        CXRZ_RQ,
+                        DWMC,
+                        FKBZ,
+                        FKRXM,
+                        TO_CHAR(FKRQ, &amp;apos;yyyy-mm-dd&amp;apos;) FKRQ,
+                        FKYK,
+                        DYBZ,
+                        TO_CHAR(DYRQ, &amp;apos;yyyy-mm-dd&amp;apos;) DYRQ,
+                        DYR,
+                        CZYXM,
+                        LXBH,
+                        QCBZ,
+                        PZH
+          FROM CW_RJZB C, AC01 B, AB07_GTJF A
+         WHERE ORG = &amp;apos;[%SYS_ORGID]&amp;apos;
+   	   AND ACC = &amp;apos;[%SYS_ACCID]&amp;apos;
+           AND C.YY = &amp;apos;[%YYYY]&amp;apos;
+           AND (A.AAZ010 = &amp;apos;[%GRBH]&amp;apos; OR B.AAC999 = &amp;apos;[%GRBH]&amp;apos;)
+           AND A.BAE165 = &amp;apos;2&amp;apos;
+           AND A.AAZ010 = B.AAC001
+           AND C.DJH = A.BAE203
+         ORDER BY C.YY, C.MM, C.DD) A</DATDSC><C4 >grmxz</C4><C5 >grmxz</C5><C6 ></C6><C7 >grmxz</C7><C8 >grmxz</C8><C9 ></C9><C10 ></C10><C11 ></C11></ROW>
+<ROW num="1" ><ID >rjzmxb</ID><NAME >日记账明细表</NAME><DATDSC >  SELECT &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;ORG&amp;quot;,   
+         &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;ACC&amp;quot;,   
+         &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;LSH&amp;quot;,   
+         &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;MXXH&amp;quot;,   
+         &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;KMBH&amp;quot;,   
+         &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;LXBH&amp;quot;,   
+         &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;LXXH&amp;quot;,   
+         &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;JE&amp;quot;,   
+         &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;JEFX&amp;quot;,   
+         decode( &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;JEFX&amp;quot;, &amp;apos;借&amp;apos;, &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;JE&amp;quot;, null ) JFJE,   
+         decode( &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;JEFX&amp;quot;, &amp;apos;贷&amp;apos;, &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;JE&amp;quot;, null ) DFJE,   
+         &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;KXMC&amp;quot;,
+		&amp;quot;CW_RJLXB&amp;quot;.&amp;quot;RJLX&amp;quot;,
+         &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;YM1&amp;quot;,   
+         &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;YM2&amp;quot;,   
+         &amp;quot;CW_KMB&amp;quot;.&amp;quot;KMMC&amp;quot; KMMC,
+         &amp;apos;&amp;apos; xtbh
+    FROM &amp;quot;CW_RJZMXB&amp;quot;,   
+         &amp;quot;CW_RJLXMXB&amp;quot;,
+	 &amp;quot;CW_RJLXB&amp;quot;,
+	 &amp;quot;CW_KMB&amp;quot;
+   WHERE 
+		( &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;ORG&amp;quot; = &amp;apos;[%SYS_ORGID]&amp;apos; ) and
+		( &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;ACC&amp;quot; = &amp;apos;[%SYS_ACCID]&amp;apos; ) and
+		( &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;LSH&amp;quot; = &amp;apos;[%LSH]&amp;apos; ) and 
+		( &amp;quot;CW_KMB&amp;quot;.&amp;quot;ORG&amp;quot;(+) = &amp;apos;[%SYS_ORGID]&amp;apos; ) and
+		( &amp;quot;CW_KMB&amp;quot;.&amp;quot;ACC&amp;quot;(+) = &amp;apos;[%SYS_ACCID]&amp;apos; ) and
+		( &amp;quot;CW_KMB&amp;quot;.&amp;quot;KMBH&amp;quot;(+) = &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;KMBH&amp;quot; ) and
+		( &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;ORG&amp;quot;(+) = &amp;apos;[%SYS_ORGID]&amp;apos; ) and
+		( &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;ACC&amp;quot;(+) = &amp;apos;[%SYS_ACCID]&amp;apos; ) and
+		( &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;LXBH&amp;quot;(+) = &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;LXBH&amp;quot; ) and
+		( &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;MXXH&amp;quot;(+) = &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;LXXH&amp;quot; ) and
+		( &amp;quot;CW_RJLXB&amp;quot;.&amp;quot;ORG&amp;quot;(+) = &amp;apos;[%SYS_ORGID]&amp;apos; ) and
+		( &amp;quot;CW_RJLXB&amp;quot;.&amp;quot;ACC&amp;quot;(+) = &amp;apos;[%SYS_ACCID]&amp;apos; ) and
+		( &amp;quot;CW_RJLXB&amp;quot;.&amp;quot;LXBH&amp;quot;(+) = &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;LXBH&amp;quot; ) 
+order by &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;LSH&amp;quot;, &amp;quot;CW_RJZMXB&amp;quot;.&amp;quot;MXXH&amp;quot;
+
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11></ROW>
+<ROW num="2" ><ID >LASTDAY</ID><NAME ></NAME><DATDSC >select to_char(last_day(to_date(&amp;apos;[%DAT1]&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;)),&amp;apos;yyyy-mm-dd&amp;apos;) dat2 from dual</DATDSC><C4 ></C4><C5 ></C5><C6 >LASTDAY</C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11></ROW>
+<ROW num="3" ><ID >UPDATEPRINT</ID><NAME >更新打印标志</NAME><DATDSC >update cw_rjzb set DYBZ=&amp;apos;1&amp;apos;,DYRQ=sysdate,DYR=&amp;apos;[%DYR]&amp;apos;,jsph=&amp;apos;[%PRINTNUM]&amp;apos; where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and lsh=&amp;apos;[%LSH]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 >UPDATEPRINT</C11></ROW>
+<ROW num="4" ><ID >BPDYBZ</ID><NAME ></NAME><DATDSC >select * from cw_bkdyhb 
+where sbh=&amp;apos;[%SBH]&amp;apos; and zth=&amp;apos;[%ZTH]&amp;apos; and kmbh=&amp;apos;[%KMBH]&amp;apos;
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11></ROW>
+<ROW num="5" ><ID >PRINTDS</ID><NAME ></NAME><DATDSC >select yy,mm,dd,djh,pch,zy,kmbh,dwbh,dwmc,je,jefx,jsfs,fkrq,lxbh,ym1,ym2,mxjefx,kxmc,dwkmyhmc,dwyhzh,
+       sum(dwje) dwje,sum(grje) grje,sum(mxje) mxje
+from (   
+SELECT a.yy,a.mm,a.dd,a.djh,a.pch,a.zy,a.kmbh,a.dwbh,a.dwmc,a.je,a.jefx,a.jsfs,a.fkrq,
+       b.mxxh,b.lxbh,b.lxxh,b.ym1,b.ym2,b.je mxje,b.jefx mxjefx,
+       nvl(c.rjlx,b.kmbh) kxmc,/*nvl(c.kxmc,cw_pack4.kmmc( a.sbh, a.zth, b.KMBH ))*dymc kxmc,*/
+       (select khyh from si_dwb d where a.sbh=d.sbh and a.zth=d.zth and a.dwbh=d.dwbh) dwkmyhmc,
+(select yhzh from si_dwb d where a.sbh=d.sbh and a.zth=d.zth and a.dwbh=d.dwbh) dwyhzh,
+szztlx,
+ 			 to_char(decode(szztlx,&amp;apos;单位缴&amp;apos;,b.je,0),&amp;apos;FM99999999999999.99&amp;apos;) dwje,
+       to_char(decode(szztlx,&amp;apos;个人缴&amp;apos;,b.je,0),&amp;apos;FM99999999999999.99&amp;apos;) grje
+    FROM CW_RJZB a, CW_RJZMXB b,(
+         SELECT &amp;quot;CW_RJLXB&amp;quot;.&amp;quot;RJLX&amp;quot;,&amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;KXMC&amp;quot;,&amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;LXBH&amp;quot;,&amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;MXXH&amp;quot;,szztlx,dymc
+         FROM &amp;quot;CW_RJLXMXB&amp;quot;  , &amp;quot;CW_RJLXB&amp;quot;
+         WHERE ( &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;ORG&amp;quot; = &amp;apos;[%SYS_ORGID]&amp;apos; ) AND  
+         ( &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;ACC&amp;quot; = &amp;apos;[%SYS_ACCID]&amp;apos; )    and
+			   ( &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;SBH&amp;quot; = &amp;quot;CW_RJLXB&amp;quot;.&amp;quot;SBH&amp;quot; ) and
+			   ( &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;ZTH&amp;quot; = &amp;quot;CW_RJLXB&amp;quot;.&amp;quot;ZTH&amp;quot; ) and
+			   ( &amp;quot;CW_RJLXMXB&amp;quot;.&amp;quot;LXBH&amp;quot; = &amp;quot;CW_RJLXB&amp;quot;.&amp;quot;LXBH&amp;quot; )
+    ) c
+   WHERE ( a.ORG = &amp;apos;[%SYS_ORGID]&amp;apos; AND  a.ACC = &amp;apos;[%SYS_ACCID]&amp;apos; ) 
+      and ( a.SBH = b.SBH and a.ZTH = b.ZTH and a.lsh=b.lsh)
+      and ( a.ORG = b.ORG and a.ACC = b.ACC )
+      and a.lsh=&amp;apos;[%LSH]&amp;apos;
+      and b.LXBH = c.LXBH(+)
+      and b.lxxh=c.mxxh(+)
+order by b.mxxh
+) group by yy,mm,dd,djh,pch,zy,kmbh,dwbh,dwmc,je,jefx,jsfs,fkrq,lxbh,ym1,ym2,mxjefx,kxmc,dwkmyhmc,dwyhzh</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 >PRINTDS</C8><C9 >PRINTDS</C9><C10 >PRINTDS</C10><C11 ></C11></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

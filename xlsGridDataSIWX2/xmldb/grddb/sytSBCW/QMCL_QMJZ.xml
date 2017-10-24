@@ -1,0 +1,383 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >QMCL_QMJZ</MWID><NAME >期末结帐</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >QMCL_QMJZ.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >2</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var sbh = &amp;quot;&amp;quot;;
+var zth = &amp;quot;&amp;quot;;
+var qdym = &amp;quot;&amp;quot;;
+var dqym = &amp;quot;&amp;quot;;
+var dlym = &amp;quot;&amp;quot;;
+var qdyy = &amp;quot;&amp;quot;;
+var dqyy = &amp;quot;&amp;quot;;
+var dqmm = &amp;quot;&amp;quot;;
+var qdmm = &amp;quot;&amp;quot;;
+var dlyy = &amp;quot;&amp;quot;;
+var dlmm = &amp;quot;&amp;quot;;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.ShowToolBar(0);
+	sbh = G_ORGID;
+	zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+	loadData();
+}
+
+//标记每个月的结账标志
+function loadData()
+{
+	var ret = invokeOSFunc(&amp;quot;getYYMM&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth);
+	qdym = ret.split(&amp;quot;~&amp;quot;)[0];
+	dqym = ret.split(&amp;quot;~&amp;quot;)[1];
+	dlym = ret.split(&amp;quot;~&amp;quot;)[2];
+	qdyy = qdym.substr(0,4);
+	dqyy = dqym.substr(0,4);
+	dlyy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	dqmm = dqym.substr(4,2)*1;
+	qdmm = qdym.substr(4,2)*1;
+	dlmm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1];
+	
+	_this.SetCellText(0,2,6,dqyy);
+	_this.SetCellText(0,2,8,dqmm);
+	
+	if(dlyy*1 &amp;lt; dqym.substr(0,4)*1) {
+		for(var row=5;row&amp;lt;=16;row++) {
+			_this.SetCellText(0,row,3,&amp;quot;√&amp;quot;);
+		}	
+	}
+	else if((dqmm*1 -1 &amp;gt; 0) &amp;&amp; (dlyy == dqyy)) {
+		var mm = dqmm*1 -1;
+		for(var row =5;row&amp;lt;=(mm+4);row++) {
+			_this.SetCellText(0,row,3,&amp;quot;√&amp;quot;);
+		}
+	}
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if(id == &amp;quot;结账&amp;quot;) {
+		JZ();
+	}
+	//loadData();
+}
+
+function JZ()
+{
+	//检查是否已经结账
+	var jz_yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	var jz_mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+	var jz_sbh = G_ORGID;
+	var jz_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	var param = new Object();
+	param.yy = jz_yy;
+	param.mm = jz_mm;
+	param.sbh = jz_sbh;
+	param.zth = jz_zth;
+	var jz_retVal = invokeOSFuncExt(&amp;quot;check_jz&amp;quot;,param);
+	var jz_ret = jz_retVal.split(&amp;quot;@&amp;quot;)[0];
+	var jz_msg = jz_retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(jz_ret != 1 ){
+		alert(jz_msg);
+		return false;
+	}
+	
+	if(!check_JZ()) return;
+	if (!confirm(jz_yy+&amp;quot;年&amp;quot;+jz_mm+&amp;quot;月期末结账，是否继续？&amp;quot;)) return;
+	
+	var param = new Object();
+	param.dqym = dqym;
+	param.dqyy = dqyy;
+	param.dqmm = dqmm;
+	param.qdym = qdym;
+	param.qdyy = qdyy;
+	param.qdmm = qdmm;
+	param.dlyy = dlyy;
+	param.dlmm = dlmm;
+	param.sbh = sbh;
+	param.zth = zth;
+	param.thisaccid = G_ACCID;
+	param.thisorgid = G_ORGID;
+	var ret = invokeOSFuncExt(&amp;quot;JZ&amp;quot;,param);
+	alert(ret);
+	loadData();
+}
+
+//结帐前做检查
+function check_JZ()
+{
+	if(dqym*1 &amp;gt; (dlyy + dlmm)*1) {
+		alert(&amp;quot;本月已结帐，不能再进行结帐！&amp;quot;);
+		return false;
+	}
+	else if(dqym*1 &amp;lt; (dlyy + dlmm)*1) {
+		alert(&amp;quot;上月还未结帐，本月不能进行结帐！&amp;quot;);
+		return false;	
+	}
+	var yy = dlyy * 1;
+	var mm = dlmm * 1;
+	
+//	20161107 lyh modify 屏蔽不在此判断期初余额表的数据 期初余额表的记录会在记账的时候写入
+//	var ret = _this.invokeOSFunc(&amp;quot;jz_check&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;yy=&amp;quot;+yy+&amp;quot;&amp;mm=&amp;quot;+mm);
+//	if(ret != 1) {
+//		alert(ret);
+//		return false;
+//	}
+
+	//求凭证数
+	var filter = &amp;quot;and zt &amp;lt;&amp;gt; &amp;apos;记总帐&amp;apos;&amp;quot;;
+	_sql.querytods(&amp;quot;getPZNum&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;yy=&amp;quot;+yy+&amp;quot;&amp;mm=&amp;quot;+mm+&amp;quot;&amp;filter=&amp;quot;+filter);
+	var cnt = _this.XMLDS_GetStringAt(0,0);
+	if(cnt &amp;gt; 0) {
+		alert(&amp;quot;本月还有未记总帐凭证，不能结帐！&amp;quot;);
+		return false;
+	}
+	if(dlmm*1 == 12) {
+		var filter = &amp;quot;and jsbz =1&amp;quot;;
+		_sql.querytods(&amp;quot;getPZNum&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;yy=&amp;quot;+yy+&amp;quot;&amp;mm=&amp;quot;+mm+&amp;quot;&amp;filter=&amp;quot;+filter);
+		cnt = _this.XMLDS_GetStringAt(0,0);
+		if(cnt == 0) {
+			var bool = window.confirm(&amp;quot;注意： 本年末转帐凭证还没有做( 请核对 )！\r\n是否确定继续往下结帐？&amp;quot;);
+			if(!bool) return false;
+		}
+		//检查期末转账明细表
+		var ret = invokeOSFunc(&amp;quot;checkQMZZ&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;yy=&amp;quot;+yy+&amp;quot;&amp;mm=&amp;quot;+mm);
+		if(ret != 1) {
+			alert(ret);
+			return false;
+		}
+	}
+	_sql.querytods(&amp;quot;getPZNum&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;yy=&amp;quot;+yy+&amp;quot;&amp;mm=&amp;quot;+mm+&amp;quot;&amp;filter=&amp;quot;);
+	cnt = _this.XMLDS_GetStringAt(0,0);
+	if(cnt &amp;lt; 1) {
+		var bool = window.confirm(&amp;quot;本月没有发现任何凭证，按理不能结帐，\r\n您是否确定要强行结帐？&amp;quot;);
+		if(!bool) return false;		
+	}
+	else {
+		var bool = window.confirm(&amp;quot;本月发生&amp;quot;+cnt+&amp;quot;张记帐凭证，结帐后将结束本月的凭证填制工作，\r\n您是否要结帐？&amp;quot;);
+		if(!bool) return false;			
+	}
+	return true;
+}
+
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+//检查结账
+function check_jz(){
+	var Pub = new SBCW_CW_PUBLIC();
+	var retVal = Pub.Pub_check_jz(sbh,zth,yy,mm);
+	return retVal;
+}
+//求启动年月，当前年月,登陆日期等
+function getYYMM()
+{
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var sql = &amp;quot;select qdym,dqym,to_char(dlrq,&amp;apos;yyyy-mm-dd&amp;apos;)dlrq from cw_ztb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		var qdym = ds.getStringAt(0,&amp;quot;qdym&amp;quot;);
+		var dqym = ds.getStringAt(0,&amp;quot;dqym&amp;quot;);
+		var dlrq = ds.getStringAt(0,&amp;quot;dlrq&amp;quot;);
+		return qdym+&amp;quot;~&amp;quot;+dqym+&amp;quot;~&amp;quot;+dlrq;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+//期末结帐
+function JZ()
+{
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var yy = &amp;quot;&amp;quot;;
+		var mm = &amp;quot;&amp;quot;;
+		var jzrq = &amp;quot;&amp;quot;;
+		if(dlmm &amp;lt; 12) {
+			yy = dlyy;
+			mm = (java.lang.Integer.parseInt(dlmm)+1).toString();		
+			if(mm.length() == 1) {
+				mm= &amp;quot;0&amp;quot;+mm;
+			}
+			jzrq = yy+mm;
+		}
+		else {
+			yy = 1*dqyy + 1;
+			mm = &amp;quot;01&amp;quot;;
+			jzrq = &amp;quot;&amp;quot;+yy +&amp;quot;&amp;quot;+ mm;
+		}
+		
+		//找出本月发生额科目的借贷方金额 与 期初余额表对应科目的余额进行累加结帐
+		var sql = &amp;quot;select kmbh,nvl(ye,0) ye,nvl(yefx,&amp;apos;贷&amp;apos;) yefx,nvl(jfje,0) jfje,nvl(dfje,0) dfje
+	                     from cw_qcyeb WHERE sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND yy = &amp;quot;+dlyy+&amp;quot; AND mm = &amp;quot;+dlmm;
+	        var ds = db.QuerySQL(sql);
+	        for(var row=0;row&amp;lt;ds.getRowCount();row++) {
+	        	var kmbh = ds.getStringAt(row,&amp;quot;kmbh&amp;quot;);
+	        	var ye = ds.getStringAt(row,&amp;quot;ye&amp;quot;)*1.0;
+	        	var yefx = ds.getStringAt(row,&amp;quot;yefx&amp;quot;);
+	        	var jfje = ds.getStringAt(row,&amp;quot;jfje&amp;quot;)*1.0;
+	        	var dfje = ds.getStringAt(row,&amp;quot;dfje&amp;quot;)*1.0;
+	        	var yxyefx = db.GetSQL(&amp;quot;select yxyefx from cw_kmb WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;&amp;quot;);
+	        	if(yefx == &amp;quot;贷&amp;quot;) {
+	        		ye = -1.0 * ye;	        		
+	        	}
+	        	ye = ye + jfje - dfje;
+	        	if(yxyefx == &amp;quot;双&amp;quot;) {
+	        		if(ye &amp;gt; 0) {
+	        			yefx = &amp;quot;借&amp;quot;;
+	        		}
+	        		else {
+	        			ye = -1.0 * ye;
+	        			yefx = &amp;quot;贷&amp;quot;;
+	        		}	        		
+	        	}
+	        	else if(yxyefx == &amp;quot;借&amp;quot;) {
+	        		yefx = &amp;quot;借&amp;quot;;
+	        	}
+	        	else {
+	        		yefx = &amp;quot;贷&amp;quot;;
+	        		ye = -1.0 * ye;
+	        	}
+	        	
+	        	//20170118 lyh modify 凭证记账已经写了 cw_qcyeb 之前未卡住期末未结账不允许凭证记账问题，修正处理期末结账程序
+	        	sql = &amp;quot;select count(1) from cw_qcyeb where SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos; AND yy = &amp;quot;+yy+&amp;quot; AND mm = &amp;quot;+mm;
+	        	var cou = db.GetSQL(sql);
+	        	if(cou &amp;gt; 0){
+	        		sql = &amp;quot;update cw_qcyeb set ye = &amp;quot;+ye+&amp;quot;,yefx = &amp;apos;&amp;quot;+yefx+&amp;quot;&amp;apos; where SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos; AND yy = &amp;quot;+yy+&amp;quot; AND mm = &amp;quot;+mm;
+	        		db.ExcecutSQL(sql);
+	        	}else{
+		        	sql = &amp;quot;insert into cw_qcyeb (sbh,zth,yy,mm,kmbh,ye,yefx,jfje,dfje,org,acc)
+						values (&amp;quot;+sbh+&amp;quot;,&amp;quot;+zth+&amp;quot;,&amp;quot;+yy+&amp;quot;,&amp;quot;+mm+&amp;quot;,&amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;,&amp;quot;+ye+&amp;quot;,&amp;apos;&amp;quot;+yefx+&amp;quot;&amp;apos;,0,0,&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos;)&amp;quot;;
+				db.ExcecutSQL(sql);
+	        	}	        	
+	        } 
+	        
+	        sql = &amp;quot;update cw_ztb set dqym = &amp;quot;+jzrq+&amp;quot; where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;  
+	        db.ExcecutSQL(sql);
+	        db.Commit();          
+		 return &amp;quot;结帐提交成功&amp;quot;;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+
+function checkQMZZ()
+{
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var sql = &amp;quot;select kmh1 from cw_qmzzmxb WHERE sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and hsbl = 1&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		for(var row=0;row&amp;lt;ds.getRowCount();row++) {
+			var kmbh1 = ds.getStringAt(row,&amp;quot;kmbh1&amp;quot;);
+			sql = &amp;quot;select ye, yefx, jfje, dfje from cw_qcyeb 
+					WHERE SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND yy = &amp;quot;+yy+&amp;quot; and mm = &amp;quot;+mm+&amp;quot; and kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;&amp;quot;;
+			var tmpds = db.QuerySQL(sql);
+			var ye = tmpds.getStringAt(0,&amp;quot;ye&amp;quot;)*1.0;	
+			var yefx = tmpds.getStringAt(0,&amp;quot;yefx&amp;quot;);
+			var jfje = tmpds.getStringAt(0,&amp;quot;jfje&amp;quot;)*1.0;
+			var dfje = tmpds.getStringAt(0,&amp;quot;dfje&amp;quot;)*1.0;	
+			if(yefx == &amp;quot;借&amp;quot; &amp;&amp; ((ye+jfje-dfje)!= 0) ) {
+				return &amp;quot;年末转帐还没有进行，不能进行结帐！&amp;quot;;
+			}
+			else if(yefx == &amp;quot;贷&amp;quot; &amp;&amp; ((ye+dfje-jfje)!= 0)) {
+				return &amp;quot;年末转帐还没有进行，不能进行结帐！&amp;quot;;
+			}
+		}
+		return 1;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+function jz_check()
+{
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var yy1 = &amp;quot;&amp;quot;;
+		var yy2 = &amp;quot;&amp;quot;;
+		var mm1 = &amp;quot;&amp;quot;;
+		var mm2 = &amp;quot;&amp;quot;;
+		//求上月
+		if(mm*1 == 1) {
+			yy1 = yy*1-1;
+			mm1 = 12;
+		}
+		else {
+			yy1 = yy*1;
+			mm1 = mm*1 -1;
+		}
+		//求下月
+		if(mm*1 == 12) {
+			yy2 = yy*1+1;
+			mm2 = 1;
+		}
+		else {
+			yy2 = yy*1;
+			mm2 = mm*1 + 1;
+		}
+               // 判断本月是否已结过帐( 1:cw_qcyeb, 2:cw_pzhzb, 3:cw_pzb )
+               var sql = &amp;quot;select count(*) from cw_qcyeb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy = &amp;quot;+yy2+&amp;quot; and mm = &amp;quot;+mm2;
+               var cnt = db.GetSQL(sql);
+               if(cnt &amp;gt; 0) {
+               	return &amp;quot;本月已结过帐，不能再记本月的帐！\r\n(下月期初余额表有期初余额)&amp;quot;;
+               }				
+		return 1; //表示检查通过;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}	
+}
+
+
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >getPZNum</ID><NAME >求本月凭证数</NAME><DATDSC >select count(*) 
+from cw_pzb 
+where sbh = &amp;apos;[%sbh]&amp;apos; and zth = &amp;apos;[%zth]&amp;apos; and yy = [%yy] 
+and mm = [%mm]
+[%filter]</DATDSC><C4 >getPZNum</C4></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >TCQBH</MWID><NAME >统筹区编号</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >TCQBH.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >日记账管理</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdcelds>
+<ROWSET>
+<ROW num="0" ><ID >0,0,2</ID><CELLID ></CELLID><NAME ></NAME><VALFLD ></VALFLD><DEFVAL ></DEFVAL><NOTNULL ></NOTNULL><VALTYP ></VALTYP><MAXLEN ></MAXLEN><CTLTYP ></CTLTYP><LISTID ></LISTID><WHERE ></WHERE><ORDER ></ORDER><IFQUERY ></IFQUERY><IFQUERYSCOPE ></IFQUERYSCOPE><QUERTDEFVAL ></QUERTDEFVAL><FLD ></FLD><C17 >0,0,2</C17></ROW>
+</ROWSET>
+</grdcelds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+var ZXGFILE0 = &amp;quot;&amp;quot;;
+var currow= -1;
+var objParam;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{	
+
+
+	//  _this.SetRowVisible(sheet,0,-1)
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,&amp;quot;20%&amp;quot;);
+//	获取社保号和帐套号（全局变量）
+	cur_sbh = G_ORGID;
+	cur_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	_this.SetCellFocus(0,1,1);	
+	
+	ZXGFILE0 = _this.SaveTempZXGFile(0); 
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+//接收传入参数
+	var filter = &amp;quot;&amp;quot;;
+	
+	//接收传入参数
+	try {
+		objParam = window.dialogArguments;
+		if (objParam.filter != null &amp;&amp; objParam.filter != undefined) {
+			filter = objParam.filter;
+		}
+	} catch (e) {}
+	
+	loadData(filter);
+
+}
+
+
+//首页
+function loadData(filter)
+{
+	
+	if (filter != &amp;quot;&amp;quot;) filter = &amp;quot;and&amp;quot;+filter;
+	if(filter==&amp;quot;&amp;quot;) 
+	{
+	filter = &amp;quot; and smc like &amp;apos;%25&amp;apos;&amp;quot;;
+	}
+	//_sql.querytods(&amp;quot;list&amp;quot;,&amp;quot;filter=&amp;quot;+filter);
+
+	var xml = _sql.query(&amp;quot;list&amp;quot;,&amp;quot;filter=&amp;quot;+filter);
+
+	_this.SetMainCellRange(0,1,0,15,1);
+	_this.SetXmlDS(0,1,0,15,1,xml);
+		
+	//光标定位焦点  
+	_this.SetFocusCell(0,1,0);
+}
+
+
+//首页
+function firstPage()
+{
+	loadData(&amp;quot;&amp;quot;);
+}
+
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if (id == &amp;quot;确定&amp;quot;) {
+		okAndBack();
+	}
+	
+	else if (id == &amp;quot;查询&amp;quot;) {
+		queryTCBH();
+	}
+}
+
+//查询统筹编号
+function queryTCBH()
+{
+
+	var key = _this.GetCellText(1,1,2);
+	var filter = &amp;quot;(smc like &amp;apos;%25&amp;quot;+key+&amp;quot;%25&amp;apos;)&amp;quot;;
+	  	if (key == &amp;quot;&amp;quot;) filter = &amp;quot;&amp;quot;;
+	loadData(filter);
+}
+
+
+//确定返回
+function okAndBack()
+{
+ 	var currow=_this.GetCurrentRow(0)
+	var tcbh = _this.GetCellText(0,currow,1);
+		
+	window.returnValue = tcbh;
+	window.close();
+
+}
+
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+	if (sheet == 0) {
+		okAndBack();
+	}
+}
+
+
+//鼠标左键点击
+//function _thisOnMouseLClick(sheet,row,col)
+//{	
+//	if (sheet == 0) {
+//		currow = row;
+//	}
+//
+//}
+
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 1) {
+		queryTCBH();
+	}
+}
+
+
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >list</ID><NAME ></NAME><DATDSC >select smc,tcqbm from cw_sbsb where 1=1 [%filter]</DATDSC><C4 >list</C4><C5 >list</C5><C6 >list</C6><C7 >list</C7></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

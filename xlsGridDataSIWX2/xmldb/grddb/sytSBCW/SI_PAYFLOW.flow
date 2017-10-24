@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<svg title="SVGform" fill="#FFFFFF" fill-type="1" background="xlsgrid/images/flash/images/bgimage.jpg">
+ <rect id="rect_231312" x="19" y="20" width="1028" height="450" round="1.5" stroke="#CCCCCC" fill="#FFFFFF" fillto="" opacity="0.7" stroke-dash="1" stroke-width="0" 属性="">
+ </rect>
+ <img id="img_844311" cx="308" cy="219" x="896" y="438" width="32" height="25" src="org/GXSI/logo2.png" 属性="">
+ </img>
+ <rect id="rect_554810" x="10" y="10" round="1" stroke="#000000" fill="#E8E8E8" fillto="#FFFFFF" 属性="">
+ </rect>
+ <connector id="connector_108_255013" from="rect_53512" to="rect_84114" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_255017" from="rect_132514" to="rect_132514" fromcp="32" tocp="32" type="108">
+ </connector>
+ <connector id="connector_108_255029" from="rect_53513" to="rect_53513" fromcp="21" tocp="21" typfe="108">
+ </connector>
+ <connector id="connector_108_311215" from="rect_311210" to="rect_255019" fromcp="23" tocp="21" type="108">
+ </connector>
+ <connector id="connector_108_583213" from="rect_255019" to="rect_255019" fromcp="21" tocp="21" type="108">
+ </connector>
+ <connector id="connector_208_154020" from="rect_203320" to="rect_150616" fromcp="32" tocp="12" type="208" stroke-dash="3">
+ </connector>
+ <rect id="rect_231311" x="13" y="15" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_334311" x="124" y="93" width="102" height="47" stroke="#2A579A" fill="#808080" url="show.sp?grdid=RJZ_SFFH2&processid=0" 属性="" fillto="" round="" stroke-width="0" font-size="14" font-color="#FFFFFF" opacity="0.7">业务生成</rect>
+ <connector id="connector_208_224115" from="rect_334327" to="rect_334324" fromcp="32" tocp="12" type="208" stroke="#2A579A" stroke-width="2">
+ </connector>
+ <text id="text_421023" x="938" y="440" width="96" height="24" font-size="14" 属性="">广西社保</text>
+ <rect id="rect_85411" x="268" y="165" width="98" height="50" stroke="#2A579A" fill="#2A579A" url="show.sp?grdid=RJZ_SFFH&processid=1" 属性="" fillto="" round="" stroke-width="0" font-size="14" font-color="#FFFFFF" opacity="0.7">财务实付审核</rect>
+ <text id="text_391317" x="1064" y="467" width="21" height="12" font-size="14">
+ </text>
+ <rect id="rect_151415" x="808" y="154" width="93" height="70" stroke="#2A579A" fill="#6C65F5" url="" 属性="" fillto="" round="" stroke-width="0" font-size="14" font-color="#FFFFFF" opacity="0.7">银行支付</rect>
+ <connector id="connector_108_151420" from="rect_473110" to="rect_85411" fromcp="12" tocp="32" type="108" stroke="#2A579A" stroke-width="2">
+ </connector>
+ <rect id="rect_255412" x="412" y="164" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_255414" x="699" y="182" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_255415" x="680" y="198" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_295012" x="520" y="165" width="98" height="50" stroke="#2A579A" fill="#008040" url="show.sp?grdid=YSZL_ZF&processid=2" 属性="" fillto="" round="" stroke-width="0" font-size="14" font-color="#FFFFFF" opacity="0.7">财务领导审核</rect>
+ <polygon id="rhombus_295016" points="401,190 428,215 456,190 428,165 401,190 401,190" changeto="rhombus" stroke="#000000" fill="#CCFFCC" fillto="" opacity="1" stroke-dash="1">通过？</polygon>
+ <connector id="connector_200_295017" from="rect_85411" to="rhombus_295016" fromcp="32" tocp="12" type="200">
+ </connector>
+ <polygon id="polygon_295018" points="652,190 679,215 707,190 679,165 652,190 652,190 652,190" changeto="rhombus" stroke="#000000" fill="#FFFF80" fillto="" opacity="1" stroke-dash="1">通过？</polygon>
+ <connector id="connector_200_295019" from="rect_295012" to="polygon_295018" fromcp="32" tocp="12" type="200">
+ </connector>
+ <connector id="connector_208_295020" from="rhombus_295016" to="rect_295012" fromcp="32" tocp="12" type="208">
+ </connector>
+ <connector id="connector_208_295021" from="polygon_295018" to="rect_151415" fromcp="32" tocp="12" type="208">
+ </connector>
+ <connector id="connector_208_295024" from="polygon_295018" to="rect_85411" fromcp="23" tocp="23" type="208">
+ </connector>
+ <text id="text_295025" x="30" y="30" width="140" height="30" font-size="14">【实付审批流程】</text>
+ <text id="text_295026" x="468" y="172" width="20" height="40" font-size="14">Y</text>
+ <text id="text_295027" x="713" y="171" width="20" height="40" font-size="14">Y</text>
+ <text id="text_295028" x="651" y="233" width="20" height="40" font-size="14">N</text>
+ <connector id="connector_208_311514" from="rect_334311" to="rect_85411" fromcp="23" tocp="12" type="208">
+ </connector>
+ <polygon id="upnote_82715" points="516,268 516,356 646,356 646,268 557,268 556,234 535,268 516,268" changeto="upnote" stroke="#000000" fill="#FFFFFF" fillto="" opacity="1" stroke-dash="1">
+财务领导审核通过后，系统实时发送消息通知银行进行支付。</polygon>
+ <polygon id="upnote_82718" points="229,255 229,358 353,358 353,255 270,255 274,232 249,255 229,255" changeto="upnote" stroke="#000000" fill="#FFFFFF" fillto="" opacity="1" stroke-dash="1">
+实付人员核对银行和总金额是否与业务生成一致</polygon>
+ <rect id="rect_63318" x="550" y="62" width="88" height="50" stroke="#2A579A" fill="#FFFF80" url="" 属性="" fillto="" round="" stroke-width="0" font-size="14" font-color="#FFFFFF" opacity="0.7">生成待支付数据</rect>
+ <rect id="rect_63319" x="766" y="64" width="98" height="50" stroke="#2A579A" fill="#2A579A" url="" 属性="" fillto="" round="" stroke-width="0" font-size="14" font-color="#FFFFFF" opacity="0.7">实付凭证打印</rect>
+ <rect id="rect_63323" x="271" y="64" width="102" height="47" stroke="#2A579A" fill="#E5E5E5" url="" 属性="" fillto="" round="" stroke-width="1" font-size="14" font-color="#FFFFFF" opacity="0.7" stroke-dash="3">财务主管签字</rect>
+ <rect id="rect_63324" x="406" y="64" width="102" height="47" stroke="#2A579A" fill="#E5E5E5" url="" 属性="" fillto="" round="" stroke-width="1" font-size="14" font-color="#FFFFFF" opacity="0.7" stroke-dash="3">局长签字</rect>
+ <connector id="connector_208_63326" from="rect_63323" to="rect_63324" fromcp="32" tocp="12" type="208">
+ </connector>
+ <connector id="connector_208_63327" from="rhombus_295016" to="rect_63323" fromcp="32" tocp="23" type="208">
+ </connector>
+ <connector id="connector_208_63328" from="rect_63324" to="rect_63318" fromcp="32" tocp="12" type="208">
+ </connector>
+ <connector id="connector_208_63329" from="rect_63318" to="rect_295012" fromcp="23" tocp="21" type="208">
+ </connector>
+ <connector id="connector_208_63330" from="polygon_295018" to="rect_63319" fromcp="32" tocp="12" type="208">
+ </connector>
+</svg>

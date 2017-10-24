@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >CFG_KMRS</MWID><NAME >科目延伸</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CFG_KMRS.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >系统维护</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0 = &amp;quot;&amp;quot;;
+var kmbh2
+//数据加载完毕
+function _thisOnpost_loaddata(sheet){
+	ZXGFILE0 = _this.SaveTempZXGFile(0); 
+	_this.SetCellText(0,4,2,kmbh);
+	_this.SetCellText(0,4,4,kmmc);
+	kmbh2 = kmbh+&amp;quot;001&amp;quot;;
+	_this.SetCellText(0,5,2,kmbh2);
+	_this.SetCellText(0,5,4,kmmc);
+	
+	_this.ShowToolBar(0);
+	
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col){
+	var kmbh_next = _this.GetCellText(0,5,2);
+	var kmmc_next = _this.GetCellText(0,5,4);
+	
+	if(id==&amp;quot;开始&amp;quot;){
+		try{
+			var param = new Object();
+			param.sbh = G_ORGID;
+			param.zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+			param.org = G_ORGID;
+			param.acc = G_ACCID;
+			param.kmbh = kmbh;
+			param.kmbh2 = kmbh_next;
+			param.kmmc = kmmc_next;
+			param.jb = jb;
+			param.mj = mj;
+			param.kmlx = kmlx;
+			param.yxjefx = yxjefx;
+			param.kmjc = kmjc;
+			
+			if(_this.GetCellText(0,5,2) == &amp;quot;&amp;quot; || _this.GetCellText(0,5,2) == &amp;quot;undefined&amp;quot;){
+				alert(&amp;quot;科目号不能为空&amp;quot;);
+			}
+			var ret = invokeOSFuncExt(&amp;quot;kmys&amp;quot;,param);
+			if(ret == &amp;quot;1&amp;quot;){
+				alert(&amp;quot;延伸完成&amp;quot;);
+			}else{
+				alert(&amp;quot;延伸失败:&amp;quot;+ret);
+			}
+			window.returnValue = 1;
+			window.close();
+		}catch(e){
+			alert(e.toString());
+		}
+	}else if(id == &amp;quot;退出&amp;quot;){
+		window.returnValue = -1;
+		window.close();
+	}
+}</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var xmldb = new JavaPackage(&amp;quot;com.xlsgrid.net.xmldb&amp;quot;);
+var web = new JavaPackage(&amp;quot;com.xlsgrid.net.web&amp;quot;);
+var orajdbc = new JavaPackage(&amp;quot;oracle.jdbc&amp;quot;);
+
+function kmys()
+{	
+	var db = null;
+	var ps = null;
+	var sql = &amp;quot;&amp;quot;;  
+	var ccxx = &amp;quot;&amp;quot;;
+	var retVal = 1;
+	var ccxxcd = 0;
+	var errlen = &amp;quot;&amp;quot;;
+	var errtext = &amp;quot;&amp;quot;;
+	try {
+		db = new pub.EADatabase();
+		var conn = db.GetConn();
+		//获取执行环境
+		var statement = conn.createStatement();
+		
+		sql = &amp;quot;select count(*) from cw_kmb where  kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos; and sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and org = &amp;apos;&amp;quot;+org+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+acc+&amp;quot;&amp;apos;&amp;quot;;
+		var count = db.GetSQL(sql);	
+		if(count ==0){
+			return &amp;quot;没有找到此科目编号&amp;quot;;
+		}
+
+		sql = &amp;quot;insert into cw_kmb(sbh,zth,kmbh,kmmc,kmjc,zjm,kmlx,slh,jb,mjbz,yxyefx,dwbz,grbz,gdzcbz,qlbz,xjyhbz,zzgs1,
+			zzgs2,zzgs3,zzgs4,author,bmbz,dykmbh,rjzkm_lrbz,rjzkm_qcye_hzkmbh,yhzl,org,acc,indexid,srh_zch_bz,kssj,jssj,xzlx)
+			select sbh,zth,trim(&amp;apos;&amp;quot;+kmbh2+&amp;quot;&amp;apos;) kmbh,trim(&amp;apos;&amp;quot;+kmmc+&amp;quot;&amp;apos;) kmmc,trim(&amp;apos;&amp;quot;+kmmc+&amp;quot;&amp;apos;) kmjc,zjm,kmlx,&amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos; slh,jb+1 jb,&amp;apos;1&amp;apos; mjbz,
+			yxyefx,dwbz,grbz,gdzcbz,qlbz,xjyhbz,zzgs1,zzgs2,zzgs3,zzgs4,author,bmbz,dykmbh,rjzkm_lrbz,rjzkm_qcye_hzkmbh,
+			yhzl,org,acc,indexid,srh_zch_bz,kssj,jssj,xzlx
+			from cw_kmb 
+			where kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos; and sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and org = &amp;apos;&amp;quot;+org+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+acc+&amp;quot;&amp;apos;&amp;quot;;
+
+		ps = db.prepareStatement(sql); //初始化
+		ps.execute(); //执行SQL语句
+		
+		sql = &amp;quot;update cw_kmb set mjbz = 0 where kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos; and sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and org = &amp;apos;&amp;quot;+org+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+acc+&amp;quot;&amp;apos;&amp;quot;;
+		ps = db.prepareStatement(sql); //初始化
+		ps.execute(); //执行SQL语句
+		
+		var errlen = 4096;
+		var praFunc = conn.prepareCall(&amp;quot;{?=call cw_pack.check_move_kmbh(?,?,?,?,?,?,?)}&amp;quot;);
+		praFunc.registerOutParameter(1,java.sql.Types.INTEGER);
+		praFunc.setString(2,sbh);
+		praFunc.setString(3,zth);
+		praFunc.setString(4,kmbh);
+		praFunc.setString(5,kmbh2);
+		praFunc.setString(6,&amp;quot;extend&amp;quot;);
+		praFunc.registerOutParameter(7,java.sql.Types.VARCHAR);
+		praFunc.setInt(8,errlen);
+	
+		praFunc.executeUpdate();
+		
+		retVal = praFunc.getString(1);
+		ccxx = praFunc.getString(7);
+
+		if(retVal == &amp;quot;&amp;quot; || retVal == 1){
+			db.Commit();
+			return 1;
+		}else{
+			return ccxx;
+		}
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

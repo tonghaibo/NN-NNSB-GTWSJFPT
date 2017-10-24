@@ -1,0 +1,20 @@
+<?xml version = '1.0' ?>
+<ROWSET height="139" width="163">
+<ROW>
+ <C0  height="139" width="163" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_256.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=demo','收缴','收缴');" bkcolor="#FF9408" title="收缴" >收缴</C0>
+ <C1  height="139" width="326" COLSPAN="1" ROWSPAN="2" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_254.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=demo','查询','查询');" bkcolor="#2BBAFF" title="查询" >查询</C1>
+ <C3  height="139" width="163" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_255.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=demo','支付','支付');" bkcolor="#EF9F1D" title="支付" >支付</C3>
+</ROW>
+<ROW>
+ <C0  height="139" width="163" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_256.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=demo','日记帐录入','日记帐录入');" bkcolor="#FF9408" title="日记帐录入" >日记帐录入</C0>
+ <C1  height="139" width="163" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_256.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=demo','日记帐修改','日记帐修改');" bkcolor="#FF9408" title="日记帐修改" >日记帐修改</C1>
+ <C2  height="139" width="163" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_255.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=demo','日记帐查询','日记帐查询');" bkcolor="#EF9F1D" title="日记帐查询" >日记帐查询</C2>
+ <C3  height="139" width="163" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_253.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=demo','日记帐打印','日记帐打印');" bkcolor="#54C104" title="日记帐打印" >日记帐打印</C3>
+</ROW>
+<ROW>
+ <C0  height="139" width="163" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_256.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=demo','凭证制单','凭证制单');" bkcolor="#FF9408" title="凭证制单" >凭证制单</C0>
+ <C1  height="139" width="163" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_254.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=demo','凭证审核','凭证审核');" bkcolor="#2BBAFF" title="凭证审核" >凭证审核</C1>
+ <C2  height="139" width="163" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_252.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=demo','凭证查询','凭证查询');" bkcolor="#4577A4" title="凭证查询" >凭证查询</C2>
+ <C3  height="139" width="163" COLSPAN="1" ROWSPAN="1" fkcolor="#FFFFFF" icon="xlsgrid/images/flash/icon/icon_255.png" url="javascript:j_openWindow(-1,-1,-1,-1,'show.sp?grdid=demo','报表分析','报表分析');" bkcolor="#EF9F1D" title="报表分析" >报表分析</C3>
+</ROW>
+</ROWSET>

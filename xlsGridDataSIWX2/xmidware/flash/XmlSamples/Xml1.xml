@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 单系列 -->
+<chart caption='分析图' subCaption='Top 5 Sales Person' numberPrefix='$'
+	showLegend='1' showBorder='0' palette='2' exportEnabled='1'
+	exportAtClient='0' exportAction='download' exportHandler='FCExporter.jsp'
+	exportFormats='JPG=导出为JPG图片|PNG=导出为PNG图片|PDF=导出为PDF文件'>
+	<set label='Alex' value='25000' />
+	<set label='Mark' value='35000' />
+	<set label='David' value='42300' />
+	<set label='Graham' value='35300' />
+	<set label='John' value='31300' />
+</chart>

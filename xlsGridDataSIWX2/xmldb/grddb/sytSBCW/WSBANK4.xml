@@ -1,0 +1,310 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >WSBANK4</MWID><NAME >WSBANK4</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >WSBANK4.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >WebService</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE ></GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var dom = new JavaPackage(&amp;quot;org.w3c.dom&amp;quot;);
+var sax = new JavaPackage(&amp;quot;org.xml.sax&amp;quot;);
+var parsers = new JavaPackage(&amp;quot;javax.xml.parsers&amp;quot;);
+var soap = new JavaPackage(&amp;quot;javax.xml.soap&amp;quot;);
+var io = new JavaPackage(&amp;quot;java.io&amp;quot;);
+var util = new JavaPackage(&amp;quot;java.util&amp;quot;);
+var timepack = new JavaPackage( &amp;quot;com.xlsgrid.net.time&amp;quot; );
+var jschftp = new JavaPackage( &amp;quot;com.jcraft.jsch&amp;quot; );
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//function F0214001()
+//系统连通性测试
+function F0214001(requestXml)
+{
+		//return &amp;quot;aaa&amp;quot;;
+	var service = new SBCW_sbcwService();
+	var map = service.parseMsgText(requestXml,false);
+	var repxml = &amp;quot;&amp;quot;;
+	repxml = &amp;quot;
+			&amp;lt;MsgText&amp;gt;
+			  &amp;lt;GrpHdr&amp;gt;
+			    &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+			    &amp;lt;Ref&amp;gt;&amp;quot;+map.get(&amp;quot;Ref&amp;quot;)+&amp;quot;&amp;lt;/Ref&amp;gt;
+			    &amp;lt;BusCd&amp;gt;0214001&amp;lt;/BusCd&amp;gt;
+			    &amp;lt;TradSrc&amp;gt;&amp;quot;+map.get(&amp;quot;TradSrc&amp;quot;)+&amp;quot;&amp;lt;/TradSrc&amp;gt;
+			    &amp;lt;Sender&amp;gt;
+			      &amp;lt;InstId&amp;gt;&amp;quot;+map.get(&amp;quot;SenderId&amp;quot;)+&amp;quot;&amp;lt;/InstId&amp;gt;
+			    &amp;lt;/Sender&amp;gt;
+			    &amp;lt;Recver&amp;gt;
+			      &amp;lt;InstId&amp;gt;&amp;quot;+map.get(&amp;quot;RecverId&amp;quot;)+&amp;quot;&amp;lt;/InstId&amp;gt;
+			    &amp;lt;/Recver&amp;gt;
+			    &amp;lt;Resend&amp;gt;N&amp;lt;/Resend&amp;gt;
+			    &amp;lt;Date&amp;gt;&amp;quot;+map.get(&amp;quot;Date&amp;quot;)+&amp;quot;&amp;lt;/Date&amp;gt;
+			    &amp;lt;Time&amp;gt;&amp;quot;+map.get(&amp;quot;Time&amp;quot;)+&amp;quot;&amp;lt;/Time&amp;gt;
+			    &amp;lt;Dgst&amp;gt;系统连通性测试&amp;lt;/Dgst&amp;gt;
+			    &amp;lt;Rst&amp;gt;
+				    &amp;lt;Code&amp;gt;0000&amp;lt;/Code&amp;gt;
+				    &amp;lt;Info&amp;gt;已处理&amp;lt;/Info&amp;gt;
+			  &amp;lt;/Rst&amp;gt;
+			  &amp;lt;/GrpHdr&amp;gt;
+			  &amp;lt;BusiText&amp;gt;
+			  	&amp;lt;Rst&amp;gt;
+				    &amp;lt;Code&amp;gt;0000&amp;lt;/Code&amp;gt;
+				    &amp;lt;Info&amp;gt;交易成功&amp;lt;/Info&amp;gt;
+			  	&amp;lt;/Rst&amp;gt;
+				  &amp;lt;BkSeq&amp;gt;&amp;quot;+map.get(&amp;quot;BkSeq&amp;quot;)+&amp;quot;&amp;lt;/BkSeq&amp;gt;
+				  &amp;lt;SiSeq&amp;gt;&amp;quot;+service.genSiSeq(map.get(&amp;quot;RecverId&amp;quot;))+&amp;quot;&amp;lt;/SiSeq&amp;gt;
+			  &amp;lt;/BusiText&amp;gt;
+			&amp;lt;/MsgText&amp;gt;&amp;quot;;
+	service.parseMsgText(repxml,true);	
+	return repxml;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//批量文件就绪通知
+//function F0214002()
+function F0214002(requestxml)
+{
+	var service = new SBCW_sbcwService();
+	try{		
+		var map = new java.util.HashMap();	
+		map = service.parseMsgText(requestxml,false);
+		var SiSeq = service.genSiSeq(map.get(&amp;quot;RecverId&amp;quot;));
+		var responseXml = parseMsgText_0214002(requestxml,map,SiSeq);
+		//service.parseMsgText(responseXml ,true);
+		return responseXml;				
+	}
+	catch(e) {
+		return e.toString();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//批量文件就绪通知业务处理方法
+//序号	文件类型代码	文件名称			文件生成方	
+//1	0224001		日终交易核对流水		银行生成	
+//2	0122001		文件批量结算			社保生成	
+//3	0222002		社保机构账户收支明细		银行生成	
+//4	0121001		个人身份缴费档次标准更新	社保生成	
+//5	0121002		社保卡银行账户批量开户		社保生成	
+//6	0121003		社保卡社保账户状态变更明细	社保生成	
+//7	0221001		银行行号同步			银行生成	
+//8	0224002		错误代码表同步			银行生成	
+//9	0221004		预制空白卡管理信息同步		银行生成	
+//10	0121004		预制空白卡管理信息同步		社保生成	
+////////////////////////////////////////////////////////////////////////////////
+function parseMsgText_0214002(msgText,hdrmap,SiSeq)
+{	
+	var responsexml = &amp;quot;
+			      &amp;lt;MsgText&amp;gt;
+			         &amp;lt;GrpHdr&amp;gt;
+			            &amp;lt;Version&amp;gt;1.0.0&amp;lt;/Version&amp;gt;
+			            &amp;lt;Ref&amp;gt;&amp;quot;+hdrmap.get(&amp;quot;Ref&amp;quot;)+&amp;quot;&amp;lt;/Ref&amp;gt;
+			            &amp;lt;BusCd&amp;gt;&amp;quot;+hdrmap.get(&amp;quot;BusCd&amp;quot;)+&amp;quot;&amp;lt;/BusCd&amp;gt;
+			            &amp;lt;TradSrc&amp;gt;B&amp;lt;/TradSrc&amp;gt;
+			            &amp;lt;Sender&amp;gt;
+			               &amp;lt;InstId&amp;gt;&amp;quot;+hdrmap.get(&amp;quot;SenderId&amp;quot;)+&amp;quot;&amp;lt;/InstId&amp;gt;
+			            &amp;lt;/Sender&amp;gt;
+			            &amp;lt;Recver&amp;gt;
+			               &amp;lt;InstId&amp;gt;&amp;quot;+hdrmap.get(&amp;quot;RecverId&amp;quot;)+&amp;quot;&amp;lt;/InstId&amp;gt;
+			            &amp;lt;/Recver&amp;gt;
+			            &amp;lt;Resend&amp;gt;&amp;quot;+hdrmap.get(&amp;quot;Resend&amp;quot;)+&amp;quot;&amp;lt;/Resend&amp;gt;
+			            &amp;lt;Date&amp;gt;&amp;quot;+hdrmap.get(&amp;quot;Date&amp;quot;)+&amp;quot;&amp;lt;/Date&amp;gt;
+			            &amp;lt;Time&amp;gt;&amp;quot;+hdrmap.get(&amp;quot;Time&amp;quot;)+&amp;quot;&amp;lt;/Time&amp;gt;
+			            &amp;lt;Dgst&amp;gt;&amp;quot;+hdrmap.get(&amp;quot;Dgst&amp;quot;)+&amp;quot;&amp;lt;/Dgst&amp;gt;
+			            &amp;lt;Rst&amp;gt;
+			               &amp;lt;Code&amp;gt;0000&amp;lt;/Code&amp;gt;
+			               &amp;lt;Info&amp;gt;已收到请求&amp;lt;/Info&amp;gt;
+			            &amp;lt;/Rst&amp;gt;
+			         &amp;lt;/GrpHdr&amp;gt;
+			         &amp;lt;BusiText&amp;gt;
+			            &amp;lt;Rst&amp;gt;
+			               &amp;lt;Code&amp;gt;[%BusiCode]&amp;lt;/Code&amp;gt;
+			               &amp;lt;Info&amp;gt;[%BusiInfo]&amp;lt;/Info&amp;gt;
+			            &amp;lt;/Rst&amp;gt;
+			            &amp;lt;BkSeq&amp;gt;&amp;quot;+hdrmap.get(&amp;quot;BkSeq&amp;quot;)+&amp;quot;&amp;lt;/BkSeq&amp;gt;
+			            &amp;lt;SiSeq&amp;gt;[%sblsh]&amp;lt;/SiSeq&amp;gt;
+			         &amp;lt;/BusiText&amp;gt;
+			      &amp;lt;/MsgText&amp;gt;&amp;quot;;
+	var service = new SBCW_sbcwService();	
+	try {				
+		var dbf = parsers.DocumentBuilderFactory.newInstance();
+		var documentbuilder = dbf.newDocumentBuilder();
+		var document = documentbuilder.parse(new sax.InputSource(new io.StringReader(msgText))); 
+		var nodelist = document.getElementsByTagName(&amp;quot;MsgText&amp;quot;);                  
+		var node = nodelist.item(0);	
+		var BkSeq = &amp;quot;&amp;quot;;
+		var old_md5 = &amp;quot;&amp;quot;;
+		var fileName = &amp;quot;&amp;quot;;	
+		try{ BkSeq = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;BkSeq&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		try{ old_md5 = node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;FileMD5&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		try{ fileName= node.getElementsByTagName(&amp;quot;BusiText&amp;quot;).item(0).getElementsByTagName(&amp;quot;FileName&amp;quot;).item(0).getFirstChild().getNodeValue();}catch(e){}
+		if(fileName == &amp;quot;&amp;quot;) {
+			responsexml = pub.EAFunc.Replace(responsexml,&amp;quot;[%BusiCode]&amp;quot;,&amp;quot;2001&amp;quot;);	
+			responsexml = pub.EAFunc.Replace(responsexml,&amp;quot;[%BusiInfo]&amp;quot;,&amp;quot;文件名不能为空&amp;quot;);
+			responsexml = pub.EAFunc.Replace(responsexml,&amp;quot;[%sblsh]&amp;quot;,SiSeq);
+			return 	responsexml;		
+		}
+		//文件类型代码
+		//解释出文件类型代码后，根据文件类型代码，系统自动去调用相应的处理方法
+		//调用规则是中间件编号为：N+文件类型代码 方法名称为：F+文件类型代码
+		var fileTypeCode = fileName.split(&amp;quot;_&amp;quot;)[1]; 
+		var RecverId = hdrmap.get(&amp;quot;RecverId&amp;quot;);
+		var SenderId= hdrmap.get(&amp;quot;SenderId&amp;quot;);
+		var ref = hdrmap.get(&amp;quot;Ref&amp;quot;);		
+		//增加预校验  20170725 ding
+		var ret = &amp;quot;&amp;quot;;
+		try{ret = checkFile(fileTypeCode,SenderId,RecverId,fileName,old_md5,ref,BkSeq,SiSeq);}catch(e){ret = &amp;quot;校验文件出错！&amp;quot;+e.toString();}
+		//启用后台任务计划调用文件处理方法
+		if(ret != &amp;quot;ok&amp;quot;) {
+			responsexml = pub.EAFunc.Replace(responsexml,&amp;quot;[%BusiCode]&amp;quot;,&amp;quot;2001&amp;quot;);	
+			responsexml = pub.EAFunc.Replace(responsexml,&amp;quot;[%BusiInfo]&amp;quot;,ret);
+			responsexml = pub.EAFunc.Replace(responsexml,&amp;quot;[%sblsh]&amp;quot;,SiSeq);			
+		}
+		else {
+			responsexml = pub.EAFunc.Replace(responsexml,&amp;quot;[%BusiCode]&amp;quot;,&amp;quot;0000&amp;quot;);	
+			responsexml = pub.EAFunc.Replace(responsexml,&amp;quot;[%BusiInfo]&amp;quot;,&amp;quot;已收到通知&amp;quot;);
+			responsexml = pub.EAFunc.Replace(responsexml,&amp;quot;[%sblsh]&amp;quot;,SiSeq);		
+			runTask(fileTypeCode,SenderId,RecverId,fileName,old_md5,ref,BkSeq,SiSeq);		
+		}	
+		//返回响应报文给银行
+	}
+	catch(e) {
+//		throw new Exception(e);	
+		responsexml = 	service.getErrReturnMsgText(hdrmap.get(&amp;quot;BusCd&amp;quot;),hdrmap.get(&amp;quot;SenderId&amp;quot;),hdrmap.get(&amp;quot;RecverId&amp;quot;));
+	}
+	service.parseMsgText(responsexml,true);
+	return 	responsexml;		
+	//return map;
+}
+
+//启用后台任务计划调用文件处理方法
+//fileTypeCode - 文件类型代码
+//调用规则是中间件编号为：N+文件类型代码 方法名称为：F+文件类型代码
+//例如： 中间件编号N0224001 方法名F0224001()
+function runTask(fileTypeCode,bkInstId,sbInstId,fileName,fileMD5,ref,BkSeq,SiSeq)
+{	
+	var jobseqid  = &amp;quot;&amp;quot;;
+	try {
+		var service = new SBCW_sbcwService();
+		var tim = new timepack.EARunOSTimer(); 
+		jobseqid = &amp;quot;FILEBATCH&amp;quot; + service.genSiSeq(sbInstId);
+		var jobnam = &amp;quot;批量文件类型&amp;quot; + fileTypeCode + &amp;quot;业务处理&amp;quot;;
+		var grdid = &amp;quot;N&amp;quot; + fileTypeCode;
+		var osname = &amp;quot;&amp;quot;;
+		//批量结算 要调用有参的方法
+		if(fileTypeCode == &amp;quot;0122001&amp;quot;) {
+			osname = &amp;quot;testF0122001&amp;quot;;
+		}
+		else {
+			osname = &amp;quot;F&amp;quot; + fileTypeCode;
+		}
+		var czyxm = &amp;quot;银行&amp;quot;+bkInstId;
+		//初始化后台任务计划
+		tim.init(jobseqid,jobnam,&amp;quot;SBCW&amp;quot;,grdid,osname,&amp;quot;fileTypeCode=&amp;quot;+fileTypeCode+&amp;quot;&amp;sbInstId=&amp;quot;+sbInstId+&amp;quot;&amp;bkInstId=&amp;quot;+bkInstId+&amp;quot;&amp;jobseqid=&amp;quot;+jobseqid+&amp;quot;&amp;fileName=&amp;quot;+fileName+&amp;quot;&amp;fileMD5=&amp;quot;+fileMD5+&amp;quot;&amp;ref=&amp;quot;+ref+&amp;quot;&amp;BkSeq=&amp;quot;+BkSeq+&amp;quot;&amp;SiSeq=&amp;quot;+SiSeq+&amp;quot;&amp;czyxm=&amp;quot;+czyxm);
+	}
+	catch ( ee ) {
+		throw new pub.EAException ( ee.toString() );
+	}
+
+	return jobseqid;// 返回后台分配的作业编号
+
+}
+
+
+function checkFile(fileTypeCode,SenderId,RecverId,fileName,old_md5,ref,BkSeq,SiSeq)
+{
+	var db = null;
+	var line = &amp;quot;&amp;quot;;
+	var failecnt = 0;
+	var rowcount = 0;
+	var ret = &amp;quot;ok&amp;quot;;//表示返回成功
+	var sbInstId = RecverId;
+	var bkInstId = SenderId;
+	var wjdownpath = &amp;quot;&amp;quot;;
+	try {
+		db = new pub.EADatabase();	
+		var sbh = &amp;quot;&amp;quot;;
+		var zth = &amp;quot;&amp;quot;;
+		var thisorgid = &amp;quot;&amp;quot;;
+		var thisaccid = &amp;quot;&amp;quot;;	
+		
+		var sql = &amp;quot;select org,acc,sbh,zth from cw_ztb where yszl_sbjgdm = &amp;apos;&amp;quot;+sbInstId+&amp;quot;&amp;apos;&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		for(var i=0;i&amp;lt;ds.getRowCount();i++) {
+			sbh = ds.getStringAt(i,&amp;quot;sbh&amp;quot;);
+			zth = ds.getStringAt(i,&amp;quot;zth&amp;quot;);
+			thisorgid = ds.getStringAt(i,&amp;quot;org&amp;quot;);
+			thisaccid = ds.getStringAt(i,&amp;quot;acc&amp;quot;);
+		}	
+		
+		//登录FTP取文件
+		var sql = &amp;quot;select * from cw_dfdsb_yszl where yszl_yhjgdm = &amp;apos;&amp;quot;+bkInstId+&amp;quot;&amp;apos; and sbh= &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+		var ftpds = db.QuerySQL(sql);
+		var ftpip = ftpds.getStringAt(0,&amp;quot;FTP_IP&amp;quot;);
+		var ftpport = ftpds.getStringAt(0,&amp;quot;FTP_PORT&amp;quot;);
+		var ftpuser = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_NAME&amp;quot;);
+		var ftppasswd = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_PASSWD&amp;quot;);		
+		var ftploginpath = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_PATH&amp;quot;);			
+		var ftpdownpath = ftpds.getStringAt(0,&amp;quot;FTP_DOWN_PATH&amp;quot;);
+		//var 
+		wjdownpath = ftploginpath + &amp;quot;/&amp;quot; +	 ftpdownpath; 	
+		var localpath = &amp;quot;/u/yszl_dsdf/incoming/&amp;quot;+sbInstId;
+		
+		//下载sftp				
+		var jsch = new jschftp.JSch();
+		var sftp = null;
+		var sshSession = null;
+		var localFile = &amp;quot;&amp;quot;;//未解压
+		var localFile2 = &amp;quot;&amp;quot;;//已解压
+		try {
+			sshSession = jsch.getSession(ftpuser,ftpip,ftpport);
+			sshSession.setPassword(ftppasswd);
+			var config = new java.util.Properties();
+			config.put(&amp;quot;StrictHostKeyChecking&amp;quot;,&amp;quot;no&amp;quot;);
+			sshSession.setConfig(config);
+			sshSession.connect();
+			//pub.EAFunc.Log(&amp;quot;sftp登录成功2&amp;quot;);
+			var channel = sshSession.openChannel(&amp;quot;sftp&amp;quot;);
+			channel.connect();
+			sftp = channel;
+			sftp.cd(wjdownpath);
+			//pub.EAFunc.Log(&amp;quot;sftp工作目录2：&amp;quot;+wjdownpath);
+			localFile = new java.io.File(localpath + &amp;quot;/&amp;quot;+ fileName);
+			//pub.EAFunc.Log(&amp;quot;sftp下载文件2：&amp;quot;+fileName);
+			sftp.get(fileName,new java.io.FileOutputStream(localFile));
+			//pub.EAFunc.Log(&amp;quot;sftp下载文件成功2：&amp;quot;+fileName);
+			sftp.quit();
+			sshSession.disconnect();
+		}
+		catch(ee) {
+			if(sftp != null) sftp.quit();
+			if(sshSession != null) sshSession.disconnect();
+			return &amp;quot;下载文件[&amp;quot;+fileName+&amp;quot;]失败:==&amp;quot;+ee.toString()+&amp;quot;,wjdownpath =&amp;quot;+wjdownpath ;
+		}
+									
+	}
+	catch ( e) {
+		if(db!=null) db.Rollback();
+		return &amp;quot;校验文件出错&amp;quot;;
+	}	
+	finally {
+		if(db!=null) db.Close();
+	}
+	return ret;
+}
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

@@ -1,0 +1,295 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >CW_DWSEL</MWID><NAME >选择单位</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >CW_DWSEL.zxg</FILE><SCENE ></SCENE><FIXED >1,1</FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >1</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >firstPage</ID><NAME >首页</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE><C10 >GRDBTNDS_0</C10></ROW>
+<ROW num="1" ><ID >prevPage</ID><NAME >上一页</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE><C10 >prevPage</C10></ROW>
+<ROW num="2" ><ID >nextPage</ID><NAME >下一页</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE><C10 >nextPage</C10></ROW>
+<ROW num="3" ><ID >endPage</ID><NAME >尾页</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE><C10 >GRDBTNDS_3</C10></ROW>
+</ROWSET>
+</grdbtnds><grdshwds>
+<ROWSET>
+<ROW num="0" ><ID >1,1,5</ID><NAME ></NAME><DBNAME ></DBNAME><DSKEY ></DSKEY><NROW ></NROW><NCOL ></NCOL><PAGES >1</PAGES><PAGESIZE ></PAGESIZE><URL ></URL><CTLTYP ></CTLTYP><DYNCTL ></DYNCTL><LISTID ></LISTID><ISCROSS ></ISCROSS><HROW ></HROW><HCOLS ></HCOLS><ROWORDER ></ROWORDER><VCOLS ></VCOLS><VCOLSQL ></VCOLSQL><VALUECOL ></VALUECOL></ROW>
+</ROWSET>
+</grdshwds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >//////////////////////////////////////////////////////////////////
+// 打开单位弹出窗口，选择单位后返回上一个窗口
+// 传入参数 ： obj.filter - 过滤条件
+// 返回参数值：dwbh+&amp;quot;~&amp;quot;+dwmc+&amp;quot;~&amp;quot;+dwlxbh+&amp;quot;~&amp;quot;+dwjc
+//////////////////////////////////////////////////////////////////
+
+var ZXGFILE0 = &amp;quot;&amp;quot;;
+var objParam;
+var currow = -1;
+var filter2 = &amp;quot;&amp;quot;;
+var curr_pageno = 1; //当前页
+var curr_maxpageno = 0; //最大分页数
+var pagerows = 500; //分页每页总行数
+	
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+//	_this.ShowToolBar(0);
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,60);
+	_this.SetColVisible(sheet,0,-1);
+	_this.SetColVisible(sheet,5,-1);
+	
+	ZXGFILE0 = _this.SaveTempZXGFile(0); 
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+
+	//接收传入参数
+	var filter = &amp;quot;&amp;quot;;
+	try {
+		objParam = window.dialogArguments;
+		if (objParam.filter != null &amp;&amp; objParam.filter != undefined) {
+			filter = objParam.filter;
+		}
+	} catch (e) {}
+	
+	loadData(filter,1);
+}
+
+//载入科目数据
+function loadData(filter,pageno)
+{
+	curr_pageno = pageno;
+	
+	_this.LoadZXGFile(ZXGFILE0,-1,0);
+	
+	_sql.querytods(&amp;quot;getTcqbm&amp;quot;,&amp;quot;SBH=&amp;quot;+G_ORGID);
+	var tcqbm = _this.XMLDS_GetString(0,&amp;quot;TCQBM&amp;quot;);
+
+	if (filter != &amp;quot;&amp;quot;) filter = &amp;quot;and &amp;quot; + filter;
+	if (filter2 != &amp;quot;&amp;quot;) filter2 = &amp;quot;and &amp;quot; + filter2;
+	if (filter == &amp;quot;&amp;quot; || filter2 == &amp;quot;&amp;quot;){
+		filter = &amp;quot;and upper(dwbh) like &amp;apos;%25&amp;apos;&amp;quot;;
+		filter2 = &amp;quot;and aab001 like &amp;apos;%25&amp;apos;&amp;quot;;
+	}
+//	alert(filter + filter2 );
+	//var xml = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;FILTER=&amp;quot;+filter+&amp;quot;&amp;TCQBMN=&amp;quot;+tcqbm+&amp;quot;&amp;FILTER2=&amp;quot;+filter2);
+	
+	var param = &amp;quot;FILTER=&amp;quot;+filter+&amp;quot;&amp;TCQBMN=&amp;quot;+tcqbm+&amp;quot;&amp;FILTER2=&amp;quot;+filter2;
+	param += &amp;quot;&amp;thissytid=&amp;quot;+G_SYTID+&amp;quot;&amp;thisgrdid=&amp;quot;+G_GRDID+&amp;quot;&amp;dsid=MAIN&amp;pageno=&amp;quot;+pageno+&amp;quot;&amp;pagerows=&amp;quot;+pagerows;	
+	var xml = invokeOSFunc(&amp;quot;queryXml&amp;quot;,param);	
+	
+	_this.SetMainCellRange(0,1,1,20,5);
+	_this.SetXmlDS(0,1,1,20,5,xml);
+	
+	_this.AutoFixScreenWidth();
+	
+	//光标定位焦点   ----20161213 lwq add
+	_this.SetFocusCell(0,1,2);
+	
+	//获取总记录数
+	var totalcnt = invokeOSFunc(&amp;quot;queryRowCount&amp;quot;,param); 
+	
+	//计算最大分页数
+	curr_maxpageno = Math.ceil(totalcnt / pagerows);
+	var rowsinfo = &amp;quot;  [ 共 &amp;quot;+totalcnt+&amp;quot; 行  第 &amp;quot; + pageno + &amp;quot;/&amp;quot; + curr_maxpageno + &amp;quot;页 每页 &amp;quot; + pagerows + &amp;quot; 行 ]&amp;quot;;
+	_this.SetToolbarString(rowsinfo);
+	
+}
+
+function firstPage()
+{
+	loadData(&amp;quot;&amp;quot;,1);
+}
+
+function prevPage()
+{
+	var pageno = curr_pageno - 1;
+	if (pageno &amp;lt;= 0) return;
+	loadData(&amp;quot;&amp;quot;,pageno)
+}
+
+function nextPage()
+{
+	var pageno = curr_pageno + 1;
+	if (pageno &amp;gt; curr_maxpageno) return;		
+	loadData(&amp;quot;&amp;quot;,pageno);
+}
+
+function endPage()
+{
+	loadData(&amp;quot;&amp;quot;,curr_maxpageno);
+}
+
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if (id == &amp;quot;确定&amp;quot;) {
+		okAndBack();
+	}
+	else if (id == &amp;quot;取消&amp;quot;) {
+		window.returnValue = &amp;quot;&amp;quot;;
+		window.close();
+	}
+	else if (id == &amp;quot;查询&amp;quot;) {
+		queryDW();
+	}
+}
+
+function queryDW()
+{
+	var key = _this.GetCellText(1,1,2);
+	var filter = &amp;quot;(upper(dwbh) like upper(&amp;apos;%25&amp;quot;+key+&amp;quot;%25&amp;apos;) or upper(dwjc) like upper(&amp;apos;%25&amp;quot;+key+&amp;quot;%25&amp;apos;) or upper(dwmc) like upper(&amp;apos;%25&amp;quot;+key+&amp;quot;%25&amp;apos;))&amp;quot;;
+	    filter2 = &amp;quot;(upper(aab001) like upper(&amp;apos;%25&amp;quot;+key+&amp;quot;%25&amp;apos;) or upper(aab004) like upper(&amp;apos;%25&amp;quot;+key+&amp;quot;%25&amp;apos;) or upper(bab004) like upper(&amp;apos;%25&amp;quot;+key+&amp;quot;%25&amp;apos;))&amp;quot;;
+	
+	if (key == &amp;quot;&amp;quot;) filter = &amp;quot;&amp;quot;;
+	loadData(filter,1);
+}
+
+//确定返回
+function okAndBack()
+{
+	var dwbh = _this.GetCellText(0,currow,2);
+	var dwjc = _this.GetCellText(0,currow,3);
+	var dwmc = _this.GetCellText(0,currow,4);
+	var dwlxbh = _this.GetCellText(0,currow,5);	
+	window.returnValue = dwbh+&amp;quot;~&amp;quot;+dwmc+&amp;quot;~&amp;quot;+dwlxbh+&amp;quot;~&amp;quot;+dwjc;
+	window.close();
+
+}
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+	if (sheet == 0) {
+		okAndBack();
+	}
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{	
+	if (sheet == 0) {
+		currow = row;
+	}
+
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 1) {
+		queryDW();
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var servletpack = new JavaPackage(&amp;quot;com.xlsgrid.net.servlet&amp;quot;);
+
+//分页查询
+function queryXml()
+{
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var mwsql = new servletpack.MWSQL();
+		var sql = mwsql.GetQuerySQL(request,db,thissytid ,thisgrdid ,dsid);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%FILTER]&amp;quot;,FILTER);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%TCQBMN]&amp;quot;,TCQBMN);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%FILTER2]&amp;quot;,FILTER2);
+
+		sql = &amp;quot;select * from ( &amp;quot; + sql + &amp;quot; ) where rn&amp;gt;(&amp;quot;+pageno+&amp;quot;-1)*&amp;quot;+pagerows+&amp;quot; and rn&amp;lt;=&amp;quot;+pageno+&amp;quot;*&amp;quot;+pagerows;
+		//throw new Exception(sql);
+
+		var ds = db.QuerySQL(sql);
+		return ds.GetXml();
+		
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+
+//分页取总行数~总金额
+function queryRowCount()
+{	
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var mwsql = new servletpack.MWSQL();
+		var sql = mwsql.GetQuerySQL(request,db,thissytid ,thisgrdid ,dsid);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%FILTER]&amp;quot;,FILTER);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%TCQBMN]&amp;quot;,TCQBMN);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%FILTER2]&amp;quot;,FILTER2);
+		
+		//var cnt = db.GetSQLRowCount(sql);
+		
+		sql = &amp;quot;select count(*) cnt from ( &amp;quot; + sql + &amp;quot; )&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		var cnt = ds.getStringAt(0,&amp;quot;CNT&amp;quot;);
+		//var summny = ds.getStringAt(0,&amp;quot;SUMMNY&amp;quot;);
+		//return cnt+&amp;quot;~&amp;quot;+summny;
+		return cnt;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >SELECT ROWNUM rn, DWBH, DWMC, DWQC, DWLXBH
+  FROM (SELECT /*+ index(SI_DWB) */
+         &amp;quot;SI_DWB&amp;quot;.&amp;quot;DWBH&amp;quot; DWBH,
+         NVL(&amp;quot;SI_DWB&amp;quot;.&amp;quot;DWJC&amp;quot;, &amp;quot;SI_DWB&amp;quot;.&amp;quot;DWMC&amp;quot;) DWMC,
+         /*20120611 钱福军 增加单位全称查询功能*/
+         &amp;quot;SI_DWB&amp;quot;.&amp;quot;DWMC&amp;quot;   DWQC,
+         &amp;quot;SI_DWB&amp;quot;.&amp;quot;DWLXBH&amp;quot; DWLXBH
+          FROM &amp;quot;SI_DWB&amp;quot;
+         WHERE ORG = &amp;apos;[%SYS_ORGID]&amp;apos;
+           AND ACC = &amp;apos;[%SYS_ACCID]&amp;apos; [%FILTER]
+        UNION
+        SELECT to_char(AAB001) DWBH,
+               AAB004 DWMC,
+               BAB004 DWQC,
+               DECODE(SUBSTRB(NVL(AAB019, 0), 1, 1),
+                      &amp;apos;3&amp;apos;,
+                      &amp;apos;3&amp;apos;,
+                      &amp;apos;5&amp;apos;,
+                      &amp;apos;9&amp;apos;,
+                      &amp;apos;8&amp;apos;,
+                      &amp;apos;10&amp;apos;,
+                      &amp;apos;9&amp;apos;,
+                      &amp;apos;10&amp;apos;,
+                      &amp;apos;0&amp;apos;,
+                      &amp;apos;0&amp;apos;,
+                      &amp;apos;1&amp;apos;) DWLXBH
+          FROM AB01 a
+         WHERE AAB301 = &amp;apos;[%TCQBMN]&amp;apos; 
+         AND NOT EXISTS (SELECT 1 FROM si_dwb b WHERE to_char(a.aab001) = b.dwbh
+			and b.sbh=(select sbh from cw_sbsb where tcqbm=&amp;apos;[%TCQBMN]&amp;apos;))  
+		 [%FILTER2]
+         ORDER BY DWBH)</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 >MAIN</C6><C7 >MAIN</C7><C8 >MAIN</C8><C9 >MAIN</C9><C10 >MAIN</C10><C11 >MAIN</C11><C12 >MAIN</C12></ROW>
+<ROW num="1" ><ID >getTcqbm</ID><NAME ></NAME><DATDSC >select * from cw_sbsb where sbh = &amp;apos;[%SBH]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 >getTcqbm</C12></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

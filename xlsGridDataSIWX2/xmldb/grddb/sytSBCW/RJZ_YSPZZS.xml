@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RJZ_YSPZZS</MWID><NAME >原始凭证张数录入</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RJZ_YSPZZS.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >日记帐管理</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >queding</ID><NAME >确定</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >selOK</C10></ROW>
+<ROW num="1" ><ID >huifu</ID><NAME >恢复</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >huifu</C10></ROW>
+<ROW num="2" ><ID >quxiao</ID><NAME >取消</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >quxiao</C10></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var _dat1 = &amp;quot;&amp;quot;;
+var _dat2 = &amp;quot;&amp;quot;;
+var _kmbh = &amp;quot;&amp;quot;;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.ShowToolBar(0);
+//	_this.LoadScene(0,10);
+	_this.SetCellFocus(0,3,4);
+	try {
+		var yspz_fjzs = fjzs;
+		_this.SetCellText(0,3,4,yspz_fjzs);
+	}
+	catch (e) {
+	
+	}
+}
+
+//确定
+function queding()
+{
+	var zs = _this.GetCellText(0,3,4);
+	if (zs == &amp;quot;&amp;quot; || zs == 0) {
+		alert(&amp;quot;请输入原始作证张数！&amp;quot;);
+		_this.SetCellFocus(0,3,4);
+		return;
+	}
+	window.returnValue = zs;
+	window.close();
+}
+
+//取消
+function quxiao()
+{
+	window.returnValue = &amp;quot;&amp;quot;;
+	window.close();
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+//	alert(sheet+&amp;quot;,&amp;quot;+row+&amp;quot;,&amp;quot;+col);
+	if (id == &amp;quot;确定&amp;quot;) {
+		queding();
+	}
+}
+
+//按键
+function _thisOnKeyin(nChar,nFlags,sheet,row,col)
+{
+//	alert(&amp;quot;nChar=&amp;quot;+nChar+&amp;quot;,sh=&amp;quot;+sheet+&amp;quot;,&amp;quot;+row+&amp;quot;,&amp;quot;+col);
+	if (nChar == 13 /* &amp;&amp; row == 5 &amp;&amp; col == 6*/) {
+		queding();
+	}
+	_this.SetCellFocus(0,3,4);
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (row == 3 &amp;&amp; col == 4) {
+		if (!isNumber(newvalue)) {
+			_this.SetCellText(sheet,row,col,oldvalue);
+		}
+		else {
+			if (1 * newvalue &amp;lt;= 0) {
+				//alert(&amp;quot;输入不正确!&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+			}
+		}
+	}
+}
+
+function isNumber(n) {
+	return !isNaN(parseFloat(n)) &amp;&amp; isFinite(n);
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >KMINFO</ID><NAME ></NAME><DATDSC >select cw_pack4.kmmc(sbh,zth,kmbh) kmmc from cw_kmb where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and kmbh=&amp;apos;[%KMBH]&amp;apos;</DATDSC><C4 ></C4><C5 >KMINFO</C5></ROW>
+<ROW num="1" ><ID >DWINFO</ID><NAME ></NAME><DATDSC >select dwmc from si_dwb where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and dwbh=&amp;apos;[%DWBH]&amp;apos;</DATDSC><C4 >DWINFO</C4><C5 ></C5></ROW>
+<ROW num="2" ><ID >GETDAT</ID><NAME ></NAME><DATDSC >select to_char(trunc(add_months(last_day(to_date(&amp;apos;[%DAT]&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;)), -1) + 1), &amp;apos;yyyy-mm-dd&amp;apos;) dat1,
+to_char(last_day(to_date(&amp;apos;[%DAT]&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;)), &amp;apos;yyyy-mm-dd&amp;apos;) dat2  from dual
+ 
+ </DATDSC><C4 ></C4><C5 ></C5></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

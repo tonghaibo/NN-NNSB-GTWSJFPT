@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RJZ_TJ2</MWID><NAME >零星医疗费报账支出明细表</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RJZ_TJ2.zxg</FILE><SCENE ></SCENE><FIXED >4,1</FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >setKMBHNULL</ID><NAME >选择所有科目</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE><C10 ></C10></ROW>
+<ROW num="1" ><ID >setkmbh</ID><NAME >录入科目</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE><C10 >GRDBTNDS_1</C10></ROW>
+</ROWSET>
+</grdbtnds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >DAT1</ID><NAME >开始日期</NAME><NOTNULL >1</NOTNULL><KEYVAL >DAT</KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG >1</KEYFLG><C13 >DAT1</C13></ROW>
+<ROW num="1" ><ID >DAT2</ID><NAME >截止日期</NAME><NOTNULL >1</NOTNULL><KEYVAL >DAT</KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG >1</KEYFLG><C13 ></C13></ROW>
+<ROW num="2" ><ID >KMBH</ID><NAME >科目</NAME><NOTNULL >0</NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13></ROW>
+<ROW num="3" ><ID >RJKX</ID><NAME >款项</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13></ROW>
+</ROWSET>
+</grdpamds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0 = &amp;quot;&amp;quot;;
+var ZXGFILE1 = &amp;quot;&amp;quot;;
+
+var param_dat1 = &amp;quot;&amp;quot;;
+var param_dat2 = &amp;quot;&amp;quot;;
+var param_kmbh = &amp;quot;&amp;quot;;
+var param_rjkx = &amp;quot;&amp;quot;;
+var kmList;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+
+	try { param_dat1 = DAT1; param_dat2 = DAT2; param_kmbh = KMBH; } catch(e) {}
+	try { param_rjkx = RJKX; } catch(e) {}
+
+	initLayout();
+	
+	_this.SetToCheckBox(&amp;quot;&amp;quot;,0,1,6,&amp;quot;精确匹配&amp;quot;,&amp;quot;1&amp;quot;,&amp;quot;0&amp;quot;);
+	
+	kmList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_ACCITEM&amp;where=mjbz=1 and XJYHBZ&amp;lt;&amp;gt;0 and QLBZ&amp;lt;&amp;gt;1 and nvl(RJZKM_LRBZ,&amp;apos;1&amp;apos;) = &amp;apos;1&amp;apos;&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	var rjlxList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_RJLXB&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;FULLNAME&amp;quot;);
+	_this.SetListValue(rjlxList,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+	
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,1,5,kmList);	
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,1,8,rjlxList);
+	
+	_this.SetToDateBox(&amp;quot;&amp;quot;,0,1,1,param_dat1);
+	_this.SetToDateBox(&amp;quot;&amp;quot;,0,1,3,param_dat2);
+	_this.SetCellText(0,1,5,param_kmbh);
+	_this.SetCellText(0,1,8,param_rjkx);
+	
+	if (param_rjkx == &amp;quot;&amp;quot;) _this.SetCellText(0,1,8,&amp;quot;%&amp;quot;);
+	_this.SetCellText(1,2,2,param_dat1+&amp;quot;至&amp;quot;+param_dat2);
+	
+	param_dat1 = _this.GetCellText(0,1,1);
+	param_dat2 = _this.GetCellText(0,1,3);
+	param_kmbh = _this.GetCellText(0,1,5);
+	param_rjkx = _this.GetCellText(0,1,8);
+
+	
+	loadSheetData();
+	
+	_this.AutoFixScreenWidth();	
+}
+
+
+
+//页面布局初始化
+function initLayout()
+{
+	_this.SplitSheet(0,&amp;quot;V&amp;quot;,&amp;quot;8%&amp;quot;);
+	
+	ZXGFILE0 = _this.SaveTempZXGFile(0); 
+	ZXGFILE1 = _this.SaveTempZXGFile(1);
+}
+
+//加载统计明细
+function loadSheetData()
+{
+	_this.SetToolbarString(&amp;quot;正在加载数据...&amp;quot;);
+	_this.loadZXGFile(ZXGFILE1,-1,1);	
+	_this.SetFixedRow(1,4);	
+	_this.SetCellText(1,2,2,param_dat1+&amp;quot;至&amp;quot;+param_dat2);
+	
+	_this.SetMainCellRange(1,4,1,_this.GetRowCount(1)-1,_this.GetColCount(1)-1);
+	var jqpp = _this.GetCellText(0,1,6); //科目是否精确匹配
+	if (jqpp == 1) jqpp = &amp;quot;&amp;quot;;
+	else jqpp = &amp;quot;%25&amp;quot;;
+
+	_sql.querytods(&amp;quot;MAIN&amp;quot;,&amp;quot;DAT1=&amp;quot;+param_dat1+&amp;quot;&amp;DAT2=&amp;quot;+param_dat2+&amp;quot;&amp;KMBH=&amp;quot;+param_kmbh+&amp;quot;&amp;RJLX=&amp;quot;+param_rjkx+&amp;quot;&amp;JQPP=&amp;quot;+jqpp);
+	var rowcnt = _this.XMLDS_GetRowCount();
+	var row = 4;
+	for (var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+		var xh1 = _this.XMLDS_GetString(i,&amp;quot;XH&amp;quot;);
+		var xm1 = _this.XMLDS_GetString(i,&amp;quot;XM&amp;quot;);
+		var je1 = _this.XMLDS_GetString(i,&amp;quot;JE&amp;quot;);
+		var xh2 = &amp;quot;&amp;quot;;
+		var xm2 = &amp;quot;&amp;quot;;
+		var je2 = &amp;quot;&amp;quot;;
+		if (i+1&amp;lt;rowcnt) {
+			i ++;
+			xh2 = _this.XMLDS_GetString(i,&amp;quot;XH&amp;quot;);
+			xm2 = _this.XMLDS_GetString(i,&amp;quot;XM&amp;quot;);
+			je2 = _this.XMLDS_GetString(i,&amp;quot;JE&amp;quot;);
+		}
+		if (row &amp;gt; 5) _this.AppendRow(1,row - 1);
+		_this.SetCellText(1,row,1,xh1);
+		_this.SetCellText(1,row,2,xm1);
+		_this.SetCellText(1,row,3,je1);
+		_this.SetCellText(1,row,4,xh2);
+		_this.SetCellText(1,row,5,xm2);
+		_this.SetCellText(1,row,6,je2);
+		
+		row ++;
+	}
+	var sumrow = _this.GetRowCount(1) - 6;
+	_this.SetFormula(1,sumrow,3,&amp;quot;SUM(D4:D&amp;quot;+sumrow+&amp;quot;)&amp;quot;);
+	_this.SetFormula(1,sumrow,6,&amp;quot;SUM(G4:G&amp;quot;+sumrow+&amp;quot;)&amp;quot;);
+	_this.RefreshFormula();
+	
+	_this.SetToolbarString(&amp;quot;&amp;quot;);
+	_this.AutoFixScreenWidth();
+	
+	
+	
+
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if ( id== &amp;quot;统计&amp;quot; ) {
+		loadSheetData();
+	}
+
+}
+
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	var dat1 = _this.GetCellText(0,1,1);
+	var dat2 = _this.GetCellText(0,1,3);
+	var dat11 = dat1.replace(/-/g,&amp;quot;&amp;quot;);
+	var dat22 = dat2.replace(/-/g,&amp;quot;&amp;quot;);
+	if (dat11 &amp;gt; dat22) {
+		_this.SetCellText(0,1,3,dat1);
+	}
+	
+	param_dat1 = _this.GetCellText(0,1,1);
+	param_dat2 = _this.GetCellText(0,1,3);
+	param_kmbh = _this.GetCellText(0,1,5);
+	param_rjkx = _this.GetCellText(0,1,8);
+	
+	_this.SetCellText(1,2,2,param_dat1+&amp;quot;至&amp;quot;+param_dat2);
+}
+
+
+//单元格焦点变动
+function _thisOnCellFocusChange(sheet,rowold,colold,rownew,colnew)
+{
+	_thisOnCellModify(sheet,rowold,colold,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+}
+
+
+
+//选择所有科目
+function setKMBHNULL()
+{
+	_this.SetCellText(0,1,5,&amp;quot;%&amp;quot;);
+}
+
+var sbz = 1;
+//录入科目
+function setkmbh()
+{
+	if (sbz == 1) {
+		_this.SetToStandardCell(0,1,5);
+		_this.SetCellFocus(0,1,5);
+		sbz = 2;
+	}
+	else {
+		_this.SetToComboBox(&amp;quot;&amp;quot;,0,1,5,kmList);	
+		sbz = 1;
+	}
+	_this.SetRedraw(1);
+	
+}</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select rownum xh,pf_get_xm(1,zy) xm, 
+decode( kmbh , &amp;apos;1013004&amp;apos; , decode( jefx,&amp;apos;借&amp;apos;,nvl(-je, 0),nvl(je, 0) ),nvl(je, 0) ) je
+from cw_rjzb 
+where  (instrb(zy, &amp;apos;医疗费报销款&amp;apos;) &amp;gt; 0 or instrb(zy, &amp;apos;个人退款&amp;apos;) &amp;gt; 0 ) and 
+	 ( ORG = &amp;apos;[%SYS_ORGID]&amp;apos; ) and  
+   ( ACC = &amp;apos;[%SYS_ACCID]&amp;apos; ) and  
+   ( (trim(to_char(YY,&amp;apos;0000&amp;apos;))||&amp;apos;-&amp;apos;||trim(to_char(MM,&amp;apos;00&amp;apos;))||&amp;apos;-&amp;apos;||trim(to_char(DD,&amp;apos;00&amp;apos;))) &amp;gt;= &amp;apos;[%DAT1]&amp;apos; ) and  
+   ( (trim(to_char(YY,&amp;apos;0000&amp;apos;))||&amp;apos;-&amp;apos;||trim(to_char(MM,&amp;apos;00&amp;apos;))||&amp;apos;-&amp;apos;||trim(to_char(DD,&amp;apos;00&amp;apos;)))&amp;lt;= &amp;apos;[%DAT2]&amp;apos; ) and  
+   ( KMBH like &amp;apos;[%KMBH][%JQPP]&amp;apos; ) and lxbh like &amp;apos;[%RJLX]%&amp;apos;</DATDSC><C4 >RJZ_TJMX</C4><C5 >RJZ_TJMX</C5><C6 >RJZ_TJMX</C6><C7 >RJZ_TJMX</C7><C8 >RJZ_TJMX</C8><C9 >MAIN</C9><C10 >MAIN</C10><C11 >MAIN</C11><C12 >MAIN</C12></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

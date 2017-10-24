@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+<svg title="SVGform" fill="#FFFFFF" fill-type="1">
+ <text id="text_110815" x="391" y="11" width="240" height="40" font-size="16">报表系统架构——表结构说明</text>
+ <rect id="roundrect_110816" x="25" y="61" width="231" height="370" round="15" stroke="#000000" fill="#E8FFF3" fillto="" opacity="1" stroke-dash="1">报表定义
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</rect>
+ <polygon id="card_110817" points="97,109 67,114 67,136 218,136 218,109 97,109" changeto="card" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">报表定义</polygon>
+ <polygon id="polygon_110818" points="97,149 67,154 67,176 218,176 218,149 97,149 97,149" changeto="card" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">指标类型定义</polygon>
+ <polygon id="polygon_110819" points="97,189 67,194 67,216 218,216 218,189 97,189 97,189 97,189" changeto="card" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">指标定义</polygon>
+ <polygon id="polygon_110820" points="97,229 67,234 67,256 218,256 218,229 97,229 97,229 97,229 97,229" changeto="card" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">指标项定义</polygon>
+ <polygon id="polygon_110821" points="97,269 67,274 67,296 218,296 218,269 97,269 97,269 97,269 97,269 97,269" changeto="card" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">平衡公式定义</polygon>
+ <polygon id="polygon_110822" points="97,309 67,314 67,336 218,336 218,309 97,309 97,309 97,309 97,309 97,309 97,309" changeto="card" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">平衡公式分配定义</polygon>
+ <polygon id="polygon_110823" points="97,349 67,354 67,376 218,376 218,349 97,349 97,349 97,349 97,349 97,349 97,349 97,349" changeto="card" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">报表位置定义</polygon>
+ <rect id="FIN_FORMULA" dbname="默认" tablename="FIN_FORMULA" fill="#E0F0F8" round="5" x="287" y="267" width="120" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_FORMULA[%quot]/[%right]" 属性="">FIN_FORMULA</rect>
+ <rect id="FIN_FORMULAREP" dbname="默认" tablename="FIN_FORMULAREP" fill="#E0F0F8" round="5" x="287" y="309" width="120" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_FORMULAREP[%quot]/[%right]">FIN_FORMULAREP</rect>
+ <rect id="FIN_INDEX" dbname="默认" tablename="FIN_INDEX" fill="#E0F0F8" round="5" x="287" y="185" width="120" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_INDEX[%quot]/[%right]">FIN_INDEX</rect>
+ <rect id="FIN_INDEXDETAIL" dbname="默认" tablename="FIN_INDEXDETAIL" fill="#E0F0F8" round="5" x="899" y="292" width="120" height="60" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_INDEXDETAIL[%quot]/[%right]">指标库
+FIN_INDEXDETAIL</rect>
+ <rect id="FIN_INDEXITEM" dbname="默认" tablename="FIN_INDEXITEM" fill="#E0F0F8" round="5" x="287" y="227" width="120" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_INDEXITEM[%quot]/[%right]">FIN_INDEXITEM</rect>
+ <rect id="FIN_INDEXTYPE" dbname="默认" tablename="FIN_INDEXTYPE" fill="#E0F0F8" round="5" x="287" y="142" width="120" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_INDEXTYPE[%quot]/[%right]">FIN_INDEXTYPE</rect>
+ <rect id="FIN_INDEX_FORMULA" dbname="默认" tablename="FIN_INDEX_FORMULA" fill="#E0F0F8" round="5" x="499" y="198" width="140" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_INDEX_FORMULA[%quot]/[%right]" 属性="">FIN_INDEX_FORMULA</rect>
+ <connector id="connector_108_110824" from="polygon_110818" to="FIN_INDEXTYPE" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_110825" from="polygon_110819" to="FIN_INDEX" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_110826" from="polygon_110820" to="FIN_INDEXITEM" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_110827" from="polygon_110821" to="FIN_FORMULA" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_110828" from="polygon_110822" to="FIN_FORMULAREP" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_110829" from="FIN_INDEX" to="FIN_INDEX_FORMULA" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_110830" from="FIN_INDEXITEM" to="FIN_INDEX_FORMULA" fromcp="32" tocp="12" type="108">
+ </connector>
+ <text id="text_110831" x="422" y="179" width="90" height="40" font-size="10">报表指标指标项对应的取数公式</text>
+ <rect id="FIN_REPMODEL" dbname="默认" tablename="FIN_REPMODEL" fill="#E0F0F8" round="5" x="287" y="99" width="120" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_REPMODEL[%quot]/[%right]">FIN_REPMODEL</rect>
+ <connector id="connector_108_110832" from="card_110817" to="FIN_REPMODEL" fromcp="32" tocp="12" type="108">
+ </connector>
+ <rect id="OA_REPLOC" dbname="默认" tablename="OA_REPLOC" fill="#E0F0F8" round="5" x="287" y="361" width="120" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:OA_REPLOC[%quot]/[%right]">OA_REPLOC</rect>
+ <connector id="connector_108_110833" from="polygon_110823" to="OA_REPLOC" fromcp="32" tocp="12" type="108">
+ </connector>
+ <rect id="FIN_REPFRAME" dbname="默认" tablename="FIN_REPFRAME" fill="#E0F0F8" round="5" x="537" y="306" width="110" height="50" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_REPFRAME[%quot]/[%right]">报表设计框架表
+FIN_REPFRAME</rect>
+ <rect id="roundrect_110835" x="669" y="71" width="134" height="192" round="15" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">报表的显示模板以及报表的数据录入保存，采用中间件平台的表单中间件来处理（表单类型为财务报表型）。
+例如：
+
+
+
+
+</rect>
+ <rect id="rect_110837" x="690" y="187" width="92" height="22" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">表单：CM001</rect>
+ <rect id="rect_110838" x="690" y="217" width="92" height="22" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">表单：LM101</rect>
+ <text id="text_110839" x="730" y="239" width="20" height="20" font-size="14">...</text>
+ <rect id="REPMODEL" dbname="默认" tablename="REPMODEL" fill="#E0F0F8" round="5" x="902" y="191" width="100" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:REPMODEL[%quot]/[%right]">报表数据记录表
+REPMODEL</rect>
+ <connector id="connector_108_110840" from="rect_110837" to="FIN_REPFRAME" fromcp="12" tocp="21" type="108" stroke-dash="3">
+ </connector>
+ <connector id="connector_108_110841" from="rect_110838" to="FIN_REPFRAME" fromcp="12" tocp="21" type="108" stroke-dash="3">
+ </connector>
+ <text id="text_110842" x="511" y="255" width="120" height="40" font-size="10">报表模板设计（开发平台表单中间件）保存时写入</text>
+ <rect id="roundrect_110843" x="883" y="57" width="125" height="91" round="15" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1" 属性="">
+ </rect>
+ <text id="text_110844" x="899" y="27" width="110" height="30" font-size="10">保存报表的数据表：HDR表头 DTL表体</text>
+ <connector id="connector_108_110845" from="roundrect_110835" to="roundrect_110843" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_110846" from="roundrect_110835" to="REPMODEL" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_110847" from="roundrect_110835" to="FIN_INDEXDETAIL" fromcp="32" tocp="12" type="108">
+ </connector>
+ <text id="text_110848" x="819" y="153" width="100" height="40" font-size="10">生成报表数据时写入 （报表表单新增）</text>
+ <text id="text_110849" x="824" y="245" width="110" height="40" font-size="10">报表生成保存后写入 （报表表单保存事件）</text>
+ <rect id="rect_435215" dbname="默认" tablename="CM001HDR" fill="#E0F0F8" round="5" x="897" y="71" width="100" height="20" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:CM001HDR[%quot]/[%right]" stroke-dash="1">CM001HDR</rect>
+ <rect id="rect_435216" dbname="默认" tablename="CM001DTL" fill="#E0F0F8" round="5" x="897" y="97" width="100" height="20" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:CM001DTL[%quot]/[%right]" stroke-dash="1">CM001DTL</rect>
+ <rect id="roundrect_105515" x="688" y="310" width="112" height="87" round="15" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="CW_PZB" dbname="默认" tablename="CW_PZB" fill="#E0F0F8" round="5" x="703" y="321" width="80" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:CW_PZB[%quot]/[%right]" 属性="">CW_PZB</rect>
+ <rect id="CW_PZMXB" dbname="默认" tablename="CW_PZMXB" fill="#E0F0F8" round="5" x="704" y="359" width="80" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:CW_PZMXB[%quot]/[%right]">CW_PZMXB</rect>
+ <text id="text_105516" x="727" y="293" width="40" height="30" font-size="14">凭证</text>
+ <text id="text_105520" x="939" y="119" width="20" height="20" font-size="14">...</text>
+ <rect id="OA_REPLOCMX" dbname="默认" tablename="OA_REPLOCMX" fill="#E0F0F8" round="5" x="287" y="399" width="120" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:OA_REPLOCMX[%quot]/[%right]">OA_REPLOCMX</rect>
+ <connector id="connector_108_23716" from="polygon_110823" to="OA_REPLOCMX" fromcp="32" tocp="12" type="108">
+ </connector>
+ <rect id="CW_KMB" dbname="默认" tablename="CW_KMB" fill="#E0F0F8" round="5" x="456" y="76" width="80" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:CW_KMB[%quot]/[%right]">CW_KMB</rect>
+ <connector id="connector_188_321816" from="FIN_INDEX" to="CW_KMB" fromcp="32" tocp="23" type="188" opacity="3" stroke-dash="3">
+ </connector>
+ <text id="text_321817" x="474" y="129" width="100" height="40" font-size="10">指标与科目对照关系</text>
+ <edit id="edit_452516" cx="538" cy="462" x="538" y="462" width="-1" height="0">
+ </edit>
+ <edit id="edit_452517" cx="542" cy="459" x="27" y="1695" width="47" height="24">
+ </edit>
+ <edit id="edit_452518" cx="617" cy="432" x="617" y="432" width="0" height="0">
+ </edit>
+ <rect id="rect_452519" x="514" y="669" width="102" height="43" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">凭证科目</rect>
+ <rect id="rect_452520" x="287" y="532" width="97" height="46" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">科目表</rect>
+ <rect id="rect_452521" x="711" y="559" width="86" height="128" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">指标库</rect>
+ <rect id="rect_452522" x="509" y="555" width="93" height="38" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">指标定义</rect>
+ <rect id="rect_452523" x="297" y="669" width="93" height="38" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">报表定义的指标</rect>
+ <line id="linearrow_452524" x1="381" y1="552" x2="478" y2="602" endcap="9">
+ </line>
+ <line id="linearrow_452525" x1="390" y1="691" x2="478" y2="621" endcap="9">
+ </line>
+ <line id="line_452526" x1="484" y1="593" x2="653" y2="593">
+ </line>
+ <line id="line_452527" x1="551" y1="594" x2="551" y2="631">
+ </line>
+ <line id="line_452528" x1="484" y1="633" x2="653" y2="633">
+ </line>
+ <text id="text_452529" x="482" y="604" width="70" height="20" font-size="14">指标编号</text>
+ <text id="text_452530" x="562" y="603" width="100" height="20" font-size="14">对应科目编号</text>
+ <text id="text_452531" x="428" y="481" width="150" height="60" font-size="14">指标编号与科目编号一样，保证凭证制单审核时能写入指标库</text>
+ <line id="linearrow_452532" x1="625" y1="684" x2="705" y2="630" endcap="9">
+ </line>
+ <line id="linearrow_452533" x1="663" y1="615" x2="701" y2="630" endcap="9">
+ </line>
+ <text id="text_65815" x="21" y="756" width="460" height="40" font-size="14" 属性="">指标公式：F('4028001')</text>
+ <text id="text_65816" x="24" y="798" width="470" height="80" font-size="14" 属性="">指标项公式：[04,SNTQ]  SNTQ-上年同期 QM-期末 QC-期初 SY-上月
+</text>
+ <rect id="rect_554117" dbname="默认" tablename="CW_QCYEB" fill="#E0F0F8" round="5" x="861" y="368" width="90" height="50" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:CW_PZMXB[%quot]/[%right]">CW_QCYEB
+期初余额表</rect>
+ <text id="text_554119" x="952" y="371" width="70" height="40" font-size="14">每月底结账时写入</text>
+ <text id="text_95017" x="531" y="180" width="60" height="20" font-size="14" font-color="#FF0000">优先级1</text>
+ <text id="text_95018" x="336" y="178" width="60" height="20" font-size="14" font-color="#FF0000">优先级2</text>
+ <polygon id="flow_SBCWDB" selsytid="SBCW" points="177,916 165,916 164,923 177,916 177,849 38,849 38,923 164,923 177,916 177,916 177,916" flowid="SBCWDB" flowname="数据库字典" changeto="page" stroke="#000000" fill="#FFFFCC" xmlmenu="[%left]item name=[%quot]打开该子图[%quot] id=[%quot]m_flow_:SBCW:SBCWDB[%quot]/[%right]">子图:SBCWDB
+数据库字典</polygon>
+ <connector id="connector_108_65710" from="roundrect_105515" to="FIN_INDEXDETAIL" fromcp="32" tocp="12" type="108" stroke-dash="3">
+ </connector>
+</svg>

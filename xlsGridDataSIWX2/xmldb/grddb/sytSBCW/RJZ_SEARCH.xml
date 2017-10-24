@@ -1,0 +1,231 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RJZ_SEARCH</MWID><NAME >日记帐查找条件</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RJZ_SEARCH.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >日记帐管理</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS >xlsgrid/js/main.js</EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >queding</ID><NAME >确定</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >selOK</C10><C11 >queding</C11></ROW>
+<ROW num="1" ><ID >quxiao</ID><NAME >取消</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >quxiao</C10><C11 ></C11></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var _dat1 = &amp;quot;&amp;quot;;
+var _dat2 = &amp;quot;&amp;quot;;
+var _kmbh = &amp;quot;&amp;quot;;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SetToDateBox(&amp;quot;&amp;quot;,sheet,3,2,&amp;quot;&amp;quot;);
+	_this.SetToDateBox(&amp;quot;&amp;quot;,sheet,3,4,&amp;quot;&amp;quot;);
+	
+	var rjlxList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_RJLXB&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;FULLNAME&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,sheet,3,6,rjlxList);
+	var dwlxList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_SI_DWLXB&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,sheet,7,6,dwlxList);
+
+	//接收传入参数
+	try {
+		var objParam = window.dialogArguments;
+		var dat = objParam.yyyy+&amp;quot;-&amp;quot;+objParam.mm+&amp;quot;-01&amp;quot;;
+		_sql.querytods(&amp;quot;GETDAT&amp;quot;,&amp;quot;DAT=&amp;quot;+dat);
+		_this.SetCellText(sheet,3,2,_this.XMLDS_GetString(0,&amp;quot;DAT1&amp;quot;));
+		_this.SetCellText(sheet,3,4,_this.XMLDS_GetString(0,&amp;quot;DAT2&amp;quot;));
+		_dat1 = _this.XMLDS_GetString(0,&amp;quot;DAT1&amp;quot;);
+		_dat2 = _this.XMLDS_GetString(0,&amp;quot;DAT2&amp;quot;);
+		_kmbh = objParam.kmbh;
+		var kmmc = objParam.kmmc;
+		_kmmc = kmmc.replace(objParam.kmbh+&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;);
+		if(_kmbh == -1) {
+			_this.SetCellText(sheet,4,2,&amp;quot;&amp;quot;);
+		}
+		else {
+			_this.SetCellText(sheet,4,2,objParam.kmbh);
+		}
+		//1021001001—养老收入户存款—活期—农行-0587
+		_this.SetCellText(sheet,4,4,kmmc);
+	}
+	catch (e) {}
+}
+
+//确定
+function queding()
+{
+	var obj = new Object();
+	obj.dat1 = _this.GetCellText(0,3,2);
+	obj.dat2 = _this.GetCellText(0,3,4);
+	obj.kxlx = _this.GetCellText(0,3,6);
+	obj.kmbh = _this.GetCellText(0,4,2);
+	obj.dwbh = _this.GetCellText(0,5,2);
+	obj.zy = _this.GetCellText(0,6,2);
+	obj.mny1 = _this.GetCellText(0,7,2);
+	obj.mny2 = _this.GetCellText(0,7,4);
+	obj.dwlx = _this.GetCellText(0,7,6);
+	obj.djh = _this.GetCellText(0,8,2);
+	obj.pch = _this.GetCellText(0,8,6);
+	obj.reset = 0;
+
+	window.returnValue = obj;
+	window.close();
+}
+
+//恢复
+function huifu()
+{
+//	_this.SetCellText(0,3,2,_dat1);
+//	_this.SetCellText(0,3,4,_dat2);
+//	_this.SetCellText(0,3,6,&amp;quot;&amp;quot;);
+//	_this.SetCellText(0,7,6,&amp;quot;&amp;quot;);
+//	_this.SetCellText(0,4,2,_kmbh); _this.SetCellText(0,4,4,_kmmc);
+//	_this.SetCellText(0,5,2,&amp;quot;&amp;quot;); _this.SetCellText(0,5,4,&amp;quot;&amp;quot;);
+//	_this.SetCellText(0,6,2,&amp;quot;&amp;quot;);
+//	_this.SetCellText(0,8,2,&amp;quot;&amp;quot;);
+//	_this.SetCellText(0,8,6,&amp;quot;&amp;quot;);
+	
+	var obj = new Object();
+	obj.reset = 1;
+	window.returnValue = obj;
+	window.close();
+}
+
+//取消
+function quxiao()
+{
+	window.returnValue = null;
+	window.close();
+}
+
+function showKM()
+{
+	var obj = new Object();
+        obj.filter = &amp;quot;xjyhbz &amp;lt;&amp;gt; 0&amp;quot;;
+        obj.mjbz = &amp;quot;1&amp;quot;;
+        obj.bz = &amp;quot;&amp;quot;;
+        obj.jb = 0;
+        obj.kmbh = &amp;quot;&amp;quot;;
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_KMSEL&amp;quot;,obj,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+	if (retVal != &amp;quot;&amp;quot; &amp;&amp; retVal != &amp;quot;undefined&amp;quot; &amp;&amp; retVal != undefined) {
+		_this.SetCellText(0,4,2,retVal);
+		_thisOnCellModify(0,4,2,&amp;quot;&amp;quot;,retVal);
+	}
+	setTimeout(&amp;quot;setStatus()&amp;quot;,500);
+}
+
+//选择单位
+function showDW()
+{
+	var obj = new Object();
+        obj.filter = &amp;quot;&amp;quot;;
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_DWSEL&amp;quot;,obj,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+	if (retVal != &amp;quot;&amp;quot; &amp;&amp; retVal != &amp;quot;undefined&amp;quot; &amp;&amp; retVal != undefined) {
+		var dwbh = retVal.split(&amp;quot;~&amp;quot;)[0];
+		var dwmc = retVal.split(&amp;quot;~&amp;quot;)[1];
+		_this.SetCellText(0,5,2,dwbh);
+		_this.SetCellText(0,5,4,dwmc);
+	}
+	setTimeout(&amp;quot;setStatus()&amp;quot;,500);
+	
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (row == 4 &amp;&amp; col == 7) {
+		if (clickbz == 0) return;
+		clickbz = 0;
+		showKM();
+	}
+	else if (row == 5 &amp;&amp; col == 7) {
+		if (clickbz == 0) return;
+		clickbz = 0;
+		showDW();
+	}
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (row == 3 &amp;&amp; (col == 2 || col == 4)) {
+		var dat1 = _this.GetCellText(sheet,3,2);
+		var dat2 = _this.GetCellText(sheet,3,4);
+		var dat11 = dat1.replace(/-/g,&amp;quot;&amp;quot;);
+		var dat22 = dat2.replace(/-/g,&amp;quot;&amp;quot;);
+		if (dat11 &amp;gt; dat22) _this.SetCellText(sheet,3,4,dat1);
+	}
+	else if (row == 4 &amp;&amp; col == 2) {
+		if (newvalue == &amp;quot;&amp;quot;) { _this.SetCellText(0,4,4,&amp;quot;&amp;quot;); return; }
+		_sql.querytods(&amp;quot;KMINFO&amp;quot;,&amp;quot;KMBH=&amp;quot;+newvalue);
+		if (_this.XMLDS_GetRowCount() &amp;gt; 0) {
+			_this.SetCellText(0,4,4,_this.XMLDS_GetString(0,&amp;quot;KMMC&amp;quot;));
+		}
+		else {
+			alert(&amp;quot;没有找到该科目[&amp;quot;+newvalue+&amp;quot;]，请检查！&amp;quot;);
+			_this.SetCellText(sheet,row,col,oldvalue);
+		}
+	}
+	else if (row == 5 &amp;&amp; col == 2) {
+		if (newvalue == &amp;quot;&amp;quot;) { _this.SetCellText(0,5,4,&amp;quot;&amp;quot;); return; }
+		_sql.querytods(&amp;quot;DWINFO&amp;quot;,&amp;quot;DWBH=&amp;quot;+newvalue);
+		if (_this.XMLDS_GetRowCount() &amp;gt; 0) {
+			_this.SetCellText(0,5,4,_this.XMLDS_GetString(0,&amp;quot;DWMC&amp;quot;));
+		}
+		else {
+			alert(&amp;quot;没有找到该单位[&amp;quot;+newvalue+&amp;quot;]，请检查！&amp;quot;);
+			_this.SetCellText(sheet,row,col,oldvalue);
+		}
+	}
+	else if (row == 7 &amp;&amp; (col == 2 || col == 4)) {
+		if ( !IsNumber( newvalue,null ) ) {
+			alert(&amp;quot;输入格式不正确！&amp;quot;);
+			_this.SetCellText(sheet,row,col,oldvalue);
+		}
+		var mny1 = 1.0*_this.GetCellText(0,7,2);
+		var mny2 = 1.0*_this.GetCellText(0,7,4);
+		if (mny1 &amp;gt; mny2) {
+			_this.SetCellText(0,7,4,mny1);
+		}
+	}
+
+}
+
+//单元格焦点变动
+function _thisOnCellFocusChange(sheet,rowold,colold,rownew,colnew)
+{
+	if (rowold == 3 &amp;&amp; colold == 2) {
+		_thisOnCellModify(sheet,rowold,colold,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+	}
+}
+
+
+
+//处理选择单位双击后会再次触发单击事件再次弹出选择单位的问题
+var clickbz = -1;
+function setStatus()
+{
+	clickbz = 1;
+}
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >KMINFO</ID><NAME ></NAME><DATDSC >select cw_pack4.kmmc(sbh,zth,kmbh) kmmc from cw_kmb where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and kmbh=&amp;apos;[%KMBH]&amp;apos;</DATDSC><C4 ></C4><C5 >KMINFO</C5><C6 >KMINFO</C6></ROW>
+<ROW num="1" ><ID >DWINFO</ID><NAME ></NAME><DATDSC >select dwmc from si_dwb where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and dwbh=&amp;apos;[%DWBH]&amp;apos;</DATDSC><C4 >DWINFO</C4><C5 ></C5><C6 ></C6></ROW>
+<ROW num="2" ><ID >GETDAT</ID><NAME ></NAME><DATDSC >select to_char(trunc(add_months(last_day(to_date(&amp;apos;[%DAT]&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;)), -1) + 1), &amp;apos;yyyy-mm-dd&amp;apos;) dat1,
+to_char(last_day(to_date(&amp;apos;[%DAT]&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;)), &amp;apos;yyyy-mm-dd&amp;apos;) dat2  from dual
+ 
+ </DATDSC><C4 ></C4><C5 ></C5><C6 ></C6></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

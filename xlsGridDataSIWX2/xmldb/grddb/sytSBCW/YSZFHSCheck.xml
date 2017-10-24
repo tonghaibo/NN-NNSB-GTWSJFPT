@@ -1,0 +1,256 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >YSZFHSCheck</MWID><NAME >支付审核</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >YSZFHSCheck.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS >xlsgrid/js/main.js</EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >checkSubmit</ID><NAME >审核确认</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >3</IMG><IMGMOUSE >3</IMGMOUSE><C10 >checkSubmit</C10></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var objParam;
+var _stat = &amp;quot;&amp;quot;;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+
+	_this.AutoFixScreenWidth();
+	
+	var statList = _this.CreateListValue();
+	_this.SetListValue(statList,&amp;quot;1&amp;quot;,&amp;quot;通过&amp;quot;);
+	_this.SetListValue(statList,&amp;quot;0&amp;quot;,&amp;quot;不通过&amp;quot;);
+	
+	_this.SetToComboBox(&amp;quot;&amp;quot;,sheet,10,2,statList);
+	
+	
+	objParam = window.dialogArguments;
+	_this.SetCellText(sheet,3,2,objParam.zfdws);
+	_this.SetCellText(sheet,4,2,objParam.zfrs);
+	_this.SetCellText(sheet,5,2,objParam.zfje);
+	var dxje = convertCurrency(objParam.zfje);
+	dxje = dxje.replace(&amp;quot;人民币&amp;quot;,&amp;quot; &amp;quot;);
+	_this.SetCellText(sheet,6,2,dxje);
+	
+	var stat = objParam.stat;
+	_sql.querytods(&amp;quot;AEF3INFO&amp;quot;,&amp;quot;GUID=&amp;quot;+objParam.guid);
+	//_stat = _this.XMLDS_GetString(0,&amp;quot;STAT&amp;quot;);
+	_stat = stat;
+	if (stat == &amp;quot;21&amp;quot;) { //财务实付审核
+		_this.SetCellText(0,1,1,&amp;quot;社银直连批量支付——财务实付审核&amp;quot;);
+		_this.SetCellText(0,10,2,_this.XMLDS_GetString(0,&amp;quot;CWSHSTAT1&amp;quot;));
+		_this.SetCellText(0,12,2,_this.XMLDS_GetString(0,&amp;quot;CWSHNOTE1&amp;quot;));
+		_this.SetCellText(0,16,2,_this.XMLDS_GetString(0,&amp;quot;CWSHTIME1&amp;quot;));
+	}
+	else if (stat == &amp;quot;31&amp;quot;) { //财务主管审核
+		_this.SetCellText(0,1,1,&amp;quot;社银直连批量支付--财务主管审核&amp;quot;);
+		_this.SetCellText(0,10,2,_this.XMLDS_GetString(0,&amp;quot;CWSHSTAT2&amp;quot;));
+		_this.SetCellText(0,12,2,_this.XMLDS_GetString(0,&amp;quot;CWSHNOTE2&amp;quot;));
+		_this.SetCellText(0,16,2,_this.XMLDS_GetString(0,&amp;quot;CWSHTIME2&amp;quot;));
+	}
+}
+
+//审核确认
+function checkSubmit()
+{
+
+	//增加权限控制
+	var author = 0;
+	if (_stat == 21) { //财务实付审核
+		author = invokeOSFunc(&amp;quot;CheckZFSH1&amp;quot;);
+	}
+	else if (_stat == 31) { //财务主管审核
+		author = invokeOSFunc(&amp;quot;CheckZFSH2&amp;quot;);
+	}
+//	else if (_stat == 31) { //财务主管复核
+//		author = invokeOSFunc(&amp;quot;CheckZFSH3&amp;quot;);
+//	}
+	if (author != 1) {
+		alert(&amp;quot;对不起,你没有该权限!&amp;quot;);
+		return;
+	}
+
+	if (!confirm(&amp;quot;审核确认，是否继续？&amp;quot;)) return;
+	var sbh = G_ORGID;
+	var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+	var bkdjh = _this.GetCellText(0,4,2);
+	var stat = objParam.stat;
+	var chkstat = _this.GetCellText(0,10,2);
+	var chknote = _this.GetCellText(0,12,2);
+	var param = &amp;quot;CHKSTAT=&amp;quot;+chkstat+&amp;quot;&amp;CWSHNOTE=&amp;quot;+chknote+&amp;quot;&amp;CHKMAN=&amp;quot;+G_USRNAM+&amp;quot;&amp;GUID=&amp;quot;+objParam.guid+&amp;quot;&amp;STAT=&amp;quot;+stat+&amp;quot;&amp;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;bkdjh=&amp;quot;+bkdjh;
+	var ret = _this.invokeOSFunc(&amp;quot;ZFSH&amp;quot;,param);
+	alert(ret);
+	window.returnValue = &amp;quot;1&amp;quot;;
+	window.close();
+	
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+//财务实付审核
+function CheckZFSH1()
+{
+	return &amp;quot;1&amp;quot;;
+}
+
+//财务主管审核
+function CheckZFSH2()
+{
+	return &amp;quot;1&amp;quot;;
+}
+
+//财务主管审核
+function CheckZFSH3()
+{
+	return &amp;quot;1&amp;quot;;
+}
+
+
+//支付审核
+function ZFSH()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	try{
+		db = new pub.EADatabase();
+		var mystat = STAT;
+		var ywlx = db.GetSQL(&amp;quot;select ywlx from aef3 where guid=&amp;apos;&amp;quot;+GUID+&amp;quot;&amp;apos;&amp;quot;);
+		
+		if (STAT == &amp;quot;21&amp;quot;) { //财务实付审核
+			if(CHKSTAT == &amp;quot;0&amp;quot;) {//不通过
+				mystat = &amp;quot;20&amp;quot;;
+			}
+			sql = &amp;quot;update aef3 set STAT=&amp;apos;&amp;quot;+mystat+&amp;quot;&amp;apos;,
+					CWSHSTAT1=&amp;apos;&amp;quot;+CHKSTAT+&amp;quot;&amp;apos;,
+					CWSHMAN1=&amp;apos;&amp;quot;+CHKMAN+&amp;quot;&amp;apos;,
+					CWSHTIME1=sysdate,
+					CWSHNOTE1=&amp;apos;&amp;quot;+CWSHNOTE+&amp;quot;&amp;apos;
+					WHERE GUID = &amp;apos;&amp;quot;+GUID+&amp;quot;&amp;apos;&amp;quot;;
+			var cnt = db.ExcecutSQL(sql);
+			if(cnt == 0) {
+				db.Rollback();
+				return &amp;quot;财务实付审核失败，更新aef3表失败&amp;quot;;
+			}
+			sql = &amp;quot;update aef4 set  STAT=&amp;apos;&amp;quot;+CHKSTAT+&amp;quot;&amp;apos; where formguid=&amp;apos;&amp;quot;+GUID+&amp;quot;&amp;apos;&amp;quot;;
+			var cnt = db.ExcecutSQL(sql);
+			if(cnt == 0) {
+				db.Rollback();
+				return &amp;quot;财务实付审核失败，更新aef4表失败&amp;quot;;
+			}
+			//判断不调用业务接口：YWXT_YHDM is null and YWXT_DRDM is null
+			var sql = &amp;quot;select count(*) from aa10 where aaa100=&amp;apos;YWLX&amp;apos; and aaa102 = &amp;apos;&amp;quot;+ywlx+&amp;quot;&amp;apos; and YWXT_YHDM is null and YWXT_DRDM is null&amp;quot;;
+			var ywbz = db.GetSQL(sql);			
+			//手工录入的审批单不需要更新中间表
+			if (ywbz == 0) {
+				sql = &amp;quot;update ac95 set bae116=&amp;apos;&amp;quot;+CHKSTAT+&amp;quot;&amp;apos;,BAE012=&amp;apos;&amp;quot;+CHKMAN+&amp;quot;&amp;apos;,bae034=sysdate WHERE AAE400 = &amp;apos;&amp;quot;+bkdjh+&amp;quot;&amp;apos;&amp;quot;;	
+				var cnt = db.ExcecutSQL(sql);
+				if(cnt == 0) {
+					db.Rollback();
+					return &amp;quot;财务实付审核失败，更新ac95表失败&amp;quot;;
+				}
+				sql = &amp;quot;update v_si_djb_tmp set bae116=&amp;apos;&amp;quot;+CHKSTAT+&amp;quot;&amp;apos;,BAE012=&amp;apos;&amp;quot;+CHKMAN+&amp;quot;&amp;apos;,bae034=sysdate 
+					WHERE djh in (select min(bae074) from ac95 where aae400 = &amp;apos;&amp;quot;+bkdjh+&amp;quot;&amp;apos;)&amp;quot;;
+				var cnt = db.ExcecutSQL(sql);
+				if(cnt == 0) {
+					db.Rollback();
+					return &amp;quot;财务实付审核失败，更新si_djb_tmp表失败&amp;quot;;
+				}	
+			}			
+											
+		}
+		else if (STAT == &amp;quot;31&amp;quot;) { //财务主管审核
+			if(CHKSTAT == &amp;quot;0&amp;quot;) {//不通过
+				mystat = &amp;quot;30&amp;quot;;
+			}		
+			sql = &amp;quot;update aef3 set STAT=&amp;apos;&amp;quot;+mystat+&amp;quot;&amp;apos;,
+					CWSHSTAT2=&amp;apos;&amp;quot;+CHKSTAT+&amp;quot;&amp;apos;,
+					CWSHMAN2=&amp;apos;&amp;quot;+CHKMAN+&amp;quot;&amp;apos;,
+					CWSHTIME2=sysdate,
+					CWSHNOTE2=&amp;apos;&amp;quot;+CWSHNOTE+&amp;quot;&amp;apos;
+					WHERE GUID = &amp;apos;&amp;quot;+GUID+&amp;quot;&amp;apos;&amp;quot;;
+			var cnt = db.ExcecutSQL(sql);
+			if(cnt == 0) {
+				db.Rollback();
+				return &amp;quot;2、财务实付审核失败，更新aef3表失败&amp;quot;;
+			}
+			sql = &amp;quot;update aef4 set  STAT=&amp;apos;&amp;quot;+CHKSTAT+&amp;quot;&amp;apos; where formguid=&amp;apos;&amp;quot;+GUID+&amp;quot;&amp;apos;&amp;quot;;
+			var cnt = db.ExcecutSQL(sql);
+			if(cnt == 0) {
+				db.Rollback();
+				return &amp;quot;2、财务实付审核失败，更新aef4表失败&amp;quot;;
+			}
+			//判断不调用业务接口：YWXT_YHDM is null and YWXT_DRDM is null
+			var sql = &amp;quot;select count(*) from aa10 where aaa100=&amp;apos;YWLX&amp;apos; and aaa102 = &amp;apos;&amp;quot;+ywlx+&amp;quot;&amp;apos; and YWXT_YHDM is null and YWXT_DRDM is null&amp;quot;;
+			var ywbz = db.GetSQL(sql);				
+			//手工录入的审批单不需要更新中间表
+			if (ywbz == 0) {
+				sql = &amp;quot;update ac95 set bae117=&amp;apos;&amp;quot;+CHKSTAT+&amp;quot;&amp;apos;,BAE013=&amp;apos;&amp;quot;+CHKMAN+&amp;quot;&amp;apos;,bae035=sysdate WHERE AAE400 = &amp;apos;&amp;quot;+bkdjh+&amp;quot;&amp;apos;&amp;quot;;	
+				var cnt = db.ExcecutSQL(sql);
+				if(cnt == 0) {
+					db.Rollback();
+					return &amp;quot;2、财务实付审核失败，更新ac95表失败&amp;quot;;
+				}
+				sql = &amp;quot;update v_si_djb_tmp set bae117=&amp;apos;&amp;quot;+CHKSTAT+&amp;quot;&amp;apos;,BAE013=&amp;apos;&amp;quot;+CHKMAN+&amp;quot;&amp;apos;,bae035=sysdate 
+					WHERE djh in (select min(bae074) from ac95 where aae400 = &amp;apos;&amp;quot;+bkdjh+&amp;quot;&amp;apos;)&amp;quot;;
+				var cnt = db.ExcecutSQL(sql);
+				if(cnt == 0) {
+					db.Rollback();
+					return &amp;quot;2、财务实付审核失败，更新si_djb_tmp表失败&amp;quot;;
+				}
+			}
+		}
+		else {
+			db.Rollback();
+			return &amp;quot;财务实付审核失败,stat不正确&amp;quot;;
+		}// end if(stat == 2)	
+		db.Commit();
+		return &amp;quot;审核成功!!&amp;quot;;	
+	}catch(e){
+		if(db != null) db.Rollback();
+		return e.toString();
+	}finally{
+		if(db != null) db.Close();
+	}
+}
+
+
+
+
+
+
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >UPCHECKSTAT1</ID><NAME >更新审核信息</NAME><DATDSC >update aef3 set STAT=&amp;apos;[%STAT]&amp;apos;,
+	CWSHSTAT1=&amp;apos;[%CHKSTAT]&amp;apos;,
+	CWSHMAN1=&amp;apos;[%CHKMAN]&amp;apos;,
+	CWSHTIME1=sysdate,
+	CWSHNOTE1=&amp;apos;[%CWSHNOTE]&amp;apos;
+where guid=&amp;apos;[%GUID]&amp;apos;;
+update aef4 set STAT=&amp;apos;[%CHKSTAT]&amp;apos; where formguid=&amp;apos;[%GUID]&amp;apos;;
+update ac95 set bae116=&amp;apos;[%CHKSTAT]&amp;apos; WHERE AAE400 = &amp;apos;[%bkdjh]&amp;apos;;</DATDSC><C4 >UPCHECKSTAT1</C4><C5 >UPCHECKSTAT1</C5><C6 >UPCHECKSTAT1</C6><C7 ></C7><C8 ></C8></ROW>
+<ROW num="1" ><ID >UPCHECKSTAT2</ID><NAME >更新审核信息</NAME><DATDSC >update aef3 set STAT=&amp;apos;[%STAT]&amp;apos;,
+	CWSHSTAT2=&amp;apos;[%CHKSTAT]&amp;apos;,
+	CWSHMAN2=&amp;apos;[%CHKMAN]&amp;apos;,
+	CWSHTIME2=sysdate,
+	CWSHNOTE2=&amp;apos;[%CWSHNOTE]&amp;apos;
+where guid=&amp;apos;[%GUID]&amp;apos;;
+update aef4 set  STAT=&amp;apos;[%CHKSTAT]&amp;apos; where formguid=&amp;apos;[%GUID]&amp;apos;
+</DATDSC><C4 >更新审核信息</C4><C5 >UPCHECKSTAT2</C5><C6 >UPCHECKSTAT2</C6><C7 ></C7><C8 ></C8></ROW>
+<ROW num="2" ><ID >AEF3INFO</ID><NAME ></NAME><DATDSC >select * from aef3 where guid=&amp;apos;[%GUID]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 >AEF3INFO</C7><C8 >AEF3INFO</C8></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

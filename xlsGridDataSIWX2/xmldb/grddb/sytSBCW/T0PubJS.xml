@@ -1,0 +1,1287 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >T0PubJS</MWID><NAME >财务报表公共js</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >T0PubJS.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >COMFUNC</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var g_isph = false;
+var reloadflg = false;	//表单重新刷新标志
+var g_replocid = &amp;quot;&amp;quot;; //报表位置编号
+
+//载入之前触发
+function _thisOnpost_LoadZXGFile(sheet)
+{
+
+}
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SetMainCellRangeAppendAuto(sheet,-1);
+	
+	try { g_replocid = replocid; } catch (e) {}
+	
+	if ( stat == 0 ) {
+		try {
+			if (typeof yymm == &amp;quot;undefined&amp;quot;) yymm = G_LOGDAT.substring(0,7);
+			if (typeof replocid == &amp;quot;undefined&amp;quot;) g_replocid = replocid;
+			if (yymm.indexOf(&amp;quot;,&amp;quot;) == -1) _this.SetCellText(sheet,G_YYMM_ROW,G_YYMM_COL,yymm);
+			else _this.SetCellText(sheet,G_YYMM_ROW,G_YYMM_COL,yymm.substring(yymm.length-7,yymm.length));
+			
+			if (typeof repid == &amp;quot;undefined&amp;quot;) repid = grdid;
+			if (typeof repnam == &amp;quot;undefined&amp;quot;) repnam = &amp;quot;&amp;quot;;
+			_this.SetCellText(sheet,G_REPID_ROW,G_REPID_COL,repid);
+			if (repnam != &amp;quot;&amp;quot;) {
+				_this.SetCellText(sheet,G_REPNAM_ROW,G_REPNAM_COL,repnam);
+				_this.SetCellShowText(sheet,G_REPID_ROW,G_REPID_COL,repnam);
+			}
+			_this.SetCellText(sheet,G_REPLOCID_ROW,G_REPLOCID_COL,replocid); //报表位置编号
+			
+			_sql.m_grdid = &amp;quot;T0PubJS&amp;quot;;
+			if (typeof accs != &amp;quot;undefined&amp;quot;) {	//汇总报表
+				_sql.querytods(&amp;quot;getACCs&amp;quot;,&amp;quot;YYMM=&amp;quot;+yymm);
+				for (var r = 0; r &amp;lt; _this.XMLDS_GetRowCount(); r ++) {
+					if (accs == &amp;quot;&amp;quot;) accs = _this.XMLDS_GetString(r,&amp;quot;ID&amp;quot;);
+					else accs += &amp;quot;,&amp;quot;+ _this.XMLDS_GetString(r,&amp;quot;ID&amp;quot;);
+				}
+				
+				var sumaccid = &amp;quot;&amp;apos;&amp;quot;+accs.replace(/,/g,&amp;quot;&amp;apos;,&amp;apos;&amp;quot;)+&amp;quot;&amp;apos;&amp;quot;;
+				var sumorgnam = &amp;quot;&amp;quot;;
+				_sql.querytods(&amp;quot;SUMORG&amp;quot;,&amp;quot;SUMACCID=&amp;quot;+ sumaccid);
+				for (var r = 0; r &amp;lt; _this.XMLDS_GetRowCount(); r ++) {
+					if (sumorgnam != &amp;quot;&amp;quot;) sumorgnam += &amp;quot;，&amp;quot;;
+					sumorgnam += _this.XMLDS_GetString(r,&amp;quot;NAME&amp;quot;);
+				}
+				_this.SetCellText(sheet,G_ORGNAM_ROW,G_ORGNAM_COL,sumorgnam);
+			} else {
+				_sql.querytods(&amp;quot;ORG&amp;quot;,&amp;quot;orgid=&amp;quot;+ G_ORGID);
+				var lognam = _this.XMLDS_GetString(0,&amp;quot;LOGNAM&amp;quot;);
+				//_this.SetCellText(sheet,G_ORGNAM_ROW,G_ORGNAM_COL,lognam);
+				_this.SetCellText(sheet,G_ORGNAM_ROW,G_ORGNAM_COL,G_ORGID);
+			}
+			_sql.m_grdid = G_GRDID;		// 恢复为默认调用本中间件的数据源
+		} catch ( e ) { }
+	}
+	
+	try {
+		if (typeof replocid == &amp;quot;undefined&amp;quot;) g_replocid = replocid;
+		if (typeof oporg == &amp;quot;undefined&amp;quot;) oporg = G_ORGID;
+		if (typeof showhead == &amp;quot;undefined&amp;quot;) showhead = 1;
+		//菜单栏增减系统默认按钮
+		if (stat == 2 || stat == 3 || stat == 4 || stat == 6) {
+			lockSheet(sheet);
+		} else if (stat == 5) {
+			_this.AddToolbarButton(&amp;quot;F_run_uncheckbutton1&amp;quot;,&amp;quot;取消审核&amp;quot;,&amp;quot;取消审核&amp;quot;,&amp;quot;&amp;quot;,0,0,0,80);
+		}
+		var xmlmenu = &amp;quot;&amp;quot;;
+		//菜单栏增加运算按钮
+		xmlmenu = &amp;quot;&amp;lt;ITEM name=\&amp;quot;重新取数\&amp;quot; id=\&amp;quot;m_getcellvalue\&amp;quot;&amp;gt;&amp;lt;/ITEM&amp;gt;&amp;lt;ITEM name=\&amp;quot;本表重算\&amp;quot; id=\&amp;quot;m_getallvalue\&amp;quot;&amp;gt;&amp;lt;/ITEM&amp;gt;&amp;lt;ITEM name=\&amp;quot;打开显示\&amp;quot; id=\&amp;quot;m_showdsui\&amp;quot;&amp;gt;&amp;lt;/ITEM&amp;gt;&amp;lt;ITEM name=\&amp;quot;关闭显示\&amp;quot; id=\&amp;quot;m_closedsui\&amp;quot;&amp;gt;&amp;lt;/ITEM&amp;gt;&amp;quot;;
+		//_this.AddToolbarButton(&amp;quot;getsheetvalue&amp;quot;,&amp;quot;运算&amp;quot;,&amp;quot;运算&amp;quot;,&amp;quot;&amp;quot;,0,0,0,60);
+		_this.AddToolbarButton(&amp;quot;btn_gs&amp;quot;,&amp;quot;数据来源&amp;quot;,&amp;quot;数据来源&amp;quot;,xmlmenu,0,0,0,60);
+		
+		//单元格增加右击事件
+		xmlmenu = &amp;quot;&amp;lt;folder name=\&amp;quot;指标信息\&amp;quot;&amp;gt;&amp;lt;ITEM name=\&amp;quot;重新取数\&amp;quot; id=\&amp;quot;m_getcellvalue\&amp;quot;&amp;gt;&amp;lt;/ITEM&amp;gt;&amp;lt;ITEM name=\&amp;quot;指标信息\&amp;quot; id=\&amp;quot;m_indexinfo\&amp;quot;&amp;gt;&amp;lt;/ITEM&amp;gt;&amp;lt;/folder&amp;gt;&amp;lt;ITEM name=\&amp;quot;查看公式\&amp;quot; id=\&amp;quot;m_showcellgs\&amp;quot;&amp;gt;&amp;lt;/ITEM&amp;gt;&amp;quot;;
+		for ( var r = _this.GetMainCellRangeRow1(sheet); r &amp;lt;= _this.GetMainCellRangeRow2(sheet); r ++ ) {
+			for ( var c = _this.GetMainCellRangeCol1(sheet); c &amp;lt;= _this.GetMainCellRangeCol2(sheet); c ++ ) {
+				_this.SetAttribe(&amp;quot;CELL_&amp;quot;+sheet+&amp;quot;_&amp;quot;+ r +&amp;quot;_&amp;quot;+ c, _this.ATTR_CELL_MENUXML, xmlmenu);
+			}
+		}
+		
+		//菜单栏增加按钮
+		xmlmenu = &amp;quot;&amp;lt;item id=\&amp;quot;m_biaojian\&amp;quot; name=\&amp;quot;平衡检查\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;m_jianyulan\&amp;quot; name=\&amp;quot;平衡公式预览\&amp;quot;/&amp;gt;&amp;quot;;
+		_this.AddToolbarButton(&amp;quot;&amp;quot;,&amp;quot;平衡检查&amp;quot;,&amp;quot;&amp;quot;,xmlmenu,0,0,1,80);
+
+	} catch ( e ) {
+		alert( e );
+	}
+	
+	//处理报表年月显示为年月日，日为月份的最后一天
+	var repym = _this.GetCellText(sheet,G_YYMM_ROW,G_YYMM_COL);
+	var repyy = 1 * repym.split(&amp;quot;-&amp;quot;)[0];
+	var repmm = 1 * repym.split(&amp;quot;-&amp;quot;)[1];
+	var repdd = getLastDay(repyy,repmm);
+	_this.SetCellShowText(sheet,G_YYMM_ROW,G_YYMM_COL,repyy+&amp;quot;年&amp;quot;+repmm+&amp;quot;月&amp;quot;+repdd+&amp;quot;日&amp;quot;);
+	
+	//处理报表编制单位显示位置问题
+	var reporgid = _this.GetCellText(sheet,G_ORGNAM_ROW,G_ORGNAM_COL);
+	var reporgname = _this.GetCellShowText(sheet,G_ORGNAM_ROW,G_ORGNAM_COL);
+	_this.SetToStandardCell(sheet,G_ORGNAM_ROW,G_ORGNAM_COL);
+	_this.SetCellText(sheet,G_ORGNAM_ROW,G_ORGNAM_COL,reporgid);
+	_this.SetCellShowText(sheet,G_ORGNAM_ROW,G_ORGNAM_COL,&amp;quot;编制单位：&amp;quot;+reporgname);
+	
+	//报表新增时从指标数据库取数据，重新加载DS
+	if (typeof thisaccid == &amp;quot;undefined&amp;quot;) thisaccid = accid;
+	try { if (stat == 0) setReportValues(sheet,1); } catch ( e ) { alert(e); }
+	//报表附件
+	try { setAppendixValues(sheet,stat); } catch ( e ) { alert(e); }
+		
+	//调用原中间件的加载事件
+	try { _user_loaddata(sheet); } catch ( e ) { }
+	
+	//通过URL参数判断加载完毕后是否保存(并刷新)报表。传入参数：isSave,异常不做处理
+	try {
+		if (isSave &amp;&amp; stat == 0) {
+			var ret = f_save(false);
+			_this.XMLDS_Parse(ret);
+			var formguid = _this.XMLDS_GetString(0,&amp;quot;RETVAL&amp;quot;);
+			if (formguid != &amp;quot;&amp;quot;) {			
+				var url =&amp;quot;show.sp?grdid=&amp;quot;+grdid+&amp;quot;&amp;guid=&amp;quot;+formguid+&amp;quot;&amp;repid=&amp;quot;+repid+&amp;quot;&amp;repnam=&amp;quot;+repnam+&amp;quot;&amp;yymm=&amp;quot;+yymm
+					+&amp;quot;&amp;thisorgid=&amp;quot;+orgid+&amp;quot;&amp;accid=&amp;quot;+accid+&amp;quot;&amp;isSave=false&amp;replocid=&amp;quot;+replocid+&amp;quot;&amp;showhead=0&amp;quot;;
+				var sheetid = parent.wnd.query(accid,repid,yymm);
+				parent.wnd.getframe(sheetid).location = url;
+				reloadflg = true;
+			} else {
+				bLoaded = true;
+				reloadflg = false;
+			}
+		}
+	} catch ( e ) {
+		bLoaded = true;
+		reloadflg = false;
+	}
+	
+	//报表金额保留小数位数
+	try { getRepRetain(repid); } catch ( e ) { }
+	
+	//工具栏提示信息
+	_this.SetToolbarString(&amp;quot;位置:&amp;quot;+replocid+&amp;quot; 报表编号:&amp;quot;+repid+&amp;quot; 报表月份:&amp;quot;+yymm);
+	
+	//报表取数来源窗口
+	_this.AddSheet(&amp;quot;数据来源&amp;quot;);
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,&amp;quot;8%&amp;quot;);
+	_this.LoadZXGFile(zxgRoot+&amp;quot;FIN_REPDSUI.zxg&amp;quot;,0,1);
+	if (showhead == 0) {
+		showDataSourceUI(0);
+	}
+	
+	_this.SetRedraw(1);
+}
+
+function showDataSourceUI(showflg)
+{
+	var showheight = 8;
+	if (showflg == 0) showheight = 0;
+	var layoutxml=&amp;quot;&amp;lt;?xml version = &amp;apos;1.0&amp;apos; encoding=\&amp;quot;GBK\&amp;quot;?&amp;gt; &amp;quot;+
+		&amp;quot;&amp;lt;ROWSET&amp;gt;&amp;quot;+
+		&amp;quot;&amp;lt;ROW &amp;gt;&amp;quot;+
+		 &amp;quot;&amp;lt;C0  height=\&amp;quot;&amp;quot;+showheight+&amp;quot;%\&amp;quot; width=\&amp;quot;100%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;1&amp;lt;/C0&amp;gt;&amp;quot;+
+		&amp;quot;&amp;lt;/ROW&amp;gt;&amp;quot;+
+		&amp;quot;&amp;lt;ROW &amp;gt;&amp;quot;+
+		 &amp;quot;&amp;lt;C0  height=\&amp;quot;&amp;quot;+(100-showheight)+&amp;quot;%\&amp;quot; width=\&amp;quot;100%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;0&amp;lt;/C0&amp;gt;&amp;quot;+
+		&amp;quot;&amp;lt;/ROW&amp;gt;&amp;quot;+
+		&amp;quot;&amp;lt;/ROWSET&amp;gt;&amp;quot;;
+	_this.SetLayoutDS(layoutxml);
+}
+
+//点击菜单项
+function _thisOnMenuItemSelect(sheet,row,col,menuitemid)
+{
+	var ret = 0;
+	try { ret = _user_MenuItemSelect(sheet,row,col,menuitemid); } catch ( e ) { }
+	if ( ret == 1 ) return;
+	
+	if ( menuitemid == &amp;quot;m_getcellvalue&amp;quot; ) {	//重新取数
+		getReportValues(sheet);
+	} else if ( menuitemid == &amp;quot;m_indexinfo&amp;quot; ) {	//指标信息
+		var str = invokeOSFunc(&amp;quot;SBCW.T0PubJS.getOSFunc&amp;quot;,&amp;quot;sytid=&amp;quot;+ G_SYTID +&amp;quot;&amp;repid=&amp;quot;+ repid +&amp;quot;&amp;col=&amp;quot;+ col);
+		var indexid = _this.GetCellText(sheet,row,str.split(&amp;quot;,&amp;quot;)[0]);
+		if (indexid.indexOf(&amp;quot;,&amp;quot;) != -1) indexid = indexid.split(&amp;quot;,&amp;quot;)[0];
+		var indexitemid = str.split(&amp;quot;,&amp;quot;)[1];
+		var sql = &amp;quot;select formula from fin_index_formula where repid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos; and indexid=&amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos; and indexitemid=&amp;apos;&amp;quot;+indexitemid+&amp;quot;&amp;apos; and useflg=&amp;apos;1&amp;apos;&amp;quot;;
+		_this.QuerySQLDS(sql);
+		var formula = _this.XMLDS_GetString(0,&amp;quot;FORMULA&amp;quot;);
+		if (formula != &amp;quot;&amp;quot;) formula = &amp;quot;\n\n      取数公式     ：&amp;quot;+ formula;
+		alert(&amp;quot;【 指标 &amp; 指标项 】：【 &amp;quot;+indexid+&amp;quot; &amp; &amp;quot;+indexitemid+&amp;quot; 】&amp;quot;+formula);
+	} else if ( menuitemid == &amp;quot;m_biaojian&amp;quot; || menuitemid == &amp;quot;m_taobiao&amp;quot; ) {	//平衡检查
+		var orgid = thisorgid;
+		var msg = &amp;quot;正在进行平衡检查，请稍候...&amp;quot;;
+		try {
+			parent.document.frames[&amp;quot;_note&amp;quot;].newmsg(msg);
+		} catch(e) {
+			window.status = msg;
+		}
+		var chktyp = 1;		//表间检查
+		if (menuitemid == &amp;quot;m_taobiao&amp;quot;) chktyp = 2;	//套表检查
+
+		var phrst = invokeOSFunc(&amp;quot;SBCW.T0PubJS.checkPH&amp;quot;,&amp;quot;chktyp=&amp;quot;+chktyp+&amp;quot;&amp;sytid=&amp;quot;+G_SYTID+&amp;quot;&amp;orgid=&amp;quot;+orgid+&amp;quot;&amp;accid=&amp;quot;+accid+&amp;quot;&amp;repid=&amp;quot;+repid+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;replocid=&amp;quot;+g_replocid);
+		if (phrst == undefined || phrst == &amp;quot;undefined&amp;quot; || phrst == &amp;quot;&amp;quot;) {
+			g_isph = true;	
+			phrst = &amp;quot;&amp;quot;;
+		}
+		
+		var phmsg = &amp;quot;&amp;quot;;
+
+		try {
+			//返回值：报表编号~公式编号~公式~公式名称~不平衡差异金额;
+			var rstArr = phrst.split(&amp;quot;;&amp;quot;);
+			for (var i=0;i&amp;lt;rstArr.length;i++) {
+				var rstInfo = rstArr[i].split(&amp;quot;~&amp;quot;);
+				if (rstInfo.length != 5) continue;
+				
+				var myrepid = rstInfo[0];
+				var fid = rstInfo[1];
+				var formula = rstInfo[2];
+				var fname = rstInfo[3];
+				var cxje = 1.0 * rstInfo[4];
+				if (cxje == 0) {
+					g_isph = true;				
+				}
+				else {
+					g_isph = false;
+					//phmsg = &amp;quot;[&amp;quot;+myrepid+&amp;quot;]&amp;quot;+fid+&amp;quot; &amp;quot;+formula+&amp;quot; &amp;quot;+fname+&amp;quot; 差异金额：&amp;quot;+cxje+&amp;quot;\n&amp;quot;;
+					phmsg += &amp;quot;[&amp;quot;+myrepid+&amp;quot;]&amp;quot;+fid+&amp;quot;：&amp;quot;+fname+&amp;quot; - 公式【&amp;quot;+formula+&amp;quot;】 差异金额：&amp;quot;+cxje+&amp;quot;\n&amp;quot;;
+					parent.document.frames[&amp;quot;_note&amp;quot;].newmsg(phmsg);
+				}
+			}
+			if (g_isph) {
+				phmsg = &amp;quot;检查完成，报表平衡！&amp;quot;;
+				parent.document.frames[&amp;quot;_note&amp;quot;].newmsg(phmsg);
+			}
+
+			if (phmsg != &amp;quot;&amp;quot; &amp;&amp; phmsg != undefined) {
+				g_isph = false;
+				phmsg = &amp;quot;以下项目不平，请检查！\n&amp;quot; + phmsg;
+				parent.document.frames[&amp;quot;_note&amp;quot;].newmsg(phmsg);
+			} 
+//			else {
+//				g_isph = true;
+//				phmsg = &amp;quot;检查完成，报表平衡！&amp;quot;;
+//				parent.document.frames[&amp;quot;_note&amp;quot;].newmsg(phmsg);
+//			}
+
+			var obj = new Object();
+			obj.phinfos = phrst;
+			obj.repid = repid;
+			obj.repnam = repnam;
+			window.showModalDialog(&amp;quot;show.sp?grdid=REPPHSHOW&amp;quot;,obj,&amp;quot;dialogWidth=800px;dialogHeight=600px;&amp;quot;);
+
+		} 
+		catch ( e ) {
+			//alert(formatPHMsg(phmsg));
+			//window.status = formatPHMsg(phmsg);
+			
+			var obj = new Object();
+			obj.phinfos = phrst;
+			obj.repid = repid;
+			obj.repnam = repnam;
+			window.showModalDialog(&amp;quot;show.sp?grdid=REPPHSHOW&amp;quot;,obj,&amp;quot;dialogWidth=800px;dialogHeight=600px;&amp;quot;);
+			
+		}
+	} else if ( menuitemid == &amp;quot;m_jianyulan&amp;quot; ) {	//检查公式预览
+		_sql.m_grdid = &amp;quot;T0PubJS&amp;quot;;
+		_sql.querytods(&amp;quot;repFormula&amp;quot;,&amp;quot;repid=&amp;quot;+ repid);
+		_sql.m_grdid = G_GRDID;
+		var bcount = _this.XMLDS_GetRowCount();
+		var bstr = &amp;quot;&amp;quot;;
+		var str1 = &amp;quot;&amp;quot;;
+		var bj = false;
+		for (var i = 0; i &amp;lt; bcount; i ++) {
+			var str2 = _this.XMLDS_GetString(i,&amp;quot;INFO&amp;quot;);
+			if (bstr == &amp;quot;&amp;quot;) {
+				bstr = &amp;quot;本报表共　&amp;quot;+ bcount +&amp;quot;　条平衡检查公式，如下：\n&amp;quot;;
+			}
+			if (str2.length &amp;gt;= 24) {
+				str1 += &amp;quot;\n【&amp;quot;+(i+1)+&amp;quot;】&amp;quot;+ str2;
+				bj = true;
+			} else {
+				if (str1 == &amp;quot;&amp;quot;) {
+					str1 += &amp;quot;\n【&amp;quot;+(i+1)+&amp;quot;】&amp;quot;+ str2;
+				} else {
+					str1 += &amp;quot;\n【&amp;quot;+(i+1)+&amp;quot;】&amp;quot;+ str2;
+					bj = true;
+				}
+			}
+			
+			if (i == bcount - 1) bj = true;
+			if (bj) {
+				bstr += str1;
+				str1 = &amp;quot;&amp;quot;;
+				bj = false;
+			}
+		}
+		if (bstr == &amp;quot;&amp;quot;) bstr = &amp;quot;本报表未设置检查公式&amp;quot;;
+		alert(bstr);
+	} else if (menuitemid == &amp;quot;m_getallvalue&amp;quot;) {
+		if (window.confirm(&amp;quot;重算本表数据来源，是否继续？&amp;quot;)) setReportValues(sheet,2);
+	} else if (menuitemid == &amp;quot;m_showcellgs&amp;quot;) {
+		
+	} else if (menuitemid == &amp;quot;m_showdsui&amp;quot;) {
+		showDataSourceUI(1);
+	} else if (menuitemid == &amp;quot;m_closedsui&amp;quot;) {
+		showDataSourceUI(0);
+	}
+}
+
+
+//检查报表是否平衡，不平返回相关信息，返回空表示平衡
+function thisCheckReportPH(chktyp,orgid,accid,repid,yymm,replocid)
+{
+	var phrst = &amp;quot;&amp;quot;;
+	var phrst = invokeOSFunc(&amp;quot;SBCW.T0PubJS.checkPH&amp;quot;,&amp;quot;chktyp=&amp;quot;+chktyp+&amp;quot;&amp;sytid=SBCW&amp;orgid=&amp;quot;+orgid+&amp;quot;&amp;accid=&amp;quot;+accid+&amp;quot;&amp;repid=&amp;quot;+repid+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;replocid=&amp;quot;+replocid);
+	if (phrst == undefined || phrst == &amp;quot;undefined&amp;quot; || phrst == &amp;quot;&amp;quot;) {
+		phrst = &amp;quot;&amp;quot;;
+	}
+	return phrst;
+}
+
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	var msg = &amp;quot;&amp;quot;;
+	if ( id == &amp;quot;getsheetvalue&amp;quot; ) {
+		if (window.confirm(&amp;quot;运算只是做检查，系统并不保存（运算前后）数据\n\n是否继续？&amp;quot;)) setReportValues(sheet,2);
+	}
+	else if (id == &amp;quot;F_run_deletebutton1&amp;quot;) { //报表显示上的删除按钮，控制不让在报表显示时删除报表
+		alert(&amp;quot;不能在此删除报表数据！&amp;quot;);
+		return &amp;quot;不能在此删除报表数据！&amp;quot;;
+	}
+	else if (id == &amp;quot;重新取数&amp;quot;) {
+		getReportValues(0);
+	}
+	else if (id == &amp;quot;本表重算&amp;quot;) {
+		if (window.confirm(&amp;quot;重算本表数据来源，是否继续？&amp;quot;)) setReportValues(0,2);
+	}
+	else if (id == &amp;quot;关闭显示&amp;quot;) {
+		showDataSourceUI(0);
+	}
+	
+	try { _user_OnButtonCtrlClick(id,sheet,row,col); } catch ( e ) { }
+	return &amp;quot;&amp;quot;;
+}
+ 
+//生成报表数据
+function setReportValues(sheet,type)
+{
+	var g_acc = G_ACCID;
+	try { g_acc = accs; } catch ( e ) {  }
+	
+	try {
+		var params = new Object();
+		params.sytid = &amp;quot;SBCW&amp;quot;;//G_SYTID;
+		params.orgid = orgid;
+		params.thisaccid = g_acc;
+		params.repid = repid;
+		params.replocid = replocid;
+		params.yymm = yymm;
+		if (type == 1) {
+			window.status = &amp;quot;正在生成报表数据，请稍候...&amp;quot;;
+		} else if (type == 2) {
+			window.status = &amp;quot;正在运算报表数据，请稍候...&amp;quot;;
+		}
+		
+		var ds = invokeOSFuncExt(&amp;quot;SBCW.T0PubJS.getOSFunction&amp;quot;,params);	
+		_this.XMLDS_Reset();
+		_this.XMLDS_Parse(ds);
+		for (var i = 0; i &amp;lt; _this.XMLDS_GetRowCount(); i ++) {
+			var row = _this.XMLDS_GetString(i,&amp;quot;ROW&amp;quot;);
+			var col = _this.XMLDS_GetString(i,&amp;quot;COL&amp;quot;);
+			var val = _this.XMLDS_GetString(i,&amp;quot;VAL&amp;quot;);
+			if (1*col == -1) {
+				window.status = &amp;quot;出现异常数据，请联系软件服务商解决：row=&amp;quot;+row+&amp;quot;,col=-1,val=&amp;quot;+val;
+			} else {
+				if (type == 1) {
+					_this.SetCellText(sheet,row,col,val);
+				} else if (type == 2) {
+					//var cellprop = _this.GetCellProp(sheet,row,col);
+					//if (cellprop.substring(0,1) == &amp;quot;1&amp;quot;) {
+						var oldidxval = _this.GetCellText(sheet,row,col);
+						_this.SetCellText(sheet,row,col,val);
+						var newidxval = _this.GetCellText(sheet,row,col);
+						if (1.0*oldidxval != 1.0*newidxval &amp;&amp; !isNaN(oldidxval)) {
+							f_SetCellBkColor(sheet,row,col,255,0,0);
+						}
+					//}
+				}
+			}
+			_thisOnRunCellFocusChange(sheet,-1,-1,row,col); //如果调用该句，报表生成后点保存按钮保存后明细数据会重复
+			//_thisOnRunCellModify(sheet,row,col,&amp;quot;&amp;quot;,val);
+		}
+		if (type == 1) {
+			window.status = &amp;quot;报表已打开&amp;quot;;
+		} else if (type == 2) {
+			alert(&amp;quot;运算已完成&amp;quot;);
+			window.status = &amp;quot;运算已完成&amp;quot;;
+		}
+	} catch ( ex ) { window.status = ex.toString(); }
+}
+
+//报表重新取数
+function getReportValues(sheet)
+{
+	var row1 = _this.GetSelectionRow0(sheet);
+	var col1 = _this.GetSelectionCol0(sheet);
+	var row2 = _this.GetSelectionRow1(sheet);
+	var col2 = _this.GetSelectionCol1(sheet);
+	if (row1 == -1 || col1 == -1 || row2 == -1 || col2 == -1) {
+		alert(&amp;quot;请选中报表单元格位置,或者使用鼠标选中一片区域,然后再重新取数!&amp;quot;);
+		return;
+	}
+	
+	var g_acc = G_ACCID;
+	try { g_acc = accs; } catch ( e ) {  }
+	
+	for (var rw = row1; rw &amp;lt;= row2; rw ++) {		
+		for (var cl = col1; cl &amp;lt;= col2; cl ++) {
+			var str = invokeOSFunc(&amp;quot;SBCW.T0PubJS.getOSFunc&amp;quot;,&amp;quot;sytid=&amp;quot;+ G_SYTID +&amp;quot;&amp;repid=&amp;quot;+ repid +&amp;quot;&amp;col=&amp;quot;+ cl);
+			var indexid = _this.GetCellText(sheet,rw,str.split(&amp;quot;,&amp;quot;)[0]);
+			if (indexid.indexOf(&amp;quot;,&amp;quot;) != -1) indexid = indexid.split(&amp;quot;,&amp;quot;)[0];
+			var indexitemid = str.split(&amp;quot;,&amp;quot;)[1];
+			if (indexid != &amp;quot;&amp;quot; &amp;&amp; indexitemid != &amp;quot;&amp;quot;) {
+				var indexvalue = 0;
+				indexvalue = invokeOSFunc(&amp;quot;SBCW.T0PubJS.getIndexValue&amp;quot;,&amp;quot;orgid=&amp;quot;+G_ORGID+&amp;quot;&amp;thisaccid=&amp;quot;+g_acc
+					+&amp;quot;&amp;repid=&amp;quot;+repid+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;indexid=&amp;quot;+indexid+&amp;quot;&amp;indexitemid=&amp;quot;+indexitemid+&amp;quot;&amp;replocid=&amp;quot;+replocid);
+				_this.SetCellText(sheet,rw,cl,indexvalue);
+			}
+		}
+	}
+}
+
+//格式化平衡检查信息
+//以下公式不平，请检查！
+//[T01]1005：货币资金 &amp;gt; 交易性金融资产 - 差异金额（1450） @ 公式【F(&amp;apos;01&amp;apos;,&amp;apos;DFFIN01&amp;apos;,&amp;apos;2009-10&amp;apos;,&amp;apos;T010101&amp;apos;,&amp;apos;01&amp;apos;) &amp;lt; F(&amp;apos;01&amp;apos;,&amp;apos;DFFIN01&amp;apos;,&amp;apos;2009-10&amp;apos;,&amp;apos;T010102&amp;apos;,&amp;apos;01&amp;apos;)】
+function formatPHMsg(phmsg)
+{
+	var spos = phmsg.indexOf(&amp;quot;@&amp;quot;);
+	var epos = phmsg.indexOf(&amp;quot;】&amp;quot;);
+	while (spos != -1) {		
+		phmsg = phmsg.substring(0,spos) + phmsg.substring(epos+1);
+		spos = phmsg.indexOf(&amp;quot;@&amp;quot;);
+		epos = phmsg.indexOf(&amp;quot;】&amp;quot;);
+	}
+	return phmsg;
+}
+
+//设置背景色
+function f_SetCellBkColor(sheet,row,col,r,g,b)
+{
+	_this.SetCellBkColor(sheet,row,col,r,g,b);
+	_this.SetRedraw(1);
+}
+
+//保存单据
+function f_save_and_close()
+{
+	f_save(false);
+}
+
+//参数POST方式传递给window.open的新窗口
+//params:
+//height=400,width=400,top=0,left=0,toolbar=yes,menubar=yes,scrollbars=yes,resizable=yes,location=yes,status=yes
+function openPostWindow(url,data,name,params)  
+{  
+    var _tempForm = document.createElement(&amp;quot;form&amp;quot;);  
+    _tempForm.id = &amp;quot;_tempForm1&amp;quot;;  
+    _tempForm.method = &amp;quot;post&amp;quot;;  
+    _tempForm.action = url;  
+    _tempForm.target = name;  
+    
+    var hideInput = document.createElement(&amp;quot;input&amp;quot;);  
+    hideInput.type = &amp;quot;hidden&amp;quot;;  
+    hideInput.name = &amp;quot;content&amp;quot;
+    hideInput.value = data;
+    _tempForm.appendChild(hideInput);   
+    _tempForm.attachEvent(&amp;quot;onsubmit&amp;quot;,function(){ openWindow(name,params); });
+    document.body.appendChild(_tempForm);  
+    
+    _tempForm.fireEvent(&amp;quot;onsubmit&amp;quot;);
+    _tempForm.submit();
+    document.body.removeChild(_tempForm);
+}
+
+function openWindow2(name,params)  
+{  
+    window.open(&amp;apos;about:blank&amp;apos;,name,params);   
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	var readonly = _this.GetAttribe(&amp;quot;CELL_&amp;quot;+sheet+&amp;quot;_&amp;quot;+row+&amp;quot;_&amp;quot;+col,_this.ATTR_CELL_READONLY);
+	var cellformat = _this.GetAttribe(&amp;quot;CELL_&amp;quot;+sheet+&amp;quot;_&amp;quot;+row+&amp;quot;_&amp;quot;+col,_this.ATTR_CELL_FORMAT);
+//	window.status = cellformat;
+	if (cellformat != &amp;quot;@&amp;quot; &amp;&amp; cellformat != &amp;quot;&amp;quot;) {			//非文本格式单元格
+		//将输入的逗号去除，从Excel复制粘贴进来的
+		var s = /,/g;
+		var newvalue2 = newvalue.replace(s,&amp;quot;&amp;quot;);
+		
+		if (_retain == 0) {
+			newvalue2 = Math.round(newvalue2);		//取整数
+		}
+		else {
+			var ran = Math.pow(10,_retain);
+			newvalue2 = Math.round(newvalue2*ran)/ran;	//保留小数位
+		}
+		
+		if (readonly == &amp;quot;false&amp;quot;) {
+			_this.SetCellText(sheet,row,col,newvalue2);
+			_this.RefreshFormula();
+		}
+		if (isNaN(newvalue2)) {
+			_this.SetCellText(sheet,row,col,oldvalue);
+		}
+	}
+	//cellCompute(repid,sheet,row,col); //根据平衡公式计算
+	try { _user_OnCellModify(sheet,row,col,oldvalue,newvalue); } catch ( e ) { }
+}
+
+//导出Text
+function repExp2Text(sheet)
+{
+	var row1 = _this.GetMainCellRangeRow1(sheet)-1;
+	var col1 = _this.GetMainCellRangeCol1(sheet);
+	var row2 = _this.GetMainCellRangeRow2(sheet);
+	var col2 = _this.GetMainCellRangeCol2(sheet);
+	var orgname = _this.GetCellShowText(sheet,G_ORGNAM_ROW,G_ORGNAM_COL);
+	var repname = _this.GetCellText(sheet,G_REPNAM_ROW,G_REPNAM_COL);
+	var filenam = orgname +&amp;quot;-&amp;quot;+ repname +&amp;quot;(&amp;quot;+ yymm +&amp;quot;).txt&amp;quot;;
+	var filestr = &amp;quot;&amp;quot;;
+
+	for (var row = row1; row &amp;lt;= row2; row ++) {
+		for (var col = col1; col &amp;lt;= col2; col ++) {
+			var str = _this.GetCellText(sheet,row,col);
+			if (col != col1) str = &amp;quot;\t&amp;quot;+ str;
+			if (_this.GetColVisible(sheet,col) == 1) {
+				filestr += str;
+			}
+		}
+		filestr +=&amp;quot;\r\n&amp;quot;;		
+	}
+	_this.SaveTextFile(filenam,filestr,&amp;quot;Text Files(*.txt)|*.txt|All Files(*.*)||&amp;quot;);
+}
+
+//导出Excel
+function repExp2Excel(sheet)
+{
+	var row1 = _this.GetMainCellRangeRow1(sheet)-1;
+	var col1 = _this.GetMainCellRangeCol1(sheet);
+	var row2 = _this.GetMainCellRangeRow2(sheet);
+	var col2 = _this.GetMainCellRangeCol2(sheet);
+	var orgname = _this.GetCellShowText(sheet,G_ORGNAM_ROW,G_ORGNAM_COL);
+	var repname = _this.GetCellText(sheet,G_REPNAM_ROW,G_REPNAM_COL);
+	var filenam = orgname +&amp;quot;-&amp;quot;+ repname +&amp;quot;(&amp;quot;+ yymm +&amp;quot;).xls&amp;quot;;
+	if (filenam.indexOf(&amp;quot;，&amp;quot;) != -1) filenam = &amp;quot;东方先导&amp;quot;+ repname +&amp;quot;(&amp;quot;+ yymm +&amp;quot;汇总).xls&amp;quot;;
+	var filestr = &amp;quot;&amp;quot;;
+
+	for (var row = row1; row &amp;lt;= row2; row ++) {
+		for (var col = col1; col &amp;lt;= col2; col ++) {
+			var str = _this.GetCellText(sheet,row,col);
+			if (col != col1) str = &amp;quot;\t&amp;quot;+ str;
+			if (_this.GetColVisible(sheet,col) == 1) {
+				filestr += str;
+			}
+		}
+		filestr +=&amp;quot;\r\n&amp;quot;;
+	}
+	_this.SaveTextFile(filenam,filestr,&amp;quot;Excel Files(*.xls)|*.xls|All Files(*.*)||&amp;quot;);
+}
+
+//F(&amp;apos;T100503&amp;apos;,&amp;apos;01&amp;apos;)&amp;gt;=F(&amp;apos;T10050301&amp;apos;,&amp;apos;01&amp;apos;)+F(&amp;apos;T10050302&amp;apos;,&amp;apos;01&amp;apos;)
+function checkFormula(formula)
+{
+	var sheet = 0;
+	var row,col;
+	var indexid,indexitemid,bds = &amp;quot;&amp;quot;;
+	for (var i=0;i&amp;lt;formula.length;i++) {
+		var ch = formula.charAt(i);
+		if (ch == &amp;quot;F&amp;quot; || ch == &amp;quot;)&amp;quot;) {
+			continue;
+		}
+		else if (ch == &amp;quot;(&amp;quot;) {
+			var item = formula.substring(i+1,formula.indexOf(&amp;quot;)&amp;quot;,i - 1));
+			indexid = item.split(&amp;quot;,&amp;quot;)[0];
+			indexitemid = item.split(&amp;quot;,&amp;quot;)[1];
+			indexid = indexid.replace(/\&amp;apos;/g,&amp;quot;&amp;quot;);	//截去单引号
+			indexitemid = indexitemid.replace(/\&amp;apos;/g,&amp;quot;&amp;quot;);
+			var zb = invokeOSFunc(&amp;quot;SBCW.T0PubJS.getCellIDbyIndex&amp;quot;,&amp;quot;sytid=SBCW&amp;repid=&amp;quot;+repid+&amp;quot;&amp;indexid=&amp;quot;+indexid+&amp;quot;&amp;indexitemid=&amp;quot;+indexitemid);
+			row = zb.split(&amp;quot;,&amp;quot;)[0];
+			col = zb.split(&amp;quot;,&amp;quot;)[1];
+			var cellvalue = 0 + 1.0*_this.GetCellText(sheet,row,col);
+			bds += &amp;quot;(&amp;quot;+cellvalue+&amp;quot;)&amp;quot;;	//避免负数报错
+			i += item.length + 1;
+		}
+		else {
+			bds += ch;
+		}
+	}
+	_this.QuerySQLDS(&amp;quot;select count(1) ret from dual where (&amp;quot; + bds + &amp;quot;)&amp;quot;);	
+	return _this.XMLDS_GetString(0,&amp;quot;RET&amp;quot;);
+}
+
+//单元格计算公式
+function cellCompute(repid,sheet,row,col)
+{
+	//1、根据坐标取指标和指标项
+	var str = invokeOSFunc(&amp;quot;SBCW.T0PubJS.getOSFunc&amp;quot;,&amp;quot;sytid=SBCW&amp;repid=&amp;quot;+repid+&amp;quot;&amp;col=&amp;quot;+col);
+	var indexid = _this.GetCellText(sheet,row,str.split(&amp;quot;,&amp;quot;)[0]);
+	if (indexid.indexOf(&amp;quot;,&amp;quot;) != -1) indexid = indexid.split(&amp;quot;,&amp;quot;)[0];
+	var indexitemid = str.split(&amp;quot;,&amp;quot;)[1];
+	//2、取出与该指标和指标项相关的平衡公式
+	_sql.m_grdid = &amp;quot;T0PubJS&amp;quot;;
+	_sql.querytods(&amp;quot;eqFormula&amp;quot;,&amp;quot;repid=&amp;quot;+repid+&amp;quot;&amp;indexid=&amp;quot;+indexid+&amp;quot;&amp;indexitemid=&amp;quot;+indexitemid);
+	_sql.m_grdid = G_GRDID;
+	var rcnt = _this.XMLDS_GetRowCount();
+	var arrobj = new Array();
+	for (var i=0;i&amp;lt;rcnt;i++) {	//用数组保存XML里的数据 本地XML下面重复使用
+		var id = _this.XMLDS_GetString(i,&amp;quot;ID&amp;quot;);
+		var formula = _this.XMLDS_GetString(i,&amp;quot;FORMULA&amp;quot;);
+		var note = _this.XMLDS_GetString(i,&amp;quot;NOTE&amp;quot;);
+		var obj = new Object();
+		obj.id = id;
+		obj.formula = formula;
+		obj.note = note;
+		arrobj.push(obj);
+	}	
+	//循环所有平衡公式并解释
+	for (var k=0;k&amp;lt;arrobj.length;k++) {
+		var id = arrobj[k].id;
+		var formula = arrobj[k].formula;
+		var note = arrobj[k].note;
+		var left = &amp;quot;&amp;quot;;
+		var leftrow,leftcol;
+		var eqflg = false;
+		var bds = &amp;quot;&amp;quot;;
+		for (var i=0;i&amp;lt;formula.length;i++) {
+			var ch = formula.charAt(i);
+			if (ch == &amp;quot;=&amp;quot;) {
+				eqflg = true;
+				left = formula.substring(0,i);	//取出左边赋值公式
+				left = left.replace(/F\(/,&amp;quot;&amp;quot;);
+				left = left.replace(/\)/g,&amp;quot;&amp;quot;);
+				left = left.replace(/\&amp;apos;/g,&amp;quot;&amp;quot;);
+				indexid = left.split(&amp;quot;,&amp;quot;)[0];
+				indexitemid = left.split(&amp;quot;,&amp;quot;)[1];
+				var zb = invokeOSFunc(&amp;quot;SBCW.T0PubJS.getCellIDbyIndex&amp;quot;,&amp;quot;sytid=SBCW&amp;repid=&amp;quot;+repid+&amp;quot;&amp;indexid=&amp;quot;+indexid+&amp;quot;&amp;indexitemid=&amp;quot;+indexitemid);
+				leftrow = zb.split(&amp;quot;,&amp;quot;)[0];
+				leftcol = zb.split(&amp;quot;,&amp;quot;)[1];
+			}
+			else if (ch == &amp;quot;F&amp;quot; || ch == &amp;quot;)&amp;quot; || eqflg == false) {
+				continue;
+			}
+			else if (ch == &amp;quot;(&amp;quot;) {
+				var item = formula.substring(i+1,formula.indexOf(&amp;quot;)&amp;quot;,i - 1));
+				indexid = item.split(&amp;quot;,&amp;quot;)[0];
+				indexitemid = item.split(&amp;quot;,&amp;quot;)[1];
+				indexid = indexid.replace(/\&amp;apos;/g,&amp;quot;&amp;quot;);	//截去单引号
+				indexitemid = indexitemid.replace(/\&amp;apos;/g,&amp;quot;&amp;quot;);
+				var zb = invokeOSFunc(&amp;quot;SBCW.T0PubJS.getCellIDbyIndex&amp;quot;,&amp;quot;sytid=SBCW&amp;repid=&amp;quot;+repid+&amp;quot;&amp;indexid=&amp;quot;+indexid+&amp;quot;&amp;indexitemid=&amp;quot;+indexitemid);
+				row = zb.split(&amp;quot;,&amp;quot;)[0];
+				col = zb.split(&amp;quot;,&amp;quot;)[1];
+				var cellvalue = &amp;quot;&amp;quot; + _this.GetCellText(sheet,row,col);
+				bds += cellvalue;
+				i += item.length + 1;
+			}
+			else {
+				bds += ch;
+			}
+		}
+		//单元格赋值
+		var oldval = _this.GetCellText(sheet,leftrow,leftcol);
+		var newval = 0;
+		_this.QuerySQLDS(&amp;quot;select (&amp;quot;+bds+&amp;quot;) val from dual&amp;quot;);
+		newval = _this.XMLDS_GetString(0,&amp;quot;VAL&amp;quot;);
+		_this.SetCellText(sheet,leftrow,leftcol,newval);
+	}
+}
+
+//报表金额保留小数位数
+var _retain = 2;
+function getRepRetain(repid)
+{
+	var sql = &amp;quot;select nvl(retain,2) retain from fin_repmodel where reportid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+	_this.QuerySQLDS(sql);
+	_retain = 1 * _this.XMLDS_GetString(0,&amp;quot;RETAIN&amp;quot;);
+	//window.status = &amp;quot;报表保留 &amp;quot; + _retain + &amp;quot; 位小数&amp;quot;;
+}
+
+//按F8
+function _thisOnF8KeyDown(sheet,row,col)
+{
+	try {
+		var url =&amp;quot;show.sp?grdid=&amp;quot;+repid+&amp;quot;&amp;guid=&amp;quot;+guid+&amp;quot;&amp;repid=&amp;quot;+repid+&amp;quot;&amp;repnam=&amp;quot;+repnam+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;thisaccid=&amp;quot;+thisaccid
+			+&amp;quot;&amp;thisorgid=&amp;quot;+thisorgid+&amp;quot;&amp;accid=&amp;quot;+accid+&amp;quot;&amp;oporg=&amp;quot;+parent.document.frames[&amp;quot;_left&amp;quot;].G_ORGID;
+		if (typeof accs != &amp;quot;undefined&amp;quot;) url += &amp;quot;&amp;accs=&amp;quot;+ accs;	//汇总帐套
+		parent.document.frames[&amp;quot;_sheet&amp;quot;]._thisRefresh(accid,repid,yymm,url);
+	} catch ( e ) { }
+}
+
+//按F9,全屏显示
+function _thisOnF9KeyDown(sheet,row,col)
+{
+	try {
+		if (isOpen == &amp;quot;y&amp;quot;){
+			window.close();
+			var url =&amp;quot;show.sp?grdid=&amp;quot;+repid+&amp;quot;&amp;guid=&amp;quot;+guid+&amp;quot;&amp;repid=&amp;quot;+repid+&amp;quot;&amp;repnam=&amp;quot;+repnam+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;thisaccid=&amp;quot;+thisaccid
+				+&amp;quot;&amp;thisorgid=&amp;quot;+thisorgid+&amp;quot;&amp;accid=&amp;quot;+accid+&amp;quot;&amp;oporg=&amp;quot;+oporg;
+			if (typeof accs != &amp;quot;undefined&amp;quot;) url += &amp;quot;&amp;accs=&amp;quot;+ accs;	//汇总帐套
+			window.opener.parent.document.frames[&amp;quot;_sheet&amp;quot;]._thisRefresh(accid,repid,yymm,url);
+		}
+	} catch ( e ) {
+		var url = &amp;quot;show.sp?grdid=&amp;quot;+repid+&amp;quot;&amp;guid=&amp;quot;+guid+&amp;quot;&amp;repid=&amp;quot;+repid+&amp;quot;&amp;repnam=&amp;quot;+repnam+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;thisorgid=&amp;quot;+thisorgid
+			+&amp;quot;&amp;isOpen=y&amp;accid=&amp;quot;+accid+&amp;quot;&amp;thisaccid=&amp;quot;+thisaccid+&amp;quot;&amp;oporg=&amp;quot;+parent.document.frames[&amp;quot;_left&amp;quot;].G_ORGID;
+		if (typeof accs != &amp;quot;undefined&amp;quot;) url += &amp;quot;&amp;accs=&amp;quot;+ accs;		//汇总帐套
+		var newWin = openWindow(url);
+	}
+}
+
+//保存单据数据前
+function _thisOnbeforesave()
+{
+	try {
+		parent.document.frames[&amp;quot;_left&amp;quot;].sethItemAttr(hItem,repnam+&amp;quot;-&amp;quot;+repid+&amp;quot;【制单】&amp;quot;);
+	} catch ( e ) { }
+	return &amp;quot;&amp;quot;;
+}
+
+//审核单据前
+function _thisOnbeforecheck()
+{
+	var isph = false;
+	var phrst = &amp;quot;&amp;quot;;
+	if (thisaccid != &amp;quot;DFFIN013&amp;quot;) {
+		//_thisOnMenuItemSelect(0,-1,-1,&amp;quot;m_biaojian&amp;quot;);
+		phrst = thisCheckReportPH(&amp;quot;1&amp;quot;,thisorgid,accid,repid,yymm,g_replocid);
+		if (phrst == &amp;quot;&amp;quot; || phrst == &amp;quot;undefined&amp;quot; || phrst == undefined) {
+			isph = true;
+		}
+	}
+
+	if (isph == true) {
+		try {
+			parent.document.frames[&amp;quot;_left&amp;quot;].sethItemAttr(hItem,repnam+&amp;quot;-&amp;quot;+repid+&amp;quot;【已核】&amp;quot;);
+		} catch ( e ) { }
+		return &amp;quot;&amp;quot;;
+	} else {
+		//报表编号~公式编号~公式~公式名称~不平衡差异金额
+		window.status = &amp;quot;报表不平，审核不能通过！&amp;quot;;
+		//alert(&amp;quot;报表不平，审核不能通过！&amp;quot;);
+		if (confirm(&amp;quot;报表不平，审核不能通过！\n是否查看详细信息？&amp;quot;)) {
+			var obj = new Object();
+			obj.phinfos = phrst;
+			obj.repid = repid;
+			obj.repnam = repnam;
+			window.showModalDialog(&amp;quot;show.sp?grdid=REPPHSHOW&amp;quot;,obj,&amp;quot;dialogWidth=800px;dialogHeight=600px;&amp;quot;);
+		}
+		
+		return &amp;quot;报表不平，审核不能通过！&amp;quot;;
+
+	}
+}
+
+
+//反审核单据前
+function _thisOnbeforeuncheck()
+{
+	try {
+		parent.document.frames[&amp;quot;_left&amp;quot;].sethItemAttr(hItem,repnam+&amp;quot;-&amp;quot;+repid+&amp;quot;【制单】&amp;quot;);
+	} catch ( e ) { }
+	return &amp;quot;&amp;quot;;
+}
+
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (sheet == 0 &amp;&amp; row &amp;gt;= _this.GetMainCellRangeRow1(sheet) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(sheet)) {
+		var str = invokeOSFunc(&amp;quot;SBCW.T0PubJS.getOSFunc&amp;quot;,&amp;quot;sytid=&amp;quot;+ G_SYTID +&amp;quot;&amp;repid=&amp;quot;+ repid +&amp;quot;&amp;col=&amp;quot;+ col);
+		var arr = str.split(&amp;quot;,&amp;quot;);
+		if (arr.length == 2) {
+			if (arr[1] == &amp;quot;&amp;quot;) { _this.SetCellText(1,1,2,&amp;quot;&amp;quot;); _this.SetCellText(1,1,5,&amp;quot;&amp;quot;); return; }
+			var indexid = _this.GetCellText(0,row,arr[0]);
+			if (indexid == &amp;quot;&amp;quot;) { _this.SetCellText(1,1,2,&amp;quot;&amp;quot;); _this.SetCellText(1,1,5,&amp;quot;&amp;quot;); return; }
+			var indexitemid = arr[1];
+			_this.SetCellText(1,2,2,&amp;quot;F(&amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+indexitemid+&amp;quot;&amp;apos;)&amp;quot;); //指标信息
+			var formula = invokeOSFunc(&amp;quot;SBCW.T0PubJS.getDataSourceFormula&amp;quot;,&amp;quot;indexid=&amp;quot;+indexid+&amp;quot;&amp;indexitemid=&amp;quot;+indexitemid+&amp;quot;&amp;repid=&amp;quot;+repid);
+			if (formula == &amp;quot;null&amp;quot;) {
+				_this.SetCellText(1,1,2,&amp;quot;&amp;quot;);
+			}
+			else {
+				_this.SetCellText(1,1,2,formula); //指标取数来源公式
+				var p1 = formula.indexOf(&amp;quot;&amp;apos;,&amp;apos;&amp;quot;);
+				var p2 = formula.indexOf(&amp;quot;&amp;apos;)&amp;quot;,p1+3);
+				indexitemid = formula.substring(p1+3,p2);
+			}
+			var fnote = invokeOSFunc(&amp;quot;SBCW.T0PubJS.getFormulaNote&amp;quot;,&amp;quot;indexid=&amp;quot;+indexid+&amp;quot;&amp;indexitemid=&amp;quot;+indexitemid+&amp;quot;&amp;thisaccid=&amp;quot;+thisaccid);
+			_this.SetCellText(1,1,5,fnote);
+		}
+		else {
+			_this.SetCellText(1,1,2,&amp;quot;&amp;quot;);
+			_this.SetCellText(1,1,5,&amp;quot;&amp;quot;);
+		}
+	}
+	
+	try { _user_thisOnMouseLClick(sheet,row,col); } catch ( e ) { }
+		
+}
+
+//单元格焦点变动
+function _thisOnCellFocusChange(sheet,rowold,colold,rownew,colnew)
+{
+	_thisOnMouseLClick(sheet,rownew,colnew);
+	try { _user_thisOnCellFocusChange(sheet,rowold,colold,rownew,colnew); } catch ( e ) { }
+	
+}
+
+//处理报表附件 stat=0新增
+function setAppendixValues(sheet,stat)
+{
+	var hav = invokeOSFunc(&amp;quot;SBCW.T0PubJS.checkAppendix&amp;quot;,&amp;quot;repid=&amp;quot;+repid);
+	if (1*hav &amp;gt; 0) {
+		_this.AddToolbarButton(&amp;quot;udf_thisEditAppendix&amp;quot;,&amp;quot;录入附件&amp;quot;,&amp;quot;录入附件&amp;quot;,&amp;quot;&amp;quot;,1,1,1,60);
+		var valxml = invokeOSFunc(&amp;quot;SBCW.T0PubJS.getAppendixValue&amp;quot;,&amp;quot;thisorgid=&amp;quot;+G_ORGID+&amp;quot;&amp;thisaccid=&amp;quot;+thisaccid+&amp;quot;&amp;sytid=SBCW&amp;repid=&amp;quot;+repid+&amp;quot;&amp;replocid=&amp;quot;+replocid+&amp;quot;&amp;yymm=&amp;quot;+yymm+&amp;quot;&amp;stat=&amp;quot;+stat);
+		//alert(valxml);
+		_this.XMLDS_Parse(valxml);
+		var appendixs = new Array();
+		for (var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+			var seqno = _this.XMLDS_GetString(i,&amp;quot;SEQNO&amp;quot;);
+			var val = _this.XMLDS_GetString(i,&amp;quot;VAL&amp;quot;);
+			appendixs.push(val);
+		}
+		setReportAppendix(appendixs);
+	}
+}
+
+//录入附件
+function thisEditAppendix()
+{
+	var obj = new Object();
+	obj.repid = repid;
+	obj.replocid = replocid;
+	obj.yymm = yymm;
+	obj.thisaccid = thisaccid;
+	obj.thisorgid = G_ORGID;
+	obj.appendixs = null;
+	var ret = window.showModalDialog(&amp;quot;show.sp?grdid=REPAPPENDIX&amp;quot;,obj,&amp;quot;dialogWidth=400px;dialogHeight=300px;&amp;quot;);
+	if (ret != null) {
+		setReportAppendix(ret.appendixs);
+	}
+	
+}
+
+//设置附件数值
+function setReportAppendix(appendixs)
+{
+	var row2 = _this.GetMainCellRangeRow2(0);
+	var col1 = _this.GetMainCellRangeCol1(0);
+	var col2 = _this.GetMainCellRangeCol2(0);
+	for (var r=row2+1;r&amp;lt;_this.GetRowCount(0);r++) {
+		for (var c=col1;c&amp;lt;=col2;c++) {
+			//var str = _this.GetCellText(0,r,c);
+			var str = _this.GetCellTip(0,r,c);
+			//if (r == 38 &amp;&amp; c == 1) alert(str);
+			if (str != &amp;quot;&amp;quot;) {
+				for (var i=0;i&amp;lt;appendixs.length;i++) {
+					var seqno = i+1;
+					var val = appendixs[i];
+					str = str.replace(&amp;quot;[%s&amp;quot;+seqno+&amp;quot;]&amp;quot;,(1.0*val).toFixed(2));
+					_this.SetCellText(0,r,c,str);
+				}
+				break;
+			}
+		}
+	}
+}
+
+
+//获得某月的最后一天  
+function getLastDay(year,month) {         
+	var new_year = year;    //取当前的年份          
+	var new_month = month++;//取下一个月的第一天，方便计算（最后一天不固定）          
+	if(month&amp;gt;12) {         
+		new_month -=12;        //月份减          
+		new_year++;            //年份增          
+	}         
+	var new_date = new Date(new_year,new_month,1);                //取当年当月中的第一天          
+	return (new Date(new_date.getTime()-1000*60*60*24)).getDate();//获取当月最后一天日期          
+} 
+        
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var xmldb = new JavaPackage(&amp;quot;com.xlsgrid.net.xmldb&amp;quot;);
+var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+//根据指标项列号，获取该指标项的指标列号,指标项编号
+//返回指标列号和指标项编号 如：5,01
+function getOSFunc()
+{
+	var sbcw = new SBCW_PUBDFFIN();
+	var grdid = getGrdid4Repid(repid);
+	return sbcw.getMainCellIndexInfo(sytid,grdid,col);	
+}
+
+function getGrdid4Repid(repid)
+{
+	var sql = &amp;quot;select grdid from fin_repmodel where reportid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+	var ds = pub.EADbTool.QuerySQL(sql);
+	if (ds.getRowCount() &amp;gt; 0) {
+		return ds.getStringAt(0,&amp;quot;GRDID&amp;quot;);
+	}
+	return repid;
+}
+
+//取指标值并返回坐标
+function getOSFunction()
+{
+	var accid = thisaccid;
+	var yearmn = yymm;//getYYYYMM(accid,repid,yymm);
+	var sbcw= new SBCW_PUBDFFIN();
+
+	try {
+		return sbcw.getReportVal(sytid,orgid,accid,repid,yearmn,replocid);
+	}
+	catch(e) {
+		//return e.toString();
+		throw new Exception(e.toString());
+	}
+}
+
+//根据报表类型（季报，年报），取得汇总年月
+//总部汇总问题：季报，年报汇总
+function getYYYYMM(accid,repid,sumyymm)
+{
+	if (accid.indexOf(&amp;quot;,&amp;quot;) &amp;gt;= 0) return sumyymm;	//汇总日期
+	if (sumyymm.length() == 4) {
+		sumyymm = sumyymm + &amp;quot;-01&amp;quot;;
+		return sumyymm;
+	}
+	
+	var yy = sumyymm.substring(0,4);
+	var mm = sumyymm.substring(5,7);
+	var yyyymm = &amp;quot;&amp;quot;;
+	var sql = &amp;quot;select subtyp from v_finrep where reportid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+	var typ = pub.EADbTool.GetSQL(sql);
+	if (typ == &amp;quot;月报&amp;quot; || typ == &amp;quot;季报&amp;quot; || typ == &amp;quot;&amp;quot;) {
+		return sumyymm;
+	}
+	else if (typ == &amp;quot;预算&amp;quot;) {
+		return sumyymm.substring(0,4) + &amp;quot;-01&amp;quot;;
+	}
+	 	
+	for (var i=1;i&amp;lt;=1*mm;i++) {
+		var sm = &amp;quot;&amp;quot;+i;
+		if (sm.length() == 1) {
+			sm = &amp;quot;0&amp;quot; + sm;
+		}
+		if (yyyymm == &amp;quot;&amp;quot;) {
+			yyyymm = yy + &amp;quot;-&amp;quot; + sm;
+		}
+		else {
+			yyyymm += &amp;quot;,&amp;quot;+yy+&amp;quot;-&amp;quot;+sm;
+		}
+	}
+	return yyyymm;
+}
+
+//传入参数chktyp=1 表间检查 chktyp=2 套表检查
+function checkPH()
+{
+	var db = null;
+	var sbcw = new SBCW_PUBDFFIN();
+	try {
+		db = new pub.EADatabase();
+		
+		//chktyp=1 表间检查
+		if (chktyp == 1) {
+			//分配的公式涉及到的表
+			var sql = &amp;quot;select distinct repid from FIN_FORMULAREP 
+				where formulaguid in (select formulaguid from FIN_FORMULAREP where repid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;)
+				order by repid&amp;quot;;
+			var repds = db.QuerySQL(sql);
+			for (var i=0;i&amp;lt;repds.getRowCount();i++) {
+				var myrepid = repds.getStringAt(i,&amp;quot;REPID&amp;quot;);
+				//如果报表是未核的，那么先写进指标库后再做平衡检查 （改为报表保存时就写入指标库了）
+				//beforeCheckPH(db,sytid,orgid,accid,myrepid,yymm,replocid);
+			}
+			
+			return sbcw.checkReportPH(db,orgid,accid,repid,yymm,replocid);
+		} 
+		//chktyp=2 套表检查
+		else {
+			var phmsg = &amp;quot;&amp;quot;;
+			var sql = &amp;quot;select * from v_finreporg where (typ,nvl(subtyp,&amp;apos;1&amp;apos;))=(select typ,nvl(subtyp,&amp;apos;1&amp;apos;) from v_finrep where reportid=&amp;apos;%s&amp;apos;) 
+				and orgid=&amp;apos;%s&amp;apos; and year=substr(&amp;apos;%s&amp;apos;,1,4)&amp;quot;.format([repid,orgid,yymm]);
+			var ds;
+			ds = db.GetXMLSQL(sql);
+			
+//			//未核的报表先写进指标库 （改为报表保存时就写入指标库了）
+//			for (var i=0;i&amp;lt;ds.getRowCount();i++) {
+//				var rpid = ds.getStringAt(i,&amp;quot;REPORTID&amp;quot;);
+//				beforeCheckPH(db,sytid,orgid,accid,rpid,yymm,replocid);
+//			}
+			
+			//检查指标平衡
+			for (var i=0;i&amp;lt;ds.getRowCount();i++) {
+				var rpid = ds.getStringAt(i,&amp;quot;REPORTID&amp;quot;);
+				phmsg += sbcw.checkReportPH(db,orgid,accid,rpid,yymm,replocid);
+			}
+			return phmsg;
+		}
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		throw new Exception(e.toString());
+	}
+	finally {
+		if (db != null) {
+			db.Rollback();
+			db.Close();
+		}
+	}
+}
+
+//检查报表状态，如果是未核的则先写入指标库再检查平衡
+function beforeCheckPH(db,sytid,orgid,accid,repid,yymm,replocid)
+{
+	var grdid = getGrdid4Repid(repid);
+	var eagrdxmldb = new xmldb.EAGRDXmlDB(sytid,grdid);
+	var grdds = eagrdxmldb.getGrdDS();
+	var bilhdrtable = grdds.getStringAt(0,&amp;quot;BILHDRTABLE&amp;quot;);
+	var sql = &amp;quot;select stat from %s where acc=&amp;apos;%s&amp;apos; and org=&amp;apos;%s&amp;apos; and yymm=&amp;apos;%s&amp;apos; and replocid=&amp;apos;%s&amp;apos;&amp;quot;.format([bilhdrtable,accid,orgid,yymm,replocid]);
+	var stat = &amp;quot;&amp;quot;;
+	try {
+		stat = db.GetSQL(sql);
+	} catch ( e ) { stat = &amp;quot;0&amp;quot;; }
+	if (stat == &amp;quot;1&amp;quot;) {
+		var sbcw = new SBCW_PUBDFFIN();
+		sbcw.setIndexDetail(db,&amp;quot;SBCW&amp;quot;,orgid,accid,yymm,repid,replocid);
+	}
+}
+
+function getIndexItemid()
+{
+	var sbcw = new SBCW_PUBDFFIN();
+	return sbcw.getIdxItemid(sytid,repid,col);
+}
+
+function getIndexValue()
+{
+	var sbcw = new SBCW_PUBDFFIN();
+	var db = null;
+	var accid = thisaccid;
+	try {
+		db = new pub.EADatabase();
+//		var yearmn = getYYYYMM(accid,repid,yymm);
+//		throw new Exception(&amp;quot;org=&amp;quot;+orgid+&amp;quot; acc=&amp;quot;+accid+&amp;quot; yearmn=&amp;quot;+yymm+&amp;quot; indexid=&amp;quot;+indexid+&amp;quot; indexitemid=&amp;quot;+indexitemid);
+		return sbcw.getIdxValue(db,orgid,accid,repid,yymm,indexid,indexitemid,replocid);
+	}
+	catch(e) {
+		throw new Exception(&amp;quot;取指标数值出错\n&amp;quot;+e.toString());
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+
+function getCellIDbyIndex()
+{
+	var sbcw = new SBCW_PUBDFFIN();
+	try {
+		return sbcw.getCellIDbyIndex(sytid,repid,indexid,indexitemid);
+	}
+	catch(e) {
+		throw new Exception(&amp;quot;取报表指标所在坐标出错：&amp;quot;+e.toString());	
+	}
+}
+
+//更新报表状态
+function setReportStat()
+{
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var sbcw = new SBCW_PUBDFFIN();
+		sbcw.setReportStat(db,accid,repid,yymm,stat);
+		return &amp;quot;1&amp;quot;;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+//取得报表表头名
+function getReportHdrtable()
+{
+	var eagrdxmldb = new xmldb.EAGRDXmlDB(sytid,repid);
+	var grdds = eagrdxmldb.getGrdDS();
+	var bilhdrtable = grdds.getStringAt(0,&amp;quot;BILHDRTABLE&amp;quot;);
+	return bilhdrtable;
+}
+
+//取报表数据来源
+function getDataSourceFormula()
+{
+	var db = null;
+	var formula = &amp;quot;&amp;quot;;
+	var f1 = &amp;quot;&amp;quot;;
+	var f2 = &amp;quot;&amp;quot;;
+	
+	try {
+		db = new pub.EADatabase();
+		var sbcw = new SBCW_PUBDFFIN();
+		var sql = &amp;quot;select * from fin_index_formula where repid=&amp;apos;%s&amp;apos; and indexid=&amp;apos;%s&amp;apos; and indexitemid=&amp;apos;%s&amp;apos; and useflg=&amp;apos;1&amp;apos;&amp;quot;.format([repid,indexid,indexitemid]);
+		var ds = db.QuerySQL(sql);
+		if (ds.getRowCount() &amp;gt; 0) {
+			formula = ds.getStringAt(0,&amp;quot;FORMULA&amp;quot;);
+		}
+		else {
+			return &amp;quot;null&amp;quot;; //没有定义取数公式
+			//F(&amp;apos;3018&amp;apos;)
+			sql = &amp;quot;select formula from fin_index where indexid=&amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos;&amp;quot;;
+			ds = db.QuerySQL(sql);
+			if (ds.getRowCount() &amp;gt; 0) {
+				f1 = ds.getStringAt(0,&amp;quot;FORMULA&amp;quot;);
+				if (f1 != &amp;quot;&amp;quot;) {
+					f1 = f1.substring(2,f1.indexOf(&amp;quot;&amp;apos;&amp;quot;)-1);
+					formula = &amp;quot;F(&amp;apos;&amp;quot;+f1+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+indexitemid+&amp;quot;&amp;apos;)&amp;quot;;
+				}
+				else {
+					formula = &amp;quot;F(&amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+indexitemid+&amp;quot;&amp;apos;)&amp;quot;;
+				}
+			}
+			else {
+				formula = &amp;quot;F(&amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+indexitemid+&amp;quot;&amp;apos;)&amp;quot;;
+			}
+		}
+		
+		return formula;
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+
+}
+
+//报表附件检查
+function checkAppendix()
+{
+	var sql = &amp;quot;select count(*) from fin_appendix_formula where repid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+	var cnt = pub.EADbTool.GetSQL(sql);
+	return cnt;
+}
+
+function getAppendixValue()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	
+	try {
+		db = new pub.EADatabase();
+		var sbcw = new SBCW_PUBDFFIN();
+		var moneyunit = 1;
+		var retain = 2;
+		var hassave = 0;
+		
+		sql = &amp;quot;select MONEYUNIT,RETAIN from fin_repmodel where reportid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+		var tmpds = db.QuerySQL(sql);
+		moneyunit = tmpds.getStringAt(0,&amp;quot;MONEYUNIT&amp;quot;);
+		retain = tmpds.getStringAt(0,&amp;quot;RETAIN&amp;quot;);
+		
+		if (stat == 0) {
+			sql = &amp;quot;select count(*) from fin_appendix_value where repid=&amp;apos;%s&amp;apos; and acc=&amp;apos;%s&amp;apos; and replocid=&amp;apos;%s&amp;apos; and yymm=&amp;apos;%s&amp;apos;&amp;quot;.format([repid,thisaccid,replocid,yymm]);
+			if (1*db.GetSQL(sql) &amp;gt; 0) hassave = 1;
+		}
+
+		var sql = &amp;quot;select a.repid,a.seqno,a.name,a.formula,b.val 
+			from fin_appendix_formula a,fin_appendix_value b
+			where a.repid=b.repid(+) and a.seqno=b.seqno(+)
+			  and b.acc(+)=&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos;
+			  and b.replocid(+)=&amp;apos;&amp;quot;+replocid+&amp;quot;&amp;apos;
+			  and b.repid(+)=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;
+			  and b.yymm(+)=&amp;apos;&amp;quot;+yymm+&amp;quot;&amp;apos;
+			order by seqno&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		for (var i=0;i&amp;lt;ds.getRowCount();i++) {
+			var seqno = ds.getStringAt(i,&amp;quot;SEQNO&amp;quot;);
+			var formula = ds.getStringAt(i,&amp;quot;FORMULA&amp;quot;);
+			var yymm_str = pub.EAFunc.Replace(yymm,&amp;quot;-&amp;quot;,&amp;quot;#&amp;quot;);   //替换日期的-符号 区分减号运算符
+			var fma = pub.EAFunc.Replace(formula,&amp;quot;F(&amp;quot;,&amp;quot;F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;quot;.format([replocid,thisorgid,thisaccid,yymm_str,&amp;quot;moneyunit&amp;quot;]));			
+			var val = &amp;quot;&amp;quot;+sbcw.getFormulaValue(db,fma,moneyunit,retain);
+			
+			//生成附件数据
+			if (hassave == 0 &amp;&amp; stat == 0) {				
+				sql = &amp;quot;insert into fin_appendix_value(org,acc,syt,replocid,yymm,repid,seqno,val)values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;
+					.format([thisorgid,thisaccid,&amp;quot;SBCW&amp;quot;,replocid,yymm,repid,seqno,val]);
+				db.ExcecutSQL(sql);
+				ds.setValueAt(i,&amp;quot;VAL&amp;quot;,val);
+			}
+		}
+		db.Commit();
+
+		return ds.GetXml();
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+function getFormulaNote()
+{
+	var fnote = &amp;quot;&amp;quot;;
+	var sql = &amp;quot;select * from fin_indexitem where indexitemid=&amp;apos;&amp;quot;+indexitemid+&amp;quot;&amp;apos;&amp;quot;;
+	var ds = pub.EADbTool.QuerySQL(sql);
+	if (ds.getRowCount() &amp;gt; 0) {
+		fnote = indexitemid+&amp;quot;-&amp;quot;+ds.getStringAt(0,&amp;quot;ITEMNAME&amp;quot;);
+	}
+	
+	return fnote;
+}
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >ORG</ID><NAME ></NAME><DATDSC >select lognam from v_org where id=&amp;apos;[%orgid]&amp;apos;</DATDSC><C4 ></C4><C5 >ORG</C5><C6 >ORG</C6><C7 >ORG</C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 >ORG</C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 >ORG</C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 >ORG</C33><C34 ></C34></ROW>
+<ROW num="1" ><ID >SetHdrStat</ID><NAME ></NAME><DATDSC >update [%HDRTBN] set stat=&amp;apos;[%SETSTAT]&amp;apos; where guid=&amp;apos;[%GUID]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 >CheckStat</C12><C13 >CheckStat</C13><C14 >CheckStat</C14><C15 >CheckStatH</C15><C16 >SetHdrStat</C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34></ROW>
+<ROW num="2" ><ID >getREPDEF</ID><NAME ></NAME><DATDSC >select * from ( select * from fin_reploaddef
+   where repid = &amp;apos;[%repid]&amp;apos; and nvl(orgid,&amp;apos;[%orgid]&amp;apos;) = &amp;apos;[%orgid]&amp;apos;
+   order by orgid) a where rownum = 1</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 >getREPDEF</C8><C9 >getREPDEF</C9><C10 >getREPDEF</C10><C11 >getREPDEF</C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 >getREPDEF</C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 >getREPDEF</C31><C32 ></C32><C33 ></C33><C34 ></C34></ROW>
+<ROW num="3" ><ID >SetDtlStat</ID><NAME ></NAME><DATDSC >update [%DTLTBN] set stat=&amp;apos;[%SETSTAT]&amp;apos; where formguid=&amp;apos;[%FORMGUID]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 >SetDtlStat</C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34></ROW>
+<ROW num="4" ><ID >repFormula</ID><NAME >报表平衡公式</NAME><DATDSC >select b.repid,a.id,formula,note,/*nvl(a.repid,note) info*/nvl(note,a.repid) info
+  from fin_formula a,fin_formularep b
+ where a.guid=b.formulaguid and b.repid=&amp;apos;[%repid]&amp;apos;
+   and a.useflg=&amp;apos;1&amp;apos;
+ order by a.id</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 >repFormula</C18><C19 >repFormula</C19><C20 >repFormula</C20><C21 >repFormula</C21><C22 >repFormula</C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 >repFormula</C28><C29 >repFormula</C29><C30 >repFormula</C30><C31 ></C31><C32 >repFormula</C32><C33 ></C33><C34 >repFormula</C34></ROW>
+<ROW num="5" ><ID >eqFormula</ID><NAME >等于的平衡公式</NAME><DATDSC >select a.id,a.formula,a.note 
+from fin_formula a,fin_formularep b 
+where a.guid=b.formulaguid and b.repid=&amp;apos;[%repid]&amp;apos; and a.useflg=&amp;apos;1&amp;apos; 
+and a.formula like &amp;apos;%[%indexid]%&amp;apos;--&amp;apos;,&amp;apos;&amp;apos;&amp;apos; || &amp;apos;[%indexitemid]%&amp;apos;
+and a.formula not like &amp;apos;%&amp;gt;=%&amp;apos; and a.formula not like &amp;apos;%&amp;lt;=%&amp;apos; 
+and a.formula not like &amp;apos;%&amp;gt;%&amp;apos; and a.formula not like &amp;apos;%&amp;lt;%&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34></ROW>
+<ROW num="6" ><ID >moneyunit</ID><NAME ></NAME><DATDSC >select nvl(moneyunit,1) moneyunit from fin_repmodel where reportid =&amp;apos;[%REPID]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34></ROW>
+<ROW num="7" ><ID >getTaoBiao</ID><NAME ></NAME><DATDSC >select * from v_finreporg
+ where typ=(select typ from v_finrep where id=&amp;apos;[%_REPID]&amp;apos;)
+   and orgid=&amp;apos;[%_ORGID]&amp;apos; and year=&amp;apos;[%_YEAR]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 >getTaoBiao</C24><C25 ></C25><C26 >getTaoBiao</C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34></ROW>
+<ROW num="8" ><ID >ZBTUMSG</ID><NAME ></NAME><DATDSC >insert into msg(title,note,msgtyp,org)
+values(&amp;apos;[%TITLE]&amp;apos;,&amp;apos;退回时间： &amp;apos;||TO_CHAR(sysdate,&amp;apos;YYYY/MM/DD HH24:MI:SS&amp;apos;)||&amp;apos;&amp;lt;br&amp;gt;退回报表包括： [%NOTE]&amp;apos;,
+	&amp;apos;[%MSGTYP]&amp;apos;,&amp;apos;[%ORG]&amp;apos;)</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 >ZBTUMSG</C25><C26 >ZBTUMSG</C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34></ROW>
+<ROW num="9" ><ID >SUMORG</ID><NAME ></NAME><DATDSC >select name from acc where id in ([%SUMACCID])</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 >SUMORG</C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34></ROW>
+<ROW num="10" ><ID >getACCs</ID><NAME ></NAME><DATDSC >select a.id from acc a, v_org b
+ where a.org = b.id
+   and a.syt = &amp;apos;DFFIN&amp;apos;
+   and to_date(decode(length(&amp;apos;[%YYMM]&amp;apos;),4,&amp;apos;[%YYMM]&amp;apos;||&amp;apos;-12&amp;apos;,&amp;apos;[%YYMM]&amp;apos;),&amp;apos;yyyy-mm&amp;apos;)
+    &amp;gt;= to_date(decode(length(&amp;apos;[%YYMM]&amp;apos;),4,&amp;apos;[%YYMM]&amp;apos;||&amp;apos;-12&amp;apos;,b.startrep),&amp;apos;yyyy-mm&amp;apos;)</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

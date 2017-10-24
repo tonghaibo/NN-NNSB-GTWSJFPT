@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >YSZL_SN_ORG_LIST</MWID><NAME >枢纽落地机构管理</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >YSZL_SN_ORG_LIST.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var sheet_qryCon=1;
+var sheet_orgcontent=0;
+var qry_orgcontent=&amp;quot;&amp;quot;;
+var orgsrc=&amp;quot;&amp;quot;;
+var orgname=&amp;quot;&amp;quot;;
+var selected_orgid=&amp;quot;&amp;quot;;
+var selected_orgname=&amp;quot;&amp;quot;;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	initLayout();
+	
+	_this.AutoFixScreenWidth();
+	 qry_orgcontent= _this.SaveTempZXGFile(0); 
+	 
+}
+
+function initLayout(){
+	_this.SplitSheet(sheet_qryCon,&amp;quot;V&amp;quot;,&amp;quot;8%&amp;quot;);
+ 
+	var orgtypeList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=v_shuniu_orgsrc&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,sheet_qryCon,1,2,orgtypeList); _this.SetCellText(sheet_qryCon,1,2,orgsrc);
+	_this.SetCellText(sheet_qryCon,1,4,orgname);
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+    if(id==&amp;quot;查询&amp;quot;)
+    {
+        loadResultData();
+    }
+    if(id==&amp;quot;修改&amp;quot;)
+    {
+    	var curr_row=_this.GetCurrentRow(0);
+    	
+    	_thisOnMouseDClick(0,curr_row,col);
+    }
+    if(id==&amp;quot;新增&amp;quot;)
+    {
+    	var luodi_org = _this.GetCellText(sheet_orgcontent,row,1); 
+	var obj = new Object();
+	obj.luodi_org=&amp;quot;&amp;quot;;
+	luodi_org=&amp;quot;&amp;quot;;
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=YSZL_SN_ORG_EDIT&amp;luodi_org=&amp;quot;+luodi_org,obj ,&amp;quot;dialogWidth=500px;dialogHeight=600px;&amp;quot;);
+	 loadResultData();
+
+    }
+    if(id==&amp;quot;删除&amp;quot;)
+    {
+    	if(selected_orgid!=&amp;quot;&amp;quot;){
+	   if (confirm(&amp;quot;确定要删[ &amp;quot;+ selected_orgid +&amp;quot;---&amp;quot;+selected_orgname +&amp;quot; ]落地机构吗&amp;quot;)){
+	      var param=new Object();
+	      param.selected_orgid=selected_orgid;
+	      var rsp= _this.invokeOSFuncExt(&amp;quot;del_org&amp;quot;,param);
+	      alert(rsp);
+	       loadResultData();
+	   }  
+	}else{
+	    alert(&amp;quot;请选择要删除的记录&amp;quot;);
+	}
+	
+
+    }
+}
+//加载枢纽请求查询出来的结果
+function  loadResultData()
+{
+    _this.SetToolbarString(&amp;quot;正在加载数据...&amp;quot;);
+	
+    //清除前面的数据
+    _this.LoadZXGFile(qry_orgcontent,-1,0);
+    _this.SetMainCellRange(0,2,1,3,12);
+    _this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+     _this.SetFixedCol(0,1);	 
+    _this.SetFixedRow(0,2);
+ 
+  
+    var orgsrc=_this.GetCellText(sheet_qryCon,1,2);
+    var orgname=_this.GetCellText(sheet_qryCon,1,4);
+
+
+    if(orgsrc==&amp;quot;0&amp;quot;){
+       orgsrc=&amp;quot;%25&amp;quot;;
+    }
+ 
+   
+    if(orgname==&amp;quot;&amp;quot;){
+       orgname=&amp;quot;%25&amp;quot;;
+    } 
+
+    var xml = _sql.query(&amp;quot;qry_shuniu_org&amp;quot;,&amp;quot;TRADSRC=&amp;quot;+orgsrc+&amp;quot;&amp;ORGNAME=&amp;quot;+orgname);
+    _this.SetXmlDS(sheet_orgcontent,2,1,3,12,xml);
+    _this.AutoFixScreenWidth();
+     _this.SetToolbarString(&amp;quot;&amp;quot;);
+
+    
+}
+//鼠标双击
+
+function _thisOnMouseDClick(sheet,row,col)
+{
+
+    if(row==-1)
+    {   
+    	return &amp;quot;&amp;quot;;
+    }
+    if(sheet==sheet_orgcontent  &amp;&amp;  row&amp;gt;=2 ){
+	 
+	var luodi_org = _this.GetCellText(sheet_orgcontent,row,1); 
+	if( luodi_org!=&amp;quot;&amp;quot;)
+	{
+		var obj = new Object();
+		obj.luodi_org=luodi_org;
+	 	obj.orgname=_this.GetCellText(sheet_orgcontent,row,2); 
+		obj.luodi_org_url=_this.GetCellText(sheet_orgcontent,row,3); 
+		obj.ip=_this.GetCellText(sheet_orgcontent,row,4); 
+		obj.port=_this.GetCellText(sheet_orgcontent,row,5); 
+		obj.orgstatus=_this.GetCellText(sheet_orgcontent,row,6); 
+		obj.tradsrc=_this.GetCellText(sheet_orgcontent,row,7); 
+		obj.server_type=_this.GetCellText(sheet_orgcontent,row,8); 
+		obj.timeout=_this.GetCellText(sheet_orgcontent,row,9); 
+		obj.org_contacts=_this.GetCellText(sheet_orgcontent,row,10); 
+		obj.telephone=_this.GetCellText(sheet_orgcontent,row,11); 
+		obj.prikey_filename=_this.GetCellText(sheet_orgcontent,row,12); 
+	
+		var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=YSZL_SN_ORG_EDIT&amp;luodi_org=&amp;quot;+luodi_org,obj ,&amp;quot;dialogWidth=500px;dialogHeight=600px;&amp;quot;);
+	}
+
+
+    }	
+}
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+     if(sheet==sheet_orgcontent  &amp;&amp;  row&amp;gt;=2 ){
+        selected_orgid=_this.GetCellText(sheet_orgcontent,row,1);
+        selected_orgname=_this.GetCellText(sheet_orgcontent,row,2);
+
+     }
+	
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE > 
+function del_org() {
+    var db = null;
+    try{
+        db = new pub.EADatabase();
+        var sql = &amp;quot;delete TAB_INFO_ROUTER   where LUODI_ORG=&amp;apos;&amp;quot;+selected_orgid+&amp;quot;&amp;apos;&amp;quot;;
+        var cnt = db.ExcecutSQL(sql);
+        if(cnt&amp;gt;0){
+          return &amp;quot;删除成功&amp;quot;;
+        }
+        
+    }catch(e) {
+      if(db != null) db.Rollback();
+      return e.toString();
+    }finally {
+      if(db != null) db.Close();
+    }
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >qry_shuniu_org</ID><NAME >枢纽落地机构查询</NAME><DATDSC >select LUODI_ORG,
+       ORGNAME,
+       LUODI_ORG_URL,
+       IP,
+       PORT,
+       decode(ORGSTATUS,&amp;apos;00&amp;apos;,&amp;apos;有效&amp;apos;,&amp;apos;无效&amp;apos;),
+       decode(TRADSRC,&amp;apos;B&amp;apos;,&amp;apos;银行&amp;apos;,&amp;apos;社保&amp;apos;),
+       SERVER_TYPE,
+       TIMEOUT,
+       ORG_CONTACTS,
+       TELEPHONE,
+       PRIKEY_FILENAME
+   from TAB_INFO_ROUTER
+ where TRADSRC like &amp;apos;[%TRADSRC]%&amp;apos;
+   and ORGNAME like &amp;apos;[%ORGNAME]%&amp;apos;
+</DATDSC><C4 >qry_shuniu_org</C4><C5 >qry_shuniu_org</C5><C6 >qry_shuniu_org</C6><C7 >qry_shuniu_org</C7><C8 >qry_shuniu_org</C8></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

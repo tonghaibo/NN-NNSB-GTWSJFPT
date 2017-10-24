@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<svg title="SVGform" fill="#FFFFFF" fill-type="1" background="xlsgrid/images/flash/images/bgimage.jpg">
+ <rect id="rect_231312" x="5" y="5" width="99%" height="98%" round="2" stroke="#CCCCCC" fill="#FFFFFF" fillto="" opacity="0.7" stroke-dash="1" stroke-width="0" 属性="">
+ </rect>
+ <img id="img_844311" cx="308" cy="219" x="876" y="428" width="32" height="25" src="org/GXSI/logo2.png" 属性="">
+ </img>
+ <rect id="rect_554810" x="10" y="10" round="1" stroke="#000000" fill="#E8E8E8" fillto="#FFFFFF" 属性="">
+ </rect>
+ <connector id="connector_108_255013" from="rect_53512" to="rect_84114" fromcp="32" tocp="12" type="108">
+ </connector>
+ <connector id="connector_108_255017" from="rect_132514" to="rect_132514" fromcp="32" tocp="32" type="108">
+ </connector>
+ <connector id="connector_108_255029" from="rect_53513" to="rect_53513" fromcp="21" tocp="21" typfe="108">
+ </connector>
+ <connector id="connector_108_311215" from="rect_311210" to="rect_255019" fromcp="23" tocp="21" type="108">
+ </connector>
+ <connector id="connector_108_583213" from="rect_255019" to="rect_255019" fromcp="21" tocp="21" type="108">
+ </connector>
+ <connector id="connector_208_154020" from="rect_203320" to="rect_150616" fromcp="32" tocp="12" type="208" stroke-dash="3">
+ </connector>
+ <rect id="rect_231311" x="13" y="15" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_334311" x="74" y="63" width="102" height="47" stroke="#2A579A" fill="#808080" url="" 属性="" fillto="" round="" stroke-width="0" font-size="14" font-color="#FFFFFF" opacity="0.7">业务生成支付数据</rect>
+ <connector id="connector_208_224115" from="rect_334327" to="rect_334324" fromcp="32" tocp="12" type="208" stroke="#2A579A" stroke-width="2">
+ </connector>
+ <text id="text_421023" x="918" y="430" width="96" height="24" font-size="14" 属性="">广西社保</text>
+ <rect id="rect_85411" x="190" y="136" width="78" height="50" stroke="#2A579A" fill="#008040" url="show.sp?grdid=YSZL_ZF&stat=0" 属性="" fillto="" round="" stroke-width="0" font-size="14" font-color="#FFFFFF" opacity="0.7">生成
+支付审批单</rect>
+ <text id="text_391317" x="1064" y="467" width="21" height="12" font-size="14">
+ </text>
+ <rect id="rect_151415" x="796" y="117" width="93" height="70" stroke="#2A579A" fill="#6C65F5" url="show.sp?grdid=YSZFHSList&stat=5" 属性="" fillto="" round="" stroke-width="0" font-size="14" font-color="#FFFFFF" opacity="0.7">银行支付
+结果</rect>
+ <connector id="connector_108_151420" from="rect_473110" to="rect_85411" fromcp="12" tocp="32" type="108" stroke="#2A579A" stroke-width="2">
+ </connector>
+ <rect id="rect_255412" x="412" y="164" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_255414" x="699" y="182" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_255415" x="680" y="198" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_295012" x="655" y="127" width="98" height="50" stroke="#2A579A" fill="#008040" url="show.sp?grdid=YSZFHSList&stat=4" 属性="" fillto="" round="10" stroke-width="0" font-size="14" font-color="#FFFFFF" opacity="0.7">发送银行</rect>
+ <connector id="connector_208_295021" from="polygon_295018" to="rect_151415" fromcp="32" tocp="12" type="208">
+ </connector>
+ <text id="text_295025" x="40" y="14" width="360" height="30" font-size="18" font-color="#400040">社银直连支付审批流程</text>
+ <connector id="connector_208_311514" from="rect_334311" to="rect_85411" fromcp="23" tocp="12" type="208">
+ </connector>
+ <rect id="rect_63319" x="314" y="136" width="68" height="50" stroke="#2A579A" fill="#008040" url="show.sp?grdid=YSZFHSList&stat=1" 属性="" fillto="" round="" stroke-width="0" font-size="14" font-color="#FFFFFF" opacity="0.7">实付凭证
+打印</rect>
+ <connector id="connector_208_63328" from="rect_63324" to="rect_63318" fromcp="32" tocp="12" type="208">
+ </connector>
+ <connector id="connector_208_63329" from="rect_63318" to="rect_295012" fromcp="23" tocp="21" type="208">
+ </connector>
+ <rect id="rect_50312" x="401" y="233" width="68" height="50" stroke="#2A579A" fill="#2A579A" url="show.sp?grdid=YSZFHSList&stat=2" 属性="" fillto="" round="" stroke-width="0" font-size="14" font-color="#FFFFFF" opacity="0.7">财务实付
+审核</rect>
+ <rect id="rect_50313" x="515" y="233" width="68" height="50" stroke="#2A579A" fill="#FFFF9F" url="show.sp?grdid=YSZFHSList&stat=3" 属性="" fillto="" round="" stroke-width="0" font-size="14" font-color="#000000" opacity="0.7">财务主管
+复核</rect>
+ <connector id="connector_208_50314" from="rect_85411" to="rect_63319" fromcp="32" tocp="12" type="208">
+ </connector>
+ <connector id="connector_208_50315" from="rect_63319" to="rect_50312" fromcp="23" tocp="12" type="208">
+ </connector>
+ <connector id="connector_208_50316" from="rect_50312" to="rect_50313" fromcp="32" tocp="12" type="208">
+ </connector>
+ <connector id="connector_208_50318" from="rect_295012" to="rect_151415" fromcp="32" tocp="12" type="208">
+ </connector>
+ <rect id="rect_35315" x="486" y="127" width="128" height="50" stroke="#2A579A" fill="#AEAEAE" url="" 属性="" fillto="" round="" stroke-width="1" font-size="14" font-color="#000000" opacity="0.7" stroke-dash="3">局长签字
+（不在系统操作）</rect>
+ <connector id="connector_100_35318" from="rect_50313" to="rect_35315" fromcp="21" tocp="23" type="100" stroke-dash="3">
+ </connector>
+ <connector id="connector_208_35319" from="rect_35315" to="rect_295012" fromcp="32" tocp="12" type="208" stroke-dash="3">
+ </connector>
+ <connector id="connector_208_65412" from="rect_50313" to="rect_65410" fromcp="32" tocp="32" type="208">
+ </connector>
+ <text id="text_65413" x="421" y="214" width="50" height="20" font-size="12" font-color="#FF0000">N</text>
+ <text id="text_65414" x="554" y="290" width="50" height="20" font-size="12" font-color="#FF0000">N</text>
+ <text id="text_65415" x="552" y="213" width="40" height="20" font-size="12" font-color="#0000FF">Y</text>
+ <text id="text_65416" x="472" y="242" width="50" height="20" font-size="12" font-color="#0000FF">Y</text>
+ <connector id="connector_208_195711" from="rect_50313" to="rect_50312" fromcp="23" tocp="23" type="208">
+ </connector>
+ <connector id="connector_208_195712" from="rect_50312" to="rect_63319" fromcp="21" tocp="32" type="208">
+ </connector>
+ <circle id="point_413815" cx="31" cy="25" r="7" stroke="#000000" fill="#CCCCCC" fillto="" opacity="1" stroke-dash="1" resizable="0">point_413815</circle>
+ <rect id="rect_213617" x="131" y="202" width="158" height="60" stroke="#2A579A" fill="#008040" url="show.sp?grdid=YSZFHS2&action=modify" 属性="" fillto="" round="" stroke-width="0" font-size="14" font-color="#FFFFFF" opacity="0.7">手工新增支付审批单（与业务系统无关）</rect>
+ <connector id="connector_208_213618" from="rect_213617" to="rect_63319" fromcp="32" tocp="12" type="208">
+ </connector>
+ <connector id="connector_208_213619" from="rect_231312" to="rect_231312" fromcp="13" tocp="13" type="208">
+ </connector>
+ <connector id="connector_208_213620" from="rect_231312" to="rect_231312" fromcp="13" tocp="13" type="208">
+ </connector>
+ <rect id="rect_400310" x="314" y="62" width="68" height="50" stroke="#2A579A" fill="#5B5B5B" url="show.sp?grdid=YSZFHSList&stat=-1" 属性="" fillto="" round="" stroke-width="0" font-size="14" font-color="#FFFFFF" opacity="0.7">已作废</rect>
+ <connector id="connector_208_400311" from="rect_63319" to="rect_400310" fromcp="21" tocp="23" type="208">
+ </connector>
+ <rect id="rect_365508" x="655" y="234" width="98" height="50" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1" 属性="" url="show.sp?grdid=YSZFHSList&stat=99">查询支付审批单</rect>
+ <rect id="rect_365509" x="784" y="292" width="-9" height="-23" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_344716" x="846" y="291" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_344717" x="803" y="235" width="98" height="50" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1" url="show.sp?grdid=YSZL_ZF&stat=99" 属性="">查询批量数据</rect>
+ <rect id="rect_344718" x="861" y="258" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_344719" x="877" y="309" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_344720" x="865" y="255" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_344721" x="246" y="160" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_344722" x="246" y="160" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_344723" x="255" y="167" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_344724" x="254" y="164" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_344725" x="220" y="149" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <rect id="rect_344726" x="919" y="348" width="0" height="0" round="" stroke="#000000" fill="#FFFFCC" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+</svg>

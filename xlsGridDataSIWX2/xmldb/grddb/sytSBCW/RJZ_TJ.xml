@@ -1,0 +1,259 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RJZ_TJ</MWID><NAME >日记账统计</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RJZ_TJ.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >setKMBHNULL</ID><NAME >选择所有科目</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE><C10 >setKMBHNULL</C10></ROW>
+<ROW num="1" ><ID >setkmbh</ID><NAME >录入科目</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE><C10 ></C10></ROW>
+</ROWSET>
+</grdbtnds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >DAT1</ID><NAME >开始日期</NAME><NOTNULL >1</NOTNULL><KEYVAL >DAT</KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG >1</KEYFLG><C13 >DAT1</C13></ROW>
+<ROW num="1" ><ID >DAT2</ID><NAME >截止日期</NAME><NOTNULL >1</NOTNULL><KEYVAL >DAT</KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG >1</KEYFLG><C13 ></C13></ROW>
+<ROW num="2" ><ID >KMBH</ID><NAME >科目</NAME><NOTNULL >0</NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13></ROW>
+<ROW num="3" ><ID >RJKX</ID><NAME >款项</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13></ROW>
+</ROWSET>
+</grdpamds><grdshwds>
+<ROWSET>
+<ROW num="0" ><ID >0,1,1</ID><NAME ></NAME><DBNAME ></DBNAME><DSKEY ></DSKEY><NROW ></NROW><NCOL ></NCOL><PAGES ></PAGES><PAGESIZE ></PAGESIZE><URL ></URL><CTLTYP >DATE</CTLTYP><DYNCTL ></DYNCTL><LISTID ></LISTID><ISCROSS ></ISCROSS><HROW ></HROW><HCOLS ></HCOLS><ROWORDER ></ROWORDER><VCOLS ></VCOLS><VCOLSQL ></VCOLSQL><VALUECOL ></VALUECOL></ROW>
+<ROW num="1" ><ID >0,1,3</ID><NAME ></NAME><DBNAME ></DBNAME><DSKEY ></DSKEY><NROW ></NROW><NCOL ></NCOL><PAGES ></PAGES><PAGESIZE ></PAGESIZE><URL ></URL><CTLTYP >DATE</CTLTYP><DYNCTL ></DYNCTL><LISTID ></LISTID><ISCROSS ></ISCROSS><HROW ></HROW><HCOLS ></HCOLS><ROWORDER ></ROWORDER><VCOLS ></VCOLS><VCOLSQL ></VCOLSQL><VALUECOL ></VALUECOL></ROW>
+</ROWSET>
+</grdshwds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0 = &amp;quot;&amp;quot;;
+var ZXGFILE1 = &amp;quot;&amp;quot;;
+
+var param_dat1 = &amp;quot;&amp;quot;;
+var param_dat2 = &amp;quot;&amp;quot;;
+var param_kmbh = &amp;quot;&amp;quot;;
+var param_rjkx = &amp;quot;&amp;quot;;
+var kmList;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+
+	try { param_dat1 = DAT1; param_dat2 = DAT2; param_kmbh = KMBH; } catch(e) {}
+	try { param_rjkx = RJKX; } catch(e) {}
+
+	initLayout();
+	
+	kmList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_ACCITEM&amp;where=mjbz=1 and XJYHBZ&amp;lt;&amp;gt;0 and QLBZ&amp;lt;&amp;gt;1 and nvl(RJZKM_LRBZ,&amp;apos;1&amp;apos;) = &amp;apos;1&amp;apos;&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	var rjlxList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_RJLXB&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;FULLNAME&amp;quot;);
+	_this.SetListValue(rjlxList,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+	
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,1,5,kmList);	
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,1,8,rjlxList);
+	
+	_this.SetToDateBox(&amp;quot;&amp;quot;,0,1,1,param_dat1);
+	_this.SetToDateBox(&amp;quot;&amp;quot;,0,1,3,param_dat2);
+	_this.SetCellText(0,1,5,param_kmbh);
+	_this.SetCellText(0,1,8,param_rjkx);
+	
+	if (param_rjkx == &amp;quot;&amp;quot;) _this.SetCellText(0,1,8,&amp;quot;%&amp;quot;);
+	
+	param_dat1 = _this.GetCellText(0,1,1);
+	param_dat2 = _this.GetCellText(0,1,3);
+	param_kmbh = _this.GetCellText(0,1,5);
+	param_rjkx = _this.GetCellText(0,1,8);
+	
+	
+	
+	loadSheetData();
+	
+	_this.AutoFixScreenWidth();	
+}
+
+
+
+//页面布局初始化
+function initLayout()
+{
+	_this.SplitSheet(0,&amp;quot;V&amp;quot;,&amp;quot;8%&amp;quot;);
+	
+	ZXGFILE0 = _this.SaveTempZXGFile(0); 
+	ZXGFILE1 = _this.SaveTempZXGFile(1);
+}
+
+//加载统计明细
+function loadSheetData()
+{
+	_this.SetToolbarString(&amp;quot;正在加载数据...&amp;quot;);
+	_this.loadZXGFile(ZXGFILE1,-1,1);	
+	_this.SetFixedRow(1,1);	
+	
+	_this.SetMainCellRange(1,1,0,_this.GetRowCount(1)-1,_this.GetColCount(1)-1);
+	
+	var xml = _sql.query(&amp;quot;RJZKXTJ&amp;quot;,&amp;quot;DAT1=&amp;quot;+param_dat1+&amp;quot;&amp;DAT2=&amp;quot;+param_dat2+&amp;quot;&amp;KMBH=&amp;quot;+param_kmbh+&amp;quot;&amp;RJLX=&amp;quot;+param_rjkx);//调用数据源的sql 语句 返回一个XMLDS
+	_this.SetXmlDS(1,1,0,_this.GetRowCount(1)-1,_this.GetColCount(1)-1,xml);
+	_this.SetRowGroupSum(1,1,_this.GetRowCount(1)-1,&amp;quot;3,4,5&amp;quot;,&amp;quot;0,1&amp;quot;);
+	
+	for (var r=_this.GetMainCellRangeRow1(1);r&amp;lt;=_this.GetMainCellRangeRow2(1);r++) {
+		var str = _this.GetCellText(1,r,0);
+		if (str == &amp;quot;小计&amp;quot; || str == &amp;quot;合计&amp;quot;) {
+			_this.MergeCells(1,r,0,r,2);
+			_this.SetCellHAlign(1,r,0,2);
+			for (var c=0;c&amp;lt;_this.GetColCount(1);c++) {
+				_this.SetCellColor(1,r,c,255,0,0);
+			}
+		}
+	}
+	
+	_this.XMLDS_Reset();
+	_sql.querytods(&amp;quot;XZSUM&amp;quot;,&amp;quot;DAT1=&amp;quot;+param_dat1+&amp;quot;&amp;DAT2=&amp;quot;+param_dat2+&amp;quot;&amp;KMBH=&amp;quot;+param_kmbh+&amp;quot;&amp;RJLX=&amp;quot;+param_rjkx);//调用数据源的sql 语句 返回一个XMLDS
+	for (var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+		var xz = _this.XMLDS_GetString(i,&amp;quot;XZ&amp;quot;);
+		var jfje = _this.XMLDS_GetString(i,&amp;quot;JFJE&amp;quot;);
+		var dfje = _this.XMLDS_GetString(i,&amp;quot;DFJE&amp;quot;);
+		var jdje = _this.XMLDS_GetString(i,&amp;quot;JDJE&amp;quot;);
+		
+		_this.AppendRow(1,_this.GetRowCount(1)-2);
+		var row = _this.GetRowCount(1)-2;
+		_this.SetFormula(1,row,3,&amp;quot;&amp;quot;); _this.SetFormula(1,row,4,&amp;quot;&amp;quot;); _this.SetFormula(1,row,5,&amp;quot;&amp;quot;); //去掉单元格原来的计算公式
+		_this.SetCellText(1,row,0,xz+&amp;quot;-合计&amp;quot;);
+		_this.SetCellText(1,row,3,jfje);
+		_this.SetCellText(1,row,4,dfje);
+		_this.SetCellText(1,row,5,jdje);
+
+	}
+
+	_this.SetToolbarString(&amp;quot;&amp;quot;);
+	_this.AutoFixScreenWidth();
+	
+	
+	
+
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if ( id== &amp;quot;统计&amp;quot; ) {
+		loadSheetData();
+	}
+
+}
+
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	var dat1 = _this.GetCellText(0,1,1);
+	var dat2 = _this.GetCellText(0,1,3);
+	var dat11 = dat1.replace(/-/g,&amp;quot;&amp;quot;);
+	var dat22 = dat2.replace(/-/g,&amp;quot;&amp;quot;);
+	if (dat11 &amp;gt; dat22) {
+		_this.SetCellText(0,1,3,dat1);
+	}
+	
+	param_dat1 = _this.GetCellText(0,1,1);
+	param_dat2 = _this.GetCellText(0,1,3);
+	param_kmbh = _this.GetCellText(0,1,5);
+	param_rjkx = _this.GetCellText(0,1,8);
+}
+
+//单元格焦点变动
+function _thisOnCellFocusChange(sheet,rowold,colold,rownew,colnew)
+{
+	_thisOnCellModify(sheet,rowold,colold,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);
+}
+
+//选择所有科目
+function setKMBHNULL()
+{
+	_this.SetCellText(0,1,5,&amp;quot;%&amp;quot;);
+}
+
+var sbz = 1;
+//录入科目
+function setkmbh()
+{
+	if (sbz == 1) {
+		_this.SetToStandardCell(0,1,5);
+		_this.SetCellFocus(0,1,5);
+		sbz = 2;
+	}
+	else {
+		_this.SetToComboBox(&amp;quot;&amp;quot;,0,1,5,kmList);	
+		sbz = 1;
+	}
+	_this.SetRedraw(1);
+	
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >RJZKXTJ</ID><NAME >日记账款项统计</NAME><DATDSC >SELECT (select name from v_cw_xzlx where id=b.xzlx) xz,a.RJLX,   
+         b.KXMC,   
+         sum( decode(d.JEFX,&amp;apos;借&amp;apos;, nvl(d.JE,0), 0 ) ) JFJE,
+         sum( decode(d.JEFX,&amp;apos;贷&amp;apos;, nvl(d.JE,0), 0 ) ) DFJE,
+         sum( decode(d.JEFX,&amp;apos;借&amp;apos;, nvl(d.JE,0), 0 ) ) - sum( decode(d.JEFX,&amp;apos;贷&amp;apos;, nvl(d.JE,0), 0 ) ) JDJE
+    FROM CW_RJLXB a,   
+         CW_RJLXMXB b,   
+         CW_RJZB c,   
+         CW_RJZMXB d  
+   WHERE ( b.SBH = a.SBH ) and  
+         ( b.ZTH = a.ZTH ) and  
+         ( b.LXBH = a.LXBH ) and  
+         ( b.SBH = c.SBH||&amp;apos;&amp;apos; ) and  
+         ( d.SBH = c.SBH||&amp;apos;&amp;apos; ) and  
+         ( d.LSH = c.LSH||&amp;apos;&amp;apos; ) and  
+         ( d.ZTH = c.ZTH||&amp;apos;&amp;apos; ) and  
+         ( d.SBH = b.SBH ) and  
+         ( d.ZTH = b.ZTH ) and  
+         ( d.LXBH = b.LXBH ) and  
+         ( d.LXXH = b.MXXH ) and
+         ( c.ORG = &amp;apos;[%SYS_ORGID]&amp;apos; ) and  
+         ( c.ACC = &amp;apos;[%SYS_ACCID]&amp;apos; ) and  
+         ( (trim(to_char(c.YY,&amp;apos;0000&amp;apos;))||&amp;apos;-&amp;apos;||trim(to_char(c.MM,&amp;apos;00&amp;apos;))||&amp;apos;-&amp;apos;||trim(to_char(c.DD,&amp;apos;00&amp;apos;))) &amp;gt;= &amp;apos;[%DAT1]&amp;apos; ) and  
+         ( (trim(to_char(c.YY,&amp;apos;0000&amp;apos;))||&amp;apos;-&amp;apos;||trim(to_char(c.MM,&amp;apos;00&amp;apos;))||&amp;apos;-&amp;apos;||trim(to_char(c.DD,&amp;apos;00&amp;apos;)))&amp;lt;= &amp;apos;[%DAT2]&amp;apos; ) and  
+         ( c.KMBH like &amp;apos;[%KMBH]%&amp;apos; ) and  a.LXBH like &amp;apos;[%RJLX]%&amp;apos;
+  GROUP BY b.xzlx,b.LXBH,b.MXXH,a.RJLX,b.KXMC
+  ORDER BY b.xzlx,b.LXBH,b.MXXH
+</DATDSC><C4 >RJZ_TJMX</C4><C5 >RJZ_TJMX</C5><C6 >RJZ_TJMX</C6><C7 >RJZ_TJMX</C7><C8 >RJZ_TJMX</C8><C9 >RJZKXTJ</C9><C10 >RJZKXTJ</C10></ROW>
+<ROW num="1" ><ID >XZSUM</ID><NAME >按险种统计</NAME><DATDSC >select xzid,xz,sum(jfje) jfje,sum(dfje) dfje,sum(jdje) jdje from ( SELECT b.xzlx xzid,(select name from v_cw_xzlx where id=b.xzlx) xz,a.RJLX,   
+         b.KXMC,   
+         sum( decode(d.JEFX,&amp;apos;借&amp;apos;, nvl(d.JE,0), 0 ) ) JFJE,
+         sum( decode(d.JEFX,&amp;apos;贷&amp;apos;, nvl(d.JE,0), 0 ) ) DFJE,
+         sum( decode(d.JEFX,&amp;apos;借&amp;apos;, nvl(d.JE,0), 0 ) ) - sum( decode(d.JEFX,&amp;apos;贷&amp;apos;, nvl(d.JE,0), 0 ) ) JDJE
+    FROM CW_RJLXB a,   
+         CW_RJLXMXB b,   
+         CW_RJZB c,   
+         CW_RJZMXB d  
+   WHERE ( b.SBH = a.SBH ) and  
+         ( b.ZTH = a.ZTH ) and  
+         ( b.LXBH = a.LXBH ) and  
+         ( b.SBH = c.SBH||&amp;apos;&amp;apos; ) and  
+         ( d.SBH = c.SBH||&amp;apos;&amp;apos; ) and  
+         ( d.LSH = c.LSH||&amp;apos;&amp;apos; ) and  
+         ( d.ZTH = c.ZTH||&amp;apos;&amp;apos; ) and  
+         ( d.SBH = b.SBH ) and  
+         ( d.ZTH = b.ZTH ) and  
+         ( d.LXBH = b.LXBH ) and  
+         ( d.LXXH = b.MXXH ) and
+         ( c.ORG = &amp;apos;[%SYS_ORGID]&amp;apos; ) and  
+         ( c.ACC = &amp;apos;[%SYS_ACCID]&amp;apos; ) and  
+         ( (trim(to_char(c.YY,&amp;apos;0000&amp;apos;))||&amp;apos;-&amp;apos;||trim(to_char(c.MM,&amp;apos;00&amp;apos;))||&amp;apos;-&amp;apos;||trim(to_char(c.DD,&amp;apos;00&amp;apos;))) &amp;gt;= &amp;apos;[%DAT1]&amp;apos; ) and  
+         ( (trim(to_char(c.YY,&amp;apos;0000&amp;apos;))||&amp;apos;-&amp;apos;||trim(to_char(c.MM,&amp;apos;00&amp;apos;))||&amp;apos;-&amp;apos;||trim(to_char(c.DD,&amp;apos;00&amp;apos;)))&amp;lt;= &amp;apos;[%DAT2]&amp;apos; ) and  
+         ( c.KMBH like &amp;apos;[%KMBH]%&amp;apos; ) and  a.LXBH like &amp;apos;[%RJLX]%&amp;apos;
+  GROUP BY b.xzlx,b.LXBH,b.MXXH,a.RJLX,b.KXMC
+  ORDER BY b.xzlx,b.LXBH,b.MXXH
+) group by xzid,xz order by xzid
+
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

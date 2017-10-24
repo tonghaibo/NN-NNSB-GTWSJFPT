@@ -1,0 +1,842 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >N0122001</MWID><NAME >文件批量结算</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >N0122001.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >批量文件处理接口</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >downFile</ID><NAME >下载文件</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >//下载文件
+function downFile()
+{
+	var param = new Object();
+	param.sbInstId = &amp;quot;45990081&amp;quot;;
+	param.bkInstId = &amp;quot;10200000&amp;quot;;
+	param.fileName = &amp;quot;BK10200000ToRS45990081_0122001_20160826100.txt.gz&amp;quot;;
+	param.ref = &amp;quot;201608260945161000000016007&amp;quot;;
+	param.fileMD5 = &amp;quot;eab28c6b81982c11b486860953b83fcf&amp;quot;;
+	param.BkSeq = &amp;quot;201609010946471000000015974&amp;quot;;
+	param.SiSeq = &amp;quot;45990001100000009999&amp;quot;;
+	param.fileTypeCode  = &amp;quot;0122001&amp;quot;;
+	param.czyxm = &amp;quot;银行10200000&amp;quot;;
+	var ret = invokeOSFuncExt(&amp;quot;testF0122001&amp;quot;,param);
+	alert(ret);
+	_this.SetCellText(0,0,0,ret);
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var web = new JavaPackage(&amp;quot;com.xlsgrid.net.web&amp;quot;);
+var servletpack = new JavaPackage(&amp;quot;com.xlsgrid.net.servlet&amp;quot;);
+var ftppack = new JavaPackage(&amp;quot;org.apache.commons.net.ftp&amp;quot;);
+var timepack = new JavaPackage( &amp;quot;com.xlsgrid.net.time&amp;quot; );
+var jschftp = new JavaPackage( &amp;quot;com.jcraft.jsch&amp;quot; );
+//		  文件类型代码	  发送机构		  接收机构		  			  文件名		文件MD5值		报文标识	银行流水号	社保流水号
+//&amp;quot;fileTypeCode=&amp;quot;+fileTypeCode+&amp;quot;&amp;sbInstId=&amp;quot;+sbInstId+&amp;quot;&amp;bkInstId=&amp;quot;+bkInstId+&amp;quot;&amp;jobseqid=&amp;quot;+jobseqid+&amp;quot;&amp;fileName=&amp;quot;+fileName+&amp;quot;&amp;fileMD5=&amp;quot;+fileMD5+&amp;quot;&amp;ref=&amp;quot;+ref+&amp;quot;&amp;BkSeq=&amp;quot;+BkSeq+&amp;quot;&amp;SiSeq=&amp;quot;+SiSeq
+function F0122001(sbInstId,bkInstId,fileName,ref,fileMD5,BkSeq,SiSeq,fileTypeCode,czyxm)
+{	
+	//fileName = &amp;quot;BK10200000ToRS459900_0122001_20160414011.txt&amp;quot;; //测试用
+	var db = null;
+	var db2 = null;//此连接用于记录日志
+	var line = &amp;quot;&amp;quot;;
+	var failecnt2 = 0;//已上机失败数（工行储蓄卡）
+	var failecnt3 = 0;//已上机失败数（工行信用卡）
+	var failecnt = 0;
+	var rowcount = 0;
+	var succcnt = 0;
+	var jsywlx = &amp;quot;&amp;quot;; 	//结算业务类型
+	var tcqbm = &amp;quot;&amp;quot;;	//统筹区编码
+	var msgUsrName = &amp;quot;&amp;quot;;    //通知消息人姓名
+	var a_yhrzrq = &amp;quot;&amp;quot;;
+	var a_yhrzsj = &amp;quot;&amp;quot;;
+	var a_sblsh = &amp;quot;&amp;quot;;	
+	var sbh = &amp;quot;&amp;quot;;
+	var zth = &amp;quot;&amp;quot;;
+	var thisorgid = &amp;quot;&amp;quot;;
+	var thisaccid = &amp;quot;&amp;quot;;	
+	var sysdate = &amp;quot;&amp;quot;;
+	var yszl_yhzl = &amp;quot;&amp;quot;;
+	var a_yhmc = &amp;quot;&amp;quot;;//社保方银行名称
+	var myfileName = fileName;
+	var a_ywpch = &amp;quot;&amp;quot;;//业务批次号 代发和代扣都按业务批次号
+	try{
+		db = new pub.EADatabase();
+		db2 = new pub.EADatabase();
+		//var czyxm = &amp;quot;银行&amp;quot;+bkInstId;
+		//先到枢纽服务器下载文件
+		writeLog(db2,ref,&amp;quot;批量文件结算&amp;quot;,&amp;quot;0&amp;quot;,&amp;quot;开始导入文件【&amp;quot;+fileName+&amp;quot;】&amp;quot;);
+		var sql = &amp;quot;select org,acc,sbh,zth,to_char(sysdate,&amp;apos;yyyymmdd&amp;apos;) sysdat from cw_ztb where yszl_sbjgdm = &amp;apos;&amp;quot;+sbInstId+&amp;quot;&amp;apos;&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		for(var i=0;i&amp;lt;ds.getRowCount();i++) {
+			sbh = ds.getStringAt(i,&amp;quot;sbh&amp;quot;);
+			zth = ds.getStringAt(i,&amp;quot;zth&amp;quot;);
+			thisorgid = ds.getStringAt(i,&amp;quot;org&amp;quot;);
+			thisaccid = ds.getStringAt(i,&amp;quot;acc&amp;quot;);
+			sysdate = ds.getStringAt(i,&amp;quot;sysdat&amp;quot;);
+		}
+		//获取银行种类（接收方）
+		yszl_yhzl = db.GetSQL(&amp;quot;select min(yhbm) from cw_dfdsb_yszl where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yszl_yhjgdm =&amp;apos;&amp;quot;+bkInstId+&amp;quot;&amp;apos; and szbz = &amp;apos;2&amp;apos;&amp;quot;);
+		//获取银行名称（接收方）
+		a_yhmc = db.GetSQL(&amp;quot;select nvl(max(yhmc),&amp;apos;NULL&amp;apos;) from cw_dfdsb_yszl where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yszl_yhjgdm =&amp;apos;&amp;quot;+bkInstId+&amp;quot;&amp;apos; and szbz = &amp;apos;2&amp;apos;&amp;quot;);
+		
+		var dfyhbm = db.GetSQL(&amp;quot;select yhbm from cw_dfdsb_yszl where sbh= &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and szbz =&amp;apos;2&amp;apos; and yszl_yhjgdm = &amp;apos;&amp;quot;+bkInstId+&amp;quot;&amp;apos;&amp;quot;);
+		var uo_ywjk = new SBCW_IYWJK(); //业务接口
+		var ywjkbz = uo_ywjk.getYWJKBZ(db,thisaccid);	
+		var sql = &amp;quot;select * from cw_dfdsb_yszl where yszl_yhjgdm = &amp;apos;&amp;quot;+bkInstId+&amp;quot;&amp;apos; and sbh= &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+		var ftpds = db.QuerySQL(sql);
+		var ftpip = ftpds.getStringAt(0,&amp;quot;FTP_IP&amp;quot;);//枢纽IP
+		var ftpport = ftpds.getStringAt(0,&amp;quot;FTP_PORT&amp;quot;);//枢纽端口
+		var ftpuser = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_NAME&amp;quot;);//账号
+		var ftppasswd = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_PASSWD&amp;quot;);//密码		
+		var ftploginpath = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_PATH&amp;quot;);//登录目录路径			
+		var ftpdownpath = ftpds.getStringAt(0,&amp;quot;FTP_DOWN_PATH&amp;quot;);//上传路径
+		var wjdownpath = ftploginpath + &amp;quot;/&amp;quot; +	 ftpdownpath; 	
+		var localpath = &amp;quot;/u/yszl_dsdf/incoming/&amp;quot;+sbInstId;
+		//判断localpath是否存在，不存在则要创建
+		var myfile = new java.io.File(localpath);
+		if(!myfile.exists()) {
+			myfile.mkdirs();
+		}
+		//写进日志
+		writeLog(db2,ref,&amp;quot;批量文件结算&amp;quot;,&amp;quot;10&amp;quot;,&amp;quot;开始下载文件【&amp;quot;+fileName+&amp;quot;】&amp;quot;);
+		//下载sftp						
+		var jsch = new jschftp.JSch();
+		var sftp = null;
+		var sshSession = null;
+		var localFile = &amp;quot;&amp;quot;;//未解压
+		var localFile2 = &amp;quot;&amp;quot;;//已解压
+		try{
+			sshSession = jsch.getSession(ftpuser,ftpip,&amp;quot;22&amp;quot;);
+			sshSession.setPassword(ftppasswd);
+			var config = new java.util.Properties();
+			config.put(&amp;quot;StrictHostKeyChecking&amp;quot;,&amp;quot;no&amp;quot;);
+			sshSession.setConfig(config);
+			sshSession.connect();
+			var channel = sshSession.openChannel(&amp;quot;sftp&amp;quot;);
+			channel.connect();
+			sftp = channel;
+			sftp.cd(wjdownpath);
+			localFile = new java.io.File(localpath + &amp;quot;/&amp;quot;+ fileName);
+			sftp.get(fileName,new java.io.FileOutputStream(localFile));
+			sftp.quit();
+			sshSession.disconnect();
+		}catch(ee){
+			if(sftp != null) sftp.quit();
+			if(sshSession != null) sshSession.disconnect();
+			throw new Exception(&amp;quot;下载文件到ftp失败:&amp;quot;+ee.toString());
+		}
+		writeLog(db2,ref,&amp;quot;批量文件结算&amp;quot;,&amp;quot;20&amp;quot;,&amp;quot;开始解压文件【&amp;quot;+fileName+&amp;quot;】&amp;quot;);
+		//解压文件
+		var file1 = localpath + &amp;quot;/&amp;quot;+ fileName;
+		//检验md5
+		var chkMD5 = pub.EAFunc.getFileMD5(file1);
+		if(fileMD5 != chkMD5 ) {
+			throw new Exception(&amp;quot;检查文件【&amp;quot;+fileName+&amp;quot;】md5出错.\nfileMD5=&amp;quot;+fileMD5+&amp;quot;,chkMD5=&amp;quot;+chkMD5);			
+		}		
+		var file2 = localpath + &amp;quot;/&amp;quot;+ pub.EAFunc.Replace(fileName,&amp;quot;.gz&amp;quot;,&amp;quot;&amp;quot;);	
+		try{
+			pub.EAFunc.DecompressGzip(file1,file2);
+		}catch(ee){
+			throw new Exception(&amp;quot;解压文件【&amp;quot;+fileName+&amp;quot;】出错\n&amp;quot;+ee.toString());			
+		}				
+		fileName = pub.EAFunc.Replace(fileName,&amp;quot;.gz&amp;quot;,&amp;quot;&amp;quot;);					
+		if(localFile.length() != 0 &amp;&amp; localFile.length != &amp;quot;&amp;quot;) {
+			var fi = new java.io.FileInputStream(localpath + &amp;quot;/&amp;quot; + fileName);
+			var ir = new java.io.InputStreamReader(fi,&amp;quot;GBK&amp;quot;);
+			//var sr = new java.io.StringReader(pub.EAFunc.readFile(localpath + &amp;quot;/&amp;quot; + fileName));
+			var br = new java.io.BufferedReader(ir);						
+			//取第一行数据
+			writeLog(db2,ref,&amp;quot;批量文件结算&amp;quot;,&amp;quot;30&amp;quot;,&amp;quot;开始读取文件【&amp;quot;+fileName+&amp;quot;】&amp;quot;);
+			line = br.readLine();				
+			rowcount ++;
+			if(line == &amp;quot;&amp;quot;) {
+				throw new Exception(&amp;quot;失败:文件第一行为空&amp;quot;);
+			}
+			var length = db.GetSQL(&amp;quot;select lengthb(&amp;apos;&amp;quot;+line+&amp;quot;&amp;apos;) from dual&amp;quot;);		
+			if(length != 144) {
+				throw new Exception(&amp;quot;文件【&amp;quot;+fileName+&amp;quot;】第一行长度不正确，正确长度：144，实际长度：&amp;quot;+length);			
+			}
+			var wjscrq = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,0,8),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);           /*文件生成日期 8*/
+			var wjscsj = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,8,6),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);           /*文件生成时间 6*/
+			var wjclpch = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,14,20),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);	/*文件处理批次号 20 */
+			var wjcnt = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,34,8),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*文件记录数 8 */
+			var zfsje = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,42,17),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*发生总金额 17*/
+			var sucnums = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,59,8),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*成功记录数 8*/
+			var sucje = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,67,17),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*成功总金额 17*/
+			var sendid = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,84,30),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*发送方机构代码（银行） 30*/
+			var recvid = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,114,30),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);	/*接收方机构代码（社保） 30*/	
+
+			var olddjh = &amp;quot;&amp;quot;;
+			var succ_djh = &amp;quot;&amp;quot;;//记录支付成功的明细所属单据号字符串	
+			var fkzh = &amp;quot;&amp;quot;;
+			var fkhm = &amp;quot;&amp;quot;;	
+			var a_yhrjzkmbh = &amp;quot;&amp;quot;;//入银行账的科目编号
+			var a_skzh = &amp;quot;&amp;quot;;  //批量代扣社保账户
+			var a_skhm = &amp;quot;&amp;quot;; //批量代扣社保账户
+			var a_yhhzlsh = &amp;quot;&amp;quot;;//银行汇总流水号
+			var a_old_sblsh = &amp;quot;&amp;quot;;//批量发放时入账流水号
+			tcqbm = db.GetSQL(&amp;quot;select max(tcqbm) from cw_sbsb where sbh in (select sbh from cw_ztb where yszl_sbjgdm = &amp;apos;&amp;quot;+recvid+&amp;quot;&amp;apos;)&amp;quot;);
+			var backup2 = &amp;quot;&amp;quot;;
+			var backup3 = &amp;quot;&amp;quot;;			
+			while ((line = br.readLine()) != null) {
+				rowcount ++;
+				if(line == &amp;quot;&amp;quot;) continue;				
+				var length = db.GetSQL(&amp;quot;select lengthb(&amp;apos;&amp;quot;+line+&amp;quot;&amp;apos;) from dual&amp;quot;);				/*返回文件明细行每行固定长度为601*/
+//				if(length != 611) {
+//					db.Rollback();
+//					writeLog(ref,&amp;quot;批量文件结算&amp;quot;,&amp;quot;100&amp;quot;,&amp;quot;文件【&amp;quot;+fileName+&amp;quot;】第&amp;quot;+rowcount+&amp;quot;行长度不正确，正确长度：611，实际长度：&amp;quot;+length);
+//					throw new Exception(&amp;quot;文件【&amp;quot;+fileName+&amp;quot;】第&amp;quot;+rowcount+&amp;quot;行长度不正确，正确长度：611，实际长度：&amp;quot;+length);
+//					return;				
+//				}			
+				//return line;				
+				var sbjbjgdm = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,0,30),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);               /*社保经办机构代码 30*/
+				var yhrzrq = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,30,8),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);                /*银行入账日期 8*/
+				var yhrzsj = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,38,6),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		       /*银行入账时间 6 */
+				var yhlsh = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,44,30),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*银行流水号 30 */
+				var sblsh = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,74,30),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*社保流水号 30*/
+				var bb = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,104,3),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*币别 3*/
+				var chbz = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,107,1),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*钞汇标志 1*/
+				var ywgnh = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,108,7),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*业务功能号 7*/
+				jsywlx = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,115,3),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*结算业务类型 3*/
+				fkzh = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,118,34),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);           	/*付款账号 34*/
+				fkhm = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,152,90),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);           	/*付款户名 90*/
+				var skhh = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,242,12),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*收款行号 12 */
+				var skzh = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,254,34),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*收款账号 34 */
+				var skhm = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,288,90),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*收款户名 90*/
+				var jyje = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,378,17),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*交易金额 17*/
+				var cbsxf = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,395,17),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*应收参保对象手续费 17*/
+				var sbsxf = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,412,17),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*应收社保机构手续费 17*/
+				var retcode = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,429,4),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*返回码 4*/
+				var retinfo = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,433,128),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*返回信息 128*/
+				var backup1 = 	pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,561,10),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);    		/*备用1 10*/
+				if(bkInstId == &amp;quot;10200000&amp;quot;) {//工行格式与别的银行不一样
+					backup2 = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,571,10),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*备用2 10*/
+					backup3 = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,581,20),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*备用3 20*/					
+				}
+				else {
+					backup2 = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,571,30),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*备用2 30* 广西由原来10位扩展到20位，启用为银行支付失败退回汇总一笔入账的流水号（失败流水号整个文件相同）。*/ 
+					backup3 = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,601,30),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*备用3 30* 广西启用为支付先汇总文件总额一笔扣社保基金账户的流水号或代扣成功的汇总一笔入账流水号（成功流水号整个文件相同）*/					
+					a_yhhzlsh = backup3;
+				}
+				if(jsywlx == &amp;quot;&amp;quot;) {
+					throw new Exception(&amp;quot;回盘出错:结算业务类型为空,出错行:&amp;quot;+rowcount);				
+				}				
+				else if(jsywlx == &amp;quot;005&amp;quot;) {//社保批量代扣
+					//throw new Exception(&amp;quot;1&amp;quot;);
+					var djh = sblsh.substring(8);
+//					var BAZ610 = &amp;quot;&amp;quot;;
+					var AAA027 = &amp;quot;&amp;quot;;
+					var BAZ901 = &amp;quot;&amp;quot;;
+					var BAZ902 = &amp;quot;&amp;quot;;
+					var BAC004 = &amp;quot;&amp;quot;;
+					var BAE415 = &amp;quot;&amp;quot;;
+					var AAE076 = &amp;quot;&amp;quot;;
+					var BAE036 = &amp;quot;&amp;quot;;
+					var AIC263 = 0.00;
+					var BAE419 = &amp;quot;&amp;quot;;
+					var AAB034 = &amp;quot;&amp;quot;;
+					var BAC003 = &amp;quot;&amp;quot;;
+					var djh_old = &amp;quot;&amp;quot;;
+					var hkbz = &amp;quot;&amp;quot;; 
+					var hkxx = &amp;quot;&amp;quot;;	
+					var dwbh = &amp;quot;&amp;quot;;	
+					var BAE421 = &amp;quot;&amp;quot;;																	
+					sql = &amp;quot;select a.AAA027,a.AAB034 ,a.BAZ901,a.BAZ902,a.BAC004,a.BAE415,a.AAE076,a.BAE036,sum(a.aic263) AIC263,a.BAC003,a.BAE419 BAE419,a.AAE011,a.BAE074,a.AAB001,a.bae421
+						from ac95 a where bae074 = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and aaa027 = &amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos;
+						group by a.AAA027,a.AAB034 ,a.BAZ901,a.BAZ902,a.BAC004,a.BAE415,a.AAE076,a.BAE036 ,a.BAC003,a.BAE419,a.BAE074,a.AAB001,a.aae011,a.bae421&amp;quot;;				
+					if(djh != djh_old) {
+							
+						try{msgUsrName = db.GetSQL(&amp;quot;SELECT max(AAE011) aae011 FROM AC95 WHERE bae074 = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and rownum = 1&amp;quot;);}catch(eee){}											
+						var tmpds = db.QuerySQL(sql);	
+								//throw new Exception(sql);			
+						if(retcode != &amp;quot;1007&amp;quot; &amp;&amp; retcode != &amp;quot;0000&amp;quot;){	//失败
+														failecnt ++;																				
+							if (tmpds.getRowCount() &amp;gt; 0) {
+								//调用接口（银海、东软）通知业务 (一笔明细调用一次接口）
+//								BAZ610 = tmpds.getStringAt(0,&amp;quot;BAZ610&amp;quot;); //业务内部序号
+								AAA027 = tmpds.getStringAt(0,&amp;quot;AAA027&amp;quot;); //所属统筹区
+								AAB034 = tmpds.getStringAt(0,&amp;quot;AAB034&amp;quot;); //所属统筹区
+								BAZ901 = tmpds.getStringAt(0,&amp;quot;BAZ901&amp;quot;); //回盘结果状态码
+								BAZ902 = tmpds.getStringAt(0,&amp;quot;BAZ902&amp;quot;); //回盘结果失败原因
+								BAC004 = tmpds.getStringAt(0,&amp;quot;BAC004&amp;quot;); //回盘时间
+								BAE415 = tmpds.getStringAt(0,&amp;quot;BAE415&amp;quot;); //发放批次
+								AAE076 = tmpds.getStringAt(0,&amp;quot;AAE076&amp;quot;); //财务流水号
+								BAE036 = tmpds.getStringAt(0,&amp;quot;BAE036&amp;quot;); //回盘时间
+								AIC263 = tmpds.getStringAt(0,&amp;quot;AIC263&amp;quot;); //总金额
+								BAC003 = tmpds.getStringAt(0,&amp;quot;BAC003&amp;quot;); //回盘文件名
+								djh = tmpds.getStringAt(0,&amp;quot;BAE074&amp;quot;); //业务单据号
+								BAE421 = tmpds.getStringAt(0,&amp;quot;bae421&amp;quot;); //报盘流水号
+								hkbz = &amp;quot;7&amp;quot;;  //将银社直连的错误码转为调用银海接口的
+								hkxx = retinfo;
+								a_ywpch = BAE415;
+								//判断是否已经回盘 回盘文件名与导入文件名相同则视为已经回盘
+								var rapSql = &amp;quot;SELECT nvl(instrb(&amp;apos;&amp;quot;+BAC003+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+fileName+&amp;quot;&amp;apos;),0) repLen FROM dual&amp;quot;;
+								var repLen = db.GetSQL(rapSql);
+								if(repLen &amp;gt; 0){
+									throw new Exception(&amp;quot;文件名:&amp;quot;+fileName+&amp;quot;已经回盘过,不允许再回盘&amp;quot;);								
+								}							
+								//更新回盘信息
+								sql = &amp;quot;update ac95 set BAZ901=&amp;apos;&amp;quot;+retcode+&amp;quot;&amp;apos;,BAZ902=&amp;apos;&amp;quot;+hkxx+&amp;quot;&amp;apos;,BAC004=to_date(to_char(sysdate,&amp;apos;yyyy-mm-dd&amp;apos;),&amp;apos;yyyy-mm-dd&amp;apos;),BAC003=&amp;apos;&amp;quot;+fileName+&amp;quot;&amp;apos;,BAE011=&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,BAE036=sysdate,bie085 = &amp;apos;2&amp;apos;,zfbz = &amp;apos;0&amp;apos;,
+											YSZL_YHRZLSH = &amp;apos;&amp;quot;+yhlsh+&amp;quot;&amp;apos;,YSZL_YHRZRQ=&amp;quot;+yhrzrq+&amp;quot;,YSZL_YHRZSJ=&amp;quot;+yhrzsj+&amp;quot;,YSZL_YSCBDXSXF =to_number(&amp;apos;&amp;quot;+cbsxf +&amp;quot;&amp;apos;)/100 ,YSZL_YSSBJGSXF =to_number(&amp;apos;&amp;quot;+sbsxf +&amp;quot;&amp;apos;)/100,zfbz = 1
+									where  bae074 = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and aaa027 = &amp;apos;&amp;quot;+AAA027+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;	
+								var upcnt = db.ExcecutSQL(sql);														
+								if (upcnt == 0) {
+									throw new Exception(&amp;quot;1、更新回盘记录不成功，请检查回盘文件数据格式是否正确！，出错行号:&amp;quot;+rowcount);							
+								}
+//								if(ywjkbz == &amp;quot;YH&amp;quot;) {
+//									sql = &amp;quot;update v_si_djb_tmp set zfbz = 1,zbr=&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,zfsj=sysdate,cwbz=0
+//											where djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and sbh =&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth =&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+//									var upcntrow = db.ExcecutSQL(sql);
+//									if (upcntrow == 0) {
+//										throw new Exception(&amp;quot;2、更新SI_DJB_TMP回盘记录不成功，请检查回盘文件数据格式是否正确！出错行号:&amp;quot;+rowcount+&amp;quot;.\n&amp;quot;);
+//									} 
+//								}								
+								//   PROCEDURE prc_p_PayInterface(
+								//      prm_aaz288      IN     VARCHAR2    ,  -- 征集通知ID（业务单据号=中间表DJH）
+								//      prm_AAD016      IN     VARCHAR2    ,  -- 缴费方式  &amp;apos;1&amp;apos; 托收  &amp;apos;2&amp;apos; 银行缴费  &amp;apos;3&amp;apos; 转账  &amp;apos;4&amp;apos; 其他 
+								//      prm_yad003      IN     NUMBER      ,  -- 缴费金额
+								//      prm_AAD017      IN     DATE        ,  -- 缴费日期
+								//      prm_BAZ901      IN     VARCHAR2    ,  -- 回盘结果   缴费方式为 1 时填写
+								//      prm_BAZ902      IN     VARCHAR2    ,  -- 回盘失败原因  缴费方式为 1 时填写
+								//      prm_aae011      IN     VARCHAR2    ,  -- 经办人
+								//      prm_yab003      IN     VARCHAR2    ,  -- 经办所属机构
+								//      prm_AppCode     OUT    VARCHAR2    ,  -- 错误代码
+								//      prm_ErrorMsg    OUT    VARCHAR2       -- 错误内容
+								//      );	
+								//调用业务接口
+//								var aad016 = &amp;quot;&amp;quot;;
+//								if(ywjkbz == &amp;quot;DR&amp;quot;){
+//									aad016 = &amp;quot;BPHT&amp;quot;;
+//								}else if(ywjkbz == &amp;quot;YH&amp;quot;){
+//									aad016 = &amp;quot;1&amp;quot;;
+//								}							
+//								var yh_ywjk = new SBCW_YWJK_YH();
+//								var yhjk_msg = yh_ywjk.yhjk_PayInterface(db,djh,aad016,AIC263,yhrzrq,hkbz,hkxx,czyxm,AAA027 ,thisorgid ,thisaccid,ywjkbz,BAE421,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;);																					
+//								var ret = yhjk_msg.split(&amp;quot;@&amp;quot;)[0];
+//								db.Rollback();
+//								return yhjk_msg;		
+//								//throw new Exception(yhjk_msg);
+//								var retmes = yhjk_msg.split(&amp;quot;@&amp;quot;)[1];
+//								
+//								if(ret!=&amp;quot;NOERROR&amp;quot;){
+//									throw new Exception(&amp;quot;2、调用业务接口prc_p_PayInterface出错！出错行号:&amp;quot;+rowcount+&amp;quot;单据号:&amp;quot;+djh+&amp;quot;;出错原因:&amp;quot;+retmes);							
+//								}
+//								writeLog(db2,ref,&amp;quot;批量文件结算&amp;quot;,&amp;quot;50&amp;quot;,&amp;quot;单据号【&amp;quot;+djh+&amp;quot;】托收失败，处理成功，业务接口返回信息:&amp;quot;+yhjk_msg);	
+							}//end tmpds.getRowCount()
+							else{
+									throw new Exception(&amp;quot;1.单据号&amp;quot;+djh+&amp;quot;回盘失败，未拷盘&amp;quot;);
+							}
+						}else if(retcode == &amp;quot;0000&amp;quot;){//成功
+							//throw new Exception(tmpds.getRowCount());
+							if (tmpds.getRowCount() &amp;gt; 0) {
+								//调用接口（银海、东软）通知业务 (一笔明细调用一次接口）
+//								BAZ610 = tmpds.getStringAt(0,&amp;quot;BAZ610&amp;quot;); //业务内部序号
+								AAA027 = tmpds.getStringAt(0,&amp;quot;AAA027&amp;quot;); //所属统筹区
+								AAB034 = tmpds.getStringAt(0,&amp;quot;AAB034&amp;quot;); //所属统筹区
+								BAZ901 = tmpds.getStringAt(0,&amp;quot;BAZ901&amp;quot;); //回盘结果状态码
+								BAZ902 = tmpds.getStringAt(0,&amp;quot;BAZ902&amp;quot;); //回盘结果失败原因
+								BAC004 = tmpds.getStringAt(0,&amp;quot;BAC004&amp;quot;); //回盘时间
+								BAE415 = tmpds.getStringAt(0,&amp;quot;BAE415&amp;quot;); //发放批次
+								AAE076 = tmpds.getStringAt(0,&amp;quot;AAE076&amp;quot;); //财务流水号
+								BAE036 = tmpds.getStringAt(0,&amp;quot;BAE036&amp;quot;); //回盘时间
+								AIC263 = tmpds.getStringAt(0,&amp;quot;AIC263&amp;quot;); //总金额
+								BAE419 = tmpds.getStringAt(0,&amp;quot;BAE419&amp;quot;); //银行种类
+								BAC003 = tmpds.getStringAt(0,&amp;quot;BAC003&amp;quot;); //回盘文件名
+								dwbh = tmpds.getStringAt(0,&amp;quot;AAB001&amp;quot;); //单位编号
+								BAE421 = tmpds.getStringAt(0,&amp;quot;bae421&amp;quot;); //报盘流水号
+								djh = tmpds.getStringAt(0,&amp;quot;BAE074&amp;quot;); //业务单据号
+								hkbz = &amp;quot;0&amp;quot;;  				//将银社直连的错误码转为调用银海接口的
+								hkxx = retinfo;
+								tcqbm = AAA027;
+								a_yhrzrq = yhrzrq;
+								a_yhrzsj = yhrzsj;
+								a_skzh = skzh;
+								a_skhm = skhm;
+								a_ywpch = BAE415;
+								succcnt++;	
+								if(a_sblsh == &amp;quot;&amp;quot;) {
+									var service = new SBCW_sbcwService();
+									a_sblsh = service.genSiSeq(sbInstId);
+								}														
+								//判断是否已经回盘
+								//判断是否已经回盘 回盘文件名与导入文件名相同则视为已经回盘							
+								var rapSql = &amp;quot;SELECT nvl(instrb(&amp;apos;&amp;quot;+BAC003+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+fileName+&amp;quot;&amp;apos;),0) repLen FROM dual&amp;quot;;
+								var repLen = db.GetSQL(rapSql);
+								if(repLen &amp;gt; 0){
+									throw new Exception(&amp;quot;文件名:&amp;quot;+fileName+&amp;quot;已经回盘过,不允许再回盘&amp;quot;);							
+								}												
+								if (AAE076 != &amp;quot;&amp;quot;){
+									throw new Exception(&amp;quot;单据号&amp;quot;+djh+&amp;quot;已经入账，不允许回盘&amp;quot;);								
+								}else{
+									//获取个人信息
+									sql = &amp;quot;select a.aac001,
+										       a.aae135,
+										       a.aae140,
+										       a.bie086,
+										       to_number(g.jfdc_value) jfdc,
+										       substr(aae002, 0, instr(aae002, &amp;apos;-&amp;apos;, 1) - 1) KSNY,
+										       substr(aae002, instr(aae002, &amp;apos;-&amp;apos;, 1) + 1, instr(aae002, &amp;apos;-&amp;apos;, 2)) JZNY,
+										       to_char(sysdate, &amp;apos;yyyymmdd&amp;apos;) DZSJ,
+										       (select YWXT_DRDM
+										          from aa10 B
+										         where B.aaa100 = &amp;apos;AAE008&amp;apos;
+										           AND B.AAA102 = A.AAE008) EJDM
+										  from ac95 a, t_yszl_grsbxxb g
+										 where substr(g.yszl_sbjgdm, 0, 6) = a.aaa027
+										   and a.zth = g.zth
+										   and a.bae074 = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;
+										   and a.aac001 = g.aac001
+										   and a.aae140 = (select aaa102
+										                     from aa10 c
+										                    where c.aaa100 = &amp;apos;AAE140&amp;apos;
+										                      and c.yszl_dm = g.yszl_xzlx)
+										   and a.zfbz = &amp;apos;0&amp;apos;
+										   and a.aae008 = (select max(yhzl)
+										                     from cw_dfdsb_yszl b
+										                    where szbz = &amp;apos;2&amp;apos;
+										                      and b.yszl_yhjgdm = g.yszl_yhjgdm)&amp;quot;;
+										                   
+									var grds = db.QuerySQL(sql);
+									var AAC001 = grds.getStringAt(0,&amp;quot;AAC001&amp;quot;);
+									var AAE135 = grds.getStringAt(0,&amp;quot;AAE135&amp;quot;);
+									var AAE140 = grds.getStringAt(0,&amp;quot;AAE140&amp;quot;);
+									var LXBH = grds.getStringAt(0,&amp;quot;BIE086&amp;quot;);
+									if(LXBH == &amp;quot;32&amp;quot;) {
+										LXBH = &amp;quot;38&amp;quot;;
+									}
+									var jfdc = grds.getStringAt(0,&amp;quot;JFDC&amp;quot;);
+									var ksny = grds.getStringAt(0,&amp;quot;KSNY&amp;quot;);
+									var jzny = grds.getStringAt(0,&amp;quot;JZNY&amp;quot;);
+									var dzje = AIC263;
+									var dzlsh = yhlsh;
+									var dzsj = grds.getStringAt(0,&amp;quot;DZSJ&amp;quot;);
+									var ejdm = grds.getStringAt(0,&amp;quot;EJDM&amp;quot;);
+									//获取科目编号
+									sql = &amp;quot;SELECT nvl(max(kmbh),&amp;apos;NULL&amp;apos;) FROM CW_BKDYHB WHERE SBH = &amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND BZ = &amp;apos;12&amp;apos; AND (MRTSTZYHBZ = &amp;apos;217&amp;apos; or MRTSTZYHBZ = &amp;apos;218&amp;apos;)
+										AND YHZL IN (SELECT YHBM FROM CW_DFDSB WHERE SBH = &amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND YHZL = &amp;apos;&amp;quot;+BAE419+&amp;quot;&amp;apos; AND SZBZ = &amp;apos;2&amp;apos; AND YHBM &amp;lt;&amp;gt; &amp;apos;*&amp;apos;) &amp;quot;;
+									var kmbh = db.GetSQL(sql);
+									if(kmbh == &amp;quot;NULL&amp;quot;){
+										sql = &amp;quot;SELECT nvl(max(kmbh),&amp;apos;NULL&amp;apos;) FROM CW_BKDYHB WHERE SBH = &amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND BZ = &amp;apos;12&amp;apos; AND (MRTSTZYHBZ = &amp;apos;227&amp;apos; or MRTSTZYHBZ = &amp;apos;228&amp;apos;)
+											AND YHZL IN (SELECT YHBM FROM CW_DFDSB WHERE SBH = &amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND YHZL = &amp;apos;&amp;quot;+BAE419+&amp;quot;&amp;apos; AND SZBZ = &amp;apos;2&amp;apos; AND YHBM &amp;lt;&amp;gt; &amp;apos;*&amp;apos;)&amp;quot;;								
+										kmbh = db.GetSQL(sql);	
+										if(kmbh == &amp;quot;NULL&amp;quot;) {								
+											throw new Exception(&amp;quot;批量文件结算&amp;quot;,&amp;quot;100&amp;quot;,&amp;quot;查询无此银行科目,请到[账务管理-&amp;gt;账务维护-&amp;gt;银行帐号设置]&amp;quot;+&amp;quot;\n&amp;quot;+&amp;quot;请检查[&amp;quot;+yhmc+&amp;quot;]社保基金收入户是否设置为统一征收银行或者本行征收银行!!!!!!&amp;quot;);									
+										
+										}	
+									}									
+																		
+									sql = &amp;quot;select count(1) from cw_kmb WHERE sbh = &amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;&amp;quot;;								
+									var km_count = db.GetSQL(sql);
+									if(km_count == 0){
+										throw new Exception(&amp;quot;查询无此科目，科目编号：&amp;quot;+kmbh+&amp;quot;银行种类：&amp;quot;+BAE419);									
+									}
+									a_yhrjzkmbh = kmbh;
+									//获取顺序号
+									sql = &amp;quot;select nvl(max(sxh),0) + 1 sxh,nvl(max(pch),0) + 1 pch from cw_rjzb where sbh = &amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; AND kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos; 
+										and yy = substrb(&amp;apos;&amp;quot;+yhrzrq+&amp;quot;&amp;apos;,1,4) and mm = substrb(&amp;apos;&amp;quot;+yhrzrq+&amp;quot;&amp;apos;,5,2)&amp;quot;;
+										
+									var sxh_ds = db.QuerySQL(sql);
+									var sxh = sxh_ds.getStringAt(0,&amp;quot;sxh&amp;quot;);
+									var pch = sxh_ds.getStringAt(0,&amp;quot;pch&amp;quot;);
+									//获取流水号
+									var lsh = db.GetSQL(&amp;quot;SELECT seq_rjz_lsh.NEXTVAL FROM dual&amp;quot;);
+									//插入日记账表
+									var rjzrq = yhrzrq;
+//									sql = &amp;quot;insert into cw_rjzb(sbh,zth,org,acc,lsh,yy,mm,dd,sxh,czyxm,pch,djh,old_pch,zy,kmbh,lxbh,dwbh,dwmc,je,jefx,jsfs,yspz_fjzs,yspz_fjpch,yspz_lrrq,czysj,siseqno,mkjmbz)
+//										select sbh,zth,org,acc,&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos; lsh,&amp;apos;&amp;quot;+rjzrq.substring(0,4)+&amp;quot;&amp;apos; yy,&amp;apos;&amp;quot;+rjzrq.substring(4,6)+&amp;quot;&amp;apos; mm,&amp;apos;&amp;quot;+rjzrq.substring(6,8)+&amp;quot;&amp;apos; dd,&amp;apos;&amp;quot;+sxh+&amp;quot;&amp;apos; sxh,
+//										&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos; zbr,&amp;apos;&amp;quot;+pch+&amp;quot;&amp;apos; pch,djh,zjpch,max(zy) zy,&amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos; kmbh,
+//										replace(to_char(wm_concat(distinct lxbh)),&amp;apos;,&amp;apos;,&amp;apos;&amp;apos;) lxbh,dwbh,dwmc,
+//										sum(je1+je2+je3+je4+je5+je6+je7+je8+je9+je10+je11+je12+je13+je14+je15) je,&amp;apos;借&amp;apos; jefx,&amp;apos;托收&amp;apos; jsfs,&amp;apos;&amp;apos; yspz_fjzs,&amp;apos;&amp;apos; yspz_fjpch,null yspz_lrrq,sysdate,&amp;apos;&amp;quot;+a_sblsh+&amp;quot;&amp;apos;,&amp;apos;银社批量代扣&amp;apos;
+//										from v_si_djb_tmp where DJH = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;
+//										   AND YWLX = &amp;apos;A110&amp;apos;
+//										   and dwbh = &amp;apos;&amp;quot;+dwbh+&amp;quot;&amp;apos;
+//										   AND RZBZ = 0
+//										   AND ZFBZ = 0
+//										GROUP BY sbh,zth,org,acc,zjpch,djh,dwbh,dwmc,djh&amp;quot;;								
+//									var rjzcnt = db.ExcecutSQL(sql); 
+//									if (rjzcnt == 0) {
+//										throw new Exception(&amp;quot;1、插入财务日记账表出错！出错行号:&amp;quot;+rowcount+&amp;quot;.\n&amp;quot;+sql);							
+//									}
+
+									sql = &amp;quot;insert into cw_rjzb(sbh,zth,org,acc,lsh,yy,mm,dd,sxh,czyxm,pch,djh,old_pch,zy,kmbh,lxbh,dwbh,dwmc,je,jefx,jsfs,yspz_fjzs,yspz_fjpch,yspz_lrrq,czysj,siseqno,mkjmbz，grbh,grxm)
+										select &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; sbh,&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; zth,&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos; lsh,&amp;apos;&amp;quot;+rjzrq.substring(0,4)+&amp;quot;&amp;apos; yy,&amp;apos;&amp;quot;+rjzrq.substring(4,6)+&amp;quot;&amp;apos; mm,&amp;apos;&amp;quot;+rjzrq.substring(6,8)+&amp;quot;&amp;apos; dd,
+											&amp;apos;&amp;quot;+sxh+&amp;quot;&amp;apos; sxh,&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos; zbr,&amp;apos;&amp;apos;,&amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;收&amp;apos;||aac003||aae002||(select AAA103 from aa10 where aaa100 = &amp;apos;AAE140&amp;apos; and aaa102 = a.aae140)||&amp;apos;保险费&amp;apos; zy,
+											&amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos; kmbh,&amp;apos;&amp;quot;+LXBH+&amp;quot;&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;&amp;apos;,sum(aic263),&amp;apos;借&amp;apos;,&amp;apos;网上缴费&amp;apos; jsfs,&amp;apos;&amp;apos; yspz_fjzs,&amp;apos;&amp;apos; yspz_fjpch,null yspz_lrrq,sysdate,&amp;apos;&amp;quot;+a_sblsh+&amp;quot;&amp;apos;,&amp;apos;银社批量代扣&amp;apos;,aac001,aac003 
+							      			FROM  ac95 a
+							      			where bae074=&amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and aae076 is null and NVL(zfbz,&amp;apos;0&amp;apos;) = &amp;apos;0&amp;apos; and aaa027 = &amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos; 
+							      			group by bie086,bae074,aab001,aae002,aae140,aac001,aac003&amp;quot;;
+									var rjzcnt = db.ExcecutSQL(sql); 
+									if (rjzcnt == 0) {
+										throw new Exception(&amp;quot;1、插入财务日记账表出错！出错行号:&amp;quot;+rowcount+&amp;quot;.\n&amp;quot;+sql);							
+									}							      				
+									//插入明细表														
+//									sql = &amp;quot;SELECT  lxbh lxbh,
+//											NVL(JE1,0.00) JE1,
+//										       NVL(JE2,0.00) JE2,
+//										       NVL(JE3,0.00) JE3,
+//										       NVL(JE4,0.00) JE4,
+//										       NVL(JE5,0.00) JE5,
+//										       NVL(JE6,0.00) JE6,
+//										       NVL(JE7,0.00) JE7,
+//										       NVL(JE8,0.00) JE8,
+//										       NVL(JE9,0.00) JE9,
+//										       NVL(JE10,0.00) JE10,
+//										       NVL(JE11,0.00) JE11,
+//										       NVL(JE12,0.00) JE12,
+//										       NVL(JE13,0.00) JE13,
+//										       NVL(JE14,0.00) JE14,
+//										       NVL(JE15,0.00) JE15,
+//										       ym1 ym1,
+//										       ym2 ym2,
+//										       AAE140
+//										  FROM V_SI_DJB_TMP
+//										 WHERE DJH = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;
+//										   AND YWLX = &amp;apos;A110&amp;apos;
+//										   AND SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;
+//										   AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;
+//										   AND RZBZ = 0
+//										   AND ZFBZ = 0&amp;quot;;									   
+//									var rjzmx_ds = db.QuerySQL(sql);
+//									var mxxh = 0;	
+//									if(rjzmx_ds.getRowCount() == 0){
+//										throw new Exception(&amp;quot;插入日记账明细表出错!&amp;quot;+sql);									
+//									}						
+//									for(var i = 0;i&amp;lt;rjzmx_ds.getRowCount();i++ ){
+//										var lxbh = rjzmx_ds.getStringAt(i,&amp;quot;lxbh&amp;quot;);
+//										var ym1 = rjzmx_ds.getStringAt(i,&amp;quot;ym1&amp;quot;);
+//										var ym2 = rjzmx_ds.getStringAt(i,&amp;quot;ym2&amp;quot;);
+//										for(var k = 1;k&amp;lt;15;k++){
+//											var je = rjzmx_ds.getStringAt(i,&amp;quot;JE&amp;quot;+k);	
+//											var lxxh = k;				
+//											if (je != &amp;quot;0&amp;quot; &amp;&amp; je != &amp;quot;0.00&amp;quot; &amp;&amp; je != &amp;quot;&amp;quot;) {
+//												mxxh ++;										
+//												sql = &amp;quot;insert into cw_rjzmxb(sbh,zth,org,acc,lsh,mxxh,kmbh,lxbh,lxxh,ym1,ym2,je,jefx)values(&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos;,
+//														&amp;apos;&amp;quot;+mxxh+&amp;quot;&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;&amp;quot;+lxbh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+lxxh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+ym1+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+ym2+&amp;quot;&amp;apos;,&amp;quot;+je+&amp;quot;,&amp;apos;借&amp;apos;)&amp;quot;;
+//												db.ExcecutSQL(sql);
+//											}
+//										}
+//									} //end for(var i = 0;i&amp;lt;rjzmx_ds.getRowCount();i++ )
+									//插入日记账明细表
+									sql = &amp;quot;insert into cw_rjzmxb(sbh,zth,org,acc,lsh,mxxh,kmbh,lxbh,lxxh,ym1,ym2,je,jefx)values(&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos;,
+											&amp;apos;1&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;&amp;quot;+LXBH+&amp;quot;&amp;apos;,&amp;apos;6&amp;apos;,&amp;apos;&amp;quot;+ksny+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+jzny+&amp;quot;&amp;apos;,&amp;quot;+AIC263+&amp;quot;,&amp;apos;借&amp;apos;)&amp;quot;;
+									db.ExcecutSQL(sql);
+									//cw_yhrjzb
+									var yhrjzztlx = &amp;quot;&amp;quot;;
+									var yhrjzztbh = &amp;quot;&amp;quot;;
+									var yhrjzztmc = &amp;quot;&amp;quot;;
+									var yhrjzzy = &amp;quot;&amp;quot;;
+//									sql = &amp;quot;select dwbh,dwmc,zy from v_si_djb_tmp where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;&amp;quot;;
+//									var ztds = db.QuerySQL(sql);
+//									if(ztds.getRowCount() &amp;gt; 0) {
+//										yhrjzztlx = &amp;quot;1&amp;quot;;
+//										yhrjzztbh = ztds.getStringAt(0,&amp;quot;dwbh&amp;quot;);
+//										yhrjzztmc = ztds.getStringAt(0,&amp;quot;dwmc&amp;quot;);
+//										yhrjzzy = ztds.getStringAt(0,&amp;quot;zy&amp;quot;);
+//									}
+//									else {
+//										throw new Exception(&amp;quot;1、查询主体类型出错！出错行号:&amp;quot;+rowcount+&amp;quot;.\n&amp;quot;+sql);									
+//									}
+																																					
+									//更新回盘信息
+									sql = &amp;quot;update ac95 set BAZ901=&amp;apos;&amp;quot;+retcode+&amp;quot;&amp;apos;,BAZ902=&amp;apos;&amp;quot;+hkxx+&amp;quot;&amp;apos;,BAC004=to_date(to_char(sysdate,&amp;apos;yyyy-mm-dd&amp;apos;),&amp;apos;yyyy-mm-dd&amp;apos;),BAC003=&amp;apos;&amp;quot;+fileName+&amp;quot;&amp;apos;,BAE011=&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,BAE036=sysdate,AAE076 = &amp;apos;&amp;quot;+a_sblsh+&amp;quot;&amp;apos;,
+												YSZL_YHRZLSH = &amp;apos;&amp;quot;+yhlsh+&amp;quot;&amp;apos;,YSZL_YHRZRQ=&amp;quot;+yhrzrq+&amp;quot;,YSZL_YHRZSJ=&amp;quot;+yhrzsj+&amp;quot;,YSZL_YSCBDXSXF =to_number(&amp;apos;&amp;quot;+cbsxf +&amp;quot;&amp;apos;)/100 ,YSZL_YSSBJGSXF =to_number(&amp;apos;&amp;quot;+sbsxf +&amp;quot;&amp;apos;)/100
+										where  bae074 = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and aaa027 = &amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;	
+									var upcnt = db.ExcecutSQL(sql);								
+									if (upcnt == 0) {
+										throw new Exception(&amp;quot;1、更新回盘记录不成功，请检查回盘文件数据格式是否正确！出错行号:&amp;quot;+rowcount+&amp;quot;.\n&amp;quot;+sql);							
+									}
+									//更新签约协议信息表		
+									sql = &amp;quot;update t_yszl_dkxyxxb a
+										   set yszl_sfdk = &amp;apos;0&amp;apos;
+										 where sbh = &amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;
+										   and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;
+										   and ztbh = &amp;apos;&amp;quot;+AAC001+&amp;quot;&amp;apos;
+										   and yszl_xzlx = (select yszl_dm
+										                      from aa10
+										                     where aaa100 = &amp;apos;AAE140&amp;apos;
+										                       and aaa102 = &amp;apos;&amp;quot;+AAE140+&amp;quot;&amp;apos;)&amp;quot;;
+									var SFDK = db.ExcecutSQL(sql);								
+									if (SFDK == 0) {
+										throw new Exception(&amp;quot;1、更新回盘记录不成功，更新签约协议信息表出错！出错行号:&amp;quot;+rowcount+&amp;quot;.\n&amp;quot;+sql);							
+									}															
+									//更新si_djb_tmp
+//									sql = &amp;quot;update v_si_djb_tmp set rzbz = &amp;apos;1&amp;apos;,rzr=&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,rzsj =to_date(&amp;apos;&amp;quot;+yhrzrq+&amp;quot;&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;),lsh = &amp;apos;&amp;quot;+a_sblsh+&amp;quot;&amp;apos;
+//										where djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and sbh =&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth =&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+//									var upcntrow = db.ExcecutSQL(sql);
+//									if (upcntrow == 0) {
+//										throw new Exception(&amp;quot;2、更新SI_DJB_TMP回盘记录不成功，请检查回盘文件数据格式是否正确！出错行号:&amp;quot;+rowcount+&amp;quot;.\n&amp;quot;+sql);								
+//									} 
+									//调用业务接口
+									var aad016 = &amp;quot;&amp;quot;;
+									if(ywjkbz == &amp;quot;DR&amp;quot;){
+										aad016 = &amp;quot;DEDZ&amp;quot;;
+									}
+									var yh_ywjk = new SBCW_YSZL_YWJK_NN();
+									//throw new Exception(&amp;quot;TCQBM=&amp;quot;+tcqbm+&amp;quot;AAC001=&amp;quot;+AAC001+&amp;quot;AAE135=&amp;quot;+AAE135+&amp;quot;AAE140=&amp;quot;+AAE140+&amp;quot;JFDC=&amp;quot;+jfdc+&amp;quot;KSNY=&amp;quot;+ksny+&amp;quot;JZNY=&amp;quot;+jzny
+									//+&amp;quot;DZJE=&amp;quot;+dzje+&amp;quot;DZLSH=&amp;quot;+dzlsh+&amp;quot;DZSJ=&amp;quot;+dzsj+&amp;quot;EJDM=&amp;quot;+ejdm);
+									var yhjk_msg = yh_ywjk.prc_a_Auditing(tcqbm,AAC001,AAE135,AAE140,jfdc,ksny,jzny,dzje,dzlsh,dzsj ,ejdm,db);
+									var retdjh = yhjk_msg.split(&amp;quot;~&amp;quot;)[0];
+									var appcode = yhjk_msg.split(&amp;quot;~&amp;quot;)[1];
+									var errormsg  = yhjk_msg.split(&amp;quot;~&amp;quot;)[2];
+									
+									if(appcode != &amp;quot;0&amp;quot;){
+										throw new Exception(&amp;quot;2、调用业务接口prc_a_Auditing出错！出错行号:&amp;quot;+rowcount+&amp;quot;单据号:&amp;quot;+djh+&amp;quot;;出错原因:&amp;quot;+errormsg  +&amp;quot;.\n&amp;quot;);
+									}
+									sql = &amp;quot;update ac95 set si_djb_tmp_djh = &amp;apos;&amp;quot;+retdjh+&amp;quot;&amp;apos; where bae074 = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;&amp;quot;;
+									var upret = db.ExcecutSQL(sql);
+									if(upret == 0)
+									{
+										throw new Exception(&amp;quot;3、更新ac95出错,行号:&amp;quot;+rowcount+&amp;quot;.\n&amp;quot;+sql+&amp;quot;返回单据号：&amp;quot;+retdjh+&amp;quot;单据号：&amp;quot;+djh);
+									}
+									writeLog(db2,ref,&amp;quot;批量文件结算&amp;quot;,&amp;quot;50&amp;quot;,&amp;quot;单据号【&amp;quot;+djh+&amp;quot;】托收成功，处理成功，业务接口返回信息:&amp;quot;+yhjk_msg);
+								}//end AAE076 != &amp;quot;&amp;quot;
+							}//end tmpds.getRowCount()
+							else{
+								throw new Exception(&amp;quot;2.单据号&amp;quot;+djh+&amp;quot;回盘失败，未拷盘&amp;quot;);
+							}
+						}else{
+							failecnt ++;
+							BAE415 = tmpds.getStringAt(0,&amp;quot;BAE415&amp;quot;); //发放批次
+							a_ywpch = BAE415;
+							hkxx = retinfo;
+							//更新回盘信息
+							sql = &amp;quot;update ac95 set BAZ901=&amp;apos;&amp;quot;+retcode+&amp;quot;&amp;apos;,BAZ902=&amp;apos;&amp;quot;+hkxx+&amp;quot;&amp;apos;,BAC004=to_date(to_char(sysdate,&amp;apos;yyyy-mm-dd&amp;apos;),&amp;apos;yyyy-mm-dd&amp;apos;),BAC003=&amp;apos;&amp;quot;+fileName+&amp;quot;&amp;apos;,BAE011=&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,BAE036=sysdate,
+										YSZL_YHRZLSH = &amp;apos;&amp;quot;+yhlsh+&amp;quot;&amp;apos;,YSZL_YHRZRQ=&amp;quot;+yhrzrq+&amp;quot;,YSZL_YHRZSJ=&amp;quot;+yhrzsj+&amp;quot;,YSZL_YSCBDXSXF =to_number(&amp;apos;&amp;quot;+cbsxf +&amp;quot;&amp;apos;)/100 ,YSZL_YSSBJGSXF =to_number(&amp;apos;&amp;quot;+sbsxf +&amp;quot;&amp;apos;)/100
+								where  bae074 = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and aaa027 = &amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;	
+							var upcnt = db.ExcecutSQL(sql);								
+							if (upcnt == 0) {
+								throw new Exception(&amp;quot;1、更新回盘记录不成功，请检查回盘文件数据格式是否正确！出错行号:&amp;quot;+rowcount+&amp;quot;.\n&amp;quot;+sql);							
+							}
+							
+							writeLog(db2,ref,&amp;quot;批量文件结算&amp;quot;,&amp;quot;50&amp;quot;,&amp;quot;单据号【&amp;quot;+djh+&amp;quot;】托收失败，余额不足当做补托处理，处理成功&amp;quot;);
+						}//end hkbz
+//						else{
+//							failecnt ++;
+//							throw new Exception(&amp;quot;4、出错行号:&amp;quot;+rowcount+&amp;quot;单据号:&amp;quot;+djh+&amp;quot;;回款标志出错！！&amp;quot;);														
+//						}
+						djh_old = djh;
+					}// end if(djh != djh_old)													
+				}//end 	if(jsywlx == &amp;quot;005&amp;quot;)
+				else {
+					throw new Exception(&amp;quot;回盘出错:结算业务类型不正确&amp;quot;);				
+				}																
+			}//end while			
+				
+			if(jsywlx == &amp;quot;005&amp;quot;) { //批量代扣对公也是汇总入银行日记账 20161220 dingxiaobin
+				if(succcnt != 0){				
+				//插入银行日记账表
+					var yhrjzsxh = db.GetSQL(&amp;quot;select nvl(max(sxh),0)+1 from cw_yhrjzb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy=&amp;apos;&amp;quot;+a_yhrzrq.substring(0,4)+&amp;quot;&amp;apos; and mm=&amp;apos;&amp;quot;+a_yhrzrq.substring(4,6)+&amp;quot;&amp;apos; and KMBH=&amp;apos;&amp;quot;+a_yhrjzkmbh+&amp;quot;&amp;apos;&amp;quot;);
+					var yhid = db.GetSQL(&amp;quot;select seq_yhrjzb_id.nextval from dual&amp;quot;); //银行日记账表主键				
+					sql = &amp;quot;insert into cw_yhrjzb(id,sbh,zth,SiSeqNo,yy,mm,dd,sxh,czyxm,kmbh,je,jefx,czysj,YSZL_YWLX,YSZL_SZBZ,yszl_yhrzlsh,djh,ztlx,ztbh,ztmc,zy,jsfs,yszl_yhrzrq,yszl_yhrzsj,
+					             yszl_fkf_yhzh,yszl_fkf_yhhm,yszl_skf_yhzh,yszl_skf_yhhm,filename,ywpch)
+						select &amp;apos;&amp;quot;+yhid+&amp;quot;&amp;apos;,sbh,zth,siseqno,yy,mm,dd,&amp;apos;&amp;quot;+yhrjzsxh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,kmbh,sum(je),&amp;apos;借&amp;apos;,sysdate,
+							&amp;apos;1.5&amp;apos;,&amp;apos;1&amp;apos;,&amp;apos;&amp;quot;+a_yhhzlsh+&amp;quot;&amp;apos;,&amp;apos;汇总&amp;apos;,&amp;apos;1&amp;apos;,&amp;apos;汇总&amp;apos;,&amp;apos;汇总&amp;apos;,max(zy),&amp;apos;转账&amp;apos;,&amp;apos;&amp;quot;+a_yhrzrq+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+a_yhrzsj+&amp;quot;&amp;apos;,
+							&amp;apos;&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;&amp;quot;+a_skzh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+a_skhm+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+fileName+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+a_ywpch+&amp;quot;&amp;apos;
+						from cw_rjzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and siseqno = &amp;apos;&amp;quot;+a_sblsh+&amp;quot;&amp;apos;
+						group by sbh,zth,siseqno,yy,mm,dd,kmbh&amp;quot;;
+						
+					var inscnt = db.ExcecutSQL(sql);
+					if (inscnt != 1) {
+						throw new Exception(&amp;quot;1、插入银行日记账表出错,插入行数不为1,inscnt=&amp;quot;+inscnt+&amp;quot;！出错行号:&amp;quot;+rowcount+&amp;quot;.\n&amp;quot;+sql);							
+					}							
+				}					
+			}//end if(jsywlx == &amp;quot;005&amp;quot;)
+			
+		}
+		else{
+			throw new Exception(&amp;quot;失败：回盘文件长度为空&amp;quot;);
+		}					
+			var lognote = &amp;quot;所编号：&amp;quot;+sbh+&amp;quot;,账套号：&amp;quot;+zth+&amp;quot;\n报文序号ref：&amp;quot;+ref+&amp;quot;\n回盘文件：&amp;quot;+fileName+&amp;quot;\n总笔数：&amp;quot;+(rowcount-1)+&amp;quot; 失败笔数：&amp;quot;+failecnt+&amp;quot;\n社保银行:&amp;quot;+a_yhmc+&amp;quot;,批次号:&amp;quot;+a_ywpch;
+			writeLog(db2,ref,&amp;quot;批量文件结算&amp;quot;,&amp;quot;100&amp;quot;,&amp;quot;lognote:&amp;quot;+lognote);
+			//如果成功，更新一下错误信息表的处理标志
+			sql = &amp;quot;update yszl_errorlog set errmsg=&amp;apos;&amp;quot;+lognote+&amp;quot;&amp;apos;,cgbz=&amp;apos;1&amp;apos; where ref = &amp;apos;&amp;quot;+ref+&amp;quot;&amp;apos;&amp;quot;;
+			db.ExcecutSQL(sql);
+			//写系统消息系统通知
+			sendMsg(jsywlx,&amp;quot;0&amp;quot;,thisorgid,fileName,ref,lognote);	
+//			db.Rollback();
+//			return &amp;quot;aaa&amp;quot;;			
+			db.Commit();
+			db2.Commit();
+			return lognote;							
+	}catch(e){	
+		if(db != null) db.Rollback();	
+		//记录导入异常的报文日志
+		//&amp;quot;fileTypeCode=&amp;quot;+fileTypeCode+&amp;quot;&amp;sbInstId=&amp;quot;+sbInstId+&amp;quot;&amp;bkInstId=&amp;quot;+bkInstId+&amp;quot;&amp;jobseqid=&amp;quot;+jobseqid+&amp;quot;&amp;fileName=&amp;quot;+fileName+&amp;quot;&amp;fileMD5=&amp;quot;+fileMD5+&amp;quot;&amp;ref=&amp;quot;+ref+&amp;quot;&amp;BkSeq=&amp;quot;+BkSeq+&amp;quot;&amp;SiSeq=&amp;quot;+SiSeq
+		var ysywlx = &amp;quot;&amp;quot;;
+		if(jsywlx == &amp;quot;004&amp;quot;) {
+			ysywlx = &amp;quot;1.7&amp;quot;;
+		}else if(jsywlx == &amp;quot;005&amp;quot;) {
+			ysywlx = &amp;quot;1.5&amp;quot;;
+		}
+		writeErrorLog(ref,bkInstId ,sbInstId ,SiSeq,BkSeq,myfileName,e.toString(),ysywlx,fileMD5,czyxm);
+		sendMsg(jsywlx,&amp;quot;1&amp;quot;,thisorgid,fileName,ref,&amp;quot;所编号：&amp;quot;+sbh+&amp;quot;,账套号：&amp;quot;+zth+&amp;quot;\n报文序号:&amp;quot;+ref+&amp;quot;\n回盘文件名：&amp;quot;+fileName+&amp;quot;\n社保银行:&amp;quot;+a_yhmc+&amp;quot;,批次号:&amp;quot;+a_ywpch);
+		writeLog(db2,ref,&amp;quot;批量文件结算&amp;quot;,&amp;quot;100&amp;quot;,&amp;quot;失败:&amp;quot;+e.toString());
+		if(db2 != null) db2.Commit();
+		return e.toString();	
+	}finally {
+		if(db != null) db.Close();
+		if(db2 != null) db.Close();
+	}
+}
+
+
+//写日志
+function writeLog(db,id,name,percent,percentnote)
+{
+	try{
+		percentnote = percentnote.toString();
+		percentnote = pub.EAFunc.Replace(percentnote,&amp;quot;&amp;apos;&amp;quot;,&amp;quot;&amp;apos;&amp;apos;&amp;quot;);
+		if(percentnote.length() &amp;gt;= 4000) {
+			percentnote = percentnote.substring(0,3999);
+		}	
+		var sql = &amp;quot;insert into RUNOSTIMER(id,name,percent,percentnote) values (&amp;apos;&amp;quot;+id+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+name+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+percent+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+percentnote+&amp;quot;&amp;apos;)&amp;quot;;
+		if(db != null){
+			db.ExcecutSQL(sql);
+		}
+		else {
+			pub.EADbTool.ExcecutSQL(sql);
+		}	
+	}catch(e){
+	
+	}	
+}
+
+//如果回盘失败，更新ac95标志
+function updError(tcqbm,djh,note)
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	try{
+		db = new pub.EADatabase();
+		if(tcqbm != &amp;quot;&amp;quot; &amp;&amp; djh != &amp;quot;&amp;quot;) {
+			//note只有80长度，要截位
+			note = pub.EAFunc.bSubstring(str ,79);
+			sql = &amp;quot;update ac95 set baz902 = &amp;apos;&amp;quot;+note+&amp;quot;&amp;apos; where aaa027 = &amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos; and bae074 = &amp;apos;&amp;quot;+bae074+&amp;quot;&amp;apos;&amp;quot;;
+			db.ExcecutSQL(sql);
+		}
+		db.Rollback();	
+	}catch(e) {
+		if(db != null) db.Rollback();
+	}finally {
+		if(db != null) db.Close();
+	}
+}
+
+//写消息给用户
+function sendMsg(jsywlx,cgbz,thisorgid,fileName,ref,lognote)
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	var msgtitle = &amp;quot;&amp;quot;;
+	var msg = &amp;quot;&amp;quot;;
+	try{
+		db = new pub.EADatabase();
+		if(jsywlx == &amp;quot;004&amp;quot;) {
+			msgtitle += &amp;quot;您有一笔银社批量支付回盘文件导入&amp;quot;;	
+		}else if(jsywlx == &amp;quot;005&amp;quot;) {
+			msgtitle += &amp;quot;您有一笔银社批量代扣回盘文件导入&amp;quot;;	
+		}
+		else {
+			msgtitle += &amp;quot;您有一笔银社回盘文件导入&amp;quot;;
+		}
+		if(cgbz == &amp;quot;0&amp;quot;) {
+			msg += &amp;quot;导入成功!\n&amp;quot;;
+		}
+		else {
+			msg += &amp;quot;导入失败!\n&amp;quot;;
+		}
+		msg += &amp;quot;\n&amp;quot;+lognote;
+		sql = &amp;quot;select distinct org,name,id
+				from
+				(
+				select c.org org, c.name name,c.id id
+				  				from rol a, usrrol b, usr c
+				 				where a.id in (&amp;apos;01&amp;apos;,&amp;apos;02&amp;apos;,&amp;apos;03&amp;apos;,&amp;apos;05&amp;apos;,&amp;apos;06&amp;apos;)
+				   				and a.syt = &amp;apos;SBCW&amp;apos;
+				  				and b.rol = a.guid
+				   				and c.guid = b.usr
+				   				and c.org = &amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;
+				)&amp;quot;;
+   		var ds = db.QuerySQL(sql);
+   		if(ds.getRowCount() &amp;gt; 0) {
+   			var service = new SBCW_sbcwService();
+   			for(var i=0;i&amp;lt;ds.getRowCount();i++) {
+   				var usrid = ds.getStringAt(i,&amp;quot;id&amp;quot;);
+				var str = service.sendMsg(msgtitle ,msg,thisorgid,usrid);					
+   			}
+   		}		
+	}catch(e) {
+		if(db != null) db.Rollback();
+		writeLog(null,ref,&amp;quot;批量文件结算&amp;quot;,&amp;quot;100&amp;quot;,&amp;quot;发送消息失败&amp;quot;+e.toString());
+	}finally {
+		if(db != null) db.Close();
+	}	
+}
+
+
+//异常处理,记录批量回盘导入出错的报文，需要人工手动重新操作
+function writeErrorLog(ref,sendid,recvid,siseq,bkseq,filename,errormsg,ysywlx,fileMD5,czyxm)
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	try{
+		db = new pub.EADatabase();
+		errormsg = errormsg.toString();
+		errormsg = pub.EAFunc.Replace(errormsg ,&amp;quot;&amp;apos;&amp;quot;,&amp;quot;&amp;apos;&amp;apos;&amp;quot;);
+		if(errormsg.length() &amp;gt;= 4000) {
+			errormsg= errormsg.substring(0,3999);
+		}		
+		sql = &amp;quot;select 1 from YSZL_ERRORLOG where ref = &amp;apos;&amp;quot;+ref+&amp;quot;&amp;apos;&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		if(ds.getRowCount() == 0) {//新增
+			sql = &amp;quot;insert into YSZL_ERRORLOG(REF,SENDID,RECVID,SISEQ,BKSEQ,
+							BUSCD,YSZLYWLX,FILETYPECODE,FILENAME,ERRMSG,fileMD5,yhjgdm,sbjgdm,czyxm)
+				values (&amp;apos;&amp;quot;+ref+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+sendid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+recvid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+siseq+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+bkseq+&amp;quot;&amp;apos;,&amp;apos;0214002&amp;apos;,&amp;apos;&amp;quot;+ysywlx+&amp;quot;&amp;apos;,
+							&amp;apos;0122001&amp;apos;,&amp;apos;&amp;quot;+filename+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+errormsg+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+fileMD5+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+sendid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+recvid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;)&amp;quot;;	
+			db.ExcecutSQL(sql);				
+		}
+		else {//修改
+			sql = &amp;quot;update YSZL_ERRORLOG set crtdat = sysdate,ERRMSG= &amp;apos;&amp;quot;+errormsg+&amp;quot;&amp;apos;,czyxm = &amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos; where ref = &amp;apos;&amp;quot;+ref+&amp;quot;&amp;apos;&amp;quot;;
+			db.ExcecutSQL(sql);
+		}
+		db.Commit();
+		return &amp;quot;noerror&amp;quot;;
+	}catch(e) {
+		if(db != null) db.Rollback();
+		return e.toString();
+	}finally {
+		if(db != null) db.Close();
+	}	
+}
+
+
+function testF0122001()
+{
+	var ret = F0122001(sbInstId,bkInstId,fileName,ref,fileMD5,BkSeq,SiSeq,fileTypeCode,czyxm);
+	return ret;
+}
+
+
+
+
+
+
+
+
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

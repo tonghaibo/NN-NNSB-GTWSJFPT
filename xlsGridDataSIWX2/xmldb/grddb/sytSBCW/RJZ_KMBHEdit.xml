@@ -1,0 +1,276 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RJZ_KMBHEdit</MWID><NAME >日记账修改银行科目</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RJZ_KMBHEdit.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	var sbh = G_ORGID;
+	var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+	_sql.querytods(&amp;quot;QueryKMMC&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;kmbh=&amp;quot;+in_kmbh);
+	var kmmc = _this.XMLDS_GetString(0,&amp;quot;kmmc&amp;quot;);
+	_this.AddToolbarButton(&amp;quot;udf_save&amp;quot;,&amp;quot;保存修改&amp;quot;,&amp;quot;保存修改&amp;quot;,&amp;quot;&amp;quot;,1,3,3,40);
+	_this.SetCellText(0,1,2,in_kmbh);
+	_this.SetCellShowText(0,1,2,in_kmbh+&amp;quot;-&amp;quot;+kmmc);	
+	_this.SetCellText(0,4,2,in_yy);
+	_this.SetCellText(0,4,3,in_mm);
+	_this.SetCellText(0,4,4,in_dd);
+	_this.SetToBoolBox(0,3,0);
+	//20161219 lwq add 科目编号为103开头的界面可见，并可以修改
+	if(in_kmbh.substring(0,3)!=&amp;quot;103&amp;quot;){
+		_this.SetRowVisible(0,3,-1);
+		_this.SetRowVisible(0,4,-1);
+	}
+}
+
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if(row == 1 &amp;&amp; col == 5) {
+		var sbh = G_ORGID;
+		var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);	
+		//科目编号
+		var obj = new Object();
+		obj.filter = &amp;quot;&amp;quot;;//&amp;quot;xjyhbz &amp;lt;&amp;gt; 0&amp;quot;;
+	        obj.mjbz = &amp;quot;1&amp;quot;;
+	        obj.bz = &amp;quot;&amp;quot;;
+	        obj.jb = 0;
+	        obj.kmbh = &amp;quot;1&amp;quot;;
+		var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_KMSEL&amp;quot;,obj,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+		var cur_kmbh = retVal;
+		if (cur_kmbh != &amp;quot;&amp;quot; &amp;&amp; cur_kmbh != &amp;quot;undefined&amp;quot; &amp;&amp; cur_kmbh != undefined) {
+			_sql.querytods(&amp;quot;QueryKMMC&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;kmbh=&amp;quot;+cur_kmbh);
+			var kmmc = _this.XMLDS_GetString(0,&amp;quot;kmmc&amp;quot;);
+			_this.SetCellText(0,1,2,cur_kmbh);
+			_this.SetCellShowText(0,1,2,cur_kmbh+&amp;quot;-&amp;quot;+kmmc);	
+		}  			
+	}
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if(row == 1 &amp;&amp; col == 2) {
+		var sbh = G_ORGID;
+		var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);	
+		var cur_kmbh = newvalue;
+		if (cur_kmbh != &amp;quot;&amp;quot; &amp;&amp; cur_kmbh != &amp;quot;undefined&amp;quot; &amp;&amp; cur_kmbh != undefined) {
+			_this.XMLDS_Reset();
+			_sql.querytods(&amp;quot;QueryKMMC&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;kmbh=&amp;quot;+cur_kmbh);
+			var kmmc = _this.XMLDS_GetString(0,&amp;quot;kmmc&amp;quot;);
+			if(kmmc == &amp;quot;&amp;quot;) {
+				alert(&amp;quot;没有此科目编号&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+				return;
+			}
+			_this.SetCellText(0,1,2,cur_kmbh);
+			_this.SetCellShowText(0,1,2,cur_kmbh+&amp;quot;-&amp;quot;+kmmc);	
+		}  			
+	}
+	else if(row == 3 &amp;&amp; col == 0) {
+		if(newvalue == 1) {
+			_this.SetCellLock(0,4,2,0);  //20170106 lwq add MM-modify operation
+			_this.SetCellLock(0,4,3,0);  //20161219 lwq add MM-modify operation
+			_this.SetCellLock(0,4,4,0);
+		}
+		else {
+			_this.SetCellLock(0,4,2,1);  //20170106 lwq add MM-modify operation
+			_this.SetCellLock(0,4,3,1);  //20161219 lwq add MM-modify operation
+			_this.SetCellLock(0,4,4,1);
+		}
+	}	
+}
+
+//20161202 lwq modify
+function save()
+{
+	var newYY = _this.GetCellText(0,4,2); //获取修改后的年
+	var newMM = _this.GetCellText(0,4,3); //获取修改后的月
+	var newDD = _this.GetCellText(0,4,4); //获取修改后的日
+	
+	//检查是否已经结账
+//	var jz_yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+//	var jz_mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+	var jz_sbh = G_ORGID;
+	var jz_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	var param = new Object();
+	param.yy = newYY ;
+	param.mm = newMM ;
+	param.sbh = jz_sbh;
+	param.zth = jz_zth;
+	var jz_retVal = invokeOSFuncExt(&amp;quot;check_jz&amp;quot;,param);
+	var jz_ret = jz_retVal.split(&amp;quot;@&amp;quot;)[0];
+	var jz_msg = jz_retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(jz_ret != 1 ){
+		alert(jz_msg);
+		return false;
+	}	
+
+	objParam = window.dialogArguments;	
+	var xml = objParam.in_xml;
+
+	var kmbh = _this.GetCellText(0,1,2);
+	var sbh = G_ORGID;
+	var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+
+	var params = new Object();
+	params.rjzxml = xml;
+//	alert(xml);
+//	return false;
+	params.sbh = sbh;
+	params.zth = zth;
+	params.thisorgid = G_ORGID;
+	params.thisaccid = G_ACCID;
+	params.newkmbh = kmbh;
+	params.oldkmbh = in_kmbh;
+	params.newYY = newYY ;  //20170106 lwq 增加跨年修改
+	params.newMM = newMM ;
+	params.newDD = newDD ;
+	params.usrid = G_USRID;
+	params.usrnam = G_USRNAM;
+	var ret = _this.invokeOSFuncExt(&amp;quot;Save&amp;quot;,params);
+	if(ret.substring(0,1) == &amp;quot;1&amp;quot;) {
+		alert(&amp;quot;保存修改成功！&amp;quot;);
+		window.returnValue = &amp;quot;1&amp;quot;;
+		window.close();
+	}else {
+		alert(&amp;quot;保存失败：&amp;quot;+ret);
+	}
+}
+
+//点击核选框
+function _thisOnCheckboxCtrlChange(id,sheet,row,col)
+{
+//	if(sheet == 0) {
+//		if(row == 3 &amp;&amp; col == 1) {
+//			alert(_this.GetCellText(0,3,1));
+//		}
+//	}
+//	if(id == &amp;quot;mytest&amp;quot;) {
+//		alert(&amp;quot;sssdd&amp;quot;);
+//	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >//20161220 lwq add function checkRjzYE() check_jz() and modify function Save()
+
+var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+//检查结账
+function check_jz(){
+var Pub = new SBCW_CW_PUBLIC();
+var retVal = Pub.Pub_check_jz(sbh,zth,yy,mm);
+return retVal;
+}
+
+//保存日记帐科目修改
+function Save()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	var yy = &amp;quot;&amp;quot;;
+	var mm = &amp;quot;&amp;quot;;
+	try {
+		db = new pub.EADatabase();
+		var ds = new pub.EAXmlDS(rjzxml);
+
+		if (ds.getRowCount() &amp;lt;= 0) return &amp;quot;0&amp;quot;;
+		for (var i=0;i&amp;lt;ds.getRowCount();i++) {
+			yy = ds.getStringAt(i,&amp;quot;YY&amp;quot;);	
+			mm = ds.getStringAt(i,&amp;quot;MM&amp;quot;);
+			var sblsh = ds.getStringAt(i,&amp;quot;SISEQNO&amp;quot;);
+			
+			//20161227 lyh modify 录单笔记录不允许修改到月份
+			sql = &amp;quot;select count(1) from cw_yhrjzb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and siseqno=&amp;apos;&amp;quot;+sblsh+&amp;quot;&amp;apos;&amp;quot;;
+			var cout = db.GetSQL(sql);
+			if(cout &amp;gt; 1 &amp;&amp; mm != newMM){
+				throw new Exception(&amp;quot;录单笔的记录不允许跨月修改数据&amp;quot;);
+				return false;
+			}else if(cout &amp;gt; 1){
+				sql = &amp;quot;select count(1) from cw_yhrjzb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and siseqno=&amp;apos;&amp;quot;+sblsh+&amp;quot;&amp;apos; and kmbh=&amp;apos;&amp;quot;+newkmbh+&amp;quot;&amp;apos;&amp;quot;;
+				var cout1 = db.GetSQL(sql);
+				if(cout1 &amp;gt; 0){
+					throw new Exception(&amp;quot;录单笔的记录在新科目下已经存在有记录，不允许将录单笔的记录修改到相同的科目下&amp;quot;);
+					return false;
+				}
+			}
+			
+			sql = &amp;quot;update cw_yhrjzb set kmbh = &amp;apos;&amp;quot;+newkmbh+&amp;quot;&amp;apos; ,YY = &amp;apos;&amp;quot;+newYY+&amp;quot;&amp;apos; ,MM = &amp;apos;&amp;quot;+newMM+&amp;quot;&amp;apos; ,DD = &amp;apos;&amp;quot;+newDD+&amp;quot;&amp;apos; where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and siseqno=&amp;apos;&amp;quot;+sblsh+&amp;quot;&amp;apos; and kmbh=&amp;apos;&amp;quot;+oldkmbh+&amp;quot;&amp;apos;&amp;quot;;
+			db.ExcecutSQL(sql);
+			
+			sql = &amp;quot;update cw_rjzb set kmbh = &amp;apos;&amp;quot;+newkmbh+&amp;quot;&amp;apos; ,YY = &amp;apos;&amp;quot;+newYY+&amp;quot;&amp;apos; ,MM = &amp;apos;&amp;quot;+newMM +&amp;quot;&amp;apos; ,DD = &amp;apos;&amp;quot;+newDD+&amp;quot;&amp;apos; where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and siseqno=&amp;apos;&amp;quot;+sblsh+&amp;quot;&amp;apos; and kmbh=&amp;apos;&amp;quot;+oldkmbh+&amp;quot;&amp;apos;&amp;quot;;
+			db.ExcecutSQL(sql);
+		}
+		
+		//记录操作日志
+		var note = &amp;quot;保存日记帐修改：&amp;quot;+newYY+&amp;quot;年&amp;quot;+newMM+&amp;quot;月&amp;quot;+newDD+&amp;quot;日，日记帐科目：&amp;quot;+newkmbh;
+		sql = &amp;quot;insert into oplog(grdid,type,action,opdat,opusr,opusrnam,note,acc,syt,org) values(&amp;apos;RJZ_YHRJZB&amp;apos;,&amp;apos;日记帐修改&amp;apos;,&amp;apos;保存修改银行科目&amp;apos;,sysdate,&amp;apos;&amp;quot;+usrid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+usrnam+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+note+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos;,&amp;apos;SBCW&amp;apos;,&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;)&amp;quot;;
+		db.ExcecutSQL(sql);
+		
+		//重算余额
+		try { checkRjzYE(sbh,zth,newkmbh,yy,mm); } catch (e) { }
+		try { checkRjzYE(sbh,zth,oldkmbh,yy,mm); } catch (e) { }
+		
+		db.Commit();
+		return &amp;quot;1&amp;quot;;
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();	
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+//新增修改删除后进行余额检查,从当前年月开始
+function checkRjzYE(sbh,zth,kmbh,yy,mm)
+{
+	var db = null;
+	try {   
+		db = new pub.EADatabase();
+		var thisaccid = sbh+&amp;quot;&amp;quot;+zth;
+		
+		sql = &amp;quot;update cw_yhrjzb set qcbz = 0 
+	                where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos; and ( yy &amp;gt; &amp;quot;+yy+&amp;quot; or ( yy = &amp;quot;+yy+&amp;quot; and mm &amp;gt;= &amp;quot;+mm+&amp;quot; ) ) and qcbz is null&amp;quot;;
+	        db.ExcecutSQL(sql);
+	                
+                sql = &amp;quot;update cw_yhrjzb set ye=0 
+                	where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos; and qcbz=1 and  ye is null&amp;quot;;
+                db.ExcecutSQL(sql);
+
+		//调用f_check_next_qcye更新期初余额
+		var pubfunc = new SBCW_PUBFUNC();
+		var ret = pubfunc.f_check_next_qcye(db,sbh,thisaccid,kmbh,yy,mm);
+		db.Commit();
+		return ret;
+
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString();	
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >QueryKMMC</ID><NAME >查询科目名称</NAME><DATDSC >select cw_pack4.kmmc(&amp;apos;[%sbh]&amp;apos;,&amp;apos;[%zth]&amp;apos;,&amp;apos;[%kmbh]&amp;apos;) kmmc from dual</DATDSC><C4 >QueryKMMC</C4><C5 >QueryKMMC</C5></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

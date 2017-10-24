@@ -1,0 +1,252 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >PZGL_YEMXZ</MWID><NAME >余额查询明细账</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >PZGL_YEMXZ.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >queryFJ</ID><NAME >查询附件</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE></ROW>
+<ROW num="1" ><ID >queryPZ</ID><NAME >查询凭证</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE></ROW>
+</ROWSET>
+</grdbtnds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >YY</ID><NAME ></NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG ></VISFLG><KEYFLG ></KEYFLG><C13 >YY</C13></ROW>
+<ROW num="1" ><ID >MM1</ID><NAME ></NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG ></VISFLG><KEYFLG ></KEYFLG><C13 >MM1</C13></ROW>
+<ROW num="2" ><ID >MM2</ID><NAME ></NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG ></VISFLG><KEYFLG ></KEYFLG><C13 >MM2</C13></ROW>
+<ROW num="3" ><ID >KMBH</ID><NAME ></NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG ></VISFLG><KEYFLG ></KEYFLG><C13 ></C13></ROW>
+<ROW num="4" ><ID >KMMC</ID><NAME ></NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG ></VISFLG><KEYFLG ></KEYFLG><C13 ></C13></ROW>
+<ROW num="5" ><ID >filter</ID><NAME ></NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG ></VISFLG><KEYFLG ></KEYFLG><C13 ></C13></ROW>
+</ROWSET>
+</grdpamds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0 = &amp;quot;&amp;quot;;
+var sbh = &amp;quot;&amp;quot;;
+var zth = &amp;quot;&amp;quot;;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{   
+     ZXGFILE0 = _this.SaveTempZXGFile(0);
+     sbh = G_ORGID;
+     zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);     
+     loadData(&amp;quot;&amp;quot;);
+     var jzList = _this.CreateListValue();
+    _this.SetListValue(jzList ,&amp;quot;%&amp;quot;,&amp;quot;0-全部&amp;quot;);	
+    _this.SetListValue(jzList ,&amp;quot;1&amp;quot;,&amp;quot;1-已记帐&amp;quot;);
+    _this.SetListValue(jzList ,&amp;quot;2&amp;quot;,&amp;quot;2-未记帐&amp;quot;);  
+    _this.SetToRadioBox(&amp;quot;&amp;quot;,1,1,1,jzList);  
+    _this.SplitSheet(1,&amp;quot;V&amp;quot;,40);
+    
+}
+
+
+function loadFirstrow() {
+    _sql.querytods(&amp;quot;MAIN2&amp;quot;,&amp;quot;YY=&amp;quot;+YY+&amp;quot;&amp;MM1=&amp;quot;+MM1+&amp;quot;&amp;KMBH=&amp;quot;+KMBH+&amp;quot;&amp;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth);
+    var qcye = _this.XMLDS_GetStringAt(0,0);
+    var yefx = _this.XMLDS_GetStringAt(0,1);
+    if(qcye==null || qcye == 0) yefx = &amp;quot;平&amp;quot;;
+    _this.SetCellText(0,4,10,qcye);
+    _this.SetCellText(0,4,9,yefx);
+    _this.SetCellText(0,4,1,MM1);
+    _this.SetCellText(0,4,2,1);
+    _this.SetCellText(0,4,5,&amp;quot;期初余额&amp;quot;);    
+}
+
+function yejs() {
+    _sql.querytods(&amp;quot;yxyefx&amp;quot;,&amp;quot;KMBH=&amp;quot;+KMBH+&amp;quot;&amp;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth);
+    var yxyefx = _this.XMLDS_GetStringAt(0,0);
+    var qcye = _this.GetCellText(0,4,10)*1;
+    var qcyefx = _this.GetCellText(0,4,9);
+    if(qcyefx == &amp;quot;贷&amp;quot;) {
+        qcye = -1 * qcye;
+        qcyefx = &amp;quot;借&amp;quot;;
+    }
+    else qcyefx = &amp;quot;借&amp;quot;;
+    var ye = qcye;
+    var yefx = qcyefx;
+    var sum_jfje = 0;
+    var sum_dfje = 0;
+    for(var i=5;i&amp;lt;_this.GetRowCount(0)-2;i++) {
+        var jfje = _this.GetCellText(0,i,7)*1;
+        var dfje = _this.GetCellText(0,i,8)*1;
+        if(jfje == &amp;quot;&amp;quot; &amp;&amp; dfje == &amp;quot;&amp;quot;) continue;
+        if(jfje != 0 ) {sum_jfje += jfje;}
+        else {sum_dfje += dfje;}
+        ye = qcye+sum_jfje-sum_dfje;
+        if(ye == 0) {
+             _this.SetCellText(0,i,9,&amp;quot;平&amp;quot;);
+             _this.SetCellText(0,i,10,ye);
+        }
+        else if(yxyefx == &amp;quot;借&amp;quot;) {
+             _this.SetCellText(0,i,9,&amp;quot;借&amp;quot;);
+             _this.SetCellText(0,i,10,Math.abs(ye));           
+        }
+        else if(yxyefx == &amp;quot;贷&amp;quot;) {
+             _this.SetCellText(0,i,9,&amp;quot;贷&amp;quot;);
+             _this.SetCellText(0,i,10,Math.abs(ye));        
+        }else if(yxyef == &amp;quot;双&amp;quot;) {
+              if(ye &amp;gt; 0) {
+                 _this.SetCellText(0,i,9,&amp;quot;借&amp;quot;);
+                 _this.SetCellText(0,i,10,Math.abs(ye));              
+              }
+              else if(ye &amp;lt; 0) {
+                 _this.SetCellText(0,i,9,&amp;quot;贷&amp;quot;);
+                 _this.SetCellText(0,i,10,Math.abs(ye));                
+              }
+        }
+        ye = _this.GetCellText(0,i,10)*1;
+        yefx = _this.GetCellText(0,i,9);
+    } 
+    _this.SetCellText(0,_this.GetRowCount(0)-2,7,sum_jfje);
+    _this.SetCellText(0,_this.GetRowCount(0)-2,8,sum_dfje);
+    _this.SetCellText(0,_this.GetRowCount(0)-2,9,yefx);    
+    _this.SetCellText(0,_this.GetRowCount(0)-2,10,ye);    
+}
+
+function loadData(myfilter) {
+     _this.LoadZXGFile(ZXGFILE0,0,0);
+     _this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+     
+     if(myfilter != &amp;quot;&amp;quot;)  myfilter = &amp;quot; and &amp;quot;+myfilter;
+     var xml = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;filter=&amp;quot;+myfilter+&amp;quot;&amp;YY=&amp;quot;+YY+&amp;quot;&amp;MM1=&amp;quot;+MM1+&amp;quot;&amp;MM2=&amp;quot;+MM2+&amp;quot;&amp;KMBH=&amp;quot;+KMBH+&amp;quot;&amp;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth);
+     _this.SetMainCellRange(0,5,1,6,10);
+     _this.SetXmlDS(0,5,1,6,10,xml);
+    _this.SetCellText(0,2,1,YY+&amp;quot;年&amp;quot;);
+    //_this.SetCellText(0,1,10,KMBH+&amp;quot;-&amp;quot;+KMMC);
+    _sql.querytods(&amp;quot;KMINFO&amp;quot;,&amp;quot;KMBH=&amp;quot;+KMBH);
+    _this.SetCellText(0,1,8,_this.XMLDS_GetString(0,&amp;quot;NAME&amp;quot;));
+    
+    _this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHOW_ZERO,1);
+     loadFirstrow();
+     yejs();     
+     
+     _this.AutoFixColWidth(0,600);
+     _this.AutoFixScreenWidth();
+     
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+     if (sheet == 1) {
+          //过滤条件改变
+          if(row == 1 &amp;&amp; col == 1) {
+                var myfilter = &amp;quot;&amp;quot;;
+                if(newvalue == &amp;quot;1&amp;quot;) {
+                    myfilter = &amp;quot;(ZT=&amp;apos;已记帐&amp;apos; or ZT=&amp;apos;记总帐&amp;apos; or ZY=&amp;apos;期初余额&amp;apos;)&amp;quot;;
+                }
+                else if(newvalue == &amp;quot;2&amp;quot;) {
+                    myfilter = &amp;quot;(ZT=&amp;apos;已核&amp;apos; or ZT=&amp;apos;未核&amp;apos; or ZY=&amp;apos;期初余额&amp;apos;)&amp;quot;;
+                }
+                loadData(myfilter);
+          }
+      }
+}
+
+//查询附件
+function queryFJ()
+{
+	var currow = _this.GetCurrentRow(0);
+	if (currow &amp;lt; 4) return; 
+	var yy = YY;
+	var mm = _this.GetCellText(0,currow,1);
+	var pzlx = _this.GetCellText(0,currow,3);
+	var pzh = _this.GetCellText(0,currow,4);
+	
+	_sql.querytods(&amp;quot;PZCZXH&amp;quot;,&amp;quot;YY=&amp;quot;+yy+&amp;quot;&amp;MM=&amp;quot;+mm+&amp;quot;&amp;PZLX=&amp;quot;+pzlx+&amp;quot;&amp;PZH=&amp;quot;+pzh);
+	var czxh = _this.XMLDS_GetString(0,&amp;quot;CZXH&amp;quot;);
+		
+	_sql.querytods(&amp;quot;FJINFO&amp;quot;,&amp;quot;YY=&amp;quot;+yy+&amp;quot;&amp;MM=&amp;quot;+mm+&amp;quot;&amp;PZLX=&amp;quot;+pzlx+&amp;quot;&amp;PZH=&amp;quot;+pzh+&amp;quot;&amp;CZXH=&amp;quot;+czxh);
+	var cnt = _this.XMLDS_GetString(0,&amp;quot;CNT&amp;quot;);
+	if (cnt &amp;lt;= 0) {
+		alert(&amp;quot;无(日记帐)附件信息!&amp;quot;);
+		return;
+	}
+	else {
+		var param = new Object();
+		param.sbh = sbh;
+		param.zth = zth;
+		param.yy  = yy;
+		param.mm  = mm;
+		param.pzh = pzh;
+		param.czxh = czxh;
+	
+		window.showModalDialog(&amp;quot;show.sp?grdid=PZGL_PZFJ&amp;quot;,param,&amp;quot;dialogWidth=1200px;dialogHeight=800px&amp;quot;);
+	}
+}
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+	if (sheet == 0 &amp;&amp; row &amp;gt;= _this.GetMainCellRangeRow1(0) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(0)) {
+		queryFJ();
+	}
+}
+
+//查询凭证
+function queryPZ()
+{
+	var row = _this.GetCurrentRow(0);
+	if (row &amp;gt;= _this.GetMainCellRangeRow1(0) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(0)) {
+		var pzh = _this.GetCellText(0,row,4);
+		var mm = _this.GetCellText(0,row,1);
+		_sql.querytods(&amp;quot;PZGUID&amp;quot;,&amp;quot;YY=&amp;quot;+YY+&amp;quot;&amp;MM=&amp;quot;+mm+&amp;quot;&amp;PZH=&amp;quot;+pzh);
+		var guid = _this.XMLDS_GetString(0,&amp;quot;GUID&amp;quot;);
+		if (guid != &amp;quot;&amp;quot;) {
+			window.showModalDialog(&amp;quot;show.sp?grdid=PZGL_PZZDXG&amp;guid=&amp;quot;+guid+&amp;quot;&amp;action=query&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;dialogWidth=1200px;dialogHeight=800px&amp;quot;);
+		}
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >  SELECT &amp;quot;CW_PZMXB&amp;quot;.&amp;quot;MM&amp;quot;,   
+         &amp;quot;CW_PZMXB&amp;quot;.&amp;quot;DD&amp;quot;,   
+         &amp;quot;CW_PZMXB&amp;quot;.&amp;quot;PZLX&amp;quot;,   
+         &amp;quot;CW_PZMXB&amp;quot;.&amp;quot;PZH&amp;quot;,   
+         &amp;quot;CW_PZMXB&amp;quot;.&amp;quot;ZY&amp;quot;,   
+         &amp;quot;CW_PZMXB&amp;quot;.&amp;quot;ZT&amp;quot;,   
+         decode(jefx, &amp;apos;借&amp;apos;, je, 0 ) jfje,   
+         decode(jefx, &amp;apos;贷&amp;apos;, je, 0 ) dfje,   
+         &amp;apos;&amp;apos; JEFX,   
+         &amp;quot;CW_PZMXB&amp;quot;.&amp;quot;JE&amp;quot;
+    FROM &amp;quot;CW_PZMXB&amp;quot;  
+   WHERE ( sbh = &amp;apos;[%sbh]&amp;apos; ) AND  
+         ( zth = &amp;apos;[%zth]&amp;apos; ) AND  
+         ( yy = [%YY] ) AND  
+         ( mm &amp;gt;= [%MM1] ) AND  
+         ( mm &amp;lt;= [%MM2] ) AND  
+         ( kmbh like [%KMBH] ||&amp;apos;%&amp;apos;)
+         and(1=1 [%filter])     
+        ORDER BY MM,DD,PZH </DATDSC><C4 >MAIN</C4><C5 >MAIN</C5><C6 >MAIN</C6><C7 >MAIN</C7><C8 >MAIN</C8><C9 >MAIN</C9><C10 >MAIN</C10><C11 >MAIN</C11><C12 ></C12></ROW>
+<ROW num="1" ><ID >MAIN2</ID><NAME ></NAME><DATDSC >select ye, yefx from cw_qcyeb
+	where sbh = &amp;apos;[%sbh]&amp;apos; and zth = &amp;apos;[%zth]&amp;apos; and  yy = [%YY]  and 
+	mm =[%MM1]  and kmbh = [%KMBH]</DATDSC><C4 ></C4><C5 >MAIN2</C5><C6 ></C6><C7 ></C7><C8 >MAIN2</C8><C9 >MAIN2</C9><C10 ></C10><C11 >MAIN2</C11><C12 ></C12></ROW>
+<ROW num="2" ><ID >yxyefx</ID><NAME ></NAME><DATDSC >select yxyefx from cw_kmb 
+where sbh = &amp;apos;[%sbh]&amp;apos; and zth = &amp;apos;[%zth]&amp;apos; and kmbh = [%KMBH]
+</DATDSC><C4 ></C4><C5 >yxyefx</C5><C6 ></C6><C7 ></C7><C8 >yxyefx</C8><C9 >yxyefx</C9><C10 ></C10><C11 ></C11><C12 ></C12></ROW>
+<ROW num="3" ><ID >FJINFO</ID><NAME ></NAME><DATDSC >select count(*) cnt from cw_rjzb 
+where org = &amp;apos;[%SYS_ORGID]&amp;apos; and acc = &amp;apos;[%SYS_ACCID]&amp;apos; 
+  and yy = [%YY] and mm = [%MM] and pzlx = &amp;apos;[%PZLX]&amp;apos; 
+  and (pzh = &amp;apos;[%PZH]&amp;apos; or pzh = &amp;apos;[%CZXH]&amp;apos;)</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 >FJINFO</C11><C12 ></C12></ROW>
+<ROW num="4" ><ID >KMINFO</ID><NAME ></NAME><DATDSC >select * from v_accitem 
+where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos;
+  and id=&amp;apos;[%KMBH]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12></ROW>
+<ROW num="5" ><ID >PZCZXH</ID><NAME ></NAME><DATDSC >select czxh from cw_pzb where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; 
+  and yy=[%YY] and mm=[%MM] and pzh=&amp;apos;[%PZH]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 >PZCZXH</C11><C12 >PZCZXH</C12></ROW>
+<ROW num="6" ><ID >PZGUID</ID><NAME ></NAME><DATDSC >select guid from cw_pzb where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; 
+  and yy=[%YY] and mm=[%MM] and pzh=&amp;apos;[%PZH]&amp;apos;
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

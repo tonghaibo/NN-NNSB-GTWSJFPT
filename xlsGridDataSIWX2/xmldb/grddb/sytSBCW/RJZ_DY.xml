@@ -1,0 +1,307 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RJZ_DY</MWID><NAME >日记帐打印</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RJZ_DY.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >日记帐管理</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE0;
+var ZXGFILE2;
+var sbh=&amp;quot;&amp;quot;;
+var zth=&amp;quot;&amp;quot;;
+var curr_mm = 0;
+var pageNum = 0; //页数
+var curr_page = 1; //当前页
+var G_kmbh = &amp;quot;&amp;quot;;
+var G_kmmc = &amp;quot;&amp;quot;;
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+     initLayout();
+     initWidget();
+     initQueryValue();
+     ZXGFILE0 = _this.SaveTempZXGFile(0);
+     ZXGFILE2 = _this.SaveTempZXGFile(2);
+     sbh = G_ORGID;
+     zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+}
+
+function initLayout()
+{
+ //   _this.SplitSheet(&amp;quot;0&amp;quot;,&amp;quot;H&amp;quot;,&amp;quot;85%&amp;quot;);
+//    _this.SplitSheet(&amp;quot;0&amp;quot;,&amp;quot;H&amp;quot;,&amp;quot;50%&amp;quot;);
+    _this.SplitSheet(&amp;quot;2&amp;quot;,&amp;quot;H&amp;quot;,&amp;quot;80%&amp;quot;);
+    _this.HideSheet(0);
+    _this.ShowToolBar(0); 
+    _this.SetMainCellRange(0,5,1,24,9);
+    _this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );    
+}
+
+function initWidget() {
+      var yyList = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_YYYY&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+      _this.SetToComboBox(&amp;quot;&amp;quot;,1,13,1,yyList );      
+}
+
+function initQueryValue(){
+      _this.SetCellText(1,13,1,G_LOGDAT.substr(0,4));
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+     if(id == &amp;quot;选择科目&amp;quot;) {
+         showKM();
+     }
+     else if(id == &amp;quot;上一页&amp;quot;) {
+         if(curr_page == 1) {
+            alert(&amp;quot;没有上一页！&amp;quot;);
+            return;
+         } 
+         curr_page = curr_page-1;
+         copyRow(curr_page,20,0,2);
+         _this.SetCellText(1,15,1,&amp;quot;当前第&amp;quot;+curr_page+&amp;quot;页，共&amp;quot;+pageNum+&amp;quot;页&amp;quot;); 
+         _this.SetCellText(0,2,5,&amp;quot;科目：&amp;quot;+G_kmbh+&amp;quot;：&amp;quot;+G_kmmc);        
+     }
+     else if(id == &amp;quot;下一页&amp;quot;) {
+         if(curr_page == pageNum) {
+            alert(&amp;quot;已经是最后一页！&amp;quot;);
+            return;
+         } 
+         curr_page = curr_page+1;
+         copyRow(curr_page,20,0,2);
+         _this.SetCellText(1,15,1,&amp;quot;当前第&amp;quot;+curr_page+&amp;quot;页，共&amp;quot;+pageNum+&amp;quot;页&amp;quot;);
+         _this.SetCellText(0,2,5,&amp;quot;科目：&amp;quot;+G_kmbh+&amp;quot;：&amp;quot;+G_kmmc);       
+     }
+     else if(id == &amp;quot;打印&amp;quot;) {
+          printRJZ();
+     }
+}
+
+function showKM()
+{
+	var obj = new Object();
+	obj.filter = &amp;quot;xjyhbz &amp;lt;&amp;gt; 0&amp;quot;;
+        obj.mjbz = &amp;quot;1&amp;quot;;
+        obj.bz = &amp;quot;&amp;quot;;
+        obj.jb = 0;
+        obj.kmbh = &amp;quot;&amp;quot;;
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_KMSEL&amp;quot;,obj,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+	cur_kmbh = retVal;
+	if (cur_kmbh != &amp;quot;&amp;quot; &amp;&amp; cur_kmbh != &amp;quot;undefined&amp;quot; &amp;&amp; cur_kmbh != undefined) {
+		_this.SetCellText(1,10,1,cur_kmbh);
+		 loadData();
+		 copyRow(1,20,0,2);
+	}
+//	_sql.querytods(&amp;quot;getKMMC&amp;quot;,&amp;quot;KMBH=&amp;quot;+cur_kmbh);
+        G_kmbh = cur_kmbh;
+        G_kmmc = _this.invokeOSFunc(&amp;quot;getKMMC&amp;quot;,&amp;quot;thisorgid=&amp;quot;+G_ORGID+&amp;quot;&amp;thisaccid=&amp;quot;+G_ACCID+&amp;quot;&amp;kmbh=&amp;quot;+cur_kmbh);
+	_this.SetCellText(0,2,5,&amp;quot;科目：&amp;quot;+G_kmbh+&amp;quot;：&amp;quot;+G_kmmc);        
+}
+
+//加载全部数据不分页
+function loadData()
+{
+    _this.LoadZXGFile(ZXGFILE2,-1,2);
+    
+    var yy = _this.GetCellText(1,13,1);
+    //var mm = curr_mm;
+    var kmbh = _this.GetCellText(1,10,1);
+    var totalrow = 24;
+    var row = 4;
+    var zje = 0;
+    var bjjfje = 0;  //本季金额
+    var bjdfje = 0;
+    var bnjfje = 0;
+    var bndfje = 0;
+    for(var mm=1;mm&amp;lt;=12;mm++) {
+	        var pageRow = 0;
+	        var byje = 0;
+	        var byjfje = 0;
+	        var bydfje = 0;
+	        _sql.querytods(&amp;quot;main&amp;quot;,&amp;quot;yy=&amp;quot;+yy+&amp;quot;&amp;mm=&amp;quot;+mm+&amp;quot;&amp;kmbh=&amp;quot;+kmbh+&amp;quot;&amp;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth);
+    for(var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+        row++;
+        pageRow ++;   //每月数据的行数     
+        if(row &amp;gt; 24) {
+                _this.AppendRow(2,_this.GetRowCount(2)-1);
+               // row = _this.GetRowCount(2)-1;
+        }
+	        var str_pzh = &amp;quot;&amp;quot;; 
+	        var old_pch = &amp;quot;&amp;quot;; 
+	        var dd = &amp;quot;&amp;quot;; 
+	        var lsh = &amp;quot;&amp;quot;; 
+	        var pzh = &amp;quot;&amp;quot;; 
+	        var pzlx = &amp;quot;&amp;quot;; 
+	        var zy = &amp;quot;&amp;quot;;
+	        var jfje = &amp;quot;&amp;quot;;
+	        var dfje = &amp;quot;&amp;quot;;
+	        var tmp_ye = &amp;quot;&amp;quot;;
+	        var tmp_yefx = &amp;quot;&amp;quot;;
+	        var ye = 0;
+	        var yefx = &amp;quot;&amp;quot;;
+	        var qcbz = &amp;quot;&amp;quot;;
+	        str_pzh = _this.XMLDS_GetStringAt(i,0);
+	        old_pch = _this.XMLDS_GetStringAt(i,1);
+	        dd  = _this.XMLDS_GetStringAt(i,2);
+	        lsh  = _this.XMLDS_GetStringAt(i,3);
+	        pzh  = _this.XMLDS_GetStringAt(i,4);
+	        pzlx = _this.XMLDS_GetStringAt(i,5);
+	        zy = _this.XMLDS_GetStringAt(i,6);
+	        jfje = 1*_this.XMLDS_GetStringAt(i,7);
+	        dfje = 1*_this.XMLDS_GetStringAt(i,8);
+	        tmp_ye = _this.XMLDS_GetStringAt(i,9);
+	        tmp_yefx = _this.XMLDS_GetStringAt(i,10);
+	        qcbz = _this.XMLDS_GetStringAt(i,11);
+	        if(zje == 0 &amp;&amp; (jfje +dfje ) != 0 ) {
+	             zje = jfje -dfje;
+	             ye = zje;
+	             if(zje &amp;gt; 0) yefx = &amp;quot;借&amp;quot;;
+	        }
+	        else if(zje != 0){
+	             zje = zje + jfje -dfje;
+	             ye = zje;
+	             if(zje &amp;gt; 0) yefx = &amp;quot;借&amp;quot;;
+	        }
+	        _this.SetCellText(2,row,1,mm);
+	        _this.SetCellText(2,row,2,dd);
+	        _this.SetCellText(2,row,3,pzlx);
+	        _this.SetCellText(2,row,4,str_pzh);
+	        _this.SetCellText(2,row,5,zy);
+	        _this.SetCellText(2,row,6,jfje);
+	        _this.SetCellText(2,row,7,dfje);
+	        _this.SetCellText(2,row,9,ye);
+	        _this.SetCellText(2,row,8,yefx);
+	        byjfje += jfje;
+	        bydfje += dfje;
+	        bjjfje += jfje;
+	        bjdfje += dfje;
+	        bnjfje += jfje;
+	        bndfje += dfje;		        	        
+	        if(i == _this.XMLDS_GetRowCount()-1) {
+	               row++;
+                       pageRow++;  	               
+		       if(row &amp;gt; 24) {
+		             _this.AppendRow(2,_this.GetRowCount(2)-1);
+		       }    
+		       _this.SetCellText(2,row,5,&amp;quot;本月合计&amp;quot;);
+                       _this.SetCellText(2,row,6,byjfje);
+                       _this.SetCellText(2,row,7,bydfje);
+                       if(mm % 3 == 0) {
+                              row++;
+                              pageRow++;
+			      if(row &amp;gt; 24) {
+			            _this.AppendRow(2,_this.GetRowCount(2)-1);
+			      }
+			      _this.SetCellText(2,row,5,&amp;quot;本季合计&amp;quot;); 
+			      _this.SetCellText(2,row,6,bjjfje); 
+			      _this.SetCellText(2,row,7,bjdfje);
+			      bjjfje = 0;
+			      bjdfje = 0;                            
+                       } 
+                       row++;
+                       pageRow++;
+                       //本年累计
+		      if(row &amp;gt; 24) {
+		            _this.AppendRow(2,_this.GetRowCount(2)-1);
+		      }
+		      _this.SetCellText(2,row,5,&amp;quot;本年累计&amp;quot;); 
+		      _this.SetCellText(2,row,6,bnjfje); 
+		      _this.SetCellText(2,row,7,bndfje);                                                                                           	        
+	   }
+      }
+      while(pageRow % 20 == pageRow) {//不足20行的月份
+               row++;
+               pageRow++;
+	       if(row &amp;gt; 24) {
+	            _this.AppendRow(2,_this.GetRowCount(2)-1);
+               }                                    
+        }
+    }
+    //计算总页数
+    pageNum = Math.ceil((row-4) / 20);
+    _this.SetCellText(1,15,1,&amp;quot;当前第&amp;quot;+curr_page+&amp;quot;页，共&amp;quot;+pageNum+&amp;quot;页&amp;quot;);
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+    if(sheet == 1) {
+        if(row==10 &amp;&amp; col==1) {
+             
+        }
+    }
+}
+
+function copyRow(pageNow,pageSize,sheet1,sheet2) 
+{
+     _this.LoadZXGFile(ZXGFILE0,-1,0);
+     _this.SetFixedRow(0,5);
+     
+     var row1 = 5+(pageNow-1)*pageSize;
+     //var row2 = 4+(pageNow+1)*pageSize;
+     var row2 = row1 + (pageSize-1);
+     var xml = _this.GetXml(sheet2,row1,1,row2,9);
+     _this.SetXmlDS(sheet1,5,1,24,9,xml);
+     
+     _this.AutoFixScreenWidth();
+     
+}
+
+function printRJZ() {
+     _this.Print(0,1);
+}
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+
+function getKMMC() {
+      var db= null;
+      var ret= 0;
+      try{
+           var db = new pub.EADatabase();
+           var sql = &amp;quot;SELECT kmmc
+                      FROM cw_kmb  
+                      WHERE (ORG=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;) AND  
+	              (ACC=&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos;) and kmbh = &amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;
+                      order by kmbh&amp;quot;;
+           var kmmc = &amp;quot;&amp;quot;;
+           kmmc = db.GetSQL(sql);
+           return kmmc;                              
+      }catch(e) {
+          if(db != null) db.Rollback();
+          return e.toString();
+      }finally {
+          if(db != null) db.Close();
+      }
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >main</ID><NAME ></NAME><DATDSC >select str_pzh, old_pch, dd, lsh, pzh, pzlx, 
+       decode(qcbz,1,decode(MM,1,&amp;apos;上年结转&amp;apos;,&amp;apos;上月结转&amp;apos;),zy) zy,   
+       decode(jefx,&amp;apos;借&amp;apos;,je,0) jfje, decode(jefx,&amp;apos;贷&amp;apos;,je,0) dfje, nvl(ye,0), 
+       nvl(yefx,&amp;apos;借&amp;apos;),qcbz     
+       from cw_rjzb 
+where zth = &amp;apos;[%zth]&amp;apos;and sbh = &amp;apos;[%sbh]&amp;apos; 
+      and yy = &amp;apos;[%yy]&amp;apos; and mm = &amp;apos;[%mm]&amp;apos; 
+      and kmbh = &amp;apos;[%kmbh]&amp;apos;
+order by mm,dd,kmbh,qcbz desc,sxh</DATDSC><C4 >main</C4><C5 >main</C5><C6 >main</C6><C7 >main</C7><C8 >main</C8><C9 ></C9><C10 ></C10></ROW>
+<ROW num="1" ><ID >getKMMC</ID><NAME >获取科目名称</NAME><DATDSC >SELCT &amp;quot;CW_KMB&amp;quot;.&amp;quot;KMBH&amp;quot;,  &amp;quot;CW_KMB&amp;quot;.&amp;quot;KMMC&amp;quot;
+FROM &amp;quot;CW_KMB&amp;quot;  
+WHERE (&amp;quot;CW_KMB&amp;quot;.&amp;quot;ORG&amp;quot;=&amp;apos;[%SYS_ORGID]&amp;apos;) AND  
+	 (&amp;quot;CW_KMB&amp;quot;.&amp;quot;ACC&amp;quot;=&amp;apos;[%SYS_ACCID]&amp;apos;) and kmbh = &amp;apos;[%KMBH]&amp;apos;
+order by kmbh</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 >getKMMC</C9><C10 >getKMMC</C10></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

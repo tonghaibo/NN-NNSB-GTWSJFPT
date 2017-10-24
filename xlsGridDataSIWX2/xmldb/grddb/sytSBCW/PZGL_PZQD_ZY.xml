@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >PZGL_PZQD_ZY</MWID><NAME >社会保险费收付凭证清单</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >PZGL_PZQD_ZY.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >YY</ID><NAME >年</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13></ROW>
+<ROW num="1" ><ID >MM</ID><NAME >月</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13></ROW>
+<ROW num="2" ><ID >PZH</ID><NAME >凭证号</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13></ROW>
+<ROW num="3" ><ID >SBH</ID><NAME >所编号</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 >SBH</C13></ROW>
+<ROW num="4" ><ID >ZTH</ID><NAME >帐套号</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13></ROW>
+<ROW num="5" ><ID >CZXH</ID><NAME >凭证号</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG ></EDTFLG><VISFLG ></VISFLG><KEYFLG ></KEYFLG><C13 ></C13></ROW>
+</ROWSET>
+</grdpamds><grdshwds>
+<ROWSET>
+<ROW num="0" ><ID >0,5,1</ID><NAME ></NAME><DBNAME ></DBNAME><DSKEY >DSC:MAIN</DSKEY><NROW >2</NROW><NCOL >19</NCOL><PAGES ></PAGES><PAGESIZE ></PAGESIZE><URL ></URL><CTLTYP ></CTLTYP><DYNCTL ></DYNCTL><LISTID ></LISTID><ISCROSS ></ISCROSS><HROW ></HROW><HCOLS ></HCOLS><ROWORDER ></ROWORDER><VCOLS ></VCOLS><VCOLSQL ></VCOLSQL><VALUECOL ></VALUECOL></ROW>
+<ROW num="1" ><ID >0,2,2</ID><NAME ></NAME><DBNAME ></DBNAME><DSKEY >[%PZH]</DSKEY><NROW ></NROW><NCOL ></NCOL><PAGES ></PAGES><PAGESIZE ></PAGESIZE><URL ></URL><CTLTYP ></CTLTYP><DYNCTL ></DYNCTL><LISTID ></LISTID><ISCROSS ></ISCROSS><HROW ></HROW><HCOLS ></HCOLS><ROWORDER ></ROWORDER><VCOLS ></VCOLS><VCOLSQL ></VCOLSQL><VALUECOL ></VALUECOL></ROW>
+<ROW num="2" ><ID >0,2,6</ID><NAME ></NAME><DBNAME ></DBNAME><DSKEY >[%YY]年[%MM]月</DSKEY><NROW ></NROW><NCOL ></NCOL><PAGES ></PAGES><PAGESIZE ></PAGESIZE><URL ></URL><CTLTYP ></CTLTYP><DYNCTL ></DYNCTL><LISTID ></LISTID><ISCROSS ></ISCROSS><HROW ></HROW><HCOLS ></HCOLS><ROWORDER ></ROWORDER><VCOLS ></VCOLS><VCOLSQL ></VCOLSQL><VALUECOL ></VALUECOL></ROW>
+</ROWSET>
+</grdshwds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.AutoFixColWidth(sheet,300);
+	_this.AutoFixScreenWidth();
+	
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select zy,
+    sum(decode(lxbh,&amp;apos;11&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,nvl(mx_je,0),-1 * nvl(mx_je,0)),0)) ylsr,
+    sum(decode(lxbh,&amp;apos;31&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,nvl(mx_je,0),-1 * nvl(mx_je,0)),0)) yilsr,
+    sum(decode(lxbh,&amp;apos;21&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,nvl(mx_je,0),-1 * nvl(mx_je,0)),0)) sysr,
+    sum(decode(lxbh,&amp;apos;41&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,nvl(mx_je,0),-1 * nvl(mx_je,0)),0)) gssr,
+    sum(decode(lxbh,&amp;apos;51&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,nvl(mx_je,0),-1 * nvl(mx_je,0)),0)) syusr,
+    sum(decode(lxbh,&amp;apos;61&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,nvl(mx_je,0),-1 * nvl(mx_je,0)),&amp;apos;71&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,nvl(mx_je,0),-1 * nvl(mx_je,0)),0)) bcsr,
+     0  lydbsr,
+    sum(decode(lxbh,&amp;apos;87&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,nvl(mx_je,0),-1 * nvl(mx_je,0)),0)) zck,/*暂存款*/
+    &amp;apos;&amp;apos; srsum,
+    sum(decode(lxbh,&amp;apos;12&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,-1 * nvl(mx_je,0), nvl(mx_je,0)),0)) ylzc,
+    sum(decode(lxbh,&amp;apos;32&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,-1 * nvl(mx_je,0), nvl(mx_je,0)),0)) yilzc,
+    sum(decode(lxbh,&amp;apos;22&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,-1 * nvl(mx_je,0), nvl(mx_je,0)),0)) syzc,
+    sum(decode(lxbh,&amp;apos;42&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,-1 * nvl(mx_je,0), nvl(mx_je,0)),0)) gszc,
+    sum(decode(lxbh,&amp;apos;52&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,-1 * nvl(mx_je,0), nvl(mx_je,0)),0)) syuzc,
+    sum(decode(lxbh,&amp;apos;62&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,-1 * nvl(mx_je,0), nvl(mx_je,0)),&amp;apos;72&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,-1 * nvl(mx_je,0), nvl(mx_je,0)),0)) bczc,
+    0  lydbzc,
+    sum(decode(lxbh,&amp;apos;97&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,-1 * nvl(mx_je,0), nvl(mx_je,0)),0)) zfk,/*暂付款*/
+    --sum(decode(lxbh,&amp;apos;83&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,nvl(mx_je,0),-1 * nvl(mx_je,0)),0)) zysr,/*转移收入*/
+    --sum(decode(lxbh,&amp;apos;93&amp;apos;, decode(mx_jefx,&amp;apos;借&amp;apos;,-1 * nvl(mx_je,0), nvl(mx_je,0)),0)) zyzc,/*转移支出*/
+    &amp;apos;&amp;apos; zcsum
+from cw_rjzb_view a                 
+where a.sbh = &amp;apos;[%SBH]&amp;apos; and a.zth = &amp;apos;[%ZTH]&amp;apos;
+    and a.dwbh is not null 
+    and a.yy=[%YY] and a.mm=[%MM] and (a.pzh=&amp;apos;[%PZH]&amp;apos; or a.pzh=&amp;apos;[%CZXH]&amp;apos;)
+group by a.sbh,a.zth,a.yy,a.mm,a.dwbh,a.zy,
+    dd ,
+    sxh ,
+    lsh 
+order by sxh,lsh</DATDSC><C4 >MAIN</C4><C5 >MAIN</C5></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

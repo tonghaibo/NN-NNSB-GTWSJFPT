@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >REPPHSHOW</MWID><NAME >报表平衡检查结果</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >REPPHSHOW.zxg</FILE><SCENE ></SCENE><FIXED >2,0</FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >showNoPH</ID><NAME >显示不平</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE><C10 >showNoPH</C10></ROW>
+<ROW num="1" ><ID >showAll</ID><NAME >显示全部</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE><C10 >GRDBTNDS_1</C10></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	//报表编号~公式编号~公式~公式名称~不平衡差异金额
+	var obj = window.dialogArguments;
+	var phinfos = obj.phinfos;
+	_this.SetCellText(0,0,0,&amp;quot;报表（&amp;quot;+obj.repid+&amp;quot;-&amp;quot;+obj.repnam+&amp;quot;）平衡检查详细信息&amp;quot;);
+	
+	var xml = _sql.query(&amp;quot;MAIN&amp;quot;,&amp;quot;REPID=&amp;quot;+obj.repid);
+	_this.SetMainCellRange(0,2,0,_this.GetRowCount(0)-1,6);
+	_this.SetXmlDS(sheet,2,0,_this.GetRowCount(0)-1,6,xml);
+	for (var row =_this.GetMainCellRangeRow1(0);row&amp;lt;=_this.GetMainCellRangeRow2(0);row++) {
+		if (_this.GetCellText(0,row,5) == &amp;quot;√&amp;quot;) {
+			_this.SetCellColor(sheet,row,5,0,0,255);	
+			_this.SetCellColor(sheet,row,5,0,0,255);
+		}
+	}
+
+	var rstArr = phinfos.split(&amp;quot;;&amp;quot;);
+	var xh = 0;
+	var row = 1;
+	for (var i=0;i&amp;lt;rstArr.length;i++) {
+		var rstInfo = rstArr[i].split(&amp;quot;~&amp;quot;);
+		if (rstInfo.length != 5) continue;
+		xh ++;
+		row ++;
+		
+		var repid = rstInfo[0];
+		var fid = rstInfo[1];
+		var formula = rstInfo[2];
+		var fname = rstInfo[3];
+		var cxje = 1.0 * rstInfo[4];
+		
+		for (var row =_this.GetMainCellRangeRow1(0);row&amp;lt;=_this.GetMainCellRangeRow2(0);row++) {
+			if (repid == _this.GetCellText(sheet,row,1) &amp;&amp; fid == _this.GetCellText(sheet,row,2)) {
+//				if (row &amp;gt; 3) _this.AppendRow(sheet,row-1);
+//				_this.SetCellText(sheet,row,0,xh);
+//				_this.SetCellText(sheet,row,1,repid);
+//				_this.SetCellText(sheet,row,2,fid);
+//				_this.SetCellText(sheet,row,3,fname);
+//				_this.SetCellText(sheet,row,4,formula);
+				
+				var phrest = &amp;quot;&amp;quot;;
+				if (cxje == 0 || cxje == &amp;quot;&amp;quot;) {
+					phrest = &amp;quot;√ 平衡&amp;quot;;
+					_this.SetCellText(sheet,row,5,&amp;quot;√&amp;quot;);
+					_this.SetCellColor(sheet,row,5,0,0,255);	
+					_this.SetCellColor(sheet,row,5,0,0,255);
+				}
+				else {
+					//noph ++;
+					phrest = &amp;quot;╳ 不平！差异金额:&amp;quot; + cxje.toFixed(2);
+					_this.SetCellText(sheet,row,5,&amp;quot;╳&amp;quot;);
+					_this.SetCellText(sheet,row,6,cxje.toFixed(2));
+					_this.SetCellColor(sheet,row,5,255,0,0);
+					_this.SetCellColor(sheet,row,6,255,0,0);
+				}
+				//_this.SetCellText(sheet,row,5,phrest);
+			}
+		}
+
+	}
+	
+	showNoPH();
+
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+	
+	_this.AutoFixColWidth(sheet,200);
+	_this.AutoFixScreenWidth();
+				
+}
+
+//显示不平
+function showNoPH()
+{
+	for (var row =_this.GetMainCellRangeRow1(0);row&amp;lt;=_this.GetMainCellRangeRow2(0);row++) {
+		var fid = _this.GetCellText(0,row,2);
+		var isph = _this.GetCellText(0,row,5);
+		if (fid != &amp;quot;&amp;quot; &amp;&amp; isph == &amp;quot;╳&amp;quot;) {
+			_this.SetRowVisible(0,row,1);
+		}
+		else {
+			_this.SetRowVisible(0,row,-1);
+		}
+	}
+}
+
+function showAll()
+{
+	for (var row =_this.GetMainCellRangeRow1(0);row&amp;lt;=_this.GetMainCellRangeRow2(0);row++) {
+		var fid = _this.GetCellText(0,row,2);
+		var isph = _this.GetCellText(0,row,5);
+		if (fid != &amp;quot;&amp;quot;) {
+			_this.SetRowVisible(0,row,1);
+		}
+		else {
+			_this.SetRowVisible(0,row,-1);
+		}
+	}
+}
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE ></GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select rownum rn,t.* from (
+select a.repid,b.id,b.note,b.formula,&amp;apos;√&amp;apos; isph,&amp;apos;0&amp;apos; cxje
+from FIN_FORMULAREP a,fin_formula b
+where a.repid=&amp;apos;[%REPID]&amp;apos; and a.formulaguid=b.guid
+order by b.id
+) t</DATDSC></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

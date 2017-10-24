@@ -1,0 +1,1133 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RJZ_TSHT</MWID><NAME >电子托收回退</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RJZ_TSHT.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS >xlsgrid/js/main.js</EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var ZXGFILE2 = &amp;quot;&amp;quot;;
+var ZXGFILE3 = &amp;quot;&amp;quot;;
+var ZXGFILE4 = &amp;quot;&amp;quot;;
+
+var sheet_zskpwj = 0;
+var sheet_kpdata = 2;
+var sheet_jfmx = 3;
+var sheet_kpdata_bt = 4
+var lr_type = &amp;quot;2&amp;quot;;
+
+var xzlxlList;
+var hyList;
+var _scny = &amp;quot;&amp;quot;; //生成年月
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.ShowTabBar(1);
+	_this.SplitSheet(&amp;quot;0,1&amp;quot;,&amp;quot;V&amp;quot;,&amp;quot;18%&amp;quot;);
+	_this.SplitSheet(&amp;quot;2,4&amp;quot;,&amp;quot;V&amp;quot;,&amp;quot;50%&amp;quot;);
+	
+	_this.SetAttribe(&amp;quot;SHEET_2&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetAttribe(&amp;quot;SHEET_3&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetAttribe(&amp;quot;SHEET_4&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+	_this.SetToSelectBox(&amp;quot;&amp;quot;,0,1,2,&amp;quot;V_CW_YYYY_MM&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetColVisible(2,0,-1);
+	try { _scny = SCNY; } catch(e) {}
+	if (_scny == &amp;quot;&amp;quot;) {
+		_this.SetCellText(0,1,2,G_LOGDAT.substring(0,7));
+	}
+	else {
+		_this.SetCellText(0,1,2,_scny);
+	}
+	
+	_this.SetToDateBox(&amp;quot;&amp;quot;,0,1,6,G_LOGDAT);
+	
+//	var kmList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_ACCITEM&amp;where=mjbz=1 and XJYHBZ&amp;lt;&amp;gt;0 and QLBZ&amp;lt;&amp;gt;1 and nvl(RJZKM_LRBZ,&amp;apos;1&amp;apos;) = &amp;apos;1&amp;apos;&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+//	_this.SetToComboBox(&amp;quot;&amp;quot;,0,3,6,kmList);
+	
+	//拷盘标志
+	var kpbzList = _this.CreateListValue();
+	_this.SetListValue(kpbzList,&amp;quot;0&amp;quot;,&amp;quot;未拷盘&amp;quot;);
+	_this.SetListValue(kpbzList,&amp;quot;1&amp;quot;,&amp;quot;已拷盘&amp;quot;);
+	_this.SetListValue(kpbzList,&amp;quot;2&amp;quot;,&amp;quot;全部&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,2,2,kpbzList);
+	_this.SetCellText(0,2,2,&amp;quot;2&amp;quot;);
+	
+	//作废标志
+	var zfbzList = _this.CreateListValue();
+	_this.SetListValue(zfbzList,&amp;quot;0&amp;quot;,&amp;quot;未作废&amp;quot;);
+	_this.SetListValue(zfbzList,&amp;quot;1&amp;quot;,&amp;quot;已作废&amp;quot;);
+	_this.SetListValue(zfbzList,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,2,4,zfbzList);
+	_this.SetCellText(0,2,4,&amp;quot;%&amp;quot;);
+	
+	var allList = _this.CreateListValue();
+	_this.SetListValue(allList,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+
+	//银行种类
+	var yhzlList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_YHZL_ZJ&amp;where=name&amp;lt;&amp;gt; &amp;apos;全部&amp;apos;&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,2,6,yhzlList);
+	_this.SetCellText(0,2,6,&amp;quot;101&amp;quot;);
+	
+	//成功标志
+	var cgbzList = _this.CreateListValue();
+	_this.SetListValue(cgbzList,&amp;quot;0&amp;quot;,&amp;quot;成功&amp;quot;);
+	_this.SetListValue(cgbzList,&amp;quot;99&amp;quot;,&amp;quot;失败&amp;quot;);
+	_this.SetListValue(cgbzList,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,3,2,cgbzList);
+	_this.SetCellText(0,3,2,&amp;quot;%&amp;quot;);
+	
+	//险种类型
+	xzlxlList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_CW_XZLX&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,1,8,xzlxlList);
+	_this.SetCellText(0,1,8,&amp;quot;%&amp;quot;);
+
+	//回盘标志
+	var hpbzList = _this.CreateListValue();
+	_this.SetListValue(hpbzList,&amp;quot;%&amp;quot;,&amp;quot;全部&amp;quot;);
+	_this.SetListValue(hpbzList,&amp;quot;0&amp;quot;,&amp;quot;未回&amp;quot;);
+	_this.SetListValue(hpbzList,&amp;quot;1&amp;quot;,&amp;quot;已回&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,2,8,hpbzList);
+	_this.SetCellText(0,2,8,&amp;quot;%&amp;quot;);
+	
+	//操作员
+	var czyList = _this.CreateListValue();
+	_this.SetListValue(czyList,&amp;quot;%25&amp;quot;,&amp;apos; &amp;apos;);		
+	_sql.querytods(&amp;quot;getUsr&amp;quot;,&amp;quot;&amp;quot;);
+	for(var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+		var usrname = _this.XMLDS_GetString(i,&amp;quot;NAME&amp;quot;);
+		_this.SetListValue(czyList,usrname,usrname);
+	}
+	_this.SetToComboBox(&amp;quot;&amp;quot;,0,3,4,czyList );
+
+	
+//	var xmlmenu1 = &amp;quot;&amp;lt;item id=\&amp;quot;typ_succht\&amp;quot; name=\&amp;quot;1.成功数据回退\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;typ_failht\&amp;quot; name=\&amp;quot;2.失败数据回退\&amp;quot;/&amp;gt;&amp;lt;item id=\&amp;quot;typ_btht\&amp;quot; name=\&amp;quot;3.补托数据回退\&amp;quot;/&amp;gt;&amp;quot;;
+	_this.AddToolbarButton(&amp;quot;udf_TSHT&amp;quot;,&amp;quot;电子托收回退&amp;quot;,&amp;quot;电子托收回退&amp;quot;,&amp;quot;&amp;quot;,1,3,3,80);
+	
+	_this.AutoFixScreenWidth();
+	
+	ZXGFILE2 = _this.SaveTempZXGFile(2); 
+	ZXGFILE3 = _this.SaveTempZXGFile(3);
+	ZXGFILE4 = _this.SaveTempZXGFile(4);
+	
+	_this.SetToBoolBox(2,0,0);
+
+	if (_scny != &amp;quot;&amp;quot;) {
+		loadMainData();
+	}
+}
+
+//加载数据
+function loadMainData()
+{	
+	_this.SetToolbarString(&amp;quot;正在加载数据...&amp;quot;);
+
+	_this.LoadZXGFile(ZXGFILE2,-1,2);
+	_this.LoadZXGFile(ZXGFILE4,-1,sheet_kpdata_bt);
+	_this.SetFixedRow(2,1);
+	_this.SetFixedCol(2,1);
+	_this.SetColVisible(2,0,-1);	
+	_this.SetMainCellRange(2,1,1,_this.GetRowCount(2)-2,_this.GetColCount(2)-1);
+	_this.SetAttribe(&amp;quot;SHEET_2&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+	_this.SetMainCellRange(sheet_kpdata_bt,1,1,_this.GetRowCount(sheet_kpdata_bt)-2,_this.GetColCount(sheet_kpdata_bt)-1);
+	_this.SetAttribe(&amp;quot;SHEET_4&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	
+	var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;); 
+	var kpbz = _this.GetCellText(0,2,2);
+	if (kpbz == 2) kpbz = &amp;quot;&amp;quot;;
+	else if (kpbz == 0) kpbz = &amp;quot; and a.bae421 is null&amp;quot;;
+	else if (kpbz == 1) kpbz = &amp;quot; and a.bae421 is not null&amp;quot;;
+	var zfbz = _this.GetCellText(0,2,4);
+	var ssyh = _this.GetCellText(0,2,6); //所属银行
+	var hpbz = _this.GetCellText(0,2,8);
+	var xzlx = _this.GetCellText(0,1,8); //险种类型
+	var scny = (_this.GetCellText(0,1,2)).replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;); 
+	var cgbz = _this.GetCellText(0,3,2);
+	var ywpch = _this.GetCellText(0,3,6);
+	if(cgbz == &amp;quot;0&amp;quot;){
+		cgbz = &amp;quot; AND a.BAZ901 = 0 &amp;quot;
+	}else if(cgbz == &amp;quot;99&amp;quot;){
+		cgbz = &amp;quot; and a.BAZ901 &amp;lt;&amp;gt; 0 &amp;quot;
+	}else if(cgbz = &amp;quot;%&amp;quot;) {
+		cgbz = &amp;quot; AND NVL(a.BAZ901,0) = NVL(a.BAZ901,0) &amp;quot;
+	}
+	var czyxm = _this.GetCellText(0,3,4);
+	var czybz = &amp;quot;&amp;quot;;
+	if(!(czyxm == &amp;quot;&amp;quot; || czyxm == &amp;quot;%25&amp;quot;)) {
+		czybz = &amp;quot; AND AAE011 = &amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;&amp;quot;;
+	}
+	
+	var param = &amp;quot;SBH=&amp;quot;+G_ORGID+&amp;quot;&amp;ZTH=&amp;quot;+zth+&amp;quot;&amp;SCNY=&amp;quot;+scny+&amp;quot;&amp;ZFBZ=&amp;quot;+escape(zfbz)+&amp;quot;&amp;XZLX=&amp;quot;+escape(xzlx)+&amp;quot;&amp;KPBZ=&amp;quot;+kpbz+&amp;quot;&amp;HPBZ=&amp;quot;+escape(hpbz)+&amp;quot;&amp;YHBM=&amp;quot;+escape(ssyh)+&amp;quot;&amp;CGBZ=&amp;quot;+cgbz
+			+&amp;quot;&amp;czybz=&amp;quot;+czybz+&amp;quot;&amp;ywpch=&amp;quot;+ywpch;
+//	alert(param);
+	var xml = _sql.query(&amp;quot;main_zs&amp;quot;,param);	
+	_this.SetXmlDS(2,1,1,_this.GetRowCount(2)-2,_this.GetColCount(2)-1,xml);
+	_this.AutoFixColWidth(2,600);
+	
+	var xml = _sql.query(&amp;quot;main_zsbt&amp;quot;,param);
+	_this.SetXmlDS(sheet_kpdata_bt,1,1,_this.GetRowCount(sheet_kpdata_bt)-2,_this.GetColCount(sheet_kpdata_bt)-1,xml);
+	_this.AutoFixColWidth(sheet_kpdata_bt,600);
+	
+	_this.SetToBoolBox(2,0,0);
+	_this.SetToBoolBox(sheet_kpdata_bt,0,0);
+	var zdws = 0;
+	var zbs = 0;
+	var arrayObj = new Array();　//创建一个数组
+	for (var r=_this.GetMainCellRangeRow1(2);r&amp;lt;=_this.GetMainCellRangeRow2(2);r++) {
+		if (_this.GetCellText(2,r,6) == &amp;quot;&amp;quot;) break;
+		_this.SetToBoolBox(2,r,0);
+		var kpbz = _this.GetCellText(2,r,1);
+		if (kpbz == &amp;quot;1&amp;quot;) {
+			_this.SetCellShowText(2,r,1,&amp;quot;已拷&amp;quot;);
+			_this.SetCellColor(2,r,1,0,0,255);
+		}
+		else if (kpbz == &amp;quot;0&amp;quot;) {
+			_this.SetCellShowText(2,r,1,&amp;quot;未拷&amp;quot;);
+			_this.SetCellColor(2,r,1,255,0,0);
+		}
+		var hpbz = _this.GetCellText(2,r,2);
+		if (hpbz == &amp;quot;1&amp;quot;) {
+			_this.SetCellShowText(2,r,2,&amp;quot;已回&amp;quot;);
+			_this.SetCellColor(2,r,2,0,0,255);
+		}
+		else if (hpbz == &amp;quot;0&amp;quot;) {
+			_this.SetCellShowText(2,r,2,&amp;quot;未回&amp;quot;);
+			_this.SetCellColor(2,r,3,255,0,0);
+		}
+		var newdwbh = _this.GetCellText(2,r,10);
+		if(!contains(arrayObj,newdwbh)) {
+			arrayObj.push(newdwbh);
+		}
+		zbs++;
+		
+	}
+	zdws = arrayObj.length;
+	var hjstr = &amp;quot;单位数：&amp;quot;+zdws+&amp;quot;，笔数：&amp;quot;+zbs;
+	_this.SetCellText(2,_this.GetRowCount(2)-1,10,hjstr);
+	
+	var zdws = 0;
+	var zbs = 0;
+	var arrayObj = new Array();　//创建一个数组
+	for (var r=_this.GetMainCellRangeRow1(sheet_kpdata_bt);r&amp;lt;=_this.GetMainCellRangeRow2(sheet_kpdata_bt);r++) {
+		if (_this.GetCellText(sheet_kpdata_bt,r,6) == &amp;quot;&amp;quot;) break;
+		_this.SetToBoolBox(sheet_kpdata_bt,r,0);
+		var kpbz = _this.GetCellText(sheet_kpdata_bt,r,1);
+		if (kpbz == &amp;quot;1&amp;quot;) {
+			_this.SetCellShowText(sheet_kpdata_bt,r,1,&amp;quot;已拷&amp;quot;);
+			_this.SetCellColor(sheet_kpdata_bt,r,1,0,0,255);
+		}
+		else if (kpbz == &amp;quot;0&amp;quot;) {
+			_this.SetCellShowText(sheet_kpdata_bt,r,1,&amp;quot;未拷&amp;quot;);
+			_this.SetCellColor(sheet_kpdata_bt,r,1,255,0,0);
+		}
+		var hpbz = _this.GetCellText(sheet_kpdata_bt,r,2);
+		if (hpbz == &amp;quot;1&amp;quot;) {
+			_this.SetCellShowText(sheet_kpdata_bt,r,2,&amp;quot;已回&amp;quot;);
+			_this.SetCellColor(sheet_kpdata_bt,r,2,0,0,255);
+		}
+		else if (hpbz == &amp;quot;0&amp;quot;) {
+			_this.SetCellShowText(sheet_kpdata_bt,r,2,&amp;quot;未回&amp;quot;);
+			_this.SetCellColor(sheet_kpdata_bt,r,3,255,0,0);
+		}
+		var newdwbh = _this.GetCellText(sheet_kpdata_bt,r,10);
+		if(!contains(arrayObj,newdwbh)) {
+			arrayObj.push(newdwbh);
+		}
+		zbs++;	
+	}
+	zdws = arrayObj.length;
+	var hjstr = &amp;quot;单位数：&amp;quot;+zdws+&amp;quot;，笔数：&amp;quot;+zbs;
+	_this.SetCellText(sheet_kpdata_bt,_this.GetRowCount(sheet_kpdata_bt)-1,10,hjstr);
+
+	_this.RefreshFormula();
+	_this.SetToolbarString(&amp;quot;&amp;quot;);
+	
+}
+
+//加载明细数据
+function loadMainDetail(sheet,row)
+{
+	_this.LoadZXGFile(ZXGFILE3,-1,sheet_jfmx);
+	_this.SetFixedRow(sheet_jfmx,1);
+	_this.SetFixedRow(sheet_jfmx,1);
+
+	_this.SetMainCellRange(sheet_jfmx,1,0,_this.GetRowCount(sheet_jfmx)-2,_this.GetColCount(sheet_jfmx)-1);
+	_this.SetAttribe(&amp;quot;SHEET_3&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+
+	if(sheet == 2){
+		var djh = _this.GetCellText(2,row,8);
+		var dwbh = _this.GetCellText(2,row,10);
+	}else if(sheet == 4){
+		var djh = _this.GetCellText(4,row,8);
+		var dwbh = _this.GetCellText(4,row,10);
+	}
+
+	var param = &amp;quot;DJH=&amp;quot;+djh+&amp;quot;&amp;DWBH=&amp;quot;+dwbh;
+	var xml = _sql.query(&amp;quot;jfmx&amp;quot;,param);
+	_this.SetXmlDS(3,1,0,_this.GetRowCount(3)-2,_this.GetColCount(3)-1,xml);
+
+	_this.RefreshFormula();		
+	_this.AutoFixColWidth(3,600);
+	
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if (id == &amp;quot;查询&amp;quot;) {
+		loadMainData();
+	}
+}
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (sheet == 2 || sheet == 4) {
+		if (row &amp;gt;= _this.GetMainCellRangeRow1(sheet) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(sheet) &amp;&amp; col != 0) {
+			loadMainDetail(sheet,row);
+		}
+	}
+	else if (sheet == 0) {
+
+	}
+}
+
+function showKM()
+{
+	var obj = new Object();
+        obj.filter = &amp;quot;xjyhbz &amp;lt;&amp;gt; 0&amp;quot;;
+        obj.mjbz = &amp;quot;1&amp;quot;;
+        obj.bz = &amp;quot;&amp;quot;;
+        obj.jb = 0;
+        obj.kmbh = &amp;quot;&amp;quot;;
+	var retVal = window.showModalDialog(&amp;quot;show.sp?grdid=CW_KMSEL&amp;quot;,obj,&amp;quot;dialogWidth=600px;dialogHeight=500px&amp;quot;);
+	cur_kmbh = retVal;
+	if (cur_kmbh != &amp;quot;&amp;quot; &amp;&amp; cur_kmbh != &amp;quot;undefined&amp;quot; &amp;&amp; cur_kmbh != undefined) {
+		_this.SetCellText(0,3,6,cur_kmbh);
+		_thisOnCellModify(0,3,6,&amp;quot;&amp;quot;,cur_kmbh);
+	}	
+}
+
+function getSelectXml(sheet)
+{
+	var xml = &amp;quot;&amp;lt;?xml version = &amp;apos;1.0&amp;apos;?&amp;gt;&amp;lt;ROWSET&amp;gt;\n&amp;quot;;
+	var num = 0;
+	for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;=_this.GetMainCellRangeRow2(sheet);r++) {
+		var flag = _this.GetCellText(sheet,r,0);
+		var sfny = _this.GetCellText(sheet,r,6);
+		var lsh = _this.GetCellText(2,r,22);
+		if (flag == &amp;quot;1&amp;quot; &amp;&amp; sfny != &amp;quot;&amp;quot;) {
+			num ++;
+			xml += &amp;quot;&amp;lt;ROW num=\&amp;quot;&amp;quot;+num+&amp;quot;\&amp;quot;&amp;gt;\n&amp;quot;;
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet,5)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet,r,5) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet,5)+&amp;quot;&amp;gt;\n&amp;quot;;		//实付年月
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet,6)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet,r,6) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet,6)+&amp;quot;&amp;gt;\n&amp;quot;;		//所属年月 开始
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet,7)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet,r,7) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet,7)+&amp;quot;&amp;gt;\n&amp;quot;;		//所属年月 截止
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet,8)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet,r,8) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet,8)+&amp;quot;&amp;gt;\n&amp;quot;;		//单据号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet,10)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet,r,10) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet,10)+&amp;quot;&amp;gt;\n&amp;quot;;	//单位编号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet,14)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet,r,14) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet,14)+&amp;quot;&amp;gt;\n&amp;quot;;	//单位银行户名
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet,15)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet,r,15) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet,15)+&amp;quot;&amp;gt;\n&amp;quot;;	//单位银行账号
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet,16)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet,r,16) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet,16)+&amp;quot;&amp;gt;\n&amp;quot;;	//单位银行名称
+			xml += &amp;quot;&amp;lt;&amp;quot;+_this.GetColName(sheet,22)+&amp;quot;&amp;gt;&amp;quot; + _this.GetCellText(sheet,r,22) +&amp;quot;&amp;lt;/&amp;quot;+_this.GetColName(sheet,22)+&amp;quot;&amp;gt;\n&amp;quot;;	//银行编码
+			xml += &amp;quot;&amp;lt;/ROW&amp;gt;\n&amp;quot;;		
+		}
+	}
+	xml += &amp;quot;&amp;lt;/ROWSET&amp;gt;&amp;quot;;
+	return xml;
+}
+
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 2) {
+		if (row == 0 &amp;&amp; col == 0) {
+			for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;=_this.GetMainCellRangeRow2(sheet);r++) {
+				_this.SetCellText(sheet,r,0,newvalue);
+			}
+		}	
+		else if (col == 1) {
+			if (newvalue == 1) {
+				if (!confirm(&amp;quot;作废该笔记录，是否继续？&amp;quot;)) return;
+			}
+			else if (newvalue == 0) {
+				if (!confirm(&amp;quot;取消作废该笔记录，是否继续？&amp;quot;)) return;
+			}
+			var param = new Object();
+			param.zfbz = newvalue;
+			param.thisorgid = G_ORGID;
+			param.thisaccid = G_ACCID;
+			param.czyxm = G_USRNAM;
+			param.djh = _this.GetCellText(sheet,row,9);
+			param.xzlx = _this.GetCellText(sheet,row,11);
+			param.pch = _this.GetCellText(sheet,row,18);
+			param.yhbm = _this.GetCellText(sheet,row,21);
+			param.lsh = _this.GetCellText(sheet,row,22);
+			var ret = invokeOSFuncExt(&amp;quot;zfSave&amp;quot;,param);
+			alert(ret);
+		}	
+	}
+	else if (sheet == 0) {
+		if (row == 1 &amp;&amp; col == 2) {
+			var ym1 = _this.GetCellText(sheet,1,2);
+			if (ym1.indexOf(&amp;quot;-&amp;quot;) == -1) {
+				var ym11 = ym1.substring(0,4)+&amp;quot;-&amp;quot;+ym1.substring(4,6);
+				_this.SetCellText(sheet,1,2,ym11);
+			}
+			ym1 = ym1.replace(&amp;quot;-&amp;quot;,&amp;quot;&amp;quot;);
+			if (ym1.length &amp;lt; 6) {
+				alert(&amp;quot;输入的期限不正确，请检查！格式：YYYYMM/YYYY-MM 201501/2015-01&amp;quot;);
+				_this.SetCellText(sheet,row,col,oldvalue);
+			}
+
+		}	
+		loadMainData();
+	}else if(sheet == 4){
+		if (row == 0 &amp;&amp; col == 0) {
+			for (var r=_this.GetMainCellRangeRow1(sheet);r&amp;lt;=_this.GetMainCellRangeRow2(sheet);r++) {
+				_this.SetCellText(sheet,r,0,newvalue);
+			}
+		}
+	}
+}
+
+function selectOneRow(sheet,row)
+{
+	var flg = _this.GetCellText(sheet,row,0);
+	if (flg == 1) {
+		_this.SetCellText(sheet,row,0,0);
+		setOneRowBkColor(sheet,row,255,255,255);		
+	}
+	else {
+		_this.SetCellText(sheet,row,0,1);
+		setOneRowBkColor(sheet,row,255,236,139);
+	}
+}
+
+function setOneRowBkColor(sheet,row,r,g,b)
+{
+	for (var c=0;c&amp;lt;_this.GetColCount(sheet);c++) {
+		_this.SetCellBkColor(sheet,row,c,r,g,b);
+	}
+	_this.SetCellFocus(sheet,row,0);
+	_this.Redraw();
+}
+
+//鼠标双击
+function _thisOnMouseDClick(sheet,row,col)
+{
+	if (sheet == 2 &amp;&amp; row &amp;gt;= _this.GetMainCellRangeRow1(2) &amp;&amp; row &amp;lt;= _this.GetMainCellRangeRow2(2)) {
+		selectOneRow(sheet,row);
+	}
+}
+
+
+
+
+//点击菜单项
+function _thisOnMenuItemSelect(sheet,row,col,menuitemid)
+{
+
+}
+
+//电子托收回退
+function TSHT()
+{
+	//检查是否已经结账
+	var jz_yy = G_LOGDAT.split(&amp;quot;-&amp;quot;)[0];
+	var jz_mm = G_LOGDAT.split(&amp;quot;-&amp;quot;)[1]*1;
+	var jz_sbh = G_ORGID;
+	var jz_zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	
+	var param = new Object();
+	param.yy = jz_yy;
+	param.mm = jz_mm;
+	param.sbh = jz_sbh;
+	param.zth = jz_zth;
+	var jz_retVal = invokeOSFuncExt(&amp;quot;check_jz&amp;quot;,param);
+	var jz_ret = jz_retVal.split(&amp;quot;@&amp;quot;)[0];
+	var jz_msg = jz_retVal.split(&amp;quot;@&amp;quot;)[1];
+	if(jz_ret != 1 ){
+		alert(jz_retVal);
+		return false;
+	}
+	
+	var ywpch = _this.GetCellText(0,3,6);
+	var kpdat = _this.GetCellText(0,1,6);
+	var yhzl = _this.GetCellText(0,2,6);
+	var sbh = G_ORGID;
+	var zth = G_ACCID.replace(sbh,&amp;quot;&amp;quot;);
+	var djh = _this.GetCellText(0,3,8);
+	var param = new Object();
+	param.ywpch = ywpch;
+	param.kpdat = kpdat;
+	param.yhzl = yhzl;
+	param.thisorgid = G_ORGID;
+	param.thisaccid = G_ACCID;
+	param.sbh = sbh;
+	param.zth = zth;
+	param.czyxm = G_USRNAM;
+	param.in_djh = djh;
+	if(ywpch == &amp;quot;&amp;quot;) {
+		alert(&amp;quot;业务批次号不能为空！&amp;quot;);
+		return false;
+	}
+	if(djh != &amp;quot;&amp;quot;) {
+		alert(&amp;quot;对不起，只有超级管理员才能单笔回退！&amp;quot;);
+		return false;
+	}
+		/*电子托收回退必须提示信息，让财务再次确认关键信息（拷盘文件名，拷盘经办人，回盘文件名，回盘操作员，银行种类及名称，
+		成功笔数及金额，失败笔数及金额，补托笔数及金额，文件总笔数及金额）是否正确，才允许回退*/			
+	if(zth == &amp;quot;31&amp;quot;) {//银海
+		var zbs = _this.invokeOSFuncExt(&amp;quot;tsht_getCount&amp;quot;,param);
+		var tips = &amp;quot;批次号【&amp;quot;+ywpch+&amp;quot;】,单据号【&amp;quot;+djh+&amp;quot;】,拷盘经办人【&amp;quot;+zbs.split(&amp;quot;~&amp;quot;)[2]+&amp;quot;】,总笔数【&amp;quot;+zbs.split(&amp;quot;~&amp;quot;)[0]+&amp;quot;】,总金额【&amp;quot;+zbs.split(&amp;quot;~&amp;quot;)[1]+&amp;quot;】&amp;quot;
+		if(window.confirm(&amp;quot;是否要进行回退？\r\n&amp;quot;+tips))
+		{
+			var ret = _this.invokeOSFuncExt(&amp;quot;TSHT_YH&amp;quot;,param);
+			if(ret == 1) {
+				alert(&amp;quot;回退成功！&amp;quot;);
+				loadMainData();
+			}
+			else {
+				alert(ret);
+			}
+		}	
+	}
+	else if(zth = &amp;quot;21&amp;quot;) {//东软
+		_this.invokeOSFuncExt(&amp;quot;TSHT_DR&amp;quot;,param);
+	}	
+}
+
+//Sheet变动
+function _thisOnSheetChange(sheet)
+{
+	if (sheet == sheet_kpdata || sheet == sheet_kpdata_bt ) {
+		lr_type = sheet; //记住录入方式
+	}
+}
+
+//判断数组是否存在某个元素
+function contains(arr, obj) {  
+    var i = arr.length;  
+    while (i--) {  
+        if (arr[i] === obj) {  
+            return true;  
+        }  
+    }  
+    return false;  
+}  
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var web = new JavaPackage(&amp;quot;com.xlsgrid.net.web&amp;quot;);
+var servletpack = new JavaPackage(&amp;quot;com.xlsgrid.net.servlet&amp;quot;);
+var ftppack = new JavaPackage(&amp;quot;org.apache.commons.net.ftp&amp;quot;);
+var timepack = new JavaPackage( &amp;quot;com.xlsgrid.net.time&amp;quot; );
+
+var storeRoot = &amp;quot;/filestore&amp;quot;;
+
+//检查结账
+function check_jz(){
+	var Pub = new SBCW_CW_PUBLIC();
+	var retVal = Pub.Pub_check_jz(sbh,zth,yy,mm);
+	return retVal;
+}
+
+
+
+function getSysDate()
+{
+	var dt = pub.EADbTool.GetSQL(&amp;quot;select to_char(sysdate,&amp;apos;yyyymmddhh24miss&amp;apos;) from dual&amp;quot;);
+	var ret = &amp;quot;ZSHP&amp;quot;+dt;
+	return ret ;
+}
+
+
+//电子托收成功回退--银海
+function TSHT_YH()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	var YWJK_YH = new SBCW_YWJK_YH();
+	try{
+		db = new pub.EADatabase();
+		
+		//是否启用银社直连判断 //2016-12-26 add by flm
+		if (yhzl != &amp;quot;&amp;quot;) {
+               		var sipub = new SBCW_PUBFUNC();
+                	var chkret = sipub.checkYSZLStatusByYH(db,sbh,zth,yhzl);
+                	if (chkret != &amp;quot;0&amp;quot;) { //已启用
+				if (chkret != &amp;quot;&amp;quot;) {
+					var rst = 1*db.GetSQL(&amp;quot;select trunc(sysdate) - to_date(&amp;apos;&amp;quot;+chkret+&amp;quot;&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;) from dual&amp;quot;);
+					if (rst &amp;gt;= 0) {
+						var yhmc = db.GetSQL(&amp;quot;select yhbm||&amp;apos;-&amp;apos;||yhmc fullname from cw_dfdsb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yhbm=&amp;apos;&amp;quot;+yhzl+&amp;quot;&amp;apos;&amp;quot;);
+						return &amp;quot;【&amp;quot;+yhmc+&amp;quot;】社银直连已启用，请到社银直连模块操作！&amp;quot;;	
+					}			
+				}
+			}
+                }
+
+		
+		sql = &amp;quot;select bae074,
+		       bae419,
+		       bac005,
+		       bae415,/*业务批次号*/
+		       aab001,
+		       LPAD(TRIM(TO_CHAR(SUM(AIC263), &amp;apos;999999999999.99&amp;apos;)), 16) AIC263,
+		       aae076,
+		       bac001,/*报盘文件名称*/
+		       bac002,/*报盘日期/手工托收打印日期（前台拷盘日期）*/
+		       bac003,/*回盘文件名称*/
+		       bac004,/*回盘日期/手工托收返回日期*/
+		       baz901,
+		       aaa027,
+		       zfbz
+		  from ac95
+		 where baz901 is not null
+		   and bac001 is not null
+		   and bac002 is not null
+		   and bac003 is not null
+		   and bac004 is not null
+		   and bae415 = &amp;apos;&amp;quot;+ywpch+&amp;quot;&amp;apos;
+		   and bae419 = &amp;apos;&amp;quot;+yhzl+&amp;quot;&amp;apos;
+		   and bae074 like &amp;apos;%&amp;quot;+in_djh+&amp;quot;%&amp;apos;
+		   /*and bac002 = &amp;apos;&amp;quot;+kpdat+&amp;quot;&amp;apos;*/
+		  group by bae074,
+		       bae419,
+		       bac005,
+		       bae415,/*业务批次号*/
+		       aab001,
+		       aae076,
+		       bac001,/*报盘文件名称*/
+		       bac002,/*报盘日期/手工托收打印日期（前台拷盘日期）*/
+		       bac003,/*回盘文件名称*/
+		       bac004,/*回盘日期/手工托收返回日期*/
+		       baz901,aaa027,zfbz order by baz901&amp;quot;;
+		 var ds = db.QuerySQL(sql);
+		 var aic263 = 0.00;
+		 var succnt = 0;
+		 var failcnt = 0;
+		 var btcnt = 0;
+		 if(ds.getRowCount() &amp;gt; 0) {
+		 	for(var i=0;i&amp;lt;ds.getRowCount();i++) {
+		 		var dwbh = ds.getStringAt(i,&amp;quot;aab001&amp;quot;);
+		 		var aae076 = ds.getStringAt(i,&amp;quot;aae076&amp;quot;);//中间表流水号
+		 		var tcqbm = ds.getStringAt(i,&amp;quot;aaa027&amp;quot;);
+		 		aic263 = ds.getStringAt(i,&amp;quot;aic263&amp;quot;);//总金额
+		 		var dzrq = &amp;quot;&amp;quot;;
+		 		var djh = ds.getStringAt(i,&amp;quot;bae074&amp;quot;);
+		 		var bae415 = ds.getStringAt(i,&amp;quot;bae415&amp;quot;);
+			 	var tips = &amp;quot;批次号:【&amp;quot;+bae415+&amp;quot;】,单据号：【&amp;quot;+djh+&amp;quot;】，单位编号：【&amp;quot;+dwbh+&amp;quot;】,社保流水号：【&amp;quot;+aae076+&amp;quot;】&amp;quot;;
+			 	var baz901 = ds.getStringAt(i,&amp;quot;baz901&amp;quot;);
+			 	var zfbz = ds.getStringAt(i,&amp;quot;zfbz&amp;quot;);
+			 	if(baz901 == &amp;quot;0&amp;quot; ){//成功回退
+					if(aae076 == &amp;quot;&amp;quot;) {
+				 		db.Rollback();
+				 		return &amp;quot;回退失败，查询中间表流水号为空.\n&amp;quot;+tips;
+				 	}
+				 	if(zfbz != &amp;quot;0&amp;quot;) {
+				 		db.Rollback();
+				 		return &amp;quot;回退失败，该笔数据已作废.\n&amp;quot;+tips;				 		
+				 	}		 		
+					//已生成凭证不允许回退，需要先删除凭证才能回退
+					sql = &amp;quot;select * from cw_yhrjzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and siseqno = &amp;apos;&amp;quot;+aae076+&amp;quot;&amp;apos;&amp;quot;;
+					var rjzds = db.QuerySQL(sql);
+					if(rjzds.getRowCount() &amp;gt; 0) {
+						var pzh = rjzds.getStringAt(0,&amp;quot;pzh&amp;quot;);
+						if(pzh != &amp;quot;&amp;quot;) {
+							db.Rollback();
+								return &amp;quot;回退失败，生成过凭证的记录不允许回退，需先删除凭证后才允许回退.\n&amp;quot;+tips;
+						}
+						//更新数据，返回到未回盘状态
+						//更新ac95
+						sql = &amp;quot;update ac95 set BAZ901=&amp;apos;&amp;apos;,BAZ902=&amp;apos;&amp;apos;,BAC004=&amp;apos;&amp;apos;,BAC003=&amp;apos;&amp;apos;,BAE011=&amp;apos;&amp;apos;,BAE036=null ,AAE076 = &amp;apos;&amp;apos;,cwht_jbr=&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,cwhr_jbrq = sysdate,
+									first_cwht_jbr = &amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,first_cwhr_jbrq = sysdate
+							where AAB001=&amp;apos;&amp;quot;+dwbh+&amp;quot;&amp;apos;and BAE074=&amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and zth =&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and AAA027=(select tcqbm from cw_sbsb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;) and bae415=&amp;apos;&amp;quot;+ywpch+&amp;quot;&amp;apos;&amp;quot;;			
+						var upcnt = db.ExcecutSQL(sql);
+						if(upcnt == 0) {
+							db.Rollback();
+							return &amp;quot;回退失败，更新ac95出错.\n&amp;quot;+tips;
+						}	
+						//更新si_djb_tmp
+						sql = &amp;quot;update v_si_djb_tmp set rzbz = &amp;apos;0&amp;apos;,rzr=&amp;apos;&amp;apos;,rzsj =&amp;apos;&amp;apos;,lsh = &amp;apos;&amp;apos;
+							where djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and sbh =&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth =&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and pch=&amp;apos;&amp;quot;+ywpch+&amp;quot;&amp;apos;&amp;quot;;
+						var upcnt = db.ExcecutSQL(sql);	
+						if(upcnt == 0) {
+							db.Rollback();
+							return &amp;quot;回退失败，更新si_djb_tmp出错.\n&amp;quot;+tips;
+						}							
+						var yy = rjzds.getStringAt(0,&amp;quot;yy&amp;quot;);
+						var mm = rjzds.getStringAt(0,&amp;quot;mm&amp;quot;);
+						var dd = rjzds.getStringAt(0,&amp;quot;dd&amp;quot;);
+						if(mm.length == 1) mm=&amp;quot;0&amp;quot;+mm;
+						var dzrq = yy+&amp;quot;&amp;quot;+mm+&amp;quot;&amp;quot;+dd;
+						var yhjk_msg = YWJK_YH.yhjk_PREPAY(db,&amp;quot;YH&amp;quot;,&amp;quot;1&amp;quot;,dwbh,&amp;quot;5&amp;quot;,aic263,dzrq,czyxm,tcqbm,aae076,sbh,zth);
+						var ret = yhjk_msg.split(&amp;quot;@&amp;quot;)[0];
+						var retmes = &amp;quot;&amp;quot;;//yhjk_msg.split(&amp;quot;@&amp;quot;)[1];
+						if (yhjk_msg.split(&amp;quot;@&amp;quot;).length() == 2) {
+							retmes = yhjk_msg.split(&amp;quot;@&amp;quot;)[1];
+						}
+						if(ret!=&amp;quot;NOERROR&amp;quot;){
+							db.Rollback();
+							return &amp;quot;调用业务接口出错！&amp;quot;+tips+&amp;quot;;出错原因:&amp;quot;+retmes+&amp;quot;.\n接口参数：ywjkbz=YH,dsrlx=1,dwbh=&amp;quot;+dwbh+&amp;quot;,&amp;quot;+&amp;quot;je=&amp;quot;+aic263+&amp;quot;,rzrq=&amp;quot;+dzrq+&amp;quot;,czyxm=&amp;quot;+czyxm+&amp;quot;,tcqbm=&amp;quot;+tcqbm+&amp;quot;,sblsh=&amp;quot;+aae076;
+						}
+						//删除日记账
+						//删除日记账明细
+						sql = &amp;quot;delete from cw_rjzmxb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and lsh in 
+								(select lsh from cw_rjzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and siseqno = &amp;apos;&amp;quot;+aae076+&amp;quot;&amp;apos;)&amp;quot;;
+						var cnt = db.ExcecutSQL(sql);
+						if(cnt == 0) {
+							db.Rollback();
+							return &amp;quot;回退失败，删除日记账明细表出错.\n&amp;quot;+tips;
+						}
+						//删除日记账
+						sql = &amp;quot;delete from cw_rjzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and siseqno = &amp;apos;&amp;quot;+aae076+&amp;quot;&amp;apos;&amp;quot;;	
+						var cnt = db.ExcecutSQL(sql);
+						if(cnt == 0) {
+							db.Rollback();
+							return &amp;quot;回退失败，删除日记账表出错.\n&amp;quot;+tips;
+						}	
+						//删除银行日记账					
+						sql = &amp;quot;delete from cw_yhrjzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and siseqno = &amp;apos;&amp;quot;+aae076+&amp;quot;&amp;apos;&amp;quot;;	
+						var cnt = db.ExcecutSQL(sql);
+						if(cnt == 0) {
+							db.Rollback();
+							return &amp;quot;回退失败，删除银行日记账表出错.\n&amp;quot;+tips;
+						}
+						succnt++;	
+																																	
+					}else {
+						db.Rollback();
+						return &amp;quot;回退失败，查询不到日记账数据\n&amp;quot;+tips;
+					}				 	
+			 	}//end if(baz901 == &amp;quot;0&amp;quot;)
+			 	else if(baz901 == &amp;quot;1&amp;quot; || baz901 == &amp;quot;2&amp;quot;) {//补托回退
+					//更新ac95
+					sql = &amp;quot;update ac95 set BAZ901=&amp;apos;&amp;apos;,BAZ902=&amp;apos;&amp;apos;,BAC004=&amp;apos;&amp;apos;,BAC003=&amp;apos;&amp;apos;,BAE011=&amp;apos;&amp;apos;,BAE036=null ,AAE076 = &amp;apos;&amp;apos;,cwht_jbr=&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,cwhr_jbrq = sysdate,zfbz = &amp;apos;0&amp;apos;,
+								first_cwht_jbr = &amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,first_cwhr_jbrq = sysdate
+						where AAB001=&amp;apos;&amp;quot;+dwbh+&amp;quot;&amp;apos;and BAE074=&amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and zth =&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and AAA027=(select tcqbm from cw_sbsb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;) and bae415=&amp;apos;&amp;quot;+ywpch+&amp;quot;&amp;apos;&amp;quot;;			
+					var upcnt = db.ExcecutSQL(sql);
+					if(upcnt == 0) {
+						db.Rollback();
+						return &amp;quot;回退失败，更新ac95出错.\n&amp;quot;+tips;
+					}	
+					//更新si_djb_tmp
+					sql = &amp;quot;update v_si_djb_tmp set rzbz = &amp;apos;0&amp;apos;,rzr=&amp;apos;&amp;apos;,rzsj =&amp;apos;&amp;apos;,lsh = &amp;apos;&amp;apos;,zfbz = &amp;apos;0&amp;apos;
+						where djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and sbh =&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth =&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and pch=&amp;apos;&amp;quot;+ywpch+&amp;quot;&amp;apos;&amp;quot;;
+					var upcnt = db.ExcecutSQL(sql);	
+					if(upcnt == 0) {
+						db.Rollback();
+						return &amp;quot;回退失败，更新si_djb_tmp出错.\n&amp;quot;+tips;
+					}									 	
+			 	}
+			 	else {//失败回退
+					//更新数据，返回到未回盘状态
+					//更新ac95
+					sql = &amp;quot;update ac95 set BAZ901=&amp;apos;&amp;apos;,BAZ902=&amp;apos;&amp;apos;,BAC004=&amp;apos;&amp;apos;,BAC003=&amp;apos;&amp;apos;,BAE011=&amp;apos;&amp;apos;,BAE036=null ,AAE076 = &amp;apos;&amp;apos;,cwht_jbr=&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,cwhr_jbrq = sysdate,zfbz = &amp;apos;0&amp;apos;,
+								first_cwht_jbr = &amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,first_cwhr_jbrq = sysdate
+						where AAB001=&amp;apos;&amp;quot;+dwbh+&amp;quot;&amp;apos;and BAE074=&amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and zth =&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and AAA027=(select tcqbm from cw_sbsb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;) and bae415=&amp;apos;&amp;quot;+ywpch+&amp;quot;&amp;apos;&amp;quot;;			
+					var upcnt = db.ExcecutSQL(sql);
+					if(upcnt == 0) {
+						db.Rollback();
+						return &amp;quot;回退失败，更新ac95出错.\n&amp;quot;+tips;
+					}	
+					//更新si_djb_tmp
+					sql = &amp;quot;update v_si_djb_tmp set rzbz = &amp;apos;0&amp;apos;,rzr=&amp;apos;&amp;apos;,rzsj =&amp;apos;&amp;apos;,lsh = &amp;apos;&amp;apos;,zfbz = &amp;apos;0&amp;apos;
+						where djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and sbh =&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth =&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and  pch=&amp;apos;&amp;quot;+ywpch+&amp;quot;&amp;apos;&amp;quot;;
+					var upcnt = db.ExcecutSQL(sql);	
+					if(upcnt == 0) {
+						db.Rollback();
+						return &amp;quot;回退失败，更新si_djb_tmp出错.\n&amp;quot;+tips;
+					}							
+					var yhjk_msg = YWJK_YH.yhjk_PREPAY(db,&amp;quot;YH&amp;quot;,&amp;quot;1&amp;quot;,dwbh,&amp;quot;7&amp;quot;,djh,&amp;quot;&amp;quot;,czyxm,tcqbm,djh,sbh,zth);
+					var ret = yhjk_msg.split(&amp;quot;@&amp;quot;)[0];
+					var retmes = &amp;quot;&amp;quot;;//yhjk_msg.split(&amp;quot;@&amp;quot;)[1];
+					if (yhjk_msg.split(&amp;quot;@&amp;quot;).length() == 2) {
+						retmes = yhjk_msg.split(&amp;quot;@&amp;quot;)[1];
+					}
+					if(ret!=&amp;quot;NOERROR&amp;quot;){
+						db.Rollback();
+						return &amp;quot;调用业务接口出错！&amp;quot;+tips+&amp;quot;;出错原因:&amp;quot;+retmes+&amp;quot;.\n接口参数：ywjkbz=YH,dsrlx=1,ywlx=&amp;quot;+7+&amp;quot;dwbh=&amp;quot;+dwbh+&amp;quot;,&amp;quot;+&amp;quot;je=,rzrq=&amp;quot;+dzrq+&amp;quot;,czyxm=&amp;quot;+czyxm+&amp;quot;,tcqbm=&amp;quot;+tcqbm+&amp;quot;,sblsh=&amp;quot;+aae076;
+					}
+					failcnt++;									 	
+			 	}				 		
+		 	}// end for(var =0;i&amp;lt;ds.getRowCount();i++)
+		 }else {
+		 	db.Rollback();
+		 	return &amp;quot;回退失败，ac95查询不到相关数据&amp;quot;;
+		 }//end  ds.getRowCount() &amp;gt;0       
+//		db.Rollback();
+		db.Commit();
+		return 1; //返回1表示正常		   
+	}catch(e){
+		if(db != null) db.Rollback();
+		return e.toString();
+	}finally{
+		if(db != null) db.Close();
+	}
+}
+
+//电子托收拷盘回退 求总数
+function tsht_getCount()
+{
+	var db = null;
+	try{
+		db = new pub.EADatabase();
+		var cnt = &amp;quot;&amp;quot;;
+		var sql = &amp;quot;select count(*) cnt,SUM(je) je,max(kpjbr) kpjbr
+				from
+				(
+				select    bae415,LPAD(TRIM(TO_CHAR(SUM(AIC263), &amp;apos;999999999999.99&amp;apos;)), 16) je,aae011 kpjbr
+						  from ac95
+						 where baz901 is not null
+						   and bac001 is not null
+						   and bac002 is not null
+						   and bac003 is not null
+						   and bac004 is not null
+						   and bae415 = &amp;apos;&amp;quot;+ywpch+&amp;quot;&amp;apos;
+						   and bae419 = &amp;apos;&amp;quot;+yhzl+&amp;quot;&amp;apos;
+						   and bae074 like &amp;apos;%&amp;quot;+in_djh+&amp;quot;%&amp;apos;
+						  group by 
+						       bae419,
+						       bac005,
+						       bae415,/*业务批次号*/
+						       aab001,
+						       aaa027,aae011
+				)               
+				         &amp;quot;;		         
+		var ds = db.QuerySQL(sql);
+		if(ds.getRowCount()&amp;gt;0) {
+			cnt = ds.getStringAt(0,&amp;quot;cnt&amp;quot;);
+			var je = ds.getStringAt(0,&amp;quot;je&amp;quot;);
+			var kpjbr = ds.getStringAt(0,&amp;quot;kpjbr&amp;quot;);
+			return cnt+&amp;quot;~&amp;quot;+je+&amp;quot;~&amp;quot;+kpjbr;
+		}				       
+		return &amp;quot;0&amp;quot;+&amp;quot;~&amp;quot;+0+&amp;quot;~&amp;quot;+&amp;quot; &amp;quot;;
+	}catch(e){
+		if(db != null) db.Rollback();
+		return &amp;quot;0&amp;quot;+&amp;quot;~&amp;quot;+0+&amp;quot;~&amp;quot;+&amp;quot; &amp;quot;;
+	}finally {
+		if(db != null) db.Close();
+	}	       
+}
+
+//电子托收拷盘回退 求明细数
+function tsht_getMxCount()
+{
+	var db = null;
+	try{
+		db = new pub.EADatabase();
+		var cnt = 0;
+		var sql = &amp;quot;select count(*)
+				from
+				(
+				select decode(baz901,&amp;apos;0&amp;apos;,&amp;apos;cght&amp;apos;,&amp;apos;1&amp;apos;,&amp;apos;btht&amp;apos;,&amp;apos;2&amp;apos;,&amp;apos;btht&amp;apos;,)
+					  from ac95
+					 where baz901 is not null
+					   and bac001 is not null
+					   and bac002 is not null
+					   and bac003 is not null
+					   and bac004 is not null
+					   and bae415 = &amp;apos;&amp;quot;+ywpch+&amp;quot;&amp;apos;
+					   and bae419 = &amp;apos;&amp;quot;+yhzl+&amp;quot;&amp;apos;
+					   and bae074 like &amp;apos;%&amp;quot;+in_djh+&amp;quot;%&amp;apos;
+					  group by bae074,
+					       baz901
+					       bae419,
+					       bac005,
+					       bae415,/*业务批次号*/
+					       aab001,
+					       aaa027
+				)&amp;quot;;
+		cnt = db.GetSQL(sql);	
+		return cnt;
+	}catch(e){
+		if(db != null) db.Rollback();
+		return 0;
+	}finally {
+		if(db != null) db.Close();
+	}	
+	return cnt;	       
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >DETAIL</ID><NAME >明细</NAME><DATDSC >select rownum,a.* from (
+select AAC001,AAC003,AAB001,AAE135,AIC263,AAE010,AAE007,BIC006,AAE002Min,AAE002Max,months,
+       AAE208,BAE074,AAE076,BAZ901,BAZ902,BAC003
+from (
+select   AAC001,AAC003,AAB001,AAE135,AIC263,AAE010,AAE007,BIC006,
+  min(substr(AAE002,0,6)) AAE002Min,max(substr(AAE002,8,13)) AAE002Max,
+  nvl(max(substr(AAE002,8,13)),0)-nvl(min(substr(AAE002,0,6)),0)+1 months,
+  AAE208,BAE074,AAE076,BAZ901,
+  nvl(a.BAZ902,(select aaa103 from aa10 b where a.BAZ901=b.aaa102 and b.aaa100=&amp;apos;BAZ901&amp;apos; )) BAZ902,
+  BAC003,BAE415,BAE419
+from ac95 a
+where AAE208=&amp;apos;[%SFNY]&amp;apos;
+  and BAE074=&amp;apos;[%DJH]&amp;apos;
+  and aae140=&amp;apos;[%XZLX]&amp;apos;
+  and BAE419=&amp;apos;[%DFYHBM]&amp;apos; 
+  --and nvl(BAZ901,&amp;apos;%&amp;apos;) like &amp;apos;[%THM]%&amp;apos;
+  [%FILTERSTR] 
+group by AAC001,AAC003,AAB001,AAE135,AIC263,AAE010,AAE007,BIC006,
+  AAE208,BAE074,AAE076,BAZ901,BAZ902,BAC003,BAE415,BAE419
+) 
+order by BAE415,BAE419,AAB001,AAC001
+) a</DATDSC><C4 ></C4><C5 >DETAIL</C5><C6 >DETAIL</C6><C7 >DETAIL</C7><C8 >DETAIL</C8><C9 ></C9><C10 ></C10><C11 >DETAIL</C11><C12 >DETAIL</C12><C13 ></C13><C14 ></C14><C15 >DETAIL</C15><C16 >DETAIL</C16><C17 >DETAIL</C17><C18 >DETAIL</C18><C19 ></C19><C20 >DETAIL</C20><C21 ></C21><C22 >DETAIL</C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 >DETAIL</C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 ></C35><C36 ></C36><C37 ></C37><C38 ></C38><C39 ></C39><C40 ></C40><C41 ></C41><C42 ></C42><C43 ></C43><C44 ></C44><C45 ></C45><C46 ></C46><C47 ></C47><C48 ></C48><C49 >DETAIL</C49><C50 ></C50><C51 ></C51><C52 ></C52><C53 ></C53><C54 ></C54><C55 ></C55><C56 ></C56><C57 ></C57><C58 ></C58><C59 ></C59><C60 ></C60><C61 ></C61><C62 ></C62><C63 ></C63></ROW>
+<ROW num="1" ><ID >YHFTPINFO</ID><NAME ></NAME><DATDSC >select * from cw_dfdsb where org=&amp;apos;[%SYS_ORGID]&amp;apos; and acc=&amp;apos;[%SYS_ACCID]&amp;apos; and yhbm=&amp;apos;[%YHBM]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 >YHFTPINFO</C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 >YHFTPINFO</C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 ></C35><C36 ></C36><C37 ></C37><C38 ></C38><C39 ></C39><C40 ></C40><C41 ></C41><C42 ></C42><C43 >YHFTPINFO</C43><C44 ></C44><C45 ></C45><C46 >YHFTPINFO</C46><C47 ></C47><C48 ></C48><C49 ></C49><C50 ></C50><C51 ></C51><C52 ></C52><C53 ></C53><C54 ></C54><C55 ></C55><C56 ></C56><C57 ></C57><C58 ></C58><C59 ></C59><C60 ></C60><C61 ></C61><C62 ></C62><C63 ></C63></ROW>
+<ROW num="2" ><ID >QueryRunOSTimer</ID><NAME ></NAME><DATDSC >select count(*) from RunOSTimer
+where stat=&amp;apos;run&amp;apos; and id=&amp;apos;[%jobid]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 >QueryRunOSTimer</C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 >QueryRunOSTimer</C35><C36 ></C36><C37 ></C37><C38 ></C38><C39 ></C39><C40 ></C40><C41 ></C41><C42 ></C42><C43 ></C43><C44 ></C44><C45 ></C45><C46 ></C46><C47 ></C47><C48 ></C48><C49 ></C49><C50 >QueryRunOSTimer</C50><C51 >QueryRunOSTimer</C51><C52 ></C52><C53 ></C53><C54 ></C54><C55 ></C55><C56 ></C56><C57 ></C57><C58 ></C58><C59 ></C59><C60 ></C60><C61 ></C61><C62 ></C62><C63 ></C63></ROW>
+<ROW num="3" ><ID >QueryRunOSTimerExist</ID><NAME ></NAME><DATDSC >select count(*) from RunOSTimer
+where (stat=&amp;apos;end&amp;apos; or stat=&amp;apos;error&amp;apos;) and id=&amp;apos;[%jobid]&amp;apos;
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 >QueryRunOSTimerExist</C35><C36 ></C36><C37 ></C37><C38 ></C38><C39 ></C39><C40 ></C40><C41 ></C41><C42 ></C42><C43 ></C43><C44 ></C44><C45 ></C45><C46 ></C46><C47 ></C47><C48 ></C48><C49 ></C49><C50 >QueryRunOSTimerExist</C50><C51 >QueryRunOSTimerExist</C51><C52 ></C52><C53 ></C53><C54 ></C54><C55 ></C55><C56 ></C56><C57 ></C57><C58 ></C58><C59 ></C59><C60 ></C60><C61 ></C61><C62 ></C62><C63 ></C63></ROW>
+<ROW num="4" ><ID >DeleteQueryRunOSTimer</ID><NAME ></NAME><DATDSC >delete from RunOSTimer where  id=&amp;apos;[%jobid]&amp;apos;;
+delete from RunOSTimerDTL where  id=&amp;apos;[%jobid]&amp;apos;
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 ></C35><C36 ></C36><C37 ></C37><C38 ></C38><C39 ></C39><C40 ></C40><C41 ></C41><C42 ></C42><C43 ></C43><C44 ></C44><C45 ></C45><C46 ></C46><C47 ></C47><C48 ></C48><C49 ></C49><C50 ></C50><C51 ></C51><C52 ></C52><C53 ></C53><C54 ></C54><C55 ></C55><C56 ></C56><C57 ></C57><C58 ></C58><C59 ></C59><C60 ></C60><C61 ></C61><C62 ></C62><C63 ></C63></ROW>
+<ROW num="5" ><ID >main_zs</ID><NAME ></NAME><DATDSC >SELECT DECODE(A.BAE421, NULL, &amp;apos;0&amp;apos;, &amp;apos;1&amp;apos;) KPBZ, /*拷盘标志*/
+       DECODE(NVL(MAX(A.BAZ901), &amp;apos;NUL&amp;apos;), &amp;apos;NUL&amp;apos;, &amp;apos;0&amp;apos;, &amp;apos;1&amp;apos;) HPBZ, /*回盘标志*/
+       A.AAE011 KPCZY, /*拷盘操作员*/
+       DECODE(A.BAC002,
+              NULL,
+              TO_CHAR(A.AAE036, &amp;apos;yyyymmdd&amp;apos;),
+              TO_CHAR(A.BAC002, &amp;apos;yyyymmdd&amp;apos;)) KPRQ, /*拷盘日期*/
+       A.AAE208 SFNY, /*实付年月*/
+       MIN(SUBSTR(A.AAE002, 0, 6)) AAE002, /*所属年月 开始*/
+       MAX(SUBSTR(A.AAE002, 8)) AAE002_MAX, /*所属年月 截止*/
+       A.BAE074 DJH, /*单据号*/
+       /*A.AAE140 XZLX, 险种*/
+       B.WJM WJM, /*文件名*/
+       A.AAB001 DWBH, /*单位编号*/
+       A.AAB004 DWMC, /*单位名称*/
+       SUM(NVL(AIC263, 0)) JE,
+       AAE008 DWYHHH, /*单位银行行号*/
+       AAE009 DWYHHM, /*单位银行户名*/
+       AAE010 DWYHZH, /*单位银行账号*/
+       A.AAE024 DWYHMC, /*单位银行名称*/
+       MAX(A.BAZ901) THM,/*退回码*/
+       MAX(NVL(A.BAZ902,
+               (SELECT AAA103
+                  FROM AA10 B
+                 WHERE A.BAZ901 = B.AAA102
+                   AND B.AAA100 = &amp;apos;BAZ901&amp;apos;))) THYY, /*退回原因*/
+       A.BAE324 SBYHMC,
+       A.BAE310 SBYHZH,
+       A.BAE309 SBYHHM,       
+       A.BAE419 DFYHBM, /*社保银行编码*/
+       MAX(AAE076) CWLSH,/*财务流水号*/
+       MAX(BAC001) KPWJM,/*拷盘文件名*/
+       MAX(BAC003) HPWJM /*回盘文件名*/,max(bae415) PCH
+  FROM AC95 A, CW_DFDSB B,cw_sbsb c
+ WHERE A.BAC005 = &amp;apos;A110&amp;apos; 
+   AND A.AAE208 = &amp;apos;[%SCNY]&amp;apos;
+   /*AND A.AAE140 like &amp;apos;[%XZLX]&amp;apos;*/
+   and a.YSZL_YHRZLSH is null /*银社数据不显示*/
+   and nvl(a.zfbz,&amp;apos;0&amp;apos;) like decode(&amp;apos;[%ZFBZ]&amp;apos;,&amp;apos;%&amp;apos;,&amp;apos;%&amp;apos;,&amp;apos;[%ZFBZ]&amp;apos;)
+   AND B.SZBZ(+) = &amp;apos;1&amp;apos;
+   AND B.SBH(+) = &amp;apos;[%SBH]&amp;apos;
+   AND B.ZTH(+) = &amp;apos;[%ZTH]&amp;apos;
+   and a.zth = &amp;apos;[%ZTH]&amp;apos;
+   AND A.BAE419 like &amp;apos;[%YHBM]&amp;apos;
+   and (a.aae140 like &amp;apos;[%XZLX]%&amp;apos;)
+   and a.bae415 like &amp;apos;[%ywpch]%&amp;apos;
+   AND DECODE(NVL(A.BAZ901, &amp;apos;NUL&amp;apos;), &amp;apos;NUL&amp;apos;, &amp;apos;0&amp;apos;, &amp;apos;1&amp;apos;) LIKE &amp;apos;[%HPBZ]%&amp;apos;
+       [%KPBZ] [%CGBZ] [%czybz]
+   AND B.YHBM(+) = A.BAE419
+   AND B.SBH = C.SBH
+   AND A.AAA027 = C.TCQBM
+ GROUP BY DECODE(A.BAE421, NULL, &amp;apos;0&amp;apos;, &amp;apos;1&amp;apos;), /*拷盘标志*/
+          A.AAE011, /*拷盘操作员*/
+          DECODE(A.BAC002,
+                 NULL,
+                 TO_CHAR(A.AAE036, &amp;apos;yyyymmdd&amp;apos;),
+                 TO_CHAR(A.BAC002, &amp;apos;yyyymmdd&amp;apos;)), /*拷盘日期*/
+          A.AAE208, /*实付年月*/
+          A.BAE074, /*单据号*/
+          B.WJM, /*文件名*/
+          A.AAB001, /*单位编号*/
+          A.AAB004, /*单位名称*/
+          AAE008, /*单位银行行号*/
+          AAE009, /*单位银行户名*/
+          AAE010, /*单位银行账号*/
+          A.AAE024, /*单位银行名称*/
+          A.BAE324,
+          A.BAE310,
+          A.BAE309,
+          A.BAE419
+  order by A.BAE419,
+           a.bae074,a.aab001</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 >main_zs</C27><C28 >main_zs</C28><C29 ></C29><C30 >main_zs</C30><C31 >main_zs</C31><C32 >main_zs</C32><C33 >main_zs</C33><C34 >main_zs</C34><C35 ></C35><C36 >main_zs</C36><C37 >main_zs</C37><C38 >main_zs</C38><C39 ></C39><C40 >main_zs</C40><C41 >main_zs</C41><C42 >main_zs</C42><C43 ></C43><C44 >main_zs</C44><C45 >main_zs</C45><C46 ></C46><C47 ></C47><C48 ></C48><C49 ></C49><C50 ></C50><C51 ></C51><C52 >main_zs</C52><C53 >main_zs</C53><C54 >main_zs</C54><C55 >main_zs</C55><C56 ></C56><C57 ></C57><C58 >main_zs</C58><C59 >main_zs</C59><C60 ></C60><C61 >main_zs</C61><C62 ></C62><C63 ></C63></ROW>
+<ROW num="6" ><ID >jfmx</ID><NAME >缴费明细</NAME><DATDSC >SELECT A.BAZ901 THM,/*退回码*/
+       NVL(A.BAZ902,
+               (SELECT AAA103
+                  FROM AA10 B
+                 WHERE A.BAZ901 = B.AAA102
+                   AND B.AAA100 = &amp;apos;BAZ901&amp;apos;)) THYY,
+	AAE002 QX,
+       BIE086 LXBH,
+       NVL(BAZ501, 0) JE1,
+       NVL(BAZ502, 0) JE2,
+       NVL(BAZ503, 0) JE3,
+       NVL(BAZ504, 0) JE4,
+       NVL(BAZ505, 0) JE5,
+       NVL(BAZ506, 0) JE6,
+       NVL(BAZ507, 0) JE7,
+       NVL(BAZ508, 0) JE8,
+       NVL(BAZ509, 0) JE9,
+       NVL(BAZ510, 0) JE10,
+       NVL(BAZ511, 0) JE11,
+       NVL(BAZ512, 0) JE12,
+       NVL(BAZ513, 0) JE13,
+       NVL(BAZ514, 0) JE14,
+       NVL(BAZ515, 0) JE15,
+       NVL(AIC263, 0) ZJE,
+       AAB119 JFRS,
+       AAB120 JFJS,
+       AAE140 XZ
+  FROM AC95 A
+ WHERE BAE074 = &amp;apos;[%DJH]&amp;apos;
+   AND AAB001 = &amp;apos;[%DWBH]&amp;apos;
+   and AAA027=(select tcqbm from cw_sbsb where sbh=&amp;apos;[%SYS_ORGID]&amp;apos;)
+ ORDER BY AAE140</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 >jfmx</C29><C30 >jfmx</C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 ></C35><C36 >jfmx</C36><C37 ></C37><C38 ></C38><C39 ></C39><C40 ></C40><C41 ></C41><C42 ></C42><C43 ></C43><C44 ></C44><C45 ></C45><C46 ></C46><C47 ></C47><C48 ></C48><C49 ></C49><C50 ></C50><C51 ></C51><C52 ></C52><C53 ></C53><C54 ></C54><C55 ></C55><C56 ></C56><C57 ></C57><C58 ></C58><C59 ></C59><C60 ></C60><C61 ></C61><C62 ></C62><C63 ></C63></ROW>
+<ROW num="7" ><ID >main_zsbt</ID><NAME >征收补托</NAME><DATDSC >SELECT DECODE(A.BAE421, NULL, &amp;apos;0&amp;apos;, &amp;apos;1&amp;apos;) KPBZ, /*拷盘标志*/
+       DECODE(NVL(MAX(A.BAZ901), &amp;apos;NUL&amp;apos;), &amp;apos;NUL&amp;apos;, &amp;apos;0&amp;apos;, &amp;apos;1&amp;apos;) HPBZ, /*回盘标志*/
+       A.AAE011 KPCZY, /*拷盘操作员*/
+       DECODE(A.BAC002,
+              NULL,
+              TO_CHAR(A.AAE036, &amp;apos;yyyymmdd&amp;apos;),
+              TO_CHAR(A.BAC002, &amp;apos;yyyymmdd&amp;apos;)) KPRQ, /*拷盘日期*/
+       A.AAE208 SFNY, /*实付年月*/
+       MIN(SUBSTR(A.AAE002, 0, 6)) AAE002, /*所属年月 开始*/
+       MAX(SUBSTR(A.AAE002, 8)) AAE002_MAX, /*所属年月 截止*/
+       A.BAE074 DJH, /*单据号*/
+       /*A.AAE140 XZLX, 险种*/
+       B.WJM WJM, /*文件名*/
+       A.AAB001 DWBH, /*单位编号*/
+       A.AAB004 DWMC, /*单位名称*/
+       SUM(NVL(AIC263, 0)) JE,
+       AAE008 DWYHHH, /*单位银行行号*/
+       AAE009 DWYHHM, /*单位银行户名*/
+       AAE010 DWYHZH, /*单位银行账号*/
+       A.AAE024 DWYHMC, /*单位银行名称*/
+       MAX(A.BAZ901) THM,/*退回码*/
+       MAX(NVL(A.BAZ902,
+               (SELECT AAA103
+                  FROM AA10 B
+                 WHERE A.BAZ901 = B.AAA102
+                   AND B.AAA100 = &amp;apos;BAZ901&amp;apos;))) THYY, /*退回原因*/
+       A.BAE324 SBYHMC,
+       A.BAE310 SBYHZH,
+       A.BAE309 SBYHHM,       
+       A.BAE419 DFYHBM, /*社保银行编码*/
+       MAX(AAE076) CWLSH,/*财务流水号*/
+       MAX(BAC001) KPWJM,/*拷盘文件名*/
+       MAX(BAC003) HPWJM /*回盘文件名*/,max(bae415) PCH
+  FROM AC95 A, CW_DFDSB B,cw_sbsb c
+ WHERE A.BAC005 = &amp;apos;A110&amp;apos;
+   AND A.AAE208 = &amp;apos;[%SCNY]&amp;apos;
+   /*AND A.AAE140 like &amp;apos;[%XZLX]&amp;apos;*/
+   AND NVL(A.BIE085, 0) &amp;lt;&amp;gt; 1
+   AND B.SZBZ(+) = &amp;apos;1&amp;apos;
+   AND B.SBH(+) = &amp;apos;[%SBH]&amp;apos;
+   AND B.ZTH(+) = &amp;apos;[%ZTH]&amp;apos;
+   AND A.ZTH    = &amp;apos;[%ZTH]&amp;apos;
+   AND A.BAE419 like &amp;apos;[%YHBM]&amp;apos;
+   AND DECODE(NVL(A.BAZ901, &amp;apos;NUL&amp;apos;), &amp;apos;NUL&amp;apos;, &amp;apos;0&amp;apos;, &amp;apos;1&amp;apos;) LIKE &amp;apos;[%HPBZ]%&amp;apos;
+       [%KPBZ]
+   AND B.YHBM(+) = A.BAE419
+   AND A.BAZ901 IN (&amp;apos;1&amp;apos;,&amp;apos;2&amp;apos;)
+   and nvl(a.bie085,&amp;apos;0&amp;apos;) &amp;lt;= 1
+   AND B.SBH = C.SBH
+   AND A.AAA027 = C.TCQBM and decode (&amp;apos;[%ywpch]&amp;apos;,&amp;apos;&amp;apos;,a.bae415,&amp;apos;%&amp;apos;,a.bae415,&amp;apos;[%ywpch]&amp;apos;) = a.bae415
+ GROUP BY DECODE(A.BAE421, NULL, &amp;apos;0&amp;apos;, &amp;apos;1&amp;apos;), /*拷盘标志*/
+          A.AAE011, /*拷盘操作员*/
+          DECODE(A.BAC002,
+                 NULL,
+                 TO_CHAR(A.AAE036, &amp;apos;yyyymmdd&amp;apos;),
+                 TO_CHAR(A.BAC002, &amp;apos;yyyymmdd&amp;apos;)), /*拷盘日期*/
+          A.AAE208, /*实付年月*/
+          A.BAE074, /*单据号*/
+          B.WJM, /*文件名*/
+          A.AAB001, /*单位编号*/
+          A.AAB004, /*单位名称*/
+          AAE008, /*单位银行行号*/
+          AAE009, /*单位银行户名*/
+          AAE010, /*单位银行账号*/
+          A.AAE024, /*单位银行名称*/
+          A.BAE324,
+          A.BAE310,
+          A.BAE309,
+          A.BAE419
+  order by A.BAE419,
+           a.bae074,a.aab001</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 ></C35><C36 ></C36><C37 >main_zsbt</C37><C38 >main_zsbt</C38><C39 ></C39><C40 >main_zsbt</C40><C41 >main_zsbt</C41><C42 >main_zsbt</C42><C43 ></C43><C44 ></C44><C45 ></C45><C46 ></C46><C47 ></C47><C48 ></C48><C49 ></C49><C50 ></C50><C51 ></C51><C52 >main_zsbt</C52><C53 >main_zsbt</C53><C54 ></C54><C55 ></C55><C56 ></C56><C57 ></C57><C58 ></C58><C59 >main_zsbt</C59><C60 ></C60><C61 ></C61><C62 >main_zsbt</C62><C63 >main_zsbt</C63></ROW>
+<ROW num="8" ><ID >DOWNWJ</ID><NAME ></NAME><DATDSC >select max(bac001) kpwjm from ac95
+where AAE208=&amp;apos;[%SCNY]&amp;apos; and BAE419=&amp;apos;[%YHBM]&amp;apos;
+  and aaa027=(select tcqbm from cw_sbsb where sbh=&amp;apos;[%SYS_ORGID]&amp;apos;)
+  and zth=&amp;apos;[%ZTH]&amp;apos; and BAE074=&amp;apos;[%DJH]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 ></C35><C36 ></C36><C37 ></C37><C38 ></C38><C39 ></C39><C40 ></C40><C41 ></C41><C42 ></C42><C43 ></C43><C44 ></C44><C45 ></C45><C46 ></C46><C47 ></C47><C48 ></C48><C49 ></C49><C50 ></C50><C51 ></C51><C52 ></C52><C53 ></C53><C54 ></C54><C55 ></C55><C56 ></C56><C57 ></C57><C58 ></C58><C59 ></C59><C60 ></C60><C61 ></C61><C62 ></C62><C63 ></C63></ROW>
+<ROW num="9" ><ID >getUsr</ID><NAME ></NAME><DATDSC >select * from usr where useflg = &amp;apos;1&amp;apos; and org = &amp;apos;[%SYS_ORGID]&amp;apos; order by name</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 ></C35><C36 ></C36><C37 ></C37><C38 ></C38><C39 ></C39><C40 ></C40><C41 ></C41><C42 ></C42><C43 ></C43><C44 ></C44><C45 ></C45><C46 ></C46><C47 ></C47><C48 ></C48><C49 ></C49><C50 ></C50><C51 ></C51><C52 ></C52><C53 ></C53><C54 ></C54><C55 ></C55><C56 ></C56><C57 ></C57><C58 ></C58><C59 ></C59><C60 ></C60><C61 ></C61><C62 ></C62><C63 ></C63></ROW>
+<ROW num="10" ><ID >mx_zsht</ID><NAME >征收回退明细</NAME><DATDSC >select bae074,
+		       bae419,
+		       bac005,
+		       bae415,/*业务批次号*/
+		       aab001,
+		       LPAD(TRIM(TO_CHAR(SUM(AIC263), &amp;apos;999999999999.99&amp;apos;)), 16) AIC263,
+		       aae076,
+		       bac001,/*报盘文件名称*/
+		       bac002,/*报盘日期/手工托收打印日期（前台拷盘日期）*/
+		       bac003,/*回盘文件名称*/
+		       bac004,/*回盘日期/手工托收返回日期*/
+		       baz901,
+		       aaa027,
+		       zfbz
+		  from ac95
+		 where baz901 is not null
+		   and bac001 is not null
+		   and bac002 is not null
+		   and bac003 is not null
+		   and bac004 is not null
+		   and bae415 = &amp;apos;[%ywpch]&amp;apos;
+		   and bae419 = &amp;apos;[%yhzl]&amp;apos;
+		   and bae074 like &amp;apos;%[%in_djh]%&amp;apos;
+		   /*and bac002 = &amp;apos;&amp;quot;+kpdat+&amp;quot;&amp;apos;*/
+		  group by bae074,
+		       bae419,
+		       bac005,
+		       bae415,/*业务批次号*/
+		       aab001,
+		       aae076,
+		       bac001,/*报盘文件名称*/
+		       bac002,/*报盘日期/手工托收打印日期（前台拷盘日期）*/
+		       bac003,/*回盘文件名称*/
+		       bac004,/*回盘日期/手工托收返回日期*/
+		       baz901,aaa027 order by baz901,zfbz</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22><C23 ></C23><C24 ></C24><C25 ></C25><C26 ></C26><C27 ></C27><C28 ></C28><C29 ></C29><C30 ></C30><C31 ></C31><C32 ></C32><C33 ></C33><C34 ></C34><C35 ></C35><C36 ></C36><C37 ></C37><C38 ></C38><C39 ></C39><C40 ></C40><C41 ></C41><C42 ></C42><C43 ></C43><C44 ></C44><C45 ></C45><C46 ></C46><C47 ></C47><C48 ></C48><C49 ></C49><C50 ></C50><C51 ></C51><C52 ></C52><C53 ></C53><C54 ></C54><C55 ></C55><C56 ></C56><C57 ></C57><C58 ></C58><C59 ></C59><C60 ></C60><C61 ></C61><C62 ></C62><C63 ></C63></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

@@ -1,0 +1,674 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >RJZ_PAYRETURN</MWID><NAME >银行发放回盘确认</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >RJZ_PAYRETURN.zxg</FILE><SCENE ></SCENE><FIXED >1,1</FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >1</WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >doCheck</ID><NAME >数据检查</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE><C10 >dataCheck</C10></ROW>
+<ROW num="1" ><ID >closeWND</ID><NAME >关闭</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >2</IMG><IMGMOUSE >2</IMGMOUSE><C10 ></C10></ROW>
+</ROWSET>
+</grdbtnds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >HPRQ</ID><NAME >回盘日期</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 >hprq</C13><C14 >HPRQ</C14><C15 >HPRQ</C15><C16 ></C16></ROW>
+<ROW num="1" ><ID >JOBID</ID><NAME >回盘作业号</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 >hpseqno</C13><C14 >JOBID</C14><C15 ></C15><C16 ></C16></ROW>
+<ROW num="2" ><ID >HPBANK</ID><NAME >回盘银行</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 ></C13><C14 ></C14><C15 >HPBANK</C15><C16 >HPBANK</C16></ROW>
+</ROWSET>
+</grdpamds><grdshwds>
+<ROWSET>
+<ROW num="0" ><ID >0,1,0</ID><NAME ></NAME><DBNAME ></DBNAME><DSKEY >DSC:MAIN</DSKEY><NROW >2</NROW><NCOL >18</NCOL><PAGES ></PAGES><PAGESIZE ></PAGESIZE><URL ></URL><CTLTYP ></CTLTYP><DYNCTL ></DYNCTL><LISTID ></LISTID><ISCROSS ></ISCROSS><HROW ></HROW><HCOLS ></HCOLS><ROWORDER ></ROWORDER><VCOLS ></VCOLS><VCOLSQL ></VCOLSQL><VALUECOL ></VALUECOL><C20 >0,1,0</C20></ROW>
+</ROWSET>
+</grdshwds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var checkResult = 0; //回盘数据格式检查结果
+var intervalProcess;
+var timecnt = 0;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	_this.SplitSheet(1,&amp;quot;V&amp;quot;,&amp;quot;40%&amp;quot;);
+	_this.AutoFixColWidth(0,600);
+	_this.AutoFixScreenWidth();
+	_this.SetAttribe(&amp;quot;SHEET_0&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetAttribe(&amp;quot;SHEET_1&amp;quot;,_this.ATTR_SHOW_ZERO,1);
+	_this.SetColVisible(0,7,-1);
+	_this.SetColVisible(0,8,-1);
+
+	_this.SetToDateBox(&amp;quot;&amp;quot;,1,2,2,HPRQ);
+	_this.SetCellText(1,2,2,HPRQ);
+	_this.SetToolbarString(&amp;quot;提示：当前回盘作业号:&amp;quot;+JOBID + &amp;quot;    快捷键：Ctrl+F查找&amp;quot;);
+	
+	_sql.querytods(&amp;quot;INFODS&amp;quot;,&amp;quot;JOBID=&amp;quot;+JOBID);
+	_this.SetCellText(1,2,6,_this.XMLDS_GetString(0,&amp;quot;ZBS&amp;quot;));
+	_this.SetCellText(1,2,8,_this.XMLDS_GetString(0,&amp;quot;DWBS&amp;quot;));
+	_this.SetCellText(1,2,4,_this.XMLDS_GetString(0,&amp;quot;SUMDFJE&amp;quot;));
+	_this.SetCellText(1,4,2,_this.XMLDS_GetString(0,&amp;quot;SUCCBS&amp;quot;));
+	_this.SetCellText(1,4,6,_this.XMLDS_GetString(0,&amp;quot;FAILBS&amp;quot;));
+	_this.SetCellText(1,4,4,_this.XMLDS_GetString(0,&amp;quot;SUCCJE&amp;quot;));
+	_this.SetCellText(1,4,8,_this.XMLDS_GetString(0,&amp;quot;FAILJE&amp;quot;));
+	
+	_this.SetToCheckBox(&amp;quot;&amp;quot;,1,6,1,&amp;quot;是否笔数匹配&amp;quot;,&amp;quot;1&amp;quot;,&amp;quot;0&amp;quot;);
+	_this.SetCellText(1,6,1,&amp;quot;1&amp;quot;);
+	
+	
+}
+
+//数据检查
+function dataCheck()
+{
+	var sbh = G_ORGID;
+	var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	var jobseqid = &amp;quot;SAVE_&amp;quot;+JOBID;
+	var chkbs = _this.GetCellText(1,6,1);
+	var ret = invokeOSFunc(&amp;quot;CheckHPData&amp;quot;,&amp;quot;sbh=&amp;quot;+sbh+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;jobid=&amp;quot;+JOBID+&amp;quot;&amp;jobseqid=&amp;quot;+jobseqid+&amp;quot;&amp;chkbs=&amp;quot;+chkbs+&amp;quot;&amp;hpbank=&amp;quot;+HPBANK);
+	if (ret != &amp;quot;1&amp;quot;) {
+		alert(&amp;quot;数据检查，发现以下问题：\n&amp;quot;+ret);
+		_this.SetCellText(1,8,1,&amp;quot;数据检查，发现以下问题：\n&amp;quot;+ret);
+		return 0;
+	}
+	return 1;
+}
+
+function doCheck()
+{
+	var ret = dataCheck();
+	if (ret == 1) {
+		alert(&amp;quot;数据检查完毕，没有发现问题！&amp;quot;);
+		_this.SetCellText(1,8,1,&amp;quot;&amp;quot;);
+	}
+}
+
+//点击按钮
+function _thisOnButtonCtrlClick(id,sheet,row,col)
+{
+	if (id == &amp;quot;保存回盘&amp;quot;) {
+		if (!confirm(&amp;quot;回盘保存，请确认以下信息！\n回盘日期： &amp;quot;+_this.GetCellText(1,2,2)
+			+&amp;quot;\n   总笔数： &amp;quot;+_this.GetCellText(1,2,6)+&amp;quot;  单位数： &amp;quot;+_this.GetCellText(1,2,8)
+			+&amp;quot;\n   总金额： &amp;quot;+ (1.0*_this.GetCellText(1,2,4)).toFixed(2)
+			+&amp;quot;\n成功笔数： &amp;quot;+_this.GetCellText(1,4,2) +&amp;quot;  成功金额： &amp;quot;+_this.GetCellText(1,4,4)
+			+&amp;quot;\n失败笔数： &amp;quot;+_this.GetCellText(1,4,6)+&amp;quot;  失败金额： &amp;quot;+_this.GetCellText(1,4,8)
+		    )) return;
+		if (dataCheck() == 0) return;
+		
+		var param = new Object();
+		param.zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+		param.hpdat = _this.GetCellText(1,2,2);
+		param.hpbank = HPBANK;
+		param.thisorgid = G_ORGID;
+		param.thisaccid = G_ACCID;
+		param.usrid = G_USRID;
+		param.czyxm = G_USRNAM;
+		
+		var jobseqid = &amp;quot;SAVE_&amp;quot;+JOBID;
+		param.jobid = jobseqid;
+		param.jobnam = &amp;quot;银行发放回盘导入进程[&amp;quot;+jobseqid+&amp;quot;]&amp;quot;;
+		
+		_sql.querytods(&amp;quot;QueryRunOSTimer&amp;quot;,&amp;quot;jobseqid=&amp;quot;+jobseqid);
+		if( 1*_this.XMLDS_GetStringAt(0,0)&amp;gt;0 ){
+			//有一个作业正在运行，打开进度框
+			//window.showModalDialog(&amp;quot;show.sp?grdid=RunOSTimer&amp;jobseqid=&amp;quot;+jobseqid,&amp;quot;&amp;quot;,&amp;quot;dialogwidth:600pt;dialogheight:500pt;help:yes;resizable:yes;&amp;quot; );
+			refresh(jobseqid);
+		}
+		else {
+			_sql.querytods(&amp;quot;QueryRunOSTimerExist&amp;quot;,&amp;quot;jobseqid=&amp;quot;+jobseqid);
+			if ( 1*_this.XMLDS_GetStringAt(0,0) &amp;gt; 0) { //是否运行结束
+				//运行结束打开预览保存窗口
+				clearInterval(intervalProcess);		
+				refresh(jobseqid);	
+			}
+			else {
+				intervalProcess = setInterval(&amp;quot;refresh(&amp;apos;&amp;quot;+jobseqid+&amp;quot;&amp;apos;)&amp;quot;,500);
+				var ret = invokeOSFuncExt(&amp;quot;genbatch&amp;quot;,param); 
+			
+				if ( ret == jobseqid ) {
+					//window.showModalDialog(&amp;quot;show.sp?grdid=RunOSTimer&amp;rungrdid=RJZ_PAYRETURN&amp;jobseqid=&amp;quot;+ret ,&amp;quot;&amp;quot;,&amp;quot;dialogwidth:600pt;dialogheight:500pt;help:yes;resizable:yes;&amp;quot; );
+				}			
+			}
+		}
+	}
+}
+
+function refresh(jobseqid)
+{
+	timecnt ++;
+	var savebz = 0;
+	
+	_sql.querytods(&amp;quot;TIPSDS&amp;quot;,&amp;quot;jobseqid=&amp;quot;+jobseqid);
+	var percent = _this.XMLDS_GetString(0,&amp;quot;PERCENT&amp;quot;);
+	var tips = _this.XMLDS_GetString(0,&amp;quot;TIPS&amp;quot;);
+	//_this.SetToolbarString(tips+&amp;quot; 进程ID:&amp;quot;+jobseqid);
+	if (tips.indexOf(&amp;quot;保存银行回盘数据成功&amp;quot;) &amp;gt; -1) {
+		savebz = 1;
+	}
+	var str = &amp;quot;&amp;quot;;
+	for (var i=0;i&amp;lt;_this.XMLDS_GetRowCount();i++) {
+		str += _this.XMLDS_GetString(i,&amp;quot;TIPS&amp;quot;) + &amp;quot;\n&amp;quot;;
+	}
+	_this.SetCellText(1,8,1,str);
+	
+	_this.SetRedraw(0);
+	_this.SetCellText(1,0,0,&amp;quot;保存进度 &amp;quot;+percent+&amp;quot;%&amp;quot;);
+	var colwidth = 0;
+	for (var c=0;c&amp;lt;=9;c++) {
+		colwidth += _this.GetColWidth(1,c);
+	}
+	_this.SetToRectbox(1,0,0, &amp;quot;&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;保存进度 &amp;quot;+(percent*colwidth/100),&amp;quot;&amp;quot;+_this.GetRowHeight(1,0), &amp;quot;#FF0000&amp;quot;, 1,&amp;quot;#FF0000&amp;quot;,1,&amp;quot;#FF0000&amp;quot;,1,&amp;quot;#FF0000&amp;quot;,1,&amp;quot;#FF0000&amp;quot;);
+	_this.SetRedraw(1);
+	
+	if (percent == 100) {
+		clearInterval(intervalProcess);
+		if (savebz == 1) {
+			if (!confirm(&amp;quot;保存回盘数据成功！是否关闭窗口？&amp;quot;)) return;
+			window.returnValue = &amp;quot;success&amp;quot;;
+			window.close();
+		}
+		else {
+			alert(&amp;quot;保存回盘数据失败！&amp;quot;);
+		}
+	}
+}
+
+//关闭
+function closeWND()
+{
+	window.returnValue = &amp;quot;success&amp;quot;;
+	window.close();
+}
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var web = new JavaPackage(&amp;quot;com.xlsgrid.net.web&amp;quot;);
+var servletpack = new JavaPackage(&amp;quot;com.xlsgrid.net.servlet&amp;quot;);
+var ftppack = new JavaPackage(&amp;quot;org.apache.commons.net.ftp&amp;quot;);
+var timepack = new JavaPackage( &amp;quot;com.xlsgrid.net.time&amp;quot; );
+
+//银行回盘处理
+function SaveYHHP()
+{
+	var filename = &amp;quot;&amp;quot;;
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	var jkret = &amp;quot;&amp;quot;;
+	var rowcnt = 0;
+	var failecnt = 0;
+	var process = 0;
+	var sbh = thisorgid;
+	var yszlCheck = 0;
+	var BAZ610_XH = &amp;quot;&amp;quot;;
+	try {
+		db = new pub.EADatabase();
+		
+		var uo_ywjk = new SBCW_IYWJK(); //业务接口类
+		var ywjkbz = uo_ywjk.getYWJKBZ(db,thisaccid);
+		
+		notify(jobseqid,0,&amp;quot;准备保存银行回盘数据...&amp;quot;,&amp;quot;run&amp;quot;);//名称为空表示只要更新进度
+
+		
+		sql = &amp;quot;select tcqbm from cw_sbsb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;&amp;quot;;
+		var tcqbm = db.GetSQL(sql);
+		//获取社保流水号
+		var service = new SBCW_sbcwService();
+		var sblsh = service.genSiSeq(tcqbm);		
+		var kmbh = &amp;quot;&amp;quot;;
+		
+		sql = &amp;quot;select * from SI_YHRETURN_TEMP where jobid=replace(&amp;apos;%s&amp;apos;,&amp;apos;SAVE_&amp;apos;,&amp;apos;&amp;apos;) order by xh&amp;quot;.format([jobseqid]);
+		var ds = db.QuerySQL(sql);
+		
+		rowcnt = ds.getRowCount();
+		var modcnt = 5;
+		if (rowcnt &amp;gt;= 10000) modcnt = 1000;
+		else if (rowcnt &amp;gt;= 5000) modcnt = 500;
+		else if (rowcnt &amp;gt;= 1000) modcnt = 100;
+		else if (rowcnt &amp;gt;= 500) modcnt = 200;
+		else if (rowcnt &amp;gt;= 200) modcnt = 50;
+		else if (rowcnt &amp;gt;= 50) modcnt = 10;
+		
+		for (var i=0;i&amp;lt;rowcnt;i++) {
+			var currow = i + 1;
+			var grbh = ds.getStringAt(i,&amp;quot;GRBH&amp;quot;);
+			var xm = ds.getStringAt(i,&amp;quot;XM&amp;quot;);
+			var dwbh = ds.getStringAt(i,&amp;quot;DWBH&amp;quot;);
+			var sfzh = ds.getStringAt(i,&amp;quot;SFZH&amp;quot;);
+			var dfje = ds.getStringAt(i,&amp;quot;DFJE&amp;quot;);
+			var dfzh = ds.getStringAt(i,&amp;quot;DFZH&amp;quot;);
+			var zcode = ds.getStringAt(i,&amp;quot;ZCODE&amp;quot;);
+			var addr = ds.getStringAt(i,&amp;quot;ADDR&amp;quot;);
+			var djh = ds.getStringAt(i,&amp;quot;DJH&amp;quot;);
+			var pch = ds.getStringAt(i,&amp;quot;PCH&amp;quot;);
+			var cgbz = ds.getStringAt(i,&amp;quot;CGBZ&amp;quot;);
+			var sbbz = ds.getStringAt(i,&amp;quot;SBBZ&amp;quot;);
+			var zqzh = ds.getStringAt(i,&amp;quot;ZQZH&amp;quot;);
+			var zqyhm = ds.getStringAt(i,&amp;quot;ZQYHM&amp;quot;);
+			filename = ds.getStringAt(i,&amp;quot;FILENAME&amp;quot;);
+			BAZ610_XH = ds.getStringAt(i,&amp;quot;BAZ610&amp;quot;);//20170117 LYH add 加入序号查询
+			
+			process = db.GetSQL(&amp;quot;select round(&amp;quot;+currow+&amp;quot; / &amp;quot;+rowcnt+&amp;quot; * 100 - 1,0) from dual&amp;quot;);
+			
+			if (currow % modcnt == 0) {
+				notify(jobseqid,process,&amp;quot;正在保存(当前行:&amp;quot;+currow+&amp;quot;),请稍候...&amp;quot;,&amp;quot;run&amp;quot;);//名称为空表示只要更新进度
+			}
+			
+			if(cgbz == &amp;quot;&amp;quot; || cgbz == null) {
+				db.Rollback();
+				notify(jobseqid,100,&amp;quot;保存回盘失败！发放标志不能为空！出错行号:&amp;quot;+currow+&amp;quot;.个人编号：&amp;quot;+grbh+&amp;quot;,姓名：&amp;quot;+xm+&amp;quot;,金额：&amp;quot;+dfje+&amp;quot;,sql:&amp;quot;,&amp;quot;end&amp;quot;);//名称为空表示只要更新进度
+				return &amp;quot;保存回盘失败！发放标志不能为空！出错行号:&amp;quot;+currow+&amp;quot;.个人编号：&amp;quot;+grbh+&amp;quot;,姓名：&amp;quot;+xm+&amp;quot;,金额：&amp;quot;+dfje+&amp;quot;,sql:&amp;quot;;				
+			}
+			
+			//是否启用银社直连判断
+			if (yszlCheck == 0) {
+				yszlCheck = 1;
+				sql = &amp;quot;select distinct BAE419 from ac95 where zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and aaa027=&amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos; and AAB001=&amp;apos;&amp;quot;+dwbh+&amp;quot;&amp;apos; and BAE074=&amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and BAE415=&amp;apos;&amp;quot;+pch+&amp;quot;&amp;apos; and (aae008=&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos; or BAE419=&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos;)&amp;quot;;
+				var ac95ds = db.QuerySQL(sql);
+				if (ac95ds.getRowCount() &amp;gt; 0) {
+					var bae419 = ac95ds.getStringAt(0,&amp;quot;BAE419&amp;quot;); //单位银行编码
+					var sipub = new SBCW_PUBFUNC();
+					var chkret = sipub.checkYSZLStatusByYH(db,sbh,zth,bae419);
+					if (chkret != &amp;quot;0&amp;quot;) { //已启用
+						if (chkret != &amp;quot;&amp;quot;) {
+							var rst = 1*db.GetSQL(&amp;quot;select to_date(&amp;apos;&amp;quot;+hpdat+&amp;quot;&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;) - to_date(&amp;apos;&amp;quot;+chkret+&amp;quot;&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;) from dual&amp;quot;);
+							if (rst &amp;gt;= 0) {
+								var yhmc = db.GetSQL(&amp;quot;select fullname from V_CW_YHZL_ZF where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and id=&amp;apos;&amp;quot;+bae419+&amp;quot;&amp;apos;&amp;quot;);
+								notify(jobseqid,100,&amp;quot;保存回盘失败！【&amp;quot;+yhmc+&amp;quot;】社银直连已启用，请到社银直连模块操作！出错行号:&amp;quot;+filerow+&amp;quot;.&amp;quot;,&amp;quot;end&amp;quot;);
+								return &amp;quot;保存回盘失败！【&amp;quot;+yhmc+&amp;quot;】社银直连已启用，请到社银直连模块操作！&amp;quot;;
+							}											
+						}
+					}
+
+				}
+			}
+			
+			////20170117 LYH add 加入序号查询AND BAZ610 = &amp;apos;&amp;quot;+BAZ610_XH+&amp;quot;&amp;apos;
+			sql = &amp;quot;select * from ac95 where zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and aaa027=&amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos; and AAC001=&amp;apos;&amp;quot;+grbh+&amp;quot;&amp;apos; and AAB001=&amp;apos;&amp;quot;+dwbh+&amp;quot;&amp;apos; and BAE074=&amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and BAE415=&amp;apos;&amp;quot;+pch+&amp;quot;&amp;apos; 
+				and (aae008=&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos; or BAE419=&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos;) and BAZ901 is not null and BAE036 is not null &amp;quot;;
+			if (sfzh != &amp;quot;&amp;quot;) sql += &amp;quot; and AAE135=&amp;apos;&amp;quot;+sfzh+&amp;quot;&amp;apos;&amp;quot;;
+			if (BAZ610_XH != &amp;quot;&amp;quot;) sql += &amp;quot; AND BAZ610 = &amp;apos;&amp;quot;+BAZ610_XH+&amp;quot;&amp;apos;&amp;quot;;
+			
+			var hpds = db.QuerySQL(sql);
+			if (hpds.getRowCount() &amp;gt; 0) { //已回过盘不允许重复
+				db.Rollback();
+				notify(jobseqid,100,&amp;quot;已经回盘，不允许重复回盘！出错行号:&amp;quot;+currow+&amp;quot;.&amp;quot;,&amp;quot;end&amp;quot;);//名称为空表示只要更新进度
+				return &amp;quot;保存失败：已经做过回盘，不允许重复回盘！出错行号:&amp;quot;+currow+&amp;quot;.&amp;quot;;
+			}
+			
+			//更新回盘信息
+			//20170117 LYH add 加入序号查询AND BAZ610 = &amp;apos;&amp;quot;+BAZ610_XH+&amp;quot;&amp;apos;
+			sql = &amp;quot;update ac95 set BAZ901=&amp;apos;&amp;quot;+cgbz+&amp;quot;&amp;apos;,BAZ902=&amp;apos;&amp;quot;+sbbz+&amp;quot;&amp;apos;,BAC004=to_date(&amp;apos;&amp;quot;+hpdat+&amp;quot;&amp;apos;,&amp;apos;yyyy-mm-dd&amp;apos;),BAC003=&amp;apos;&amp;quot;+filename+&amp;quot;&amp;apos;,BAE011=&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,BAE036=sysdate 
+				where zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and aaa027=&amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos; and AAC001=&amp;apos;&amp;quot;+grbh+&amp;quot;&amp;apos; and AAB001=&amp;apos;&amp;quot;+dwbh+&amp;quot;&amp;apos; 
+				  and BAE074=&amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and BAE415=&amp;apos;&amp;quot;+pch+&amp;quot;&amp;apos; and (aae008=&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos; or BAE419=&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos;) &amp;quot;;
+			if (sfzh != &amp;quot;&amp;quot;) sql += &amp;quot; and AAE135=&amp;apos;&amp;quot;+sfzh+&amp;quot;&amp;apos;&amp;quot;;
+			//旧文件格式有冲突，暂时注释20170119
+			if (BAZ610_XH != &amp;quot;&amp;quot;) sql += &amp;quot; AND BAZ610 = &amp;apos;&amp;quot;+BAZ610_XH+&amp;quot;&amp;apos;&amp;quot;;
+			
+			var upcnt = db.ExcecutSQL(sql);
+			if (upcnt == 0) {
+				db.Rollback();
+				notify(jobseqid,100,&amp;quot;保存回盘失败！更新记录数为0！出错行号:&amp;quot;+currow+&amp;quot;.个人编号：&amp;quot;+grbh+&amp;quot;,姓名：&amp;quot;+xm+&amp;quot;,金额：&amp;quot;+dfje+&amp;quot;,sql:&amp;quot;+sql,&amp;quot;end&amp;quot;);//名称为空表示只要更新进度
+				return &amp;quot;保存回盘失败！更新记录数为0！出错行号:&amp;quot;+currow+&amp;quot;.\n&amp;quot;;
+			}
+			
+			//20170117 LYH add 加入序号查询AND BAZ610 = &amp;apos;&amp;quot;+BAZ610_XH+&amp;quot;&amp;apos;
+			sql = &amp;quot;select a.BAZ610,a.AAA027,a.BAZ901,nvl(a.BAZ902,(select aaa103 from aa10 b where a.BAZ901=b.aaa102 and b.aaa100=&amp;apos;BAZ901&amp;apos; )) BAZ902,a.BAC004,a.BAE415,a.AAE076,a.BAE036
+				from ac95 a where zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and aaa027=&amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos; and AAC001=&amp;apos;&amp;quot;+grbh+&amp;quot;&amp;apos; and AAB001=&amp;apos;&amp;quot;+dwbh+&amp;quot;&amp;apos; and BAE074=&amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos; and BAE415=&amp;apos;&amp;quot;+pch+&amp;quot;&amp;apos; 
+				  and (aae008=&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos; or BAE419=&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos;) &amp;quot;;
+			if (sfzh != &amp;quot;&amp;quot;) sql += &amp;quot; and AAE135=&amp;apos;&amp;quot;+sfzh+&amp;quot;&amp;apos;&amp;quot;;
+			//旧文件格式有冲突，暂时注释20170119
+			if (BAZ610_XH != &amp;quot;&amp;quot;) sql += &amp;quot; AND BAZ610 = &amp;apos;&amp;quot;+BAZ610_XH+&amp;quot;&amp;apos;&amp;quot;;
+			
+			var tmpds = db.QuerySQL(sql);
+			if (tmpds.getRowCount() &amp;gt; 0) {
+				//调用接口（银海、东软）通知业务 (一笔明细调用一次接口）
+				var BAZ610 = tmpds.getStringAt(0,&amp;quot;BAZ610&amp;quot;); //业务内部序号
+				//var AAE117 = tmpds.getStringAt(0,&amp;quot;AAE117&amp;quot;); //支付状态
+				var AAA027 = tmpds.getStringAt(0,&amp;quot;AAA027&amp;quot;); //所属统筹区
+				var BAZ901 = tmpds.getStringAt(0,&amp;quot;BAZ901&amp;quot;); //回盘结果状态码
+				var BAZ902 = tmpds.getStringAt(0,&amp;quot;BAZ902&amp;quot;); //回盘结果失败原因
+				var BAC004 = tmpds.getStringAt(0,&amp;quot;BAC004&amp;quot;); //回盘时间
+				var BAE415 = tmpds.getStringAt(0,&amp;quot;BAE415&amp;quot;); //发放批次
+				var AAE076 = tmpds.getStringAt(0,&amp;quot;AAE076&amp;quot;); //财务流水号
+				var BAE036 = tmpds.getStringAt(0,&amp;quot;BAE036&amp;quot;); //回盘时间
+				
+				if (AAE076 == &amp;quot;&amp;quot;) {  //还没有存入日记帐不能做回盘操作
+					db.Rollback();
+					notify(jobseqid,100,&amp;quot;保存回盘失败！该拷盘数据财务尚未记日记帐，请先到批量录模块存入日记帐后再进行回盘操作！&amp;quot;,&amp;quot;end&amp;quot;);//名称为空表示只要更新进度
+					return &amp;quot;保存回盘失败！该拷盘数据财务尚未记日记帐，请先到批量录模块存入日记帐后再进行回盘操作！&amp;quot;;
+				}
+				
+				sql = &amp;quot;select czyxm,to_char(czysj,&amp;apos;yyyy-mm-dd&amp;apos;) czysj from cw_rjzb where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos; and lsh=&amp;apos;&amp;quot;+AAE076+&amp;quot;&amp;apos;&amp;quot;;
+				var rjzds = db.QuerySQL(sql);
+				var zdr = czyxm;
+				var czysj = db.GetSQL(&amp;quot;select to_char(sysdate,&amp;apos;yyyy-mm-dd&amp;apos;) from dual&amp;quot;);
+				if (rjzds.getRowCount() &amp;gt; 0) {
+					zdr = rjzds.getStringAt(0,&amp;quot;CZYXM&amp;quot;);
+					czysj = rjzds.getStringAt(0,&amp;quot;CZYSJ&amp;quot;);
+				}
+				var yhbz = (cgbz == &amp;quot;0&amp;quot; ? &amp;quot;11&amp;quot; : &amp;quot;12&amp;quot;); //支付标志（11:支付成功，12：支付失败）
+				//notify(jobseqid,30,&amp;quot;正在导入银行回盘文件...&amp;quot;,&amp;quot;run&amp;quot;);//名称为空表示只要更新进度
+				var jkmsg = uo_ywjk.yhkpReturn(db,thisorgid,thisaccid,BAZ610,AAA027,yhbz,BAZ902,AAE076,zdr,czysj,BAE415,BAC004,BAC004,BAE036,ywjkbz);
+//				throw new Exception(jkmsg);
+				var retmsg = jkmsg.split(&amp;quot;@&amp;quot;);
+				//notify(jobseqid,33,&amp;quot;正在导入银行回盘文件...&amp;quot;+retmsg ,&amp;quot;run&amp;quot;);//名称为空表示只要更新进度
+				
+				if(retmsg[1] != &amp;quot;NOERROR&amp;quot;){
+					db.Rollback();
+					notify(jobseqid,100,&amp;quot;保存回盘失败！调用发放业务接口出错！接口返回：&amp;quot;+jkmsg,&amp;quot;end&amp;quot;);//名称为空表示只要更新进度
+					return &amp;quot;保存回盘失败！调用发放业务接口出错！接口返回：&amp;quot;+jkmsg;
+				}
+				
+				//回盘不成功的记录，写入日记帐对冲原来的入帐日记 （一笔出不成功就记一笔日记帐）
+				if (cgbz != &amp;quot;0&amp;quot;) {
+					failecnt ++;
+					
+					if (retmsg.length() != 3) { // &amp;&amp; retmsg[0].length() != 20
+						db.Rollback();
+						notify(jobseqid,100,&amp;quot;保存回盘失败！调用发放业务接口出错！接口返回：&amp;quot;+jkmsg,&amp;quot;end&amp;quot;);//名称为空表示只要更新进度
+						//throw new Exception(&amp;quot;调用接口出错！接口返回：&amp;quot;+jkmsg);
+						return &amp;quot;保存回盘失败！调用发放业务接口出错！接口返回：&amp;quot;+jkmsg;
+					}
+					
+					notify(jobseqid,process,&amp;quot;第&amp;quot;+currow+&amp;quot;行回盘发放不成功【&amp;quot;+xm+&amp;quot;(&amp;quot;+grbh+&amp;quot;) BAZ610=&amp;quot;+BAZ610+&amp;quot; 接口返回:&amp;quot;+retmsg+&amp;quot;】&amp;quot; ,&amp;quot;run&amp;quot;);
+					if (retmsg[0].indexOf(&amp;quot;null&amp;quot;) &amp;gt; -1) {
+						db.Rollback();
+						notify(jobseqid,100,&amp;quot;保存回盘失败！调用发放业务接口出错！业务内部序号:&amp;quot;+BAZ610,&amp;quot;error&amp;quot;);
+						return &amp;quot;保存回盘失败！调用发放业务接口出错！业务内部序号:&amp;quot;+BAZ610+&amp;quot;返回参数:&amp;quot;+jkmsg;
+						//throw new Exception(&amp;quot;回盘失败！调用接口出错！业务内部序号:&amp;quot;+BAZ610);
+					}
+					//20170223 lyh modify 单据号或序号是不重复的，修正东软不需要加入银行回写 and aae008=&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos;
+					sql = &amp;quot;select * from v_si_djb_tmp where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos; and ( xh=&amp;apos;&amp;quot;+retmsg[0]+&amp;quot;&amp;apos; or djh =&amp;apos;&amp;quot;+retmsg[0]+&amp;quot;&amp;apos;) and aae008=decode(&amp;apos;&amp;quot;+ywjkbz+&amp;quot;&amp;apos;,&amp;apos;YH&amp;apos;,&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos;,aae008)&amp;quot;;
+					var sids = db.QuerySQL(sql);
+					if (sids.getRowCount() &amp;lt;= 0) {
+						db.Rollback();
+						notify(jobseqid,100,&amp;quot;保存回盘失败！查询si_djb_tmp出错！业务内部序号:&amp;quot;+BAZ610+&amp;quot;,返回参数序号&amp;quot;+retmsg[0],&amp;quot;error&amp;quot;);
+						return &amp;quot;保存回盘失败！调用发放业务接口出错！业务内部序号:&amp;quot;+BAZ610+&amp;quot;返回参数:&amp;quot;+jkmsg;
+					}else{
+						var rq = sids.getStringAt(0,&amp;quot;RQ&amp;quot;);
+						var yy = rq.substring(0,4); //20151224
+						var mm = rq.substring(4,6);
+						var dd = rq.substring(6,8);
+						var sbh = sids.getStringAt(0,&amp;quot;SBH&amp;quot;);	
+						var zth = sids.getStringAt(0,&amp;quot;ZTH&amp;quot;);	
+						var jefx = &amp;quot;借&amp;quot;;
+						//20160907 科目编号要用入账时的科目编号
+						//kmbh = sids.getStringAt(0,&amp;quot;KMBH&amp;quot;);
+						sql = &amp;quot;select nvl(max(kmbh),&amp;apos;NULL&amp;apos;) from cw_yhrjzb where sbh = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and djh = &amp;apos;&amp;quot;+djh+&amp;quot;&amp;apos;&amp;quot;;
+						kmbh = db.GetSQL(sql);
+						if(kmbh == &amp;quot;NULL&amp;quot;) {
+							db.Rollback();
+							notify(jobseqid,100,&amp;quot;保存回盘失败！查询科目编号出错！业务内部序号:&amp;quot;+BAZ610,&amp;quot;error&amp;quot;);
+							return &amp;quot;保存回盘失败！查询科目编号出错！业务内部序号:&amp;quot;+BAZ610+&amp;quot;返回参数:&amp;quot;+jkmsg;							
+						}						
+						//判断是否已存过日记帐
+						var djblsh = sids.getStringAt(0,&amp;quot;LSH&amp;quot;);	
+						sql = &amp;quot;select * from cw_rjzb where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos; and lsh=&amp;apos;&amp;quot;+djblsh+&amp;quot;&amp;apos;&amp;quot;;
+						var cnt = db.GetSQLRowCount(sql);
+						if (cnt == 0) {							
+							//保存进日记帐表cw_rjzb			
+							var lsh = db.GetSQL(&amp;quot;select seq_rjz_lsh.nextval from dual&amp;quot;); //流水号
+							sql = &amp;quot;select nvl(max(sxh),-1)+1 from cw_rjzb where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos; and yy=&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; and mm=&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; and kmbh=&amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;&amp;quot;;
+							var sxh = db.GetSQL(sql); //顺序号
+							var jsfs = &amp;quot;转帐&amp;quot;;
+							sql = &amp;quot;insert into cw_rjzb(sbh,zth,org,acc,lsh,yy,mm,dd,sxh,czyxm,old_pch,zy,kmbh,lxbh,dwbh,dwmc,je,jefx,jsfs,yspz_fjzs,yspz_fjpch,yspz_lrrq,czysj,djh,siseqno)
+								select sbh,zth,org,acc,&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos; lsh,&amp;apos;&amp;quot;+yy+&amp;quot;&amp;apos; yy,&amp;apos;&amp;quot;+mm+&amp;quot;&amp;apos; mm,&amp;apos;&amp;quot;+dd+&amp;quot;&amp;apos; dd,&amp;apos;&amp;quot;+sxh+&amp;quot;&amp;apos; sxh,zbr,pch,zy,&amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;,lxbh,dwbh,dwmc,
+								(0-(je1+je2+je3+je4+je5+je6+je7+je8+je9+je10+je11+je12+je13+je14+je15)) je,&amp;apos;&amp;quot;+jefx+&amp;quot;&amp;apos; jefx,&amp;apos;转帐&amp;apos; jsfs,&amp;apos;&amp;apos; yspz_fjzs,&amp;apos;&amp;apos; yspz_fjpch,null yspz_lrrq,sysdate,djh,&amp;apos;&amp;quot;+sblsh+&amp;quot;&amp;apos;
+								from v_si_djb_tmp where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos; and ( xh=&amp;apos;&amp;quot;+retmsg[0]+&amp;quot;&amp;apos; or djh =&amp;apos;&amp;quot;+retmsg[0]+&amp;quot;&amp;apos;) and aae008=decode(&amp;apos;&amp;quot;+ywjkbz+&amp;quot;&amp;apos;,&amp;apos;YH&amp;apos;,&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos;,aae008)&amp;quot;;
+								
+							db.ExcecutSQL(sql);	
+							
+							//保存进日记帐明细表cw_rjzmxb
+							var mxxh = 0;
+							var mxjefx = &amp;quot;贷&amp;quot;;
+							for (var k=1;k&amp;lt;=15;k++) {
+								var lxbh = sids.getStringAt(0,&amp;quot;LXBH&amp;quot;);	
+								var je = sids.getStringAt(0,&amp;quot;JE&amp;quot;+k);	
+								var lxxh = k;				
+								if (je != &amp;quot;0&amp;quot; &amp;&amp; je != &amp;quot;0.00&amp;quot; &amp;&amp; je != &amp;quot;&amp;quot;) {
+									mxxh ++;
+									var ym1 = sids.getStringAt(0,&amp;quot;YM1&amp;quot;);
+									var ym2 = sids.getStringAt(0,&amp;quot;YM2&amp;quot;);
+									sql = &amp;quot;insert into cw_rjzmxb(sbh,zth,org,acc,lsh,mxxh,kmbh,lxbh,lxxh,ym1,ym2,je,jefx)values(&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos;,
+											&amp;apos;&amp;quot;+mxxh+&amp;quot;&amp;apos;,&amp;apos;&amp;apos;,&amp;apos;&amp;quot;+lxbh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+lxxh+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+ym1+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+ym2+&amp;quot;&amp;apos;,&amp;quot;+je+&amp;quot;,&amp;apos;&amp;quot;+mxjefx+&amp;quot;&amp;apos;)&amp;quot;;
+									db.ExcecutSQL(sql);
+								}
+							}
+							
+							//notify(jobseqid,process,&amp;quot;更新SI_DJB_TMP记录！（序号:&amp;quot;+retmsg[0]+&amp;quot;）&amp;quot;,&amp;quot;run&amp;quot;);			
+							//20170223 lyh modify 单据号或序号是不重复的，修正东软不需要加入银行回写 and aae008=&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos;
+							//更新SI_DJB_TMP
+							sql = &amp;quot;update v_si_djb_tmp set lsh=&amp;apos;&amp;quot;+sblsh+&amp;quot;&amp;apos;,RZBZ=&amp;apos;1&amp;apos;,RZR=&amp;apos;&amp;quot;+czyxm+&amp;quot;&amp;apos;,RZSJ=sysdate 
+								where org=&amp;apos;&amp;quot;+thisorgid+&amp;quot;&amp;apos; and acc=&amp;apos;&amp;quot;+thisaccid+&amp;quot;&amp;apos; and ( xh=&amp;apos;&amp;quot;+retmsg[0]+&amp;quot;&amp;apos; or djh =&amp;apos;&amp;quot;+retmsg[0]+&amp;quot;&amp;apos;) and aae008=decode(&amp;apos;&amp;quot;+ywjkbz+&amp;quot;&amp;apos;,&amp;apos;YH&amp;apos;,&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos;,aae008)&amp;quot;;
+							db.ExcecutSQL(sql);							
+							//notify(jobseqid,process,&amp;quot;更新AC95记录！（序号:&amp;quot;+retmsg[0]+&amp;quot;）&amp;quot;,&amp;quot;run&amp;quot;);//名称为空表示只要更新进度
+							
+							sql = &amp;quot;update ac95 set prc_out_xh=&amp;apos;&amp;quot;+retmsg[0]+&amp;quot;&amp;apos;,prc_out_code=&amp;apos;&amp;quot;+retmsg[1]+&amp;quot;&amp;apos;,prc_out_text=&amp;apos;&amp;quot;+retmsg[2]+&amp;quot;&amp;apos;,err_cwlsh=&amp;apos;&amp;quot;+lsh+&amp;quot;&amp;apos; where BAZ610=&amp;apos;&amp;quot;+BAZ610+&amp;quot;&amp;apos;&amp;quot;;
+							db.ExcecutSQL(sql);
+							
+						}
+						else {
+							db.Rollback();
+							notify(jobseqid,100,&amp;quot;保存回盘失败！没有找到业务冲帐记录！（序号:&amp;quot;+retmsg[0]+&amp;quot;）&amp;quot;,&amp;quot;end&amp;quot;);//名称为空表示只要更新进度
+							return &amp;quot;保存回盘失败！没有找到业务冲帐记录！（序号:&amp;quot;+retmsg[0]+&amp;quot;）&amp;quot;;
+						}
+					}
+				}//END回盘不成功的记录
+				else {
+					sql = &amp;quot;update ac95 set prc_out_xh=&amp;apos;&amp;quot;+retmsg[0]+&amp;quot;&amp;apos;,prc_out_code=&amp;apos;&amp;quot;+retmsg[1]+&amp;quot;&amp;apos; where BAZ610=&amp;apos;&amp;quot;+BAZ610+&amp;quot;&amp;apos;&amp;quot;;
+					db.ExcecutSQL(sql);
+				}
+				
+			} //end tmpds.getRowCount()
+			
+		} //end ds
+		
+		var yhrjzsxh = db.GetSQL(&amp;quot;select nvl(max(sxh),0)+1 from cw_yhrjzb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos; and yy=substrb(&amp;apos;&amp;quot;+hpdat+&amp;quot;&amp;apos;,1,4) and mm=substrb(&amp;apos;&amp;quot;+hpdat+&amp;quot;&amp;apos;,5,2) and KMBH=&amp;apos;&amp;quot;+kmbh+&amp;quot;&amp;apos;&amp;quot;);
+		var yhrjzid = db.GetSQL(&amp;quot;select seq_yhrjzb_id.nextval from dual&amp;quot;);
+		//获取主体类型及业务回退接口
+		sql = &amp;quot;SELECT DECODE(&amp;apos;&amp;quot;+ywjkbz+&amp;quot;&amp;apos;,&amp;apos;YH&amp;apos;,YWXT_YHDM,&amp;apos;DR&amp;apos;,YWXT_DRDM,&amp;apos;&amp;quot;+ywjkbz+&amp;quot;&amp;apos;) ywhtjk,nvl(ztlx,1) ztlx FROM AA10 WHERE AAA100 = &amp;apos;YWLX&amp;apos; AND AAA102 = &amp;apos;E110&amp;apos;&amp;quot;;
+		var ds_ht = db.QuerySQL(sql);
+		var ztlx   = ds_ht.getStringAt(0,&amp;quot;ztlx&amp;quot;);
+		var ywhtjk = ds_ht.getStringAt(0,&amp;quot;ywhtjk&amp;quot;);
+		sql = &amp;quot;SELECT AAA103 FROM aa10 WHERE aaa100 = &amp;apos;ZTLX&amp;apos; AND AAA102 = &amp;apos;&amp;quot;+ztlx+&amp;quot;&amp;apos;&amp;quot;;
+		var ztmc = db.GetSQL(sql);
+//		//插入银行日记账表
+		sql = &amp;quot;INSERT INTO CW_YHRJZB
+			  (ID,SBH,ZTH,YY,MM,DD,CWPCH,PZH,ZY,JE,JEFX,YEFX,YE,SISEQNO,DJH,YWPCH,ZTLX,ZTBH,ZTMC,KMBH,CZYXM,CZYSJ,JSFS,YSPZ_FJZS,YSPZ_FJPCH,YSPZ_LRRQ,DYYWJK_LX,SXH,FKBZ)
+			  SELECT &amp;apos;&amp;quot;+yhrjzid+&amp;quot;&amp;apos; YHID,SBH,ZTH,YY,MM,DD,MAX(PCH) PCH,MAX(PZH) PZH,MAX(ZY)||&amp;apos;等&amp;quot;+failecnt+&amp;quot;笔&amp;apos; ZY,SUM(JE) JE,JEFX,
+			         YEFX,YE,SISEQNO,DJH,OLD_PCH YWPCH,&amp;apos;&amp;quot;+ztlx+&amp;quot;&amp;apos; ZTLX,&amp;apos;&amp;quot;+ztlx+&amp;quot;&amp;apos; ZTBH,&amp;apos;&amp;quot;+ztmc+&amp;quot;&amp;apos; ZTMC,
+			         KMBH,CZYXM,SYSDATE,JSFS,YSPZ_FJZS,YSPZ_FJPCH,YSPZ_LRRQ,&amp;apos;&amp;quot;+ywhtjk+&amp;quot;&amp;apos; DYYWJK_LX,&amp;apos;&amp;quot;+yhrjzsxh+&amp;quot;&amp;apos; SXH,FKBZ
+			    FROM CW_RJZB
+			   WHERE SISEQNO = &amp;apos;&amp;quot;+sblsh+&amp;quot;&amp;apos;
+			     AND SBH = &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;
+			     AND ZTH = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;
+			   GROUP BY SBH,ZTH,YY,MM,DD,JEFX,YEFX, YE,SISEQNO,DJH,OLD_PCH,KMBH,
+			            CZYXM,JSFS,YSPZ_FJZS,YSPZ_FJPCH,YSPZ_LRRQ,FKBZ&amp;quot;;								   
+		db.ExcecutSQL(sql);
+		
+		var lognote = &amp;quot;进程ID：&amp;quot;+jobseqid+&amp;quot; 回盘文件：&amp;quot;+filename+&amp;quot; 总笔数：&amp;quot;+rowcnt+&amp;quot; 失败笔数：&amp;quot;+failecnt+&amp;quot;。&amp;quot;;
+		sql = &amp;quot;insert into oplog(grdid,type,action,opdat,opusr,opusrnam,note,acc,syt,org)
+			values(&amp;apos;RJZ_PAYRETURN&amp;apos;,&amp;apos;发放回盘&amp;apos;,&amp;apos;保存&amp;apos;,sysdate,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;.format([usrid,czyxm,lognote,thisaccid,&amp;quot;SBCW&amp;quot;,thisorgid]);
+		db.ExcecutSQL(sql);
+		
+		//return jkret;
+		if (notify(jobseqid,100,&amp;quot;保存银行回盘数据成功！\n回盘文件：&amp;quot;+filename+&amp;quot;\n总笔数：&amp;quot;+rowcnt+&amp;quot;\n失败笔数：&amp;quot;+failecnt+&amp;quot;。&amp;quot;,&amp;quot;end&amp;quot;)==&amp;quot;ERROR&amp;quot;) throw new Exception ( &amp;quot;进程已经中断&amp;quot; );
+		
+		db.Commit();
+		//db.Rollback();
+
+		return &amp;quot;保存银行回盘数据成功！\n回盘文件：&amp;quot;+filename+&amp;quot;\n总笔数：&amp;quot;+rowcnt+&amp;quot;\n失败笔数：&amp;quot;+failecnt+&amp;quot;。&amp;quot;;
+	}
+	catch (e) {
+		notify(jobseqid,100,&amp;quot;保存银行回盘数据失败121！&amp;quot;+e.toString(),&amp;quot;error&amp;quot;);
+		if (db != null) db.Rollback();
+		return &amp;quot;保存银行回盘数据失败121！&amp;quot;+e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+
+
+//回盘加入进度条提示实现 
+function genbatch()
+{
+	var db = null;
+	var jobseqid = jobid;
+	try {
+		//db = new pub.EADatabase();	// 如果连接到其他数据库, new pubpack.EADatabase(“dbname”)
+		
+		var tim = new timepack.EARunOSTimer(); 
+		  tim.init(jobseqid,jobnam,&amp;quot;SBCW&amp;quot;,&amp;quot;RJZ_PAYRETURN&amp;quot;,&amp;quot;SaveYHHP&amp;quot;,&amp;quot;jobid=&amp;quot;+jobid+&amp;quot;&amp;thisorgid=&amp;quot;+thisorgid+&amp;quot;&amp;jobseqid=&amp;quot;+jobseqid 
+			+&amp;quot;&amp;thisaccid=&amp;quot;+thisaccid+&amp;quot;&amp;hpdat=&amp;quot;+hpdat+&amp;quot;&amp;hpbank=&amp;quot;+hpbank+&amp;quot;&amp;zth=&amp;quot;+zth+&amp;quot;&amp;usrid=&amp;quot;+usrid+&amp;quot;&amp;czyxm=&amp;quot;+czyxm);
+		
+	}
+	catch ( ee ) {
+		throw new pub.EAException ( ee.toString() );
+	}
+	finally {
+		if (db!=null) db.Close();
+	}
+	return jobseqid  ;// 返回后台分配的作业编号
+
+}
+// 通知外部当前的运行情况
+function notify(jobseqid,percent,note,stat)
+{
+	var db = null;
+	if ( percent &amp;lt; 0 ) return &amp;quot;&amp;quot;;
+	try{
+		db = new pub.EADatabase();
+		note = pub.EAFunc.Replace( note, &amp;quot;&amp;apos;&amp;quot;,&amp;quot;‘&amp;quot; );
+		if(note==&amp;quot;&amp;quot;){
+			db.ExcecutSQL(&amp;quot;update RunOSTimer set percent=&amp;quot;+(percent) +&amp;quot;,stat=&amp;apos;&amp;quot;+stat+&amp;quot;&amp;apos; where id=&amp;apos;&amp;quot;+jobseqid+&amp;quot;&amp;apos;&amp;quot;);
+		}
+		else {
+			db.ExcecutSQL(&amp;quot;update RunOSTimer set percent=&amp;quot;+(percent) +&amp;quot;,percentnote=&amp;apos;&amp;quot;+note+&amp;quot;&amp;apos;,stat=&amp;apos;&amp;quot;+stat+&amp;quot;&amp;apos; where id=&amp;apos;&amp;quot;+jobseqid+&amp;quot;&amp;apos;&amp;quot;);
+			db.ExcecutSQL(&amp;quot;insert into RunOSTimerDTL(id,name) values(&amp;apos;&amp;quot;+jobseqid+&amp;quot;&amp;apos;,&amp;apos;[ &amp;quot;+percent+&amp;quot;% ]&amp;quot;+note+&amp;quot;&amp;apos;)&amp;quot; );
+		}
+		db.Commit();
+	}
+	catch ( e ) {
+		pub.EAFunc.Log( e.toString() );
+		db.Rollback();
+		return &amp;quot;ERROR&amp;quot; ;
+	}
+	finally {
+		if (db!=null) db.Close();
+	}
+	return &amp;quot;OK&amp;quot;;
+}
+
+//检查回盘数据是否有问题
+function CheckHPData()
+{
+	var db = null;
+	var result = &amp;quot;&amp;quot;;
+	
+	try {
+		db = new pub.EADatabase();
+		var tcqbm = db.GetSQL(&amp;quot;select tcqbm from cw_sbsb where sbh=&amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos;&amp;quot;);
+			
+		var sql = &amp;quot;select count(*) from si_yhreturn_temp where jobid=&amp;apos;&amp;quot;+jobid+&amp;quot;&amp;apos;&amp;quot;;
+		var fileCount = 1*db.GetSQL(sql); //文件数据总笔数
+		//20170110修改业务统计笔数distinct aac001 by flm
+		sql = &amp;quot;select count(distinct aac001) from ac95 where aaa027=&amp;apos;&amp;quot;+tcqbm+&amp;quot;&amp;apos; and zth=&amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;
+			and (bae074,bae415) in (select djh,pch from si_yhreturn_temp where jobid=&amp;apos;&amp;quot;+jobid+&amp;quot;&amp;apos;)
+			and (aae008=&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos; or BAE419=&amp;apos;&amp;quot;+hpbank+&amp;quot;&amp;apos;)&amp;quot;;
+			alert(sql);
+		var ywCount = 1*db.GetSQL(sql); //单据号+批次号所对应AC95表的总记录数	
+		
+		if (fileCount != ywCount &amp;&amp; chkbs == &amp;quot;1&amp;quot;) {
+			return &amp;quot;回盘文件总笔数与业务对应的笔数不一致！文件总笔数:&amp;quot;+fileCount+&amp;quot; 业务笔数:&amp;quot;+ywCount;
+		}
+		
+		//检查回盘文件的内容是否与中间表AC95一样
+		//20161228 lyh modify 加入金额关联，数据不正确，同一个人一个文件生成两笔数据问题 add AND a.dfje = b.aic263
+		sql = &amp;quot;select a.xh,a.grbh,a.dwbh,a.sfzh,a.dfje,a.dfzh,b.AIC263,b.AAE135,b.AAE010  
+			from si_yhreturn_temp a,ac95 b
+			where a.jobid=&amp;apos;%s&amp;apos; and b.aaa027=&amp;apos;%s&amp;apos; and b.zth=&amp;apos;%s&amp;apos;
+			  and a.djh=b.bae074 and a.pch=b.bae415
+			  and a.grbh=b.aac001 and a.dwbh=b.aab001 AND a.dfje = b.aic263&amp;quot;.format([jobid,tcqbm,zth]);
+		var chkds = db.QuerySQL(sql);
+		for (var i=0;i&amp;lt;chkds.getRowCount();i++) {
+			var xh = chkds.getStringAt(i,&amp;quot;XH&amp;quot;);			/*文件行号*/
+			var grbh = chkds.getStringAt(i,&amp;quot;GRBH&amp;quot;);		/*文件个人编号*/
+			var dwbh = chkds.getStringAt(i,&amp;quot;DWBH&amp;quot;);		/*文件单位编号*/
+			var sfzh = chkds.getStringAt(i,&amp;quot;SFZH&amp;quot;);		/*文件身份证号*/
+			var dfje = chkds.getStringAt(i,&amp;quot;DFJE&amp;quot;);		/*文件代发金额*/
+			var dfzh = chkds.getStringAt(i,&amp;quot;DFZH&amp;quot;);		/*文件代发帐号*/
+			var aic263 = chkds.getStringAt(i,&amp;quot;AIC263&amp;quot;);	/*AC95代发金额*/
+			var aae135 = chkds.getStringAt(i,&amp;quot;AAE135&amp;quot;);	/*AC95身份证号*/
+			var aae010 = chkds.getStringAt(i,&amp;quot;AAE010&amp;quot;);	/*AC95代发帐号*/
+			
+			//20161223 lyh modify 身份证号可能为空，加入sfzh判断
+			if (sfzh != aae135 &amp;&amp; sfzh != &amp;quot;&amp;quot;) result += &amp;quot;第&amp;quot;+xh+&amp;quot;行身份证号：&amp;quot;+sfzh+&amp;quot; != &amp;quot;+aae135+&amp;quot;\n&amp;quot;;
+			if (1.0*dfje != 1.0*aic263) result += &amp;quot;第&amp;quot;+xh+&amp;quot;行代发金额：&amp;quot;+pub.EAFunc.formatMoney(dfje,2)+&amp;quot; != &amp;quot;+pub.EAFunc.formatMoney(aic263,2)+&amp;quot;\n&amp;quot;;
+			if (dfzh != aae010) result += &amp;quot;第&amp;quot;+xh+&amp;quot;行代发帐号：&amp;quot;+dfzh+&amp;quot; != &amp;quot;+aae010+&amp;quot;\n&amp;quot;;
+		}
+		
+		if (result != &amp;quot;&amp;quot;) return result;
+		
+		return 1;
+		
+	}
+	catch ( e ) {
+		db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db!=null) db.Close();
+	}
+
+	return 1;
+}
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select XH,GRBH,XM,DWBH,SFZH,DFJE,DFZH,ZCODE,ADDR,DJH,PCH,
+	CGBZ,SBBZ,ZQZH,ZQYHM,
+	(select max(BAC001) from ac95 b 
+	  where a.grbh=b.aac001 and a.dwbh=b.AAB001 
+        and a.djh=b.BAE074 and a.pch=b.BAE415) kpwjm,
+  filename hpwjm,baz610
+from SI_YHRETURN_TEMP a
+where jobid=&amp;apos;[%JOBID]&amp;apos;
+order by xh</DATDSC><C4 >MAIN</C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 >MAIN</C9><C10 >MAIN</C10><C11 >MAIN</C11></ROW>
+<ROW num="1" ><ID >INFODS</ID><NAME ></NAME><DATDSC >select count(*) zbs,
+	count(distinct dwbh) dwbs,
+	sum(dfje) sumdfje,
+       sum(decode(cgbz,&amp;apos;0&amp;apos;,1,0)) succbs,
+       sum(decode(cgbz,&amp;apos;0&amp;apos;,0,1)) failbs,
+       sum(decode(cgbz,&amp;apos;0&amp;apos;,dfje,0)) succje,
+       sum(decode(cgbz,&amp;apos;0&amp;apos;,0,dfje)) failje
+from SI_YHRETURN_TEMP
+where jobid=&amp;apos;[%JOBID]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 >INFODS</C8><C9 ></C9><C10 >INFODS</C10><C11 ></C11></ROW>
+<ROW num="2" ><ID >QueryRunOSTimer</ID><NAME ></NAME><DATDSC >select count(*) from RunOSTimer
+where stat=&amp;apos;run&amp;apos; and id=&amp;apos;[%jobseqid]&amp;apos;
+</DATDSC><C4 >QueryRunOSTimer</C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 >QueryRunOSTimer</C10><C11 >QueryRunOSTimer</C11></ROW>
+<ROW num="3" ><ID >QueryRunOSTimerExist</ID><NAME ></NAME><DATDSC >select count(*) from RunOSTimer
+where (stat=&amp;apos;end&amp;apos; or stat=&amp;apos;error&amp;apos;) and id=&amp;apos;[%jobseqid]&amp;apos;
+
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11></ROW>
+<ROW num="4" ><ID >TIPSDS</ID><NAME ></NAME><DATDSC >select * from (
+select b.name tips,a.percent 
+from RunOSTimer a,RunOSTimerDTL b
+where a.id=b.id
+  and a.id=&amp;apos;[%jobseqid]&amp;apos;
+order by b.seqid desc,b.crtdat desc
+) 
+</DATDSC><C4 ></C4><C5 >TIPSDS</C5><C6 >TIPSDS</C6><C7 >TIPSDS</C7><C8 >TIPSDS</C8><C9 ></C9><C10 ></C10><C11 ></C11></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

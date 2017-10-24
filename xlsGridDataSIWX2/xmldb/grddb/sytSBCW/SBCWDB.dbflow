@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<svg title="SVGform" fill="#FFFFFF" fill-type="1">
+ <text id="text_303917" x="394" y="22" width="310" height="40" font-size="20">社保财务系统 - 数据库字典</text>
+ <line id="line_303918" x1="11" y1="59" x2="1032" y2="59">
+ </line>
+ <rect id="roundrect_303919" x="36" y="80" width="440" height="343" round="15" stroke="#000000" fill="#FFFFFF" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <text id="text_303920" x="188" y="83" width="100" height="40" font-size="14">中间件平台表</text>
+ <rect id="ACC" dbname="默认" tablename="ACC" fill="#E0F0F8" round="5" x="52" y="114" width="60" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:ACC[%quot]/[%right]">ACC
+ 帐套表</rect>
+ <rect id="FORMBLOB" dbname="默认" tablename="FORMBLOB" fill="#E0F0F8" round="5" x="377" y="218" width="80" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FORMBLOB[%quot]/[%right]">FORMBLOB
+大数据表</rect>
+ <rect id="MWACC" dbname="默认" tablename="MWACC" fill="#E0F0F8" round="5" x="50" y="166" width="100" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:MWACC[%quot]/[%right]">MWACC
+用户定义帐套表</rect>
+ <rect id="MWORG" dbname="默认" tablename="MWORG" fill="#E0F0F8" round="5" x="159" y="166" width="100" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:MWORG[%quot]/[%right]">MWORG
+用户定义组织表</rect>
+ <rect id="ORG" dbname="默认" tablename="ORG" fill="#E0F0F8" round="5" x="124" y="115" width="60" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:ORG[%quot]/[%right]">ORG
+ 组织表</rect>
+ <rect id="PARAM" dbname="默认" tablename="PARAM" fill="#E0F0F8" round="5" x="361" y="118" width="80" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:PARAM[%quot]/[%right]">PARAM
+ 基本参数表</rect>
+ <rect id="ROL" dbname="默认" tablename="ROL" fill="#E0F0F8" round="5" x="50" y="216" width="80" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:ROL[%quot]/[%right]">ROL
+ 角色表</rect>
+ <rect id="ROLMOD" dbname="默认" tablename="ROLMOD" fill="#E0F0F8" round="5" x="49" y="267" width="100" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:ROLMOD[%quot]/[%right]">ROLMOD
+ 角色模块定义表</rect>
+ <rect id="RUNTIMER" dbname="默认" tablename="RUNTIMER" fill="#E0F0F8" round="5" x="266" y="217" width="100" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:RUNTIMER[%quot]/[%right]">RUNTIMER
+后台任务日志表</rect>
+ <rect id="RUNTIMERDTL" dbname="默认" tablename="RUNTIMERDTL" fill="#E0F0F8" round="5" x="263" y="265" width="130" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:RUNTIMERDTL[%quot]/[%right]">RUNTIMERDTL
+后台任务日志明细表</rect>
+ <rect id="SYSMOD" dbname="默认" tablename="SYSMOD" fill="#E0F0F8" round="5" x="145" y="217" width="80" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:SYSMOD[%quot]/[%right]">SYSMOD
+ 模块权限表</rect>
+ <rect id="SYSMW" dbname="默认" tablename="SYSMW" fill="#E0F0F8" round="5" x="270" y="167" width="90" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:SYSMW[%quot]/[%right]">SYSMW
+ 系统中间件表</rect>
+ <rect id="USR" dbname="默认" tablename="USR" fill="#E0F0F8" round="5" x="198" y="116" width="50" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:USR[%quot]/[%right]">USR
+ 用户表</rect>
+ <rect id="USRROL" dbname="默认" tablename="USRROL" fill="#E0F0F8" round="5" x="156" y="267" width="100" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:USRROL[%quot]/[%right]">USRROL
+ 用户/角色对应表</rect>
+ <rect id="LOG" dbname="默认" tablename="LOG" fill="#E0F0F8" round="5" x="367" y="168" width="80" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:LOG[%quot]/[%right]">LOG
+系统日志表</rect>
+ <rect id="OPLOG" dbname="默认" tablename="OPLOG" fill="#E0F0F8" round="5" x="265" y="116" width="80" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:OPLOG[%quot]/[%right]">OPLOG
+操作日志表</rect>
+ <rect id="rect_160209" x="564" y="82" width="410" height="573" round="15" stroke="#000000" fill="#FFFFFF" fillto="" opacity="1" stroke-dash="1" 属性="">
+ </rect>
+ <text id="text_160210" x="733" y="89" width="130" height="40" font-size="14">财务报表系统表</text>
+ <rect id="FIN_FORMULA" dbname="默认" tablename="FIN_FORMULA" fill="#E0F0F8" round="5" x="694" y="120" width="100" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_FORMULA[%quot]/[%right]">FIN_FORMULA
+平衡公式定义表</rect>
+ <rect id="FIN_FORMULAREP" dbname="默认" tablename="FIN_FORMULAREP" fill="#E0F0F8" round="5" x="707" y="172" width="120" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_FORMULAREP[%quot]/[%right]">FIN_FORMULAREP
+公式分配表</rect>
+ <rect id="FIN_INDEX" dbname="默认" tablename="FIN_INDEX" fill="#E0F0F8" round="5" x="584" y="123" width="80" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_INDEX[%quot]/[%right]" 属性="">FIN_INDEX
+指标表</rect>
+ <rect id="FIN_INDEXDETAIL" dbname="默认" tablename="FIN_INDEXDETAIL" fill="#E0F0F8" round="5" x="842" y="171" width="110" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_INDEXDETAIL[%quot]/[%right]">FIN_INDEXDETAIL
+指标库表</rect>
+ <rect id="FIN_INDEXITEM" dbname="默认" tablename="FIN_INDEXITEM" fill="#E0F0F8" round="5" x="585" y="174" width="100" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_INDEXITEM[%quot]/[%right]">FIN_INDEXITEM
+指标项表</rect>
+ <rect id="FIN_INDEXTYPE" dbname="默认" tablename="FIN_INDEXTYPE" fill="#E0F0F8" round="5" x="585" y="228" width="100" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_INDEXTYPE[%quot]/[%right]" 属性="">FIN_INDEXTYPE
+指标类型参数表</rect>
+ <rect id="FIN_INDEX_FORMULA" dbname="默认" tablename="FIN_INDEX_FORMULA" fill="#E0F0F8" round="5" x="819" y="118" width="140" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_INDEX_FORMULA[%quot]/[%right]">FIN_INDEX_FORMULA
+指标取数公式表</rect>
+ <rect id="FIN_REPFRAME" dbname="默认" tablename="FIN_REPFRAME" fill="#E0F0F8" round="5" x="713" y="225" width="100" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_REPFRAME[%quot]/[%right]">FIN_REPFRAME
+报表设计框架表</rect>
+ <rect id="FIN_REPMODEL" dbname="默认" tablename="FIN_REPMODEL" fill="#E0F0F8" round="5" x="585" y="277" width="100" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_REPMODEL[%quot]/[%right]">FIN_REPMODEL
+报表模型定义表</rect>
+ <rect id="FIN_REPORG" dbname="默认" tablename="FIN_REPORG" fill="#E0F0F8" round="5" x="837" y="224" width="100" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:FIN_REPORG[%quot]/[%right]">FIN_REPORG
+报表组织分配表</rect>
+ <rect id="LM811DTL" dbname="默认" tablename="LM811DTL" fill="#E0F0F8" round="5" x="578" y="377" width="80" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:LM811DTL[%quot]/[%right]">LM811HDR</rect>
+ <rect id="LM811HDR" dbname="默认" tablename="LM811HDR" fill="#E0F0F8" round="5" x="578" y="410" width="80" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:LM811HDR[%quot]/[%right]">LM811HDR</rect>
+ <rect id="LM812HDR" dbname="默认" tablename="LM812HDR" fill="#E0F0F8" round="5" x="671" y="375" width="80" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:LM812HDR[%quot]/[%right]">LM812HDR</rect>
+ <rect id="LM812DTL" dbname="默认" tablename="LM812DTL" fill="#E0F0F8" round="5" x="671" y="410" width="80" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:LM812DTL[%quot]/[%right]">LM812DTL</rect>
+ <rect id="LM813HDR" dbname="默认" tablename="LM813HDR" fill="#E0F0F8" round="5" x="761" y="376" width="80" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:LM813HDR[%quot]/[%right]">LM813HDR</rect>
+ <rect id="LM813DTL" dbname="默认" tablename="LM813DTL" fill="#E0F0F8" round="5" x="763" y="410" width="80" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:LM813DTL[%quot]/[%right]">LM813DTL</rect>
+ <rect id="LM814DTL" dbname="默认" tablename="LM814DTL" fill="#E0F0F8" round="5" x="856" y="409" width="80" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:LM814DTL[%quot]/[%right]">LM814DTL</rect>
+ <rect id="LM815DTL" dbname="默认" tablename="LM815DTL" fill="#E0F0F8" round="5" x="581" y="486" width="80" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:LM815DTL[%quot]/[%right]">LM815DTL</rect>
+ <rect id="LM815HDR" dbname="默认" tablename="LM815HDR" fill="#E0F0F8" round="5" x="580" y="452" width="80" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:LM815HDR[%quot]/[%right]">LM815HDR</rect>
+ <rect id="LM814HDR" dbname="默认" tablename="LM814HDR" fill="#E0F0F8" round="5" x="855" y="374" width="80" height="30" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:LM814HDR[%quot]/[%right]">LM814HDR</rect>
+ <rect id="rect_83209" x="36" y="440" width="440" height="343" round="15" stroke="#000000" fill="#FFFFFF" fillto="" opacity="1" stroke-dash="1">
+ </rect>
+ <text id="text_83210" x="191" y="454" width="100" height="40" font-size="14">社银接口表</text>
+ <rect id="SI_WSCONFIG" dbname="默认" tablename="SI_WSCONFIG" fill="#E0F0F8" round="5" x="62" y="492" width="160" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:SI_WSCONFIG[%quot]/[%right]">SI_WSCONFIG
+ WebService配置表</rect>
+ <rect id="SI_WSFILE_0122001_DTL" dbname="默认" tablename="SI_WSFILE_0122001_DTL" fill="#E0F0F8" round="5" x="60" y="683" width="160" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:SI_WSFILE_0122001_DTL[%quot]/[%right]">SI_WSFILE_0122001_DTL
+ 文件批量结算</rect>
+ <rect id="SI_WSFILE_0122001_HDR" dbname="默认" tablename="SI_WSFILE_0122001_HDR" fill="#E0F0F8" round="5" x="59" y="639" width="160" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:SI_WSFILE_0122001_HDR[%quot]/[%right]" 属性="">SI_WSFILE_0122001_HDR
+ 文件批量结算</rect>
+ <rect id="SI_WSFILE_0221001_DTL" dbname="默认" tablename="SI_WSFILE_0221001_DTL" fill="#E0F0F8" round="5" x="261" y="684" width="160" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:SI_WSFILE_0221001_DTL[%quot]/[%right]">SI_WSFILE_0221001_DTL
+ 银行行号同步</rect>
+ <rect id="SI_WSFILE_0221001_HDR" dbname="默认" tablename="SI_WSFILE_0221001_HDR" fill="#E0F0F8" round="5" x="259" y="640" width="160" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:SI_WSFILE_0221001_HDR[%quot]/[%right]">SI_WSFILE_0221001_HDR
+ 银行行号同步</rect>
+ <rect id="SI_WSFILE_0222002" dbname="默认" tablename="SI_WSFILE_0222002" fill="#E0F0F8" round="5" x="61" y="729" width="160" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:SI_WSFILE_0222002[%quot]/[%right]">SI_WSFILE_0222002
+ 社保机构账户收支明细</rect>
+ <rect id="SI_WSFILE_0224001_DTL" dbname="默认" tablename="SI_WSFILE_0224001_DTL" fill="#E0F0F8" round="5" x="61" y="590" width="160" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:SI_WSFILE_0224001_DTL[%quot]/[%right]">SI_WSFILE_0224001_DTL
+ 日终交易核对流水</rect>
+ <rect id="SI_WSFILE_0224001_HDR" dbname="默认" tablename="SI_WSFILE_0224001_HDR" fill="#E0F0F8" round="5" x="61" y="547" width="160" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:SI_WSFILE_0224001_HDR[%quot]/[%right]">SI_WSFILE_0224001_HDR
+ 日终交易核对流水</rect>
+ <rect id="SI_WSFILE_0224002_DTL" dbname="默认" tablename="SI_WSFILE_0224002_DTL" fill="#E0F0F8" round="5" x="258" y="588" width="160" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:SI_WSFILE_0224002_DTL[%quot]/[%right]">SI_WSFILE_0224002_DTL
+ 错误代码表同步</rect>
+ <rect id="SI_WSFILE_0224002_HDR" dbname="默认" tablename="SI_WSFILE_0224002_HDR" fill="#E0F0F8" round="5" x="258" y="545" width="160" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:SI_WSFILE_0224002_HDR[%quot]/[%right]">SI_WSFILE_0224002_HDR
+ 错误代码表同步</rect>
+ <rect id="SI_WSFILE_LOG" dbname="默认" tablename="SI_WSFILE_LOG" fill="#E0F0F8" round="5" x="253" y="491" width="160" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:SI_WSFILE_LOG[%quot]/[%right]">SI_WSFILE_LOG
+接口通讯日志表</rect>
+ <line id="line_83211" x1="11" y1="63" x2="1032" y2="63">
+ </line>
+ <rect id="TRKHDR" dbname="默认" tablename="TRKHDR" fill="#E0F0F8" round="5" x="51" y="314" width="100" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:TRKHDR[%quot]/[%right]">TRKHDR
+消息通知主表</rect>
+ <rect id="TRKDTL" dbname="默认" tablename="TRKDTL" fill="#E0F0F8" round="5" x="51" y="358" width="100" height="40" url="" xmlmenu="[%left]item name=[%quot]修改该数据表结构[%quot] id=[%quot]m_table_:默认:TRKDTL[%quot]/[%right]">TRKDTL
+消息通知明细表</rect>
+ <text id="text_92610" x="693" y="334" width="150" height="40" font-size="14">相关报表数据保存表</text>
+</svg>

@@ -1,0 +1,281 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >N0222002</MWID><NAME >社保机构账户收支明细</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >N0222002.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP >批量文件处理接口</CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >mytest</ID><NAME >测试</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG ></IMG><IMGMOUSE ></IMGMOUSE><C10 ></C10></ROW>
+</ROWSET>
+</grdbtnds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >//test
+function mytest()
+{
+	var ret = _this.invokeOSFunc(&amp;quot;F0221001&amp;quot;,&amp;quot;&amp;quot;);
+	alert(ret);
+}</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var web = new JavaPackage(&amp;quot;com.xlsgrid.net.web&amp;quot;);
+var servletpack = new JavaPackage(&amp;quot;com.xlsgrid.net.servlet&amp;quot;);
+var ftppack = new JavaPackage(&amp;quot;org.apache.commons.net.ftp&amp;quot;);
+var timepack = new JavaPackage( &amp;quot;com.xlsgrid.net.time&amp;quot; );
+var jschftp = new JavaPackage( &amp;quot;com.jcraft.jsch&amp;quot; );
+
+//可以直接使用的参数：
+//&amp;quot;fileTypeCode=&amp;quot;+fileTypeCode+&amp;quot;&amp;sbInstId=&amp;quot;+sbInstId+&amp;quot;&amp;bkInstId=&amp;quot;+bkInstId+&amp;quot;&amp;jobseqid=&amp;quot;+jobseqid+&amp;quot;&amp;fileName=&amp;quot;+fileName+&amp;quot;&amp;fileMD5=&amp;quot;+fileMD5+&amp;quot;&amp;ref=&amp;quot;+ref
+
+//文件发送方：银行。
+//文件类型代码：0222002。交易的结构如下：
+//注：若当天无交易明细时，则生成空文件发送。
+//从文件第一行开始为明细信息：
+//数据项名称		数据类型、长度	数据项描述	
+//社保经办机构代码	CHAR(30)	必输。	
+//顺序号		CHAR(30)	必输，预留30位长度，标识一笔明细	
+//银行入账日期		CHAR(8)		必输。	
+//银行入账时间		CHAR(6)		必输。	
+//银行流水号		CHAR(30)	选输，可能为空。对于通过银社系统完成的交易明细，则为联机交易时对应的银行流水号字段。	
+//币别			CHAR(3)		必输。001：人民币。	
+//钞汇标识		CHAR(1)		必输。0钞 1汇。对于人民币填0.	
+//业务功能号		CHAR(7)		选输，可能为空。对于通过银社系统完成的交易明细，则同联机结算交易发生时的业务功能号。其他情况送空。	
+//结算业务类型		CHAR(3)		必输。对于通过银社系统完成的交易明细，则同联机结算交易发生时的结算业务类型。对于不是通过系统完成的交易，则具体见TransType定义。	
+//本方账号		CHAR(34)	必输。即社保机构银行账号。	
+//本方户名		CHAR(90)	必输。	
+//对方行号		CHAR(12)	选输。根据联机交易情况，可能为空。	
+//对方账号		CHAR(34)	必输。	
+//对方户名		CHAR(90)	必输。	
+//借贷标志		CHAR(1)		必输。具体见DrFlag定义。社保账户余额增加记为贷，余额减少记为借。	
+//交易金额		INT(17)		必输。	
+//交易后余额		INT(17)		必输。	
+//摘要信息		CHAR(100)		
+//备用字段1		CHAR(10)	选输。	
+//备用字段2		CHAR(10)	选输。	
+//备用字段3		CHAR(20)	选输。	
+//
+
+//批量文件处理-社保机构账户收支明细
+function F0222002()
+{
+	var db = null;
+	var line = &amp;quot;&amp;quot;;
+	var failecnt = 0;
+	var rowcount = 0;
+
+	try{
+		db = new pub.EADatabase();
+		
+		var sbh = &amp;quot;&amp;quot;;
+		var zth = &amp;quot;&amp;quot;;
+		var thisorgid = &amp;quot;&amp;quot;;
+		var thisaccid = &amp;quot;&amp;quot;;
+		var sql = &amp;quot;select org,acc,sbh,zth from cw_ztb where yszl_sbjgdm = &amp;apos;&amp;quot;+sbInstId+&amp;quot;&amp;apos;&amp;quot;;
+		var ds = db.QuerySQL(sql);
+		for(var i=0;i&amp;lt;ds.getRowCount();i++) {
+			sbh = ds.getStringAt(i,&amp;quot;sbh&amp;quot;);
+			zth = ds.getStringAt(i,&amp;quot;zth&amp;quot;);
+			thisorgid = ds.getStringAt(i,&amp;quot;org&amp;quot;);
+			thisaccid = ds.getStringAt(i,&amp;quot;acc&amp;quot;);
+		}
+		
+		//登录FTP取文件
+		var sql = &amp;quot;select * from cw_dfdsb_yszl where yszl_yhjgdm = &amp;apos;&amp;quot;+bkInstId+&amp;quot;&amp;apos; and sbh= &amp;apos;&amp;quot;+sbh+&amp;quot;&amp;apos; and zth = &amp;apos;&amp;quot;+zth+&amp;quot;&amp;apos;&amp;quot;;
+		var ftpds = db.QuerySQL(sql);
+		var ftpip = ftpds.getStringAt(0,&amp;quot;FTP_IP&amp;quot;);
+		var ftpport = ftpds.getStringAt(0,&amp;quot;FTP_PORT&amp;quot;);
+		var ftpuser = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_NAME&amp;quot;);
+		var ftppasswd = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_PASSWD&amp;quot;);		
+		var ftploginpath = ftpds.getStringAt(0,&amp;quot;FTP_GXSI_LOGIN_PATH&amp;quot;);			
+		var ftpdownpath = ftpds.getStringAt(0,&amp;quot;FTP_DOWN_PATH&amp;quot;);
+		var wjdownpath = ftploginpath + &amp;quot;/&amp;quot; +	 ftpdownpath; 	
+		var localpath = &amp;quot;/u/yszl_dsdf/incoming/&amp;quot;+sbInstId;
+		
+		//下载sftp				
+		var jsch = new jschftp.JSch();
+		var sftp = null;
+		var sshSession = null;
+		var localFile = &amp;quot;&amp;quot;;//未解压
+		var localFile2 = &amp;quot;&amp;quot;;//已解压
+		
+		try {
+			sshSession = jsch.getSession(ftpuser,ftpip,&amp;quot;22&amp;quot;);
+			sshSession.setPassword(ftppasswd);
+			var config = new java.util.Properties();
+			config.put(&amp;quot;StrictHostKeyChecking&amp;quot;,&amp;quot;no&amp;quot;);
+			sshSession.setConfig(config);
+			sshSession.connect();
+			var channel = sshSession.openChannel(&amp;quot;sftp&amp;quot;);
+			channel.connect();
+			sftp = channel;
+			sftp.cd(wjdownpath);
+			localFile = new java.io.File(localpath + &amp;quot;/&amp;quot;+ fileName);
+			sftp.get(fileName,new java.io.FileOutputStream(localFile));
+			sftp.quit();
+			sshSession.disconnect();
+		}
+		catch(ee) {
+			if(sftp != null) sftp.quit();
+			if(sshSession != null) sshSession.disconnect();
+			writeLog(ref,&amp;quot;批量文件结算-社保机构账户收支明细&amp;quot;,&amp;quot;100&amp;quot;,&amp;quot;下载文件[&amp;quot;+fileName+&amp;quot;]失败:&amp;quot;+ee.toString());
+			return &amp;quot;下载文件[&amp;quot;+fileName+&amp;quot;]失败:&amp;quot;+ee.toString();
+		}		
+		
+		//解压文件
+		var file1 = localpath + &amp;quot;/&amp;quot;+ fileName;
+		//检验md5
+		var chkMD5 = pub.EAFunc.getFileMD5(file1);
+		if(fileMD5 != chkMD5 ) {
+			writeLog(ref,&amp;quot;批量文件结算&amp;quot;,&amp;quot;100&amp;quot;,&amp;quot;检查文件【&amp;quot;+fileName+&amp;quot;】md5出错.\nfileMD5=&amp;quot;+fileMD5+&amp;quot;,chkMD5=&amp;quot;+chkMD5);
+			return &amp;quot;检查文件【&amp;quot;+fileName+&amp;quot;】md5出错.\nfileMD5=&amp;quot;+fileMD5+&amp;quot;,chkMD5=&amp;quot;+chkMD5; 			
+		}
+		var file2 = localpath + &amp;quot;/&amp;quot;+ pub.EAFunc.Replace(fileName,&amp;quot;.gz&amp;quot;,&amp;quot;&amp;quot;);	
+		try{
+			pub.EAFunc.DecompressGzip(file1,file2);
+		}catch(ee){
+			writeLog(ref,&amp;quot;批量文件结算&amp;quot;,&amp;quot;100&amp;quot;,&amp;quot;解压文件【&amp;quot;+fileName+&amp;quot;】出错\n&amp;quot;+ee.toString());
+			return &amp;quot;解压文件【&amp;quot;+fileName+&amp;quot;】出错\n&amp;quot;+ee.toString(); 			
+		}
+		fileName = pub.EAFunc.Replace(fileName,&amp;quot;.gz&amp;quot;,&amp;quot;&amp;quot;);					
+		
+		if (localFile.length() != 0 &amp;&amp; localFile.length != &amp;quot;&amp;quot;) {
+			var fi = new java.io.FileInputStream(localpath + &amp;quot;/&amp;quot; + fileName);
+			var ir = new java.io.InputStreamReader(fi,&amp;quot;GBK&amp;quot;);
+			//var sr = new java.io.StringReader(pub.EAFunc.readFile(localpath + &amp;quot;/&amp;quot; + fileName));
+			var br = new java.io.BufferedReader(ir);	
+			
+			//同名文件 清除原有的记录
+			sql = &amp;quot;select * from si_wsfile_0222002 where filename=&amp;apos;&amp;quot;+fileName+&amp;quot;&amp;apos;&amp;quot;;	
+			var cnt = db.GetSQLRowCount(sql);
+			if (cnt &amp;gt; 0) {
+				sql = &amp;quot;delete from si_wsfile_0222002 where filename=&amp;apos;&amp;quot;+fileName+&amp;quot;&amp;apos;&amp;quot;;	
+				db.ExcecutSQL(sql);
+			}				
+			sql = &amp;quot;insert into si_wsfile_0222002(sbInstid,sxh,yh_rzrq,yh_rzsj,yh_lsh,mny_type,mny_flg,funcid,jsywlx,
+					bfzh,bfhm,dfhh,dfzh,dfhm,jdbz,jymny,jyhye,zy,backup1,backup2,backup3,filename,bkInstid)
+					values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)&amp;quot;;
+			var ps = db.prepareStatement(sql);
+				
+			while ((line = br.readLine()) != null) {
+				rowcount ++;
+				if(line == &amp;quot;&amp;quot;) continue;
+				var length = db.GetSQL(&amp;quot;select lengthb(&amp;apos;&amp;quot;+line+&amp;quot;&amp;apos;) from dual&amp;quot;);	
+				if(!(length == 553 || length == 563)) {
+					db.Rollback();
+					writeLog(ref,&amp;quot;批量文件结算-社保机构账户收支明细&amp;quot;,&amp;quot;100&amp;quot;,&amp;quot;文件【&amp;quot;+fileName+&amp;quot;】第&amp;quot;+rowcount+&amp;quot;行长度不正确，正确长度：563，实际长度：&amp;quot;+length);
+					return &amp;quot;文件【&amp;quot;+fileName+&amp;quot;】第&amp;quot;+rowcount+&amp;quot;行长度不正确，正确长度：工行553，其他银行563，实际长度：&amp;quot;+length;				
+				}
+				//return line;				
+				var sbInstid = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,0,30),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);               /*社保经办机构代码 30*/
+				var sxh = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,30,30),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);                /*银行入账日期 8*/
+				var yh_rzrq = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,60,8),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		       /*银行入账时间 6 */
+				var yh_rzsj = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,68,6),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*银行流水号 30 */
+				var yh_lsh = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,74,30),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*社保流水号 30*/
+				var mny_type = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,104,3),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*币别 3*/
+				var mny_flg = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,107,1),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*钞汇标志 1*/
+				var funcid = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,108,7),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*业务功能号 7*/
+				var jsywlx = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,115,3),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*结算业务类型 3*/
+				var bfzh = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,118,34),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);           	/*付款账号 34*/
+				var bfhm = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,152,90),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);           	/*付款户名 90*/
+				var dfhh = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,242,12),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*收款行号 12 */
+				var dfzh = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,254,34),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*收款账号 34 */
+				var dfhm = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,288,90),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*收款户名 90*/
+				var jdbz = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,378,1),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);			/*交易金额 17*/
+				var jymny = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,379,17),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*应收参保对象手续费 17*/
+				var jyhye = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,396,17),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*应收社保机构手续费 17*/
+				var zy = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,413,100),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*应收社保机构手续费 17*/
+				var backup1 = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,513,10),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*备用1 10*/
+				var backup2 = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,523,10),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);		/*备用2 10*/
+				var backup3 = &amp;quot;&amp;quot;;
+				if(bkInstId == &amp;quot;10200000&amp;quot;){//工行与其他银行不一样
+					backup3 = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,533,20),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);    		/*备用3 20*/ 
+				}
+				else{
+					backup3 = pub.EAFunc.Replace(pub.EAFunc.bSubstring(line,533,30),&amp;quot; &amp;quot;,&amp;quot;&amp;quot;);    		/*备用3 30*/ 
+				}
+				if(rowcount == 1) {
+					//20171017修正，增加条件参数判断
+					//sql = &amp;quot;select * from si_wsfile_0222002 where bkinstid = &amp;apos;&amp;quot;+bkInstId+&amp;quot;&amp;apos; and yh_rzrq =&amp;apos;&amp;quot;+yh_rzrq+&amp;quot;&amp;apos;&amp;quot;;
+					sql = &amp;quot;select * from si_wsfile_0222002 where bkinstid = &amp;apos;&amp;quot;+bkInstId+&amp;quot;&amp;apos; and yh_rzrq =&amp;apos;&amp;quot;+yh_rzrq+&amp;quot;&amp;apos; and filename=&amp;apos;&amp;quot;+fileName+&amp;quot;&amp;apos; and sbistid=&amp;apos;&amp;quot;+sbInstid+&amp;quot;&amp;apos;&amp;quot;;
+					var cnt = db.GetSQLRowCount(sql);
+					if (cnt &amp;gt; 0) {
+						//sql = &amp;quot;delete from si_wsfile_0222002 where bkinstid = &amp;apos;&amp;quot;+bkInstId+&amp;quot;&amp;apos; and yh_rzrq =&amp;apos;&amp;quot;+yh_rzrq+&amp;quot;&amp;apos;&amp;quot;;
+						sql = &amp;quot;delete from si_wsfile_0222002 where bkinstid = &amp;apos;&amp;quot;+bkInstId+&amp;quot;&amp;apos; and yh_rzrq =&amp;apos;&amp;quot;+yh_rzrq+&amp;quot;&amp;apos; and filename=&amp;apos;&amp;quot;+fileName+&amp;quot;&amp;apos; and sbistid=&amp;apos;&amp;quot;+sbInstid+&amp;quot;&amp;apos;&amp;quot;;	
+						db.ExcecutSQL(sql);
+					}
+				}						 
+				 ps.setString(1,sbInstid);
+		                ps.setString(2,sxh);
+		                ps.setString(3,yh_rzrq);
+		                ps.setString(4,yh_rzsj);
+		                ps.setString(5,yh_lsh);
+		                ps.setString(6,mny_type);
+		                ps.setString(7,mny_flg);
+		                ps.setString(8,funcid);
+		                ps.setString(9,jsywlx);
+		                ps.setString(10,bfzh);
+		                ps.setString(11,bfhm);
+		                ps.setString(12,dfhh);
+		                ps.setString(13,dfzh);
+				 ps.setString(14,dfhm);
+		                ps.setString(15,jdbz);
+		                ps.setString(16,jymny);
+		                ps.setString(17,jyhye);
+		                ps.setString(18,zy);
+		                ps.setString(19,backup1);
+		                ps.setString(20,backup2);
+		                ps.setString(21,backup3);
+				 ps.setString(22,fileName);
+				 ps.setString(23,bkInstId);	
+		                ps.executeUpdate();
+		                
+
+			}
+			ps.close();
+			if(rowcount == 0) {
+				db.Rollback();
+				writeLog(ref,&amp;quot;批量文件结算-社保机构账户收支明细&amp;quot;,&amp;quot;100&amp;quot;,&amp;quot;文件【&amp;quot;+fileName+&amp;quot;】导入失败，文件内容为空！&amp;quot;);
+			}
+			else {
+				db.Commit();			
+				writeLog(ref,&amp;quot;批量文件结算-社保机构账户收支明细&amp;quot;,&amp;quot;100&amp;quot;,&amp;quot;文件【&amp;quot;+fileName+&amp;quot;】导入完成！&amp;quot;);			
+			}
+		}
+
+
+	}
+	catch(e){
+		if(db != null) db.Rollback();
+		writeLog(ref,&amp;quot;批量文件结算-社保机构账户收支明细&amp;quot;,&amp;quot;100&amp;quot;,&amp;quot;文件【&amp;quot;+fileName+&amp;quot;】导入出错：&amp;quot;+e.toString());
+		return e.toString();	
+	}
+	finally {
+		if(db != null) db.Close();
+	}
+	
+}
+
+
+//写日志
+function writeLog(id,name,percent,percentnote)
+{
+	percentnote = percentnote.toString();
+	percentnote = pub.EAFunc.Replace(percentnote,&amp;quot;&amp;apos;&amp;quot;,&amp;quot;&amp;apos;&amp;apos;&amp;quot;);
+	if(percentnote.length() &amp;gt;= 4000) {
+		percentnote = percentnote.substring(0,3999);
+	}	
+	var sql = &amp;quot;insert into RUNOSTIMER(id,name,percent,percentnote) values (&amp;apos;&amp;quot;+id+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+name+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+percent+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+percentnote+&amp;quot;&amp;apos;)&amp;quot;;
+	pub.EADbTool.ExcecutSQL(sql);
+}
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>

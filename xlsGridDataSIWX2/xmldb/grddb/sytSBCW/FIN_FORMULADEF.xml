@@ -1,0 +1,772 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >R</MWTYP><MWID >FIN_FORMULADEF</MWID><NAME >报表平衡公式定义</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >FIN_FORMULADEF.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD ></WIDTHMOD><HEIGHTMOD ></HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN >0</SHOWBTN><CLOSEPAGES ></CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >REPID</ID><NAME >报表编号</NAME><NOTNULL ></NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG></ROW>
+</ROWSET>
+</grdpamds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var sheet_ui = 0;
+var sheet_param = 1;
+var sheet_bds = 2;
+var sheet_phgs = 3;
+var ZXGFILE2;
+var ZXGFILE3;
+var rowcolList;
+var formulaTypList;
+
+//数据加载完毕
+function _thisOnpost_loaddata(sheet)
+{
+	initLayout();
+	
+	var replist = _this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_FINREP2&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+	_this.SetToComboBox(&amp;quot;&amp;quot;,sheet_param,1,2,replist);
+	
+	formulaTypList =_this.CreateListValueByXMLDS(_this.HttpCall(homeurl+&amp;quot;/XmlDB.sp?bind=V_FINFORMULA&amp;quot;),&amp;quot;ID&amp;quot;,&amp;quot;NAME&amp;quot;);
+
+	
+//	_this.SetRowFixWidthMode(2,1);
+//	_this.SetCellColWidth(2,1,1,60);
+//	_this.SetCellColWidth(2,1,2,60);
+//	_this.SetCellColWidth(2,1,3,60);
+//	_this.SetMergeCellTextMode(2,1);
+	_this.SetToolbarString(&amp;quot;说明：平衡公式定义保存后，自动分配给报表，不需要再去做平衡公式分配了。&amp;quot;);
+
+	_this.AddToolbarButton(&amp;quot;udf_newBDS&amp;quot;,&amp;quot;新增&amp;quot;,&amp;quot;新增&amp;quot;,&amp;quot;&amp;quot;,0,4,4,60);
+	_this.AddToolbarButton(&amp;quot;udf_delBDS&amp;quot;,&amp;quot;删除&amp;quot;,&amp;quot;删除&amp;quot;,&amp;quot;&amp;quot;,0,2,2,60);
+	_this.AddToolbarButton(&amp;quot;udf_saveBDS&amp;quot;,&amp;quot;保存&amp;quot;,&amp;quot;保存&amp;quot;,&amp;quot;&amp;quot;,0,5,5,60);
+	
+	rowcolList = _this.CreateListValue();
+	_this.SetListValue(rowcolList,&amp;quot;1&amp;quot;,&amp;quot;行&amp;quot;);
+	_this.SetListValue(rowcolList,&amp;quot;2&amp;quot;,&amp;quot;列&amp;quot;);
+
+	initBDSSheet();
+	
+	ZXGFILE2 = _this.SaveTempZXGFile(2); 
+	ZXGFILE3 = _this.SaveTempZXGFile(3); 
+	
+	try {
+		if (REPID != &amp;quot;&amp;quot;) {
+			loadReportUI(REPID);
+			loadRepBds(REPID);
+			loadRepFormula(REPID);
+		}
+	}catch (e) { }
+	
+	_this.AutoFixScreenWidth();
+	
+}
+
+
+function initLayout()
+{
+	var layoutxml=&amp;quot;&amp;lt;?xml version = &amp;apos;1.0&amp;apos; encoding=\&amp;quot;GBK\&amp;quot;?&amp;gt; &amp;quot;+
+	&amp;quot;&amp;lt;ROWSET&amp;gt;&amp;quot;+
+	&amp;quot;&amp;lt;ROW &amp;gt;&amp;quot;+
+	 &amp;quot;&amp;lt;C0  height=\&amp;quot;5%\&amp;quot; width=\&amp;quot;100%\&amp;quot; ROWSPAN=\&amp;quot;2\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;1&amp;lt;/C0&amp;gt;&amp;quot;+
+	&amp;quot;&amp;lt;/ROW&amp;gt;&amp;quot;+
+	&amp;quot;&amp;lt;ROW &amp;gt;&amp;quot;+
+	 &amp;quot;&amp;lt;C0  height=\&amp;quot;100%\&amp;quot; width=\&amp;quot;50%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;2\&amp;quot;&amp;gt;0&amp;lt;/C0&amp;gt;&amp;quot;+
+	 &amp;quot;&amp;lt;C1  height=\&amp;quot;30%\&amp;quot; width=\&amp;quot;50%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;2&amp;lt;/C1&amp;gt;&amp;quot;+
+	&amp;quot;&amp;lt;/ROW&amp;gt;&amp;quot;+
+	&amp;quot;&amp;lt;ROW &amp;gt;&amp;quot;+
+	 &amp;quot;&amp;lt;C1  height=\&amp;quot;65%\&amp;quot; width=\&amp;quot;50%\&amp;quot; ROWSPAN=\&amp;quot;1\&amp;quot; COLSPAN=\&amp;quot;1\&amp;quot;&amp;gt;3&amp;lt;/C1&amp;gt;&amp;quot;+
+	&amp;quot;&amp;lt;/ROW&amp;gt;&amp;quot;+
+	&amp;quot;&amp;lt;/ROWSET&amp;gt;&amp;quot;;
+	_this.SetLayoutDS(layoutxml);
+}
+
+function initBDSSheet()
+{
+	_this.SetColName(sheet_bds,1,&amp;quot;SEQID&amp;quot;);
+	_this.SetColName(sheet_bds,2,&amp;quot;HLBZ&amp;quot;);
+	_this.SetColName(sheet_bds,3,&amp;quot;BDS&amp;quot;);
+	_this.SetColName(sheet_bds,4,&amp;quot;NAME&amp;quot;);
+	_this.SetColName(sheet_bds,5,&amp;quot;TYP&amp;quot;);
+	_this.SetColName(sheet_bds,6,&amp;quot;FLAG&amp;quot;);
+	_this.SetColName(sheet_bds,7,&amp;quot;GUID&amp;quot;);
+	
+	
+	_this.SetColVisible(sheet_bds,6,-1);
+	_this.SetColVisible(sheet_bds,7,-1);
+	for (var r=0;r&amp;lt;_this.GetRowCount(sheet_bds);r++) {
+		_this.SetToBoolBox(sheet_bds,r,0);
+		if (r != 0) {
+			_this.SetToComboBox(&amp;quot;&amp;quot;,sheet_bds,r,2,rowcolList);
+			_this.SetCellText(sheet_bds,r,1,r);
+			_this.SetToComboBox(&amp;quot;&amp;quot;,sheet_bds,r,5,formulaTypList);
+		}
+	}
+}
+
+function loadReportUI(repid)
+{
+	_sql.querytods(&amp;quot;REPMODEL&amp;quot;,&amp;quot;REPID=&amp;quot;+repid);
+	var grdid = _this.XMLDS_GetString(0,&amp;quot;GRDID&amp;quot;);
+	var file = grdid + &amp;quot;.zxg&amp;quot;;
+	_this.setRedraw(0);
+	_this.LoadZXGFile(zxgRoot+file,-1,sheet_ui);
+	_this.AutoFixScreenWidth();
+	_this.setRedraw(1);
+	_this.SetCurrentSheet(0);
+}
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 1) {
+		if (row == 1 &amp;&amp; col == 2) {
+			loadReportUI(newvalue);
+			loadRepBds(newvalue);
+			loadRepFormula(newvalue);
+		}
+	}
+	else if (sheet == 2) {
+		if (row == 0 &amp;&amp; col == 0) {
+			for (var r=1;r&amp;lt;_this.GetRowCount(sheet_bds);r++) {
+				_this.SetCellText(sheet_bds,r,0,newvalue);
+			}
+		}
+		if (col == 3) {
+			var char1 = newvalue.substring(0,1);
+			if (char1 == &amp;quot;R&amp;quot;) {
+				_this.SetCellText(sheet_bds,row,2,&amp;quot;1&amp;quot;);
+				_this.SetCellText(sheet_bds,row,5,&amp;quot;2&amp;quot;);
+			}
+			if (char1 == &amp;quot;C&amp;quot;) {
+				_this.SetCellText(sheet_bds,row,2,&amp;quot;2&amp;quot;);
+				_this.SetCellText(sheet_bds,row,5,&amp;quot;2&amp;quot;);
+			}
+			else if (char1 == &amp;quot;[&amp;quot;) {
+				_this.SetCellText(sheet_bds,row,2,&amp;quot;1&amp;quot;);
+				_this.SetCellText(sheet_bds,row,5,&amp;quot;1&amp;quot;);
+			}
+			_this.SetCellText(sheet_bds,row,4,newvalue);
+
+		}
+	}
+	
+}
+
+//加载报表平衡关系表达式
+function loadRepBds(repid)
+{
+	_this.LoadZXGFile(ZXGFILE2,-1,sheet_bds);
+	_this.SetMainCellRange(sheet_bds,1,1,3,7);
+	_this.SetAttribe(&amp;quot;SHEET_2&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetFixedRow(2,1);
+
+	var xml = _sql.query(&amp;quot;BDSDS&amp;quot;,&amp;quot;REPID=&amp;quot;+repid);
+	_this.SetXmlDS(sheet_bds,1,1,3,7,xml);
+	initBDSSheet();
+	
+	_this.AutoFixScreenWidth();
+	
+}
+
+//加载报表平衡公式
+function loadRepFormula(repid)
+{
+	_this.LoadZXGFile(ZXGFILE3,-1,sheet_phgs);
+	_this.SetMainCellRange(sheet_phgs,1,0,3,2);
+	_this.SetAttribe(&amp;quot;SHEET_3&amp;quot;,_this.ATTR_SHEET_SELECTFLAG,_this. SELECTFLAG_SINGLEROW );
+	_this.SetFixedRow(3,1);
+	
+	var xml = _sql.query(&amp;quot;IDXFORMULA&amp;quot;,&amp;quot;REPID=&amp;quot;+repid);
+	_this.SetXmlDS(sheet_phgs,1,0,3,2,xml);
+
+	_this.AutoFixScreenWidth();
+}
+
+//重排序号
+function reSortSeqid()
+{
+	var seq = 0;
+	for (var r=1;r&amp;lt;_this.GetRowCount(sheet_bds);r++) {
+		var b = _this.GetRowVisible(sheet_bds,r);
+		if (b == 1) {
+			seq ++;
+			_this.SetCellText(sheet_bds,r,1,seq);
+		}
+	}
+}
+
+function newBDS()
+{
+	_this.AppendRow(sheet_bds,_this.GetRowCount(sheet_bds)-1);
+	//_this.SetCellText(sheet_bds,_this.GetRowCount(sheet_bds)-1,1,_this.GetRowCount(sheet_bds)-1);
+	//重排序号
+	reSortSeqid();
+}
+
+function delBDS()
+{
+	if (!confirm(&amp;quot;删除选中的表达式，是否继续？&amp;quot;)) return;
+	for (var r=1;r&amp;lt;_this.GetRowCount(sheet_bds);r++) {
+		var flag = _this.GetCellText(sheet_bds,r,0);
+		if (flag == 1) {
+			_this.SetCellText(sheet_bds,r,6,&amp;quot;-&amp;quot;);
+			_this.SetRowVisible(sheet_bds,r,-1);
+		}
+	}
+	//重排序号
+	reSortSeqid();
+}
+
+function saveBDS()
+{
+	var param = new Object();
+	param.xml = _this.GetXml(sheet_bds,1,1,_this.GetMainCellRangeRow2(sheet_bds),_this.GetMainCellRangeCol2(sheet_bds));
+	param.repid = _this.GetCellText(sheet_param,1,2);
+	
+	if (param.repid == &amp;quot;&amp;quot;) {
+		alert(&amp;quot;请先选择报表！&amp;quot;);
+		return;
+	}
+	
+	for (var r=1;r&amp;lt;_this.GetRowCount(sheet_bds);r++) {
+		var visb = _this.GetRowVisible(sheet_bds,r);
+		var xh = _this.GetCellText(sheet_bds,r,1);
+		var bds = _this.GetCellText(sheet_bds,r,3);
+		var name = _this.GetCellText(sheet_bds,r,4);
+		if (visb == 1) {
+			if (bds != &amp;quot;&amp;quot; &amp;&amp; name == &amp;quot;&amp;quot;) {
+				alert(&amp;quot;序号&amp;quot;+xh+&amp;quot;的表达式名称不能为空！&amp;quot;);
+				return;
+			}
+		}
+	}
+	
+	try {
+		var ret = invokeOSFuncExt(&amp;quot;Save&amp;quot;,param);
+		if (ret.substring(0,1) == 1) {
+			alert(ret.substring(2));
+			loadRepBds(param.repid);
+			loadRepFormula(param.repid);
+		}
+		else {
+			alert(ret);
+		}
+	}
+	catch (e) {
+	
+	}
+	
+}
+
+
+//鼠标左键点击
+function _thisOnMouseLClick(sheet,row,col)
+{
+	if (sheet == 0) {
+		var repid = _this.GetCellText(1,1,2);
+		if (repid == &amp;quot;&amp;quot;) return;
+		var str = invokeOSFunc(&amp;quot;SBCW.T0PubJS.getOSFunc&amp;quot;,&amp;quot;sytid=&amp;quot;+ G_SYTID +&amp;quot;&amp;repid=&amp;quot;+ repid +&amp;quot;&amp;col=&amp;quot;+ col);
+		var arr = str.split(&amp;quot;,&amp;quot;);
+		if (arr.length == 2) {
+			if (arr[1] == &amp;quot;&amp;quot;) { _this.SetCellText(1,1,6,&amp;quot;&amp;quot;); return; }
+			var indexid = _this.GetCellText(0,row,arr[0]);
+			if (indexid == &amp;quot;&amp;quot;) { _this.SetCellText(1,1,6,&amp;quot;&amp;quot;); return; }
+			var indexitemid = arr[1];
+//			_this.SetCellText(1,2,2,&amp;quot;F(&amp;apos;&amp;quot;+indexid+&amp;quot;&amp;apos;,&amp;apos;&amp;quot;+indexitemid+&amp;quot;&amp;apos;)&amp;quot;); //指标信息
+//			var formula = invokeOSFunc(&amp;quot;SBCW.T0PubJS.getDataSourceFormula&amp;quot;,&amp;quot;indexid=&amp;quot;+indexid+&amp;quot;&amp;indexitemid=&amp;quot;+indexitemid+&amp;quot;&amp;repid=&amp;quot;+repid);
+//			if (formula == &amp;quot;null&amp;quot;) {
+//				_this.SetCellText(1,1,2,&amp;quot;&amp;quot;);
+//			}
+//			else {
+//				_this.SetCellText(1,1,2,formula); //指标取数来源公式
+//				var p1 = formula.indexOf(&amp;quot;&amp;apos;,&amp;apos;&amp;quot;);
+//				var p2 = formula.indexOf(&amp;quot;&amp;apos;)&amp;quot;,p1+3);
+//				indexitemid = formula.substring(p1+3,p2);
+//			}
+			var fnote = invokeOSFunc(&amp;quot;SBCW.T0PubJS.getFormulaNote&amp;quot;,&amp;quot;indexid=&amp;quot;+indexid+&amp;quot;&amp;indexitemid=&amp;quot;+indexitemid+&amp;quot;&amp;thisaccid=&amp;quot;+G_ACCID);
+			_this.SetCellText(1,1,6,fnote);
+		}
+		else {
+			_this.SetCellText(1,1,6,&amp;quot;&amp;quot;);
+		}
+	}
+	
+		
+}
+
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var idx = 0;
+var operstr = new Array(&amp;quot;&amp;gt;=&amp;quot;,&amp;quot;&amp;lt;=&amp;quot;,&amp;quot;&amp;gt;&amp;quot;,&amp;quot;&amp;lt;&amp;quot;,&amp;quot;=&amp;quot;);	//表达式平衡判断符，=号不能放前面
+
+function Save()
+{
+	var db = null;
+	var sql = &amp;quot;&amp;quot;;
+	
+	try {
+		db = new pub.EADatabase();
+		
+		//1.写入平衡公式表达式定义表fin_formula_def
+		var ds = new pub.EAXmlDS(xml);
+		for (var i=0;i&amp;lt;ds.getRowCount();i++) {
+			var seqid = ds.getStringAt(i,&amp;quot;SEQID&amp;quot;);
+			var hlbz = ds.getStringAt(i,&amp;quot;HLBZ&amp;quot;);
+			var bds = ds.getStringAt(i,&amp;quot;BDS&amp;quot;);
+			var name = ds.getStringAt(i,&amp;quot;NAME&amp;quot;);
+			var typ = ds.getStringAt(i,&amp;quot;TYP&amp;quot;);
+			var flag = ds.getStringAt(i,&amp;quot;FLAG&amp;quot;);
+			var guid = ds.getStringAt(i,&amp;quot;GUID&amp;quot;);
+			if (seqid != &amp;quot;&amp;quot;) {
+				if (flag == &amp;quot;-&amp;quot;) {
+					sql = &amp;quot;delete from fin_formula_def where guid=&amp;apos;&amp;quot;+guid+&amp;quot;&amp;apos;&amp;quot;;
+					db.ExcecutSQL(sql);
+				}
+				else {
+					if (hlbz != &amp;quot;&amp;quot; &amp;&amp; bds != &amp;quot;&amp;quot; &amp;&amp; name != &amp;quot;&amp;quot;) {
+						if (guid != &amp;quot;&amp;quot;) {
+							sql = &amp;quot;update fin_formula_def set hlbz=&amp;apos;%s&amp;apos;,bds=&amp;apos;%s&amp;apos;,name=&amp;apos;%s&amp;apos;,typ=&amp;apos;%s&amp;apos; where guid=&amp;apos;%s&amp;apos;&amp;quot;.format([hlbz,bds,name,typ,guid]);
+							db.ExcecutSQL(sql);
+						}
+						else {
+							sql = &amp;quot;insert into fin_formula_def(repid,seqid,hlbz,bds,name,typ)values(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;
+								.format([repid,seqid,hlbz,bds,name,typ]);
+							db.ExcecutSQL(sql);
+						}
+					}
+				}
+			}
+		}
+		
+		//2.根据表达式表，写入真正的平衡公式定义表fin_formula并分配到报表fin_formularep
+		sql = &amp;quot;select * from fin_formula_def where repid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos; order by seqid&amp;quot;;
+		var myds = db.QuerySQL(sql);
+		
+		//先将原有公式清除
+		sql = &amp;quot;delete from fin_formula where repid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+		db.ExcecutSQL(sql);
+		var addcnt = 0;
+		
+		for (var i=0;i&amp;lt;myds.getRowCount();i++) {
+			var seqid = myds.getStringAt(i,&amp;quot;SEQID&amp;quot;);
+			var hlbz = myds.getStringAt(i,&amp;quot;HLBZ&amp;quot;);
+			var bds = myds.getStringAt(i,&amp;quot;BDS&amp;quot;);
+			var name = myds.getStringAt(i,&amp;quot;NAME&amp;quot;);
+			var typ = myds.getStringAt(i,&amp;quot;TYP&amp;quot;);			
+			
+			//将平衡公式拆分为左右两部分解释
+			var left = bds;
+			var right = &amp;quot;&amp;quot;;
+			var oper = &amp;quot;&amp;quot;;
+			for (var n=0;n&amp;lt;operstr.length();n++) {
+				var pos = bds.indexOf(operstr[n]);
+				if (pos &amp;gt; -1) {
+					oper = operstr[n];
+					left = bds.substring(0,pos);
+					right = bds.substring(pos+oper.length());
+					break;
+				}
+			}
+			
+			
+			var char1 = bds.substring(0,1);
+			if (char1 == &amp;quot;R&amp;quot;) { //行表达式	
+				var repgrdid = getGrdidByRepid(db,repid);
+				sql = &amp;quot;select indexid,indexitemid from fin_repframe where repid=&amp;apos;%s&amp;apos; order by seqid&amp;quot;.format([repgrdid]);
+				var ds = db.QuerySQL(sql);
+				var indexitem = ds.getStringAt(0,&amp;quot;INDEXITEMID&amp;quot;);
+				var arr_indexitem = indexitem.split(&amp;quot;,&amp;quot;); //指标项
+				for (var n=0;n&amp;lt;arr_indexitem.length();n++) { //所有指标项列	
+					var indexitemid = arr_indexitem[n];
+					var formula_left = getFormulaByDef(db,repid,hlbz,left,typ,&amp;quot;&amp;quot;,indexitemid,&amp;quot;&amp;quot;); //解释表达式得到指标公式
+					var formula_right = getFormulaByDef(db,repid,hlbz,right,typ,&amp;quot;&amp;quot;,indexitemid,&amp;quot;&amp;quot;); //解释表达式得到指标公式
+					var formula = formula_left + oper + formula_right;
+					var id = getFormulaId(db,repid,seqid);
+					addcnt += insertFormula(db,repid,id,formula,name,typ);
+				}
+			}
+			else if (char1 == &amp;quot;[&amp;quot;) { //表间表达式	
+				var formula_left = getFormulaByDef(db,repid,hlbz,left,typ,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;); //解释表达式得到指标公式
+				var formula_right = getFormulaByDef(db,repid,hlbz,right,typ,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;,&amp;quot;&amp;quot;); //解释表达式得到指标公式
+				var formula = formula_left + oper + formula_right;
+				var id = getFormulaId(db,repid,seqid);
+				addcnt += insertFormula(db,repid,id,formula,name,typ);
+			}
+			else if (char1 == &amp;quot;C&amp;quot;) { //列公式表达式定义
+				var repgrdid = getGrdidByRepid(db,repid);
+				var sql = &amp;quot;select max(lmh) lmh from fin_repframe where repid=&amp;apos;%s&amp;apos;&amp;quot;.format([repgrdid]);
+				var lmh = 1 * db.GetSQL(sql);
+				for (var k=1;k&amp;lt;=lmh;k++) {
+					sql = &amp;quot;select * from fin_repframe where repid=&amp;apos;%s&amp;apos; and lmh=&amp;apos;%s&amp;apos; and indexid is not null order by lmh,seqid&amp;quot;.format([repgrdid,&amp;quot;&amp;quot;+k]);
+					var rowds = db.QuerySQL(sql);
+					for (var rw=0;rw&amp;lt;rowds.getRowCount();rw++) {				
+						var hc = rowds.getStringAt(rw,&amp;quot;HC&amp;quot;);
+						var indexitemidstr = rowds.getStringAt(rw,&amp;quot;INDEXITEMID&amp;quot;);
+						var formula_left = getFormulaByDef(db,repid,hlbz,left,typ,hc,&amp;quot;&amp;quot;,k);
+						var formula_right = getFormulaByDef(db,repid,hlbz,right,typ,hc,&amp;quot;&amp;quot;,k);
+						if (formula_left != &amp;quot;&amp;quot; &amp;&amp; formula_right != &amp;quot;&amp;quot;) {
+							var formula = formula_left + oper + formula_right;
+							var id = getFormulaId(db,repid,seqid);
+							addcnt += insertFormula(db,repid,id,formula,name,typ);
+						}
+					}
+				}
+
+			}
+			
+			//将平衡公式分配到报表
+			sql = &amp;quot;delete from fin_formularep where repid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+			db.ExcecutSQL(sql);
+			sql = &amp;quot;insert into fin_formularep(repid,formulaguid)
+				select repid,guid from fin_formula where repid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+			db.ExcecutSQL(sql);
+			
+		}
+		
+		db.Commit();
+		
+		return &amp;quot;1~保存平衡公式表达式成功！记录数&amp;quot;+addcnt;
+	}
+	catch (e) {
+		if (db != null) db.Rollback();
+		return e.toString() + &amp;quot;   idx=&amp;quot; +idx;
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+//解释表达式得到指标公式
+//repid-报表编号 hlbz-行列标志 bds-表达式 typ-类型 lineno-对列表达式需要传入行次号
+//解释行表达式 R1=R2+R3+R4-R5 / R57=R58~R66 / R34=R24~R26+R29+R32+R33 / [105,74,4]=[103,29,1] / C1=C2+C3
+function getFormulaByDef(db,repid,hlbz,bds,typ,lineno,myindexitemid,in_lmh)
+{
+	if (bds == &amp;quot;&amp;quot;) return null;
+	var formula = &amp;quot;&amp;quot;;
+	
+	var sql = &amp;quot;&amp;quot;;
+	var repgrdid = getGrdidByRepid(db,repid);
+	var char1 = bds.substring(0,1);
+	if (char1 == &amp;quot;R&amp;quot;) {		
+		var indexitemid = myindexitemid;//arr_indexitem[n];				
+		var p1= 0;
+		var fa = &amp;quot;&amp;quot;;
+		var sumhc1 = 0;
+		var opchr = &amp;quot;&amp;quot;;
+			
+		//R1=R2~R5+R8+R10~12
+		for (var i=0;i&amp;lt;bds.length();i++) {
+			idx ++;
+			var ch = bds.charAt(i);
+			if (isOperChar(ch) || ch == &amp;quot;~&amp;quot; || ch == &amp;quot;=&amp;quot;) {
+				opchr = ch; //运算符+-*/
+				if (ch == &amp;quot;~&amp;quot;) opchr = &amp;quot;+&amp;quot;; 
+				
+				fa = bds.substring(p1,i); //R1
+				var hc = pub.EAFunc.Replace(fa,&amp;quot;R&amp;quot;,&amp;quot;&amp;quot;); //1				
+				p1 = i+1;
+				
+				if (sumhc1 == 0) {
+					var f = getF(db,repgrdid,hc,indexitemid);
+					formula += f + opchr;
+				}
+				else if (sumhc1 &amp;gt; 0) {
+					var sumhc2 = 1*hc;
+					for (var r=sumhc1+1;r&amp;lt;=sumhc2;r++) {
+						var f = getF(db,repgrdid,r,indexitemid);
+						formula += f + opchr;
+					}
+					sumhc1 = 0;
+				}
+				
+				if (ch == &amp;quot;~&amp;quot;) sumhc1 = 1*hc;
+				
+			}
+		}
+		//处理最后一个取数
+		if (p1 &amp;lt; bds.length()) {
+			fa = bds.substring(p1);
+			var hc = pub.EAFunc.Replace(fa,&amp;quot;R&amp;quot;,&amp;quot;&amp;quot;); 
+			if (sumhc1 == 0) {
+				var f = getF(db,repgrdid,hc,indexitemid);
+				formula += f;
+			}
+			else if (sumhc1 &amp;gt; 0) {
+				var sumhc2 = 1*hc;
+				for (var r=sumhc1+1;r&amp;lt;=sumhc2;r++) {
+					var f = getF(db,repgrdid,r,indexitemid);
+					if (r == sumhc1+1) formula += f;
+					else formula += opchr + f;
+				}
+				sumhc1 = 0;
+			}
+		}
+		return formula;
+
+	}
+	else if (char1 == &amp;quot;[&amp;quot;) {  //[105,74,4]  //[861,1,1]=[862,1,1]+[863,1,1]
+		var opchr = &amp;quot;&amp;quot;;
+		var p1= 0;
+		var fa = &amp;quot;&amp;quot;;
+		var formula = &amp;quot;&amp;quot;;
+		
+		for (var i=0;i&amp;lt;bds.length();i++) {
+			idx ++;
+			var ch = bds.charAt(i);
+			if (isOperChar(ch)) {
+				opchr = ch; //运算符+-*/
+				fa = bds.substring(p1,i); 
+				p1 = i+1;
+				
+				var f = getBJGS(db,fa);
+				formula += f + opchr;	
+			}
+		}			
+		//处理最后一个取数
+		if (p1 &amp;lt; bds.length()) {
+			fa = bds.substring(p1);
+			var f = getBJGS(db,fa);
+			formula += f;
+		}
+		
+		return formula;
+	}
+	else if (char1 == &amp;quot;C&amp;quot;) { //C1=C2+C3		
+		var p1= 0;
+		var fa = &amp;quot;&amp;quot;;
+		var sumcol1 = 0;
+		var opchr = &amp;quot;&amp;quot;;
+		
+		var sql = &amp;quot;select * from fin_repframe where repid=&amp;apos;%s&amp;apos; and hc=&amp;apos;%s&amp;apos;&amp;quot;.format([repgrdid,&amp;quot;&amp;quot;+lineno,&amp;quot;&amp;quot;+in_lmh]);
+		var rowds = db.QuerySQL(sql);
+		if (rowds.getRowCount() &amp;lt;= 0) {
+			//throw new Exception(&amp;quot;表达式公式(&amp;quot;+bds+&amp;quot;)有误：找不到报表行的定义信息！hc=&amp;quot;+lineno+&amp;quot;,sql=&amp;quot;+sql);
+			return &amp;quot;&amp;quot;;
+		}
+
+		var hc = rowds.getStringAt(0,&amp;quot;HC&amp;quot;);
+		var indexitemidstr = rowds.getStringAt(0,&amp;quot;INDEXITEMID&amp;quot;);
+		var lmh = 1 * rowds.getStringAt(0,&amp;quot;LMH&amp;quot;);	//栏目号
+		var idxlen = indexitemidstr.split(&amp;quot;,&amp;quot;).length();
+		if (lmh != in_lmh) return &amp;quot;&amp;quot;;
+
+		for (var i=0;i&amp;lt;bds.length();i++) {
+			idx ++;
+			var ch = bds.charAt(i);
+			if (isOperChar(ch) || ch == &amp;quot;~&amp;quot; || ch == &amp;quot;=&amp;quot;) {
+				opchr = ch; //运算符+-*/
+				if (ch == &amp;quot;~&amp;quot;) opchr = &amp;quot;+&amp;quot;; 
+				
+				fa = bds.substring(p1,i); //C1
+				p1 = i+1;				
+				var col = pub.EAFunc.Replace(fa,&amp;quot;C&amp;quot;,&amp;quot;&amp;quot;); //1
+				if (1*col &amp;lt;= idxlen &amp;&amp; lmh &amp;gt; 1) {
+					//throw new Exception(&amp;quot;1表达式公式(&amp;quot;+bds+&amp;quot;)有误：列坐标定义不对！idxlen=&amp;quot;+idxlen+&amp;quot;,lmh=&amp;quot;+lmh+&amp;quot;,hc=&amp;quot;+hc);
+					return &amp;quot;&amp;quot;;
+				}
+				if (1*col &amp;gt; idxlen*lmh) {
+					//throw new Exception(&amp;quot;2表达式公式(&amp;quot;+bds+&amp;quot;)有误：列坐标定义不对！idxlen=&amp;quot;+idxlen+&amp;quot;,lmh=&amp;quot;+lmh+&amp;quot;,hc=&amp;quot;+hc+&amp;quot;,col=&amp;quot;+col );
+					return &amp;quot;&amp;quot;;
+				}
+				var colidx = db.GetSQL(&amp;quot;select mod(&amp;quot;+col+&amp;quot;-1,&amp;quot;+idxlen+&amp;quot;) idx from dual&amp;quot;);			
+				
+				//var indexitemid = indexitemidstr.split(&amp;quot;,&amp;quot;)[col-1];
+				var indexitemid = indexitemidstr.split(&amp;quot;,&amp;quot;)[colidx];
+	
+				if (sumcol1 == 0) {
+					var f = getF(db,repgrdid,hc,indexitemid);
+					formula += f + opchr;
+				}
+				else if (sumcol1 &amp;gt; 0) {
+					var sumcol2 = 1*col;
+					for (var c=sumcol1+1;c&amp;lt;=sumcol2;c++) {
+						if (c &amp;gt; idxlen*lmh) {
+							//throw new Exception(&amp;quot;表达式公式(&amp;quot;+bds+&amp;quot;)有误：列坐标定义不对！idxlen=&amp;quot;+idxlen+&amp;quot;,lmh=&amp;quot;+lmh+&amp;quot;,hc=&amp;quot;+hc);
+							return &amp;quot;&amp;quot;;
+						}
+						var colidx = db.GetSQL(&amp;quot;select mod(&amp;quot;+c+&amp;quot;-1,&amp;quot;+idxlen+&amp;quot;) idx from dual&amp;quot;);
+						//var idxitemid = indexitemidstr.split(&amp;quot;,&amp;quot;)[c-1];
+						var idxitemid = indexitemidstr.split(&amp;quot;,&amp;quot;)[colidx];
+						var f = getF(db,repgrdid,hc,idxitemid);
+						formula += f + opchr;
+					}
+					sumcol1 = 0;
+				}
+
+				if (ch == &amp;quot;~&amp;quot;) sumcol1 = 1*col;
+			}
+		}
+		//处理最后一个取数
+		if (p1 &amp;lt; bds.length()) {
+			fa = bds.substring(p1);
+			var col = pub.EAFunc.Replace(fa,&amp;quot;C&amp;quot;,&amp;quot;&amp;quot;); 			
+			if (1*col &amp;gt; idxlen*lmh) {
+				//throw new Exception(&amp;quot;表达式公式(&amp;quot;+bds+&amp;quot;)有误：列坐标定义不对！idxlen=&amp;quot;+idxlen+&amp;quot;,lmh=&amp;quot;+lmh+&amp;quot;,hc=&amp;quot;+hc);
+				
+				return &amp;quot;&amp;quot;;
+			}
+			var colidx = db.GetSQL(&amp;quot;select mod(&amp;quot;+col+&amp;quot;-1,&amp;quot;+idxlen+&amp;quot;) idx from dual&amp;quot;);
+			//var indexitemid = indexitemidstr.split(&amp;quot;,&amp;quot;)[col-1];
+			var indexitemid = indexitemidstr.split(&amp;quot;,&amp;quot;)[colidx];
+
+			if (sumcol1 == 0) {
+				var f = getF(db,repgrdid,hc,indexitemid);
+				formula += f;
+			}
+			else if (sumcol1 &amp;gt; 0) {
+				var sumcol2 = 1*col;
+				for (var c=sumcol1+1;c&amp;lt;=sumcol2;c++) {
+					if (c &amp;gt; idxlen*lmh) {
+						//throw new Exception(&amp;quot;表达式公式(&amp;quot;+bds+&amp;quot;)有误：列坐标定义不对！idxlen=&amp;quot;+idxlen+&amp;quot;,lmh=&amp;quot;+lmh+&amp;quot;,hc=&amp;quot;+hc);
+						return &amp;quot;&amp;quot;;
+					}
+					var colidx = db.GetSQL(&amp;quot;select mod(&amp;quot;+c+&amp;quot;-1,&amp;quot;+idxlen+&amp;quot;) idx from dual&amp;quot;);
+					//var idxitemid = indexitemidstr.split(&amp;quot;,&amp;quot;)[c-1];
+					var idxitemid = indexitemidstr.split(&amp;quot;,&amp;quot;)[colidx];
+					
+					var f = getF(db,repgrdid,hc,idxitemid);
+					if (c == sumcol1+1) formula += f;
+					else formula += opchr + f;
+				}
+				sumcol1 = 0;
+			}
+			
+		}
+		
+		return formula;
+
+	}	
+	
+	return arrFormula;
+}
+
+//表间公式解释
+function getBJGS(db,bds)
+{
+	var ff = bds.substring(1,bds.length()-1);
+	var bbh = ff.split(&amp;quot;,&amp;quot;)[0];
+	var row = ff.split(&amp;quot;,&amp;quot;)[1];
+	var col = ff.split(&amp;quot;,&amp;quot;)[2];
+	
+	var bbhgrdid = getGrdidByRepid(db,bbh);
+	var sql = &amp;quot;select * from fin_repframe where repid=&amp;apos;%s&amp;apos; and hc=&amp;apos;%s&amp;apos;&amp;quot;.format([bbhgrdid,&amp;quot;&amp;quot;+row]);
+	var ds = db.QuerySQL(sql);
+	var indexid = ds.getStringAt(0,&amp;quot;INDEXID&amp;quot;);
+	var indexitemidstr = ds.getStringAt(0,&amp;quot;INDEXITEMID&amp;quot;);
+	var indexitemid = indexitemidstr.split(&amp;quot;,&amp;quot;)[col-1];
+	
+	var formula = &amp;quot;F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;.format([indexid,indexitemid]);
+	return formula;
+
+}
+
+//将解释得到的公式写入平衡公式表
+function insertFormula(db,repid,id,formula,fname,typ)
+{
+	//写入平平衡公式定义表
+	var sql = &amp;quot;insert into fin_formula(id,formula,note,useflg,repid,type)values(?,?,?,?,?,?)&amp;quot;;
+	var ps = db.prepareStatement(sql);
+	ps.setString(1,id);
+	ps.setString(2,formula);
+	ps.setString(3,fname);
+	ps.setString(4,&amp;quot;1&amp;quot;);
+	ps.setString(5,repid);
+	ps.setString(6,typ);
+	ps.executeUpdate();
+	ps.close();
+	return 1;
+}
+
+//公式编号 报表编号+两位序号
+function getFormulaId(db,repid,seqid)
+{
+	var id = &amp;quot;&amp;quot;;
+	if (seqid &amp;lt; 100) {
+		seqid = &amp;quot;00&amp;quot; + seqid;
+	}
+	var sql = &amp;quot;select count(*) from fin_formula where repid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+	var cnt = 1*db.GetSQL(sql);
+	if (cnt &amp;lt;= 0) {
+		id = repid + formatFId(seqid);
+	}
+	else {
+		var seq = cnt + 1;
+		id = repid + formatFId(seq);
+	}
+	
+	return id;
+}
+
+function formatFId(seqid)
+{
+	var seq = 1 * seqid;
+	if (seq &amp;lt; 10) seq = &amp;quot;00&amp;quot; + seq;
+	else if (seq &amp;lt; 100) seq = &amp;quot;0&amp;quot; + seq;
+	return &amp;quot;&amp;quot;+seq;
+}
+		
+function getF(db,repgrdid,hc,indexitemid)
+{
+	var sql = &amp;quot;select indexid from fin_repframe where repid=&amp;apos;%s&amp;apos; and hc=&amp;apos;%s&amp;apos;&amp;quot;.format([repgrdid,&amp;quot;&amp;quot;+hc]);
+	var indexid = db.GetSQL(sql);
+	var formula = &amp;quot;F(&amp;apos;%s&amp;apos;,&amp;apos;%s&amp;apos;)&amp;quot;.format([indexid,indexitemid]);
+	return formula;
+}
+
+function isOperChar(chr)
+{
+	var oparr = new Array(&amp;quot;+&amp;quot;,&amp;quot;-&amp;quot;,&amp;quot;*&amp;quot;,&amp;quot;/&amp;quot;);
+	for (var i=0;i&amp;lt;oparr.length();i++) {
+		if (chr == oparr[i]) return true;
+	}
+	return false;
+}
+
+//取得报表编号对应的中间件ID
+function getGrdidByRepid(db,repid)
+{
+	var sql = &amp;quot;select * from fin_repmodel where reportid=&amp;apos;&amp;quot;+repid+&amp;quot;&amp;apos;&amp;quot;;
+	var ds = db.QuerySQL(sql);
+	if (ds.getRowCount() &amp;gt; 0) {
+		return ds.getStringAt(0,&amp;quot;GRDID&amp;quot;);
+	}
+	return repid;
+}
+
+
+
+
+</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >REPMODEL</ID><NAME ></NAME><DATDSC >select * from fin_repmodel where reportid=&amp;apos;[%REPID]&amp;apos;</DATDSC></ROW>
+<ROW num="1" ><ID >BDSDS</ID><NAME ></NAME><DATDSC >select seqid,
+	hlbz,
+	bds,
+	name,
+	typ,
+	&amp;apos;&amp;apos; flag,
+	guid
+from FIN_FORMULA_DEF
+where repid=&amp;apos;[%REPID]&amp;apos;	
+order by seqid</DATDSC></ROW>
+<ROW num="2" ><ID >IDXFORMULA</ID><NAME ></NAME><DATDSC >select id,formula,note 
+from fin_formula 
+where repid=&amp;apos;[%REPID]&amp;apos;
+order by id</DATDSC></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>
