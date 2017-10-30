@@ -1,0 +1,379 @@
+<?xml version='1.0' encoding='GBK'?><mdroot><grdds>
+<ROWSET>
+<ROW num="0" ><MWTYP >M</MWTYP><MWID >BankDateBill</MWID><NAME >银行每日缴费明细清单</NAME><NOTE ></NOTE><NOACCNAME ></NOACCNAME><FILE >BankDateBill.zxg</FILE><SCENE ></SCENE><FIXED ></FIXED><CATTYP ></CATTYP><DTLRNG ></DTLRNG><BATINP ></BATINP><MANUNIT ></MANUNIT><USESMLUNT ></USESMLUNT><ITEMTABLE ></ITEMTABLE><BILHDRTABLE ></BILHDRTABLE><BILDTLTABLE ></BILDTLTABLE><COLLIST ></COLLIST><WHERE ></WHERE><ORDER ></ORDER><DBNAME ></DBNAME><LISTSUM ></LISTSUM><LOADDATA ></LOADDATA><CHECKTITLE ></CHECKTITLE><IFBILL ></IFBILL><EXTJS ></EXTJS><JAVACLS ></JAVACLS><POST2MWID ></POST2MWID><LMS ></LMS><WIDTHMOD >0</WIDTHMOD><HEIGHTMOD >0</HEIGHTMOD><CLIENTCLASS ></CLIENTCLASS><SHOWBTN ></SHOWBTN><CLOSEPAGES >1</CLOSEPAGES><syt >SBCW</syt></ROW>
+</ROWSET>
+</grdds><grdbtnds>
+<ROWSET>
+<ROW num="0" ><ID >prevPage</ID><NAME >上一页</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE><C10 ></C10><C11 ></C11><C12 ></C12><C13 >prevPage</C13></ROW>
+<ROW num="1" ><ID >nextPage</ID><NAME >下一页</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >1</IMG><IMGMOUSE >1</IMGMOUSE><C10 ></C10><C11 ></C11><C12 ></C12><C13 >myPrint</C13></ROW>
+<ROW num="2" ><ID >myPrint</ID><NAME >打印</NAME><ACTTYP ></ACTTYP><URL ></URL><URLTARGET ></URLTARGET><TIP ></TIP><BTNORD ></BTNORD><IMG >6</IMG><IMGMOUSE >6</IMGMOUSE><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13></ROW>
+</ROWSET>
+</grdbtnds><grdpamds>
+<ROWSET>
+<ROW num="0" ><ID >yyyymmdd</ID><NAME >时间*</NAME><NOTNULL >1</NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG ></KEYFLG><C13 >myData</C13><C14 >yyyymmdd</C14></ROW>
+<ROW num="1" ><ID >TCQBM</ID><NAME >社保机构编码</NAME><NOTNULL >1</NOTNULL><KEYVAL ></KEYVAL><INPCTL ></INPCTL><DISPORD ></DISPORD><SQLWHE ></SQLWHE><DEFVAL ></DEFVAL><TIP ></TIP><EDTFLG >1</EDTFLG><VISFLG >1</VISFLG><KEYFLG >1</KEYFLG><C13 ></C13><C14 ></C14></ROW>
+</ROWSET>
+</grdpamds><grdshwds>
+<ROWSET>
+<ROW num="0" ><ID >0,4,1</ID><NAME ></NAME><DBNAME ></DBNAME><DSKEY >DSC:JFQD</DSKEY><NROW >3</NROW><NCOL >9</NCOL><PAGES >1</PAGES><PAGESIZE >61</PAGESIZE><URL ></URL><CTLTYP ></CTLTYP><DYNCTL ></DYNCTL><LISTID ></LISTID><ISCROSS ></ISCROSS><HROW ></HROW><HCOLS ></HCOLS><ROWORDER ></ROWORDER><VCOLS ></VCOLS><VCOLSQL ></VCOLSQL><VALUECOL ></VALUECOL><C20 >0,4,1</C20><C21 >0,4,1</C21><C22 >0,4,1</C22><C23 >0,4,1</C23></ROW>
+</ROWSET>
+</grdshwds><grdjsds>
+<ROWSET>
+<ROW num="0" ><GRDJSDS_VALUE >var _tcqbm = &amp;quot;&amp;quot;;   //统筹区编码
+var _sbh = &amp;quot;&amp;quot;;     //所编号
+var _smc = &amp;quot;&amp;quot;;     //所名称
+var _ywpch = &amp;quot;&amp;quot;;
+var totalPage = 0; //总页数
+var curpage = 1;   //当前页
+var pagesize = 60;  //每页显示行数
+
+var ZXGFILE0 = &amp;quot;&amp;quot;;
+
+function _thisOnpost_loaddata(sheet)
+{
+	getSBXX(G_ORGID,&amp;quot;&amp;quot;);
+	
+	_this.SetToSelectBox(&amp;quot;&amp;quot;,sheet,2,3,&amp;quot;V_SBSB&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetToDateBox(&amp;quot;&amp;quot;,sheet,2,7,G_LOGDAT);
+	_this.SetCellText(sheet,2,3,_tcqbm); _this.SetCellShowText(0,2,3,_smc);
+	_this.SetCellText(sheet,2,7,G_LOGDAT);
+	
+	_this.AutoFixScreenWidth();
+
+	 ZXGFILE0 = _this.SaveTempZXGFile(0);	
+
+}
+
+//获取选择的社保机构信息
+function getSBXX(sbh,tcqbm)
+{
+	_sql.querytods(&amp;quot;SBSXX&amp;quot;,&amp;quot;SBH=&amp;quot;+sbh+&amp;quot;&amp;TCQBM=&amp;quot;+tcqbm);
+	_tcqbm = _this.XMLDS_GetString(0,&amp;quot;TCQBM&amp;quot;);
+	_sbh = _this.XMLDS_GetString(0,&amp;quot;SBH&amp;quot;);
+	_smc = _this.XMLDS_GetString(0,&amp;quot;SMC&amp;quot;);
+	totalPage = 0;
+	curpage = 1;
+}
+
+
+//修改单元格内容
+function _thisOnCellModify(sheet,row,col,oldvalue,newvalue)
+{
+	if (sheet == 0) {
+		var str = _this.GetCellText(0,2,3);
+		getSBXX(str,str);
+		loadData();
+	}
+}
+
+
+//加载当前页数据
+function loadData()
+{
+	var zth = G_ACCID.replace(G_ORGID,&amp;quot;&amp;quot;);
+	var dat = _this.GetCellText(0,2,7);
+	var yy = 1*dat.split(&amp;quot;-&amp;quot;)[0];
+	var mm = 1*dat.split(&amp;quot;-&amp;quot;)[1];
+	var dd = 1*dat.split(&amp;quot;-&amp;quot;)[2];
+	var param = &amp;quot;SBH=&amp;quot;+_sbh+&amp;quot;&amp;ZTH=&amp;quot;+zth+&amp;quot;&amp;YYYY=&amp;quot;+yy+&amp;quot;&amp;MM=&amp;quot;+mm+&amp;quot;&amp;DD=&amp;quot;+dd;
+	if (totalPage == 0) {
+		_sql.querytods(&amp;quot;MAIN&amp;quot;,param);
+		var totalCount = _this.XMLDS_GetRowCount();
+		totalPage = Math.ceil(totalCount / pagesize);
+		_ywpch = _this.XMLDS_GetString(0,&amp;quot;YWPCH&amp;quot;);
+	}
+	
+	_this.LoadZXGFile(ZXGFILE0,0,0);
+	_this.SetToSelectBox(&amp;quot;&amp;quot;,0,2,3,&amp;quot;V_SBSB&amp;quot;,&amp;quot;&amp;quot;);
+	_this.SetToDateBox(&amp;quot;&amp;quot;,0,2,7,dat);
+	_this.SetCellText(0,2,3,_tcqbm); _this.SetCellShowText(0,2,3,_smc);
+	_this.SetCellText(0,2,7,dat);
+
+	var xml = _this.invokeOSFunc(&amp;quot;getDataPage&amp;quot;,param+&amp;quot;&amp;pagesize=&amp;quot;+pagesize+&amp;quot;&amp;page=&amp;quot;+curpage);
+	_this.SetXmlDS(0,4,1,_this.GetRowCount(0)-2,_this.GetColCount(0)-1,xml);
+	
+	var rscnt = 0; //人数
+	var bscnt = 0; //笔数
+	var sumje = 0.0;//金额
+	var aac001_old = &amp;quot;&amp;quot;;
+	for (var r=4;r&amp;lt;_this.GetRowCount(0)-2;r++) {
+		if (_this.GetCellText(0,r,1) == &amp;quot;&amp;quot;) {
+			_this.SetRowVisible(0,r,-1);
+		}
+		else {
+			bscnt ++;
+			var aac001 = _this.GetCellText(0,r,3);
+			if (aac001 != aac001_old) { rscnt ++; aac001_old = aac001; }
+			
+			sumje += 1.0 * _this.GetCellText(0,r,9);
+		}
+	}
+	
+	_this.SetCellText(0,2,8,&amp;quot;批次号：&amp;quot;+_ywpch);
+	_this.SetCellText(0,2,10,&amp;quot;第&amp;quot;+curpage+&amp;quot;页 共&amp;quot;+totalPage+&amp;quot;页&amp;quot;);
+	_this.SetCellText(0,_this.GetRowCount(0)-2,3,&amp;quot;人数：&amp;quot;+rscnt+&amp;quot;  笔数：&amp;quot;+bscnt+&amp;quot;  金额：&amp;quot;+fmoney(sumje.toFixed(2),2));
+	
+	if (curpage == totalPage) {  //显示合计行
+		var totalinfo = _this.invokeOSFunc(&amp;quot;getTotalInfo&amp;quot;,param);
+		rscnt = totalinfo.split(&amp;quot;~&amp;quot;)[0];
+		bscnt = totalinfo.split(&amp;quot;~&amp;quot;)[1];
+		sumje = 1.0*totalinfo.split(&amp;quot;~&amp;quot;)[2];		
+		_this.SetCellText(0,_this.GetRowCount(0)-1,3,&amp;quot;人数：&amp;quot;+rscnt+&amp;quot;  笔数：&amp;quot;+bscnt+&amp;quot;  金额：&amp;quot;+fmoney(sumje.toFixed(2),2));
+	}
+	else { //不是最后一页隐藏合计行 
+		_this.SetRowVisible(0,_this.GetRowCount(0)-1,-1);
+	}
+	if (totalPage == 1) { //只有一页只显示合计行
+		_this.SetRowVisible(0,_this.GetRowCount(0)-2,-1);
+	}
+
+	_this.AutoFixScreenWidth();
+	
+}
+
+//打印
+function myPrint()
+{
+	//打印时间
+	var myData = new Date();
+	var printTime = myData.toLocaleString();
+	_this.SetCellText(0,2,6,&amp;quot;打印日期：&amp;quot;+printTime);
+	
+	for (var i=0;i&amp;lt;totalPage;i++) {
+		curpage = i+1;
+		loadData();
+		_this.Print(0,0);
+	}
+	alert(&amp;quot;发送打印机完成！&amp;quot;);
+}
+
+
+function nullRow()
+{
+	for (var r=4;r&amp;lt;_this.GetRowCount(0);r++) {
+		var str = _this.GetCellText(0,r,1);
+		if (str == &amp;quot;&amp;quot;) {
+			for (var c=0;c&amp;lt;_this.GetColCount(0);c++) {
+				_this.SetRowVisible(0,r,-1);
+			}
+		}
+	}
+}
+
+//上一页
+function prevPage()
+{
+	if (curpage == 1) {
+		alert(&amp;quot;已经是第一页！&amp;quot;);
+		return;
+	}
+	
+	curpage --;
+	loadData();
+}
+
+//下一页
+function nextPage()
+{
+	if (curpage &amp;gt;= totalPage) {
+		alert(&amp;quot;已经是最后一页！&amp;quot;);
+		return;
+	}
+	
+	curpage ++;
+	loadData();
+}
+
+
+//SelectBox控件修改单元格内容
+function _thisOnSelectBoxCellModify(sheet,row,col,oldvalue,newvalue,key,where)
+{
+	showSBMC(newvalue);
+}
+
+function showSBMC(tcqbm)
+{
+	_sql.querytods(&amp;quot;SBMC&amp;quot;,&amp;quot;tcqbm=&amp;quot;+tcqbm);
+	_this.SetCellShowText(0,2,3,_this.XMLDS_GetString(0,&amp;quot;NAME&amp;quot;));
+}
+
+
+//转为带,号分隔的格式
+function fmoney(s, n)   
+{   
+   n = n &amp;gt; 0 &amp;&amp; n &amp;lt;= 20 ? n : 2;   
+   s = parseFloat((s + &amp;quot;&amp;quot;).replace(/[^\d\.-]/g, &amp;quot;&amp;quot;)).toFixed(n) + &amp;quot;&amp;quot;;   
+   var l = s.split(&amp;quot;.&amp;quot;)[0].split(&amp;quot;&amp;quot;).reverse(),   
+   r = s.split(&amp;quot;.&amp;quot;)[1];   
+   t = &amp;quot;&amp;quot;;   
+   for(i = 0; i &amp;lt; l.length; i ++ )   
+   {   
+      t += l[i] + ((i + 1) % 3 == 0 &amp;&amp; (i + 1) != l.length ? &amp;quot;,&amp;quot; : &amp;quot;&amp;quot;);   
+   }   
+   return t.split(&amp;quot;&amp;quot;).reverse().join(&amp;quot;&amp;quot;) + &amp;quot;.&amp;quot; + r;   
+} 
+
+
+
+</GRDJSDS_VALUE></ROW>
+</ROWSET>
+</grdjsds><grdosds>
+<ROWSET>
+<ROW num="0" ><GRDOSDS_VALUE >var pub = new JavaPackage(&amp;quot;com.xlsgrid.net.pub&amp;quot;);
+var servlet = new JavaPackage(&amp;quot;com.xlsgrid.net.servlet&amp;quot;);
+
+//获取分页数据
+//传入页号page
+function getDataPage()
+{	
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var mwsql = new servlet.MWSQL();
+		var sql = mwsql.GetQuerySQL(request,db,&amp;quot;SBCW&amp;quot;,&amp;quot;BankDateBill&amp;quot;,&amp;quot;MAIN&amp;quot;);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%SBH]&amp;quot;,SBH);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%ZTH]&amp;quot;,ZTH);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%YYYY]&amp;quot;,YYYY);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%MM]&amp;quot;,MM);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%DD]&amp;quot;,DD);	
+		
+		var mysql = &amp;quot;select * from (&amp;quot;+sql+&amp;quot;) where rn&amp;gt;([%page]-1)*[%pagesize] and rn&amp;lt;=[%page]*[%pagesize]&amp;quot;;
+		mysql = pub.EAFunc.Replace(mysql,&amp;quot;[%page]&amp;quot;,page);
+		mysql = pub.EAFunc.Replace(mysql,&amp;quot;[%pagesize]&amp;quot;,pagesize);
+			
+		var ds = db.QuerySQL(mysql);
+		return ds.GetXml();
+		
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}
+
+//取合计数据
+function getTotalInfo()
+{	
+	var db = null;
+	try {
+		db = new pub.EADatabase();
+		var mwsql = new servlet.MWSQL();
+		var sql = mwsql.GetQuerySQL(request,db,&amp;quot;SBCW&amp;quot;,&amp;quot;BankDateBill&amp;quot;,&amp;quot;MAIN&amp;quot;);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%SBH]&amp;quot;,SBH);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%ZTH]&amp;quot;,ZTH);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%YYYY]&amp;quot;,YYYY);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%MM]&amp;quot;,MM);
+		sql = pub.EAFunc.Replace(sql,&amp;quot;[%DD]&amp;quot;,DD);	
+		
+		var mysql = &amp;quot;select count(distinct grbh) rscnt,count(*) bscnt,sum(je) sumje from (&amp;quot;+sql+&amp;quot;)&amp;quot;;		
+		var ds = db.QuerySQL(mysql);
+		return ds.getStringAt(0,&amp;quot;RSCNT&amp;quot;)+&amp;quot;~&amp;quot;+ds.getStringAt(0,&amp;quot;BSCNT&amp;quot;)+&amp;quot;~&amp;quot;+ds.getStringAt(0,&amp;quot;SUMJE&amp;quot;);		
+	}
+	catch(e) {
+		if (db != null) db.Rollback();
+		return e.toString();
+	}
+	finally {
+		if (db != null) db.Close();
+	}
+}</GRDOSDS_VALUE></ROW>
+</ROWSET>
+</grdosds><grddscds>
+<ROWSET>
+<ROW num="0" ><ID >JFQD</ID><NAME >缴费清单数据</NAME><DATDSC >select num,
+       lsh,
+       grbh,
+       grxm,
+       sfzh,
+       zy,
+       qx,
+       je,
+       djh
+        from
+           (select rownum num,f.* from
+                (select a.LSH,
+                		a.grbh,
+                		a.grxm,
+                		d.sfzh,
+                		a.YY||a.MM||a.DD yymmdd,
+                		a.zy,
+                		e.ym1||&amp;apos;-&amp;apos;||e.ym2 qx,
+                		a.Je,
+                    a.djh
+                	 from CW_RJZB a,CW_PZB b ,
+                           (select distinct a.sbh,
+                                 a.zth, 
+                                 a.siseqno,
+                                 mkjmbz
+                               from cw_rjzb a, cw_rjzmxb b
+                                 where a.sbh = b.sbh
+                                   and a.zth = b.zth
+                                   and a.lsh = b.lsh
+                                   ) c ,
+                                (select AAC001 grbh,
+                                	    AAC147 sfzh 
+                                           from AC01 ) d ,
+                                 (select distinct  lsh,
+                                 		ym1,
+                                 		ym2 
+                                 	from cw_rjzmxb ) e
+                         WHERE a.sbh = b.sbh(+)
+                           and a.zth = b.zth(+)
+                           and a.pzh = b.czxh(+)
+                           and a.grbh = d.grbh
+                           and a.sbh = c.sbh
+                           and a.zth = c.zth
+                           and a.lsh = e.lsh
+                           and a.siseqno = c.siseqno                       
+                           and a.grbh in 
+                          		(select aac001 
+                          			from ac01 
+                          			where aab301=&amp;apos;[%TCQBM]&amp;apos;)
+                           order by lsh ) f
+                          where f.yymmdd = &amp;apos;[%yyyymmdd]&amp;apos;
+                   )
+                                           </DATDSC><C4 >JFQD</C4><C5 >JFQD</C5><C6 >JFQD</C6><C7 >JFQD</C7><C8 >JFQD</C8><C9 >JFQD</C9><C10 ></C10><C11 >JFQD</C11><C12 >JFQD</C12><C13 >JFQD</C13><C14 >JFQD</C14><C15 >JFQD</C15><C16 >JFQD</C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22></ROW>
+<ROW num="1" ><ID >SBMC</ID><NAME >社保名称</NAME><DATDSC >select * 	
+  from cw_sbsb 
+	 where TCQBM=&amp;apos;[%TCQBM]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 >SBMC</C8><C9 ></C9><C10 >SBMC</C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 >SBMC</C14><C15 ></C15><C16 >SBMC</C16><C17 ></C17><C18 >SBMC</C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22></ROW>
+<ROW num="2" ><ID >GETTCQBM</ID><NAME ></NAME><DATDSC >select tcqbm from cw_sbsb where sbh=&amp;apos;[%SBH]&amp;apos;
+</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 >GETTCQBM</C16><C17 ></C17><C18 >GETTCQBM</C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22></ROW>
+<ROW num="3" ><ID >MAIN</ID><NAME ></NAME><DATDSC >select rownum rn,t.*
+from (
+select a.yszl_yhrzlsh,
+       b.grbh,
+       b.grxm,
+       (select max(AAC147) from AC01 where AAC001=b.grbh) sfzh,
+       b.zy,a.ywpch,
+       b.ym1||&amp;apos;-&amp;apos;||b.ym2 yymm12,
+       b.je,
+       a.djh
+from cw_yhrjzb a,(
+  select a.sbh,a.zth,a.siseqno,a.zy,a.je,a.djh,a.grbh,a.grxm,min(b.ym1) ym1,max(ym2) ym2
+  from cw_rjzb a, cw_rjzmxb b
+  where a.sbh = b.sbh and a.zth = b.zth and a.lsh = b.lsh
+  group by a.sbh,a.zth,a.siseqno,a.zy,a.je,a.djh,a.grbh,a.grxm
+  ) b
+where a.siseqno=b.siseqno
+  and a.sbh=b.sbh and a.zth=b.zth
+  and a.sbh=&amp;apos;[%SBH]&amp;apos; and a.zth=&amp;apos;[%ZTH]&amp;apos;
+  and a.yy=[%YYYY] and a.mm=[%MM] and a.dd=[%DD]
+  and kmbh=(select kmbh from v_cw_bkdyhb 
+  	where sbh=&amp;apos;[%SBH]&amp;apos; and zth=&amp;apos;[%ZTH]&amp;apos; and bz=&amp;apos;13&amp;apos; /*取过渡户*/
+  )
+order by yszl_yhrzlsh  
+) t</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 >MAIN</C17><C18 >MAIN</C18><C19 >MAIN</C19><C20 >MAIN</C20><C21 >MAIN</C21><C22 >MAIN</C22></ROW>
+<ROW num="4" ><ID >SBSXX</ID><NAME ></NAME><DATDSC >select * from cw_sbsb where sbh=&amp;apos;[%SBH]&amp;apos; or tcqbm=&amp;apos;[%TCQBM]&amp;apos;</DATDSC><C4 ></C4><C5 ></C5><C6 ></C6><C7 ></C7><C8 ></C8><C9 ></C9><C10 ></C10><C11 ></C11><C12 ></C12><C13 ></C13><C14 ></C14><C15 ></C15><C16 ></C16><C17 ></C17><C18 ></C18><C19 ></C19><C20 ></C20><C21 ></C21><C22 ></C22></ROW>
+</ROWSET>
+</grddscds><fldhdr>
+<ROWSET>
+<ROW num="0" ><BILID >1单据编号</BILID><STAT >0单据状态</STAT><SUBTYP >0子类型</SUBTYP><CORPID >0往来单位编号</CORPID><CORPNAM >0往来单位名称</CORPNAM><LOCID >0仓库|部门编号</LOCID><LOCNAM >0仓库|部门名称</LOCNAM><DAT >0单据日期</DAT><CRTUSR >1录入人</CRTUSR><CRTUSRNAM >0录入人姓名</CRTUSRNAM><CRTDAT >0录入日期</CRTDAT><CHKUSR >1审核人</CHKUSR><CHKUSRNAM >0审核人姓名</CHKUSRNAM><CHKDAT >0审核日期</CHKDAT><SUMQTY >0合计金额</SUMQTY><SUMMNY >0合计金额</SUMMNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5><REFID6 >0扩展字段</REFID6><REFNAM6 >0扩展字段</REFNAM6><NOTE >0备注</NOTE></ROW>
+</ROWSET>
+</fldhdr><flddtl>
+<ROWSET>
+<ROW num="0" ><SEQID >1明细序号</SEQID><ITMID >1品种编号</ITMID><ITMNAM >0品种名称</ITMNAM><ITEMPC >0品种批次号</ITEMPC><ITMSPC >0规格</ITMSPC><UNIT >0计量单位</UNIT><SMLUNT >0小计量单位</SMLUNT><UNTNUM >0大单位转小单位因子</UNTNUM><PRICE >0价格</PRICE><QTY >0数量</QTY><TAXTYP >0税率类型</TAXTYP><NOTAXMNY >0不含税税额</NOTAXMNY><TAXMNY >0税额</TAXMNY><MNY >0下单金额</MNY><REFID1 >0扩展字段</REFID1><REFNAM1 >0扩展字段</REFNAM1><REFID2 >0扩展字段</REFID2><REFNAM2 >0扩展字段</REFNAM2><REFID3 >0扩展字段</REFID3><REFNAM3 >0扩展字段</REFNAM3><REFID4 >0扩展字段</REFID4><REFNAM4 >0扩展字段</REFNAM4><REFID5 >0扩展字段</REFID5><REFNAM5 >0扩展字段</REFNAM5></ROW>
+</ROWSET>
+</flddtl></mdroot>
